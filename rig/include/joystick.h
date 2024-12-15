@@ -1,7 +1,7 @@
 #ifndef CTRL_H
 #define CTRL_H
 
-namespace Utils{
+namespace Hardware{
 
     class Joystick
     {

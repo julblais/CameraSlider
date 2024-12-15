@@ -3,7 +3,7 @@
 
 #include <LiquidCrystal_I2C.h>
 
-namespace Utils{
+namespace Hardware{
 
   class LCD
   {
@@ -21,7 +21,7 @@ namespace Utils{
   };
 
   template<typename T>
-  void Utils::LCD::Print(T&& text, const int line)
+  void Hardware::LCD::Print(T&& text, const int line)
   {
     chip.setCursor(0, line);
     chip.print(text);

@@ -9,11 +9,11 @@ namespace Rig{
 class Menu
 {
 private:
-  Utils::LCD m_LCD;
-  Utils::Joystick m_Joystick;
+  Hardware::LCD m_LCD;
+  Hardware::Joystick m_Joystick;
 
 public:
-  Menu(Utils::LCD& lcd, Utils::Joystick joystick);
+  Menu(Hardware::LCD& lcd, Hardware::Joystick joystick);
 };
 
 }

@@ -7,8 +7,8 @@
 #define SEL_PIN T8
 #define LCD_ADDRESS 0x27
 
-Utils::LCD s_lcd(LCD_ADDRESS);
-Utils::Joystick s_joystick(VERT_PIN, HORZ_PIN, SEL_PIN);
+Hardware::LCD s_lcd(LCD_ADDRESS);
+Hardware::Joystick s_joystick(VERT_PIN, HORZ_PIN, SEL_PIN);
 
 void setup() {
   Rig::Menu menu(s_lcd, s_joystick);
