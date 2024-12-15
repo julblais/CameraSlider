@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "author": "jblais",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": -81.7, "left": -149, "attrs": {} },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd1",
+      "top": -32,
+      "left": 24.8,
+      "attrs": { "pins": "i2c" }
+    },
+    { "type": "wokwi-analog-joystick", "id": "joystick1", "top": 124.2, "left": 15, "attrs": {} },
+    {
+      "type": "wokwi-stepper-motor",
+      "id": "stepper1",
+      "top": 147.61,
+      "left": 173.23,
+      "attrs": { "size": "17" }
+    }
+  ],
+  "connections": [
+    [ "lcd1:VCC", "esp:3V3", "red", [ "h-38.4", "v172.9" ] ],
+    [ "lcd1:GND", "esp:GND.2", "green", [ "v-9.6", "h-182.4", "v76.9" ] ],
+    [ "lcd1:SCL", "esp:D22", "blue", [ "h-19.2", "v9.9", "h-28.8", "v-86.1" ] ],
+    [ "lcd1:SDA", "esp:D21", "gold", [ "h-19.2", "v-37.8" ] ],
+    [ "joystick1:GND", "esp:GND.2", "green", [ "v28.8", "h-259.2", "v-201.5" ] ],
+    [ "joystick1:VCC", "esp:3V3", "red", [ "v-9.6", "h-76.8", "v-153.6" ] ],
+    [ "joystick1:VERT", "esp:D25", "blue", [ "h-220.8", "v-230.4" ] ],
+    [ "joystick1:HORZ", "esp:D26", "blue", [ "v9.6", "h-249.6", "v-230.3" ] ],
+    [ "joystick1:SEL", "esp:D33", "blue", [ "v19.2", "h-249.6", "v-259.2", "h28.8" ] ]
+  ],
+  "dependencies": {}
+}
