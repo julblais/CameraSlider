@@ -19,7 +19,7 @@ void setup() {
 
   LCD.Init();
   LCD.Print("Salut", 0);
-  LCD.Print("Guillaume2", 1);
+  LCD.Print("Guillaume", 1);
 }
 
 void loop() {
