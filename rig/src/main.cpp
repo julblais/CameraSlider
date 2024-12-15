@@ -1,38 +1,32 @@
 #include "menu.h"
 #include "lcd.h"
+#include "joystick.h"
 
 #define VERT_PIN A18
 #define HORZ_PIN A19
 #define SEL_PIN T8
 #define LCD_ADDRESS 0x27
 
-Utils::LCD LCD(LCD_ADDRESS);
+Utils::LCD s_lcd(LCD_ADDRESS);
+Utils::Joystick s_joystick(VERT_PIN, HORZ_PIN, SEL_PIN);
 
 void setup() {
-  Rig::Menu menu(LCD);
+  Rig::Menu menu(s_lcd, s_joystick);
   //Serial.begin(115200);
   //Serial.println("Hello \n");
-  
-  pinMode(VERT_PIN, INPUT);
-  pinMode(HORZ_PIN, INPUT);
-  pinMode(SEL_PIN, INPUT_PULLUP);
 
-  LCD.Init();
-  LCD.Print("Salut", 0);
-  LCD.Print("Guillaume", 1);
+  s_joystick.Init();
+  s_lcd.Init();
+
+  s_lcd.Print("Salut", 0);
+  s_lcd.Print("Guillaume", 1);
 }
 
 void loop() {
-  // horz goes from 0 (right) to 1023 (left)
-  int vert = analogRead(VERT_PIN);
-  // vert goes from 0 (bottom) to 1023 (top)
-  int horz = analogRead(HORZ_PIN);
-  // selPressed is true is the joystick is pressed
-  bool selPressed = digitalRead(SEL_PIN) == LOW;
 
-  if (selPressed)
+  if (s_joystick.SelectionPressed())
   {
-    LCD.Clear();
-    LCD.Print("Menu pressed", 0);
+    s_lcd.Clear();
+    s_lcd.Print("Menu pressed", 0);
   }
 }
