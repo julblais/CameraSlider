@@ -13,9 +13,12 @@ bool IsInBounds(int value, int low, int high) {
     return value >= low && value <= high;
 }
 
-Hardware::Dpad::Dpad(const int verticalPin, const int horizontalPin, const int selectionPin)
-    :m_HorizontalPin(horizontalPin), m_VerticalPin(verticalPin), m_SelectionPin(selectionPin),
-    m_Listeners(), m_LastState()
+Hardware::Dpad::Dpad(const int verticalPin, const int horizontalPin, const int selectionPin):
+    m_HorizontalPin(horizontalPin), 
+    m_VerticalPin(verticalPin), 
+    m_SelectionPin(selectionPin),
+    m_Listeners(), 
+    m_LastState(D_HIGH/2, D_HIGH/2, false)
 {}
 
 void Hardware::Dpad::Init()
@@ -63,11 +66,7 @@ void Hardware::Dpad::RemoveListener(IDpadListener* listener)
 
 Hardware::Dpad::State Hardware::Dpad::ReadState()
 {
-    State state;
-    state.Horizontal = ReadHorizontal();
-    state.Vertical = ReadVertical();
-    state.Selection = SelectionPressed();
-    return state;
+    return State(ReadVertical(), ReadHorizontal(), SelectionPressed());
 }
 
 void Hardware::Dpad::SendUpEvent(const DpadButton button)
@@ -127,6 +126,13 @@ const char* Hardware::Dpad::PrintButton(const DpadButton button)
             return "selection";
     }
     return "Invalid";
+}
+
+Hardware::Dpad::State::State(const int vertical, const int horizontal, const int selection)
+{
+    Vertical = vertical;
+    Horizontal = horizontal;
+    Selection = selection;
 }
 
 bool Hardware::Dpad::State::IsLeft() const

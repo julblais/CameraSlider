@@ -3,7 +3,7 @@
 #include "dpad.h"
 #include "debug.h"
 
-Rig::Menu::Menu(Hardware::LCD* lcd, Hardware::Dpad* joystick)
+Rig::Menu::Menu(Hardware::LCD* const lcd, Hardware::Dpad* const joystick)
     :m_LCD(lcd), m_Joystick(joystick)
 {}
 

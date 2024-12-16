@@ -25,14 +25,15 @@ namespace Hardware{
     class Dpad {
         struct State {
             public:
-            int Vertical;
-            int Horizontal;
-            bool Selection;
+                int Vertical;
+                int Horizontal;
+                bool Selection;
 
-            bool IsLeft() const;
-            bool IsRight() const;
-            bool IsUp() const;
-            bool IsDown() const;
+                State(const int vertical, const int horizontal, const int selection);
+                bool IsLeft() const;
+                bool IsRight() const;
+                bool IsUp() const;
+                bool IsDown() const;
         };
 
         public:
