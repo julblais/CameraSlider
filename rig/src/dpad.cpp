@@ -13,16 +13,17 @@ bool IsInBounds(int value, int low, int high) {
     return value >= low && value <= high;
 }
 
-Hardware::Dpad::Dpad(const int verticalPin, const int horizontalPin, const int selectionPin):
-    m_HorizontalPin(horizontalPin), 
-    m_VerticalPin(verticalPin), 
-    m_SelectionPin(selectionPin),
+Hardware::Dpad::Dpad():
     m_Listeners(), 
     m_LastState(D_HIGH/2, D_HIGH/2, false)
 {}
 
-void Hardware::Dpad::Init()
+void Hardware::Dpad::Init(const int verticalPin, const int horizontalPin, const int selectionPin)
 {
+    m_HorizontalPin = horizontalPin; 
+    m_VerticalPin = verticalPin;
+    m_SelectionPin = selectionPin;
+
     pinMode(m_VerticalPin, INPUT);
     pinMode(m_HorizontalPin, INPUT);
     pinMode(m_SelectionPin, INPUT_PULLUP);

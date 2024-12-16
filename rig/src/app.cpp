@@ -3,17 +3,16 @@
 #include "lcd.h"
 
 Rig::App::App(const AppConfig &config):
-    m_LCD(config.LcdAddress),
-    m_Dpad(config.DpadVerticalPin, config.DpadHorizontalPin, config.DpadSelectionPin),
-    m_Menu(&m_LCD, &m_Dpad)
+    m_Config(config),
+    m_LCD(config.LcdAddress)
 {
 }
 
 void Rig::App::Setup()
 {    
-    m_Dpad.Init();
     m_LCD.Init();
-    m_Menu.Init();
+    m_Dpad.Init(m_Config.DpadVerticalPin, m_Config.DpadHorizontalPin, m_Config.DpadSelectionPin);
+    m_Menu.Init(&m_LCD, &m_Dpad);
 
     m_LCD.Print("Salut", 0);
     m_LCD.Print("Guillaume", 1);

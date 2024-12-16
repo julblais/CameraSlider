@@ -8,14 +8,15 @@
 
 std::array<char, Hardware::LCD::NUM_COLS> m_Buffer;
 
-Hardware::LCD::LCD(const uint8_t address)
-    :chip(address, LCD::NUM_COLS, LCD::NUM_ROWS)
+Hardware::LCD::LCD(const uint8_t address):
+    chip(address, LCD::NUM_COLS, LCD::NUM_ROWS)
 {
-    m_Buffer.fill(' ');
 }
 
 void Hardware::LCD::Init()
 {
+    m_Buffer.fill(' ');
+
     Debug.Log("Init LCD.");
     chip.init();
     chip.backlight();

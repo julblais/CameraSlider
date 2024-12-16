@@ -3,12 +3,13 @@
 #include "dpad.h"
 #include "debug.h"
 
-Rig::Menu::Menu(Hardware::LCD* const lcd, Hardware::Dpad* const joystick)
-    :m_LCD(lcd), m_Joystick(joystick)
+Rig::Menu::Menu()
 {}
 
-void Rig::Menu::Init()
+void Rig::Menu::Init(Hardware::LCD* lcd, Hardware::Dpad* joystick)
 {
+    m_LCD = lcd;
+    m_Joystick = joystick;
     m_Joystick->AddListener(this);
 }
 

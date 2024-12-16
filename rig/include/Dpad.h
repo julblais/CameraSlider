@@ -37,9 +37,9 @@ namespace Hardware{
         };
 
         public:
-        Dpad(const int verticalPin, const int horizontalPin, const int selectionPin);
+        Dpad();
 
-        void Init();
+        void Init(const int verticalPin, const int horizontalPin, const int selectionPin);
         int ReadVertical() const;
         int ReadHorizontal() const;
         bool SelectionPressed() const;
