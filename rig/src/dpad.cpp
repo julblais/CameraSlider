@@ -28,17 +28,17 @@ void Hardware::Dpad::Init()
     pinMode(m_SelectionPin, INPUT_PULLUP);
 }
 
-int Hardware::Dpad::ReadVertical()
+int Hardware::Dpad::ReadVertical() const
 {
     return analogRead(m_VerticalPin);
 }
 
-int Hardware::Dpad::ReadHorizontal()
+int Hardware::Dpad::ReadHorizontal() const
 {
     return analogRead(m_HorizontalPin);
 }
 
-bool Hardware::Dpad::SelectionPressed()
+bool Hardware::Dpad::SelectionPressed() const
 {
     return digitalRead(m_SelectionPin) == LOW;
 }
@@ -64,19 +64,19 @@ void Hardware::Dpad::RemoveListener(IDpadListener* listener)
         m_Listeners.erase(position);
 }
 
-Hardware::Dpad::State Hardware::Dpad::ReadState()
+Hardware::Dpad::State Hardware::Dpad::ReadState() const
 {
     return State(ReadVertical(), ReadHorizontal(), SelectionPressed());
 }
 
-void Hardware::Dpad::SendUpEvent(const DpadButton button)
+void Hardware::Dpad::SendUpEvent(const DpadButton button) const
 {
     Debug.Log("Sending button up: ", PrintButton(button));
     for(auto listener : m_Listeners)
         listener->OnKeyUp(button);
 }
 
-void Hardware::Dpad::SendDownEvent(const DpadButton button)
+void Hardware::Dpad::SendDownEvent(const DpadButton button) const
 {
     Debug.Log("Sending button down: ", PrintButton(button));
     for(auto listener : m_Listeners)
@@ -111,7 +111,7 @@ void Hardware::Dpad::ProcessButtons(const State &state)
         SendUpEvent(Hardware::DpadButton::SELECTION);
 }
 
-const char* Hardware::Dpad::PrintButton(const DpadButton button)
+const char* Hardware::Dpad::PrintButton(const DpadButton button) const
 {
     switch(button) {
         case Hardware::DpadButton::LEFT:

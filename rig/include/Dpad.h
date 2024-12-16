@@ -40,19 +40,19 @@ namespace Hardware{
         Dpad(const int verticalPin, const int horizontalPin, const int selectionPin);
 
         void Init();
-        int ReadVertical();
-        int ReadHorizontal();
-        bool SelectionPressed();
+        int ReadVertical() const;
+        int ReadHorizontal() const;
+        bool SelectionPressed() const;
 
         void Update();
         void AddListener(IDpadListener* listener);
         void RemoveListener(IDpadListener* listener);
-        const char* PrintButton(const DpadButton button);
+        const char* PrintButton(const DpadButton button) const;
 
         private:
-        State ReadState();
-        void SendUpEvent(const DpadButton button);
-        void SendDownEvent(const DpadButton button);
+        State ReadState() const;
+        void SendUpEvent(const DpadButton button) const;
+        void SendDownEvent(const DpadButton button) const;
         void ProcessButtons(const State& state);
 
         int m_VerticalPin;
