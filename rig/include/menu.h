@@ -9,11 +9,11 @@ namespace Rig{
 class Menu : public Hardware::IDpadListener
 {
     private:
-        Hardware::LCD m_LCD;
+        Hardware::LCD* m_LCD;
         Hardware::Dpad* m_Joystick;
 
     public:
-        Menu(Hardware::LCD& lcd, Hardware::Dpad* joystick);
+        Menu(Hardware::LCD* lcd, Hardware::Dpad* joystick);
         void Init();
 
         void OnKeyUp(const Hardware::DpadButton button) override;

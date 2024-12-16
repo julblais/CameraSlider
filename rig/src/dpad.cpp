@@ -6,11 +6,11 @@
 #include <HardwareSerial.h>
 
 static const int D_LOW = 0;
-static const int D_HIGH = 1023;
+static const int D_HIGH = 4095;
 static const int D_RANGE = 100;
 
 bool IsInBounds(int value, int low, int high) {
-    return !(value < low) && (value < high);
+    return value >= low && value <= high;
 }
 
 Hardware::Dpad::Dpad(const int verticalPin, const int horizontalPin, const int selectionPin)
@@ -52,10 +52,7 @@ void Hardware::Dpad::Update()
 
 void Hardware::Dpad::AddListener(IDpadListener* listener)
 {
-        Serial.println("adding... listener");
     m_Listeners.push_back(listener);
-        Serial.println("size");
-        Serial.println(m_Listeners.size());
 }
 
 void Hardware::Dpad::RemoveListener(IDpadListener* listener)
@@ -76,12 +73,8 @@ Hardware::Dpad::State Hardware::Dpad::ReadState()
 
 void Hardware::Dpad::SendUpEvent(const DpadButton button)
 {
-    Serial.println(m_Listeners.size());
-    for(auto listener : m_Listeners){
-        
-        Serial.println("up listener");
+    for(auto listener : m_Listeners)
         listener->OnKeyUp(button);
-    }
 }
 
 void Hardware::Dpad::SendDownEvent(const DpadButton button)
@@ -91,35 +84,50 @@ void Hardware::Dpad::SendDownEvent(const DpadButton button)
 }
 
 void Hardware::Dpad::ProcessButtons(const State &state)
-{/*
+{
     if (!m_LastState.IsDown() && state.IsDown()) //key down pressed
         SendDownEvent(Hardware::DpadButton::DOWN);
-    if (m_LastState.IsDown() && !state.IsDown()) //key down depressed
+    else if (m_LastState.IsDown() && !state.IsDown()) //key down depressed
         SendUpEvent(Hardware::DpadButton::DOWN);
 
     if (!m_LastState.IsUp() && state.IsUp()) //key up pressed
         SendDownEvent(Hardware::DpadButton::UP);
-    if (m_LastState.IsUp() && !state.IsUp()) //key up depressed
+    else if (m_LastState.IsUp() && !state.IsUp()) //key up depressed
         SendUpEvent(Hardware::DpadButton::UP);
 
     if (!m_LastState.IsLeft() && state.IsLeft()) //key left pressed
         SendDownEvent(Hardware::DpadButton::LEFT);
-    if (m_LastState.IsLeft() && !state.IsLeft()) //key left depressed
+    else if (m_LastState.IsLeft() && !state.IsLeft()) //key left depressed
         SendUpEvent(Hardware::DpadButton::LEFT);
     
     if (!m_LastState.IsRight() && state.IsRight()) //key right pressed
         SendDownEvent(Hardware::DpadButton::RIGHT);
-    if (m_LastState.IsRight() && !state.IsRight()) //key right depressed
+    else if (m_LastState.IsRight() && !state.IsRight()) //key right depressed
         SendUpEvent(Hardware::DpadButton::RIGHT);
-*/
+
     if (!m_LastState.Selection && state.Selection) //select pressed
         SendDownEvent(Hardware::DpadButton::SELECTION);
-    if (m_LastState.Selection && !state.Selection) //select depressed
+    else if (m_LastState.Selection && !state.Selection) //select depressed
         SendUpEvent(Hardware::DpadButton::SELECTION);
 }
 
-// vert goes from 0 (bottom) to 1023 (top)
-// horz goes from 0 (right) to 1023 (left)
+const char* Hardware::Dpad::PrintButton(const DpadButton button)
+{
+    switch(button) {
+        case Hardware::DpadButton::LEFT:
+            return "left";
+        case Hardware::DpadButton::UP:
+            return "up";
+        case Hardware::DpadButton::DOWN:
+            return "down";
+        case Hardware::DpadButton::RIGHT:
+            return "right";
+        case Hardware::DpadButton::SELECTION:
+            return "selection";
+    }
+    return "Invalid";
+}
+
 bool Hardware::Dpad::State::IsLeft() const
 {
     return IsInBounds(Horizontal, D_HIGH - D_RANGE, D_HIGH);

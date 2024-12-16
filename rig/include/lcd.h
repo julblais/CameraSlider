@@ -2,6 +2,7 @@
 #define LCD_H
 
 #include <LiquidCrystal_I2C.h>
+#include <HardwareSerial.h>
 
 namespace Hardware{
 
@@ -23,8 +24,8 @@ namespace Hardware{
   template<typename T>
   void Hardware::LCD::Print(T&& text, const int line)
   {
-    chip.setCursor(0, line);
-    chip.print(text);
+      chip.setCursor(0, line);
+      chip.print(text);
   }
 }
 

@@ -9,9 +9,9 @@
 #define SEL_PIN T8
 #define LCD_ADDRESS 0x27
 
-Hardware::LCD s_lcd(LCD_ADDRESS);
-Hardware::Dpad s_Dpad(VERT_PIN, HORZ_PIN, SEL_PIN);
-Rig::Menu menu(s_lcd, &s_Dpad);
+static Hardware::LCD s_lcd(LCD_ADDRESS);
+static Hardware::Dpad s_Dpad(VERT_PIN, HORZ_PIN, SEL_PIN);
+static Rig::Menu menu(&s_lcd, &s_Dpad);
 
 void setup() {    
     Serial.begin(9600);

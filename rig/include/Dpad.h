@@ -46,6 +46,7 @@ namespace Hardware{
         void Update();
         void AddListener(IDpadListener* listener);
         void RemoveListener(IDpadListener* listener);
+        const char* PrintButton(const DpadButton button);
 
         private:
         State ReadState();
