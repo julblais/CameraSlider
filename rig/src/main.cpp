@@ -1,6 +1,6 @@
 #include "menu.h"
 #include "lcd.h"
-#include "joystick.h"
+#include "dpad.h"
 
 #define VERT_PIN A18
 #define HORZ_PIN A19
@@ -8,7 +8,7 @@
 #define LCD_ADDRESS 0x27
 
 Hardware::LCD s_lcd(LCD_ADDRESS);
-Hardware::Joystick s_joystick(VERT_PIN, HORZ_PIN, SEL_PIN);
+Hardware::Dpad s_joystick(VERT_PIN, HORZ_PIN, SEL_PIN);
 
 void setup() {
   Rig::Menu menu(s_lcd, s_joystick);

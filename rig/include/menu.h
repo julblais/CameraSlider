@@ -2,7 +2,7 @@
 #define MENU_H
 
 #include "lcd.h"
-#include "joystick.h"
+#include "dpad.h"
 
 namespace Rig{
 
@@ -10,10 +10,10 @@ class Menu
 {
 private:
   Hardware::LCD m_LCD;
-  Hardware::Joystick m_Joystick;
+  Hardware::Dpad m_Joystick;
 
 public:
-  Menu(Hardware::LCD& lcd, Hardware::Joystick joystick);
+  Menu(Hardware::LCD& lcd, Hardware::Dpad joystick);
 };
 
 }
