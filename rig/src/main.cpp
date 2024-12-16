@@ -1,31 +1,31 @@
+#include "app.h"
 #include "menu.h"
 #include "lcd.h"
 #include "dpad.h"
 #include "debug.h"
 
-#define VERT_PIN A18
-#define HORZ_PIN A19
-#define SEL_PIN T8
-#define LCD_ADDRESS 0x27
+static Rig::AppConfig CreateConfig()
+{
+    Rig::AppConfig config = Rig::AppConfig();
+    config.DpadHorizontalPin    = A19;
+    config.DpadVerticalPin      = A18;
+    config.DpadSelectionPin     = T8;
+    config.LcdAddress           = 0x27;
+    return config;
+}
 
-static Hardware::LCD s_lcd(LCD_ADDRESS);
-static Hardware::Dpad s_Dpad(VERT_PIN, HORZ_PIN, SEL_PIN);
-static Rig::Menu menu(&s_lcd, &s_Dpad);
+static Rig::AppConfig config = CreateConfig();
+static Rig::App app(config);
 
 void setup() {
     Debug.Init(9600);
-    Debug.Log("Setup");
+    Debug.Log("Being setup...");
 
-    s_Dpad.Init();
-    s_lcd.Init();
-    menu.Init();
+    app.Setup();
 
-    s_lcd.Print("Salut", 0);
-    s_lcd.Print("Guillaume", 1);
-
-    Debug.Log("End setup");
+    Debug.Log("End setup.");
 }
 
 void loop() {
-    s_Dpad.Update();
+    app.Update();
 }
