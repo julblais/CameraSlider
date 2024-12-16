@@ -6,14 +6,18 @@
 
 namespace Rig{
 
-class Menu
+class Menu : public Hardware::IDpadListener
 {
-private:
-  Hardware::LCD m_LCD;
-  Hardware::Dpad m_Joystick;
+    private:
+        Hardware::LCD m_LCD;
+        Hardware::Dpad* m_Joystick;
 
-public:
-  Menu(Hardware::LCD& lcd, Hardware::Dpad joystick);
+    public:
+        Menu(Hardware::LCD& lcd, Hardware::Dpad* joystick);
+        void Init();
+
+        void OnKeyUp(const Hardware::DpadButton button) override;
+        void OnKeyDown(const Hardware::DpadButton button) override;
 };
 
 }

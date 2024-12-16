@@ -5,19 +5,36 @@
 
 namespace Hardware{
 
-    class IJoystickListener {
-
-        public:
-
-        void OnSelection() {}
-        void OnMoveUp() {}
-        void OnMoveDown() {}
-        void OnMoveLeft() {}
-        void OnMoveRight() {}
+    enum DpadButton : char {
+        UP = 1,
+        DOWN = 2,
+        LEFT = 4,
+        RIGHT = 8,
+        SELECTION = 16
     };
 
-    class Dpad
-    {
+    class IDpadListener {
+
+        public:
+        virtual ~IDpadListener() {}
+
+        virtual void OnKeyUp(const DpadButton button) {}
+        virtual void OnKeyDown(const DpadButton button) {}
+    };
+
+    class Dpad {
+        struct State {
+            public:
+            int Vertical;
+            int Horizontal;
+            bool Selection;
+
+            bool IsLeft() const;
+            bool IsRight() const;
+            bool IsUp() const;
+            bool IsDown() const;
+        };
+
         public:
         Dpad(const int verticalPin, const int horizontalPin, const int selectionPin);
 
@@ -26,11 +43,22 @@ namespace Hardware{
         int ReadHorizontal();
         bool SelectionPressed();
 
+        void Update();
+        void AddListener(IDpadListener* listener);
+        void RemoveListener(IDpadListener* listener);
+
         private:
+        State ReadState();
+        void SendUpEvent(const DpadButton button);
+        void SendDownEvent(const DpadButton button);
+        void ProcessButtons(const State& state);
+
         int m_VerticalPin;
         int m_HorizontalPin;
         int m_SelectionPin;
-        std::vector<IJoystickListener> m_Events;
+        State m_LastState;
+        
+        std::vector<IDpadListener*> m_Listeners;
     };
 }
 
