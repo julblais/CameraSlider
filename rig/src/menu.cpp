@@ -6,11 +6,11 @@
 Rig::Menu::Menu()
 {}
 
-void Rig::Menu::Init(Hardware::LCD* lcd, Hardware::IDpad* joystick)
+void Rig::Menu::Init(Hardware::LCD* lcd, Hardware::IDpad* dpad)
 {
     m_LCD = lcd;
-    m_Joystick = joystick;
-    m_Joystick->AddListener(this);
+    m_Dpad = dpad;
+    m_Dpad->AddListener(this);
 }
 
 void Rig::Menu::OnKeyUp(const Hardware::DpadButton button)
@@ -21,5 +21,5 @@ void Rig::Menu::OnKeyUp(const Hardware::DpadButton button)
 void Rig::Menu::OnKeyDown(const Hardware::DpadButton button)
 {
     m_LCD->Print("Active", 0);
-    m_LCD->Print(m_Joystick->PrintButton(button), 1);
+    m_LCD->Print(m_Dpad->PrintButton(button), 1);
 }
