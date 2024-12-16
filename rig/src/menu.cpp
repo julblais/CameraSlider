@@ -14,14 +14,12 @@ void Rig::Menu::Init()
 
 void Rig::Menu::OnKeyUp(const Hardware::DpadButton button)
 {
-    m_LCD->Clear();
     m_LCD->Print("Inactive", 0);
     m_LCD->Print(m_Joystick->PrintButton(button), 1);
 }
 
 void Rig::Menu::OnKeyDown(const Hardware::DpadButton button)
 {
-    m_LCD->Clear();
     m_LCD->Print("Active", 0);
     m_LCD->Print(m_Joystick->PrintButton(button), 1);
 }
