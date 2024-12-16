@@ -2,7 +2,6 @@
 #define LCD_H
 
 #include <LiquidCrystal_I2C.h>
-#include <HardwareSerial.h>
 
 namespace Hardware{
 

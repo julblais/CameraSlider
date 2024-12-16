@@ -1,12 +1,11 @@
 #include "menu.h"
 #include "lcd.h"
 #include "dpad.h"
-#include <HardwareSerial.h>
+#include "debug.h"
 
 Rig::Menu::Menu(Hardware::LCD* lcd, Hardware::Dpad* joystick)
     :m_LCD(lcd), m_Joystick(joystick)
-{
-}
+{}
 
 void Rig::Menu::Init()
 {

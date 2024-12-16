@@ -1,9 +1,9 @@
 #include "dpad.h"
+#include "debug.h"
+
 #include <algorithm>
 #include <vector>
-
 #include <esp32-hal-gpio.h>
-#include <HardwareSerial.h>
 
 static const int D_LOW = 0;
 static const int D_HIGH = 4095;
@@ -16,8 +16,7 @@ bool IsInBounds(int value, int low, int high) {
 Hardware::Dpad::Dpad(const int verticalPin, const int horizontalPin, const int selectionPin)
     :m_HorizontalPin(horizontalPin), m_VerticalPin(verticalPin), m_SelectionPin(selectionPin),
     m_Listeners(), m_LastState()
-{
-}
+{}
 
 void Hardware::Dpad::Init()
 {
@@ -73,12 +72,14 @@ Hardware::Dpad::State Hardware::Dpad::ReadState()
 
 void Hardware::Dpad::SendUpEvent(const DpadButton button)
 {
+    Debug.Log("Sending button up: ", PrintButton(button));
     for(auto listener : m_Listeners)
         listener->OnKeyUp(button);
 }
 
 void Hardware::Dpad::SendDownEvent(const DpadButton button)
 {
+    Debug.Log("Sending button down: ", PrintButton(button));
     for(auto listener : m_Listeners)
         listener->OnKeyDown(button);
 }
