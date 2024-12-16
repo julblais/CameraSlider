@@ -1,6 +1,7 @@
-#include <LiquidCrystal_I2C.h>
-#include <lcd.h>
 
+#include <hardware/lcd.h>
+
+#include <LiquidCrystal_I2C.h>
 #include <array>
 #include <algorithm>
 

@@ -1,8 +1,8 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include "lcd.h"
-#include "dpad.h"
+#include "hardware/lcd.h"
+#include "hardware/dpad.h"
 
 namespace Rig{
 

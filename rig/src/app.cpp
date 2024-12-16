@@ -1,6 +1,6 @@
 #include "app.h"
-#include "dpad.h"
-#include "lcd.h"
+#include "hardware/dpad.h"
+#include "hardware/lcd.h"
 
 Rig::App::App(const AppConfig &config):
     m_Config(config),

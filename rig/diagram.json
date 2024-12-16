@@ -18,7 +18,8 @@
       "top": 147.61,
       "left": 173.23,
       "attrs": { "size": "17" }
-    }
+    },
+    { "type": "wokwi-a4988", "id": "drv1", "top": -120, "left": -254.4, "attrs": {} }
   ],
   "connections": [
     [ "lcd1:VCC", "esp:3V3", "red", [ "h-38.4", "v172.9" ] ],

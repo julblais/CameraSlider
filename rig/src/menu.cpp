@@ -1,6 +1,6 @@
 #include "menu.h"
-#include "lcd.h"
-#include "dpad.h"
+#include "hardware/lcd.h"
+#include "hardware/dpad.h"
 #include "debug.h"
 
 Rig::Menu::Menu()

@@ -1,8 +1,8 @@
 #ifndef APP_H
 #define APP_H
 
-#include "lcd.h"
-#include "dpad.h"
+#include "hardware/lcd.h"
+#include "hardware/dpad.h"
 #include "menu.h"
 
 namespace Rig

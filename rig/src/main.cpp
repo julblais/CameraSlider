@@ -1,7 +1,4 @@
 #include "app.h"
-#include "menu.h"
-#include "lcd.h"
-#include "dpad.h"
 #include "debug.h"
 
 static Rig::AppConfig CreateConfig()
