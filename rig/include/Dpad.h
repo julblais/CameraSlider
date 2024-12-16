@@ -53,7 +53,7 @@ namespace Hardware{
         State ReadState() const;
         void SendUpEvent(const DpadButton button) const;
         void SendDownEvent(const DpadButton button) const;
-        void ProcessButtons(const State& state);
+        void ProcessButtons(const State& state) const;
 
         int m_VerticalPin;
         int m_HorizontalPin;

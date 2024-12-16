@@ -83,7 +83,7 @@ void Hardware::Dpad::SendDownEvent(const DpadButton button) const
         listener->OnKeyDown(button);
 }
 
-void Hardware::Dpad::ProcessButtons(const State &state)
+void Hardware::Dpad::ProcessButtons(const State &state) const
 {
     if (!m_LastState.IsDown() && state.IsDown()) //key down pressed
         SendDownEvent(Hardware::DpadButton::DOWN);
