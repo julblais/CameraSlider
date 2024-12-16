@@ -14,53 +14,28 @@ namespace Hardware{
     };
 
     class IDpadListener {
-
         public:
-        virtual ~IDpadListener() {}
+            virtual ~IDpadListener() {}
 
-        virtual void OnKeyUp(const DpadButton button) {}
-        virtual void OnKeyDown(const DpadButton button) {}
+            virtual void OnKeyUp(const DpadButton button) {}
+            virtual void OnKeyDown(const DpadButton button) {}
     };
 
-    class Dpad {
-        struct State {
-            public:
-                int Vertical;
-                int Horizontal;
-                bool Selection;
-
-                State(const int vertical, const int horizontal, const int selection);
-                bool IsLeft() const;
-                bool IsRight() const;
-                bool IsUp() const;
-                bool IsDown() const;
-        };
-
+    class IDpad {
         public:
-        Dpad();
+            IDpad();
+            virtual ~IDpad(){}
+            void AddListener(IDpadListener* listener);
+            void RemoveListener(IDpadListener* listener);
+            void SendUpEvent(const DpadButton button) const;
+            void SendDownEvent(const DpadButton button) const;
+            static const char* PrintButton(const DpadButton button);
 
-        void Init(const int verticalPin, const int horizontalPin, const int selectionPin);
-        int ReadVertical() const;
-        int ReadHorizontal() const;
-        bool SelectionPressed() const;
+            virtual void Init() =0;
+            virtual void Update() =0;
 
-        void Update();
-        void AddListener(IDpadListener* listener);
-        void RemoveListener(IDpadListener* listener);
-        const char* PrintButton(const DpadButton button) const;
-
-        private:
-        State ReadState() const;
-        void SendUpEvent(const DpadButton button) const;
-        void SendDownEvent(const DpadButton button) const;
-        void ProcessButtons(const State& state) const;
-
-        int m_VerticalPin;
-        int m_HorizontalPin;
-        int m_SelectionPin;
-        State m_LastState;
-        
-        std::vector<IDpadListener*> m_Listeners;
+        protected:
+            std::vector<IDpadListener*> m_Listeners;
     };
 }
 

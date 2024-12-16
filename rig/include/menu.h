@@ -10,11 +10,11 @@ class Menu : public Hardware::IDpadListener
 {
     private:
         Hardware::LCD* m_LCD;
-        Hardware::Dpad* m_Joystick;
+        Hardware::IDpad* m_Joystick;
 
     public:
         Menu();
-        void Init(Hardware::LCD* lcd, Hardware::Dpad* joystick);
+        void Init(Hardware::LCD* lcd, Hardware::IDpad* joystick);
 
         void OnKeyUp(const Hardware::DpadButton button) override;
         void OnKeyDown(const Hardware::DpadButton button) override;

@@ -6,7 +6,7 @@
 Rig::Menu::Menu()
 {}
 
-void Rig::Menu::Init(Hardware::LCD* lcd, Hardware::Dpad* joystick)
+void Rig::Menu::Init(Hardware::LCD* lcd, Hardware::IDpad* joystick)
 {
     m_LCD = lcd;
     m_Joystick = joystick;
