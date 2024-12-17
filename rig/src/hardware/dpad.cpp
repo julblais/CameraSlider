@@ -1,7 +1,6 @@
 #include "hardware/dpad.h"
 #include "debug.h"
 
-#include <algorithm>
 #include <set>
 #include <esp32-hal-gpio.h>
 

@@ -1,8 +1,6 @@
 #include "app.h"
 #include "debug.h"
 
-constexpr bool IS_SIMULATOR = true;
-
 static Rig::AppConfig CreateConfig()
 {
     Rig::AppConfig config = Rig::AppConfig();

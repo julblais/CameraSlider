@@ -3,7 +3,6 @@
 
 #include <LiquidCrystal_I2C.h>
 #include <array>
-#include <algorithm>
 
 #include "debug.h"
 

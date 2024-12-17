@@ -1,9 +1,7 @@
+#include "simulator/dpadSimulator.h"
 #include "hardware/dpad.h"
-#include "hardware/dpadSimulator.h"
 #include "debug.h"
 
-#include <algorithm>
-#include <vector>
 #include <esp32-hal-gpio.h>
 
 static const int D_LOW = 0;

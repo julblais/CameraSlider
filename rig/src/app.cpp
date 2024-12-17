@@ -1,10 +1,9 @@
 #include "app.h"
 #include "hardware/dpad.h"
-#include "hardware/dpadSimulator.h"
+#include "simulator/dpadSimulator.h"
 #include "hardware/lcd.h"
 
 #include <esp32-hal-timer.h>
-#include <memory>
 
 Rig::App::App(const AppConfig &config):
     m_Config(config)
@@ -20,7 +19,7 @@ Rig::App::App(const AppConfig &config):
 }
 
 void Rig::App::Setup()
-{    
+{
     m_LCD->Init();
     m_Dpad->Init();
     m_Menu->Init(m_LCD.get(), m_Dpad.get());
