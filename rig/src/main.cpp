@@ -3,14 +3,14 @@
 
 static Rig::AppConfig CreateConfig()
 {
-    Rig::AppConfig config = Rig::AppConfig();
-    config.DpadHorizontalPin    = A19;
-    config.DpadVerticalPin      = A18;
-    config.DpadSelectionPin     = T8;
-    config.LcdAddress           = 0x27;
-    config.isSimulator          = true;
-    config.showMenuDelayMs      = 2000;
-    return config;
+    Rig::AppConfig conf = Rig::AppConfig();
+    conf.DpadHorizontalPin    = A19;
+    conf.DpadVerticalPin      = A18;
+    conf.DpadSelectionPin     = T8;
+    conf.LcdAddress           = 0x27;
+    conf.isSimulator          = true;
+    conf.showMenuDelayMs      = 2000;
+    return conf;
 }
 
 static Rig::AppConfig config = CreateConfig();

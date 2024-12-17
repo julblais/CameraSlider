@@ -10,8 +10,8 @@ namespace Rig{
 class Menu : public Hardware::IDpadListener
 {
     public:
-        Menu();
-        void Init(Hardware::LCD* lcd, Hardware::IDpad* dpad);
+        Menu(Hardware::LCD* lcd, Hardware::IDpad* dpad);
+        void Init();
 
         void OnKeyUp(const Hardware::DpadButton button) override;
         void OnKeyDown(const Hardware::DpadButton button) override;

@@ -6,14 +6,15 @@
 
 #define MENU_DELAY_MS 2000
 
-Rig::Menu::Menu() :
+Rig::Menu::Menu(Hardware::LCD* lcd, Hardware::IDpad* dpad) :
+    m_LCD(lcd),
+    m_Dpad(dpad),
     m_Timer("Selection menu", [this](unsigned long time){ OnOpenMenu(time); }, MENU_DELAY_MS)
-{}
-
-void Rig::Menu::Init(Hardware::LCD* lcd, Hardware::IDpad* dpad)
 {
-    m_LCD = lcd;
-    m_Dpad = dpad;
+}
+
+void Rig::Menu::Init()
+{
     m_Dpad->AddListener(this);
 }
 
