@@ -2,6 +2,7 @@
 #include "hardware/lcd.h"
 #include "hardware/dpad.h"
 #include "debug.h"
+#include "utils/timer.h"
 
 Rig::Menu::Menu()
 {}
