@@ -32,14 +32,14 @@ void Rig::Menu::OnKeyDown(const Hardware::DpadButton button)
     }
     else
     {
-        m_LCD->Print("Active", 0);
-        m_LCD->Print(m_Dpad->PrintButton(button), 1);
+        m_LCD->PrintLn("Active", 0);
+        m_LCD->PrintLn(m_Dpad->PrintButton(button), 1);
     }
 }
 
 void Rig::Menu::OnOpenMenu(unsigned long time)
 {
     Debug.Log("Open menu! ", time);
-    m_LCD->Print("Menu", 0);
-    m_LCD->Print("", 1);
+    m_LCD->PrintLn("Menu", 0);
+    m_LCD->PrintLn("", 1);
 }

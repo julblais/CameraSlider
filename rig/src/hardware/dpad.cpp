@@ -24,14 +24,14 @@ void Hardware::IDpad::Update()
 void Hardware::IDpad::SendUpEvent(const DpadButton button) const
 {
     Debug.Log("Sending button up: ", PrintButton(button));
-    InvokeListeners(
+    SendEvent(
         [button](IDpadListener* listener) { listener->OnKeyUp(button); });
 }
 
 void Hardware::IDpad::SendDownEvent(const DpadButton button) const
 {
     Debug.Log("Sending button down: ", PrintButton(button));
-    InvokeListeners(
+    SendEvent(
         [button](IDpadListener* listener) { listener->OnKeyDown(button); });
 }
 

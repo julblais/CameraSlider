@@ -14,7 +14,7 @@ namespace Utils
             inline void AddListener(TListener* listener);
             inline void RemoveListener(TListener* listener);
         protected:
-            void InvokeListeners(std::function<void(TListener*)> func) const;
+            void SendEvent(std::function<void(TListener*)> func) const;
         private:
             std::set<TListener*> m_Listeners;
     };
@@ -37,7 +37,7 @@ namespace Utils
     }
 
     template <typename TListener>
-    inline void EventSource<TListener>::InvokeListeners(std::function<void(TListener *)> func) const
+    inline void EventSource<TListener>::SendEvent(std::function<void(TListener *)> func) const
     {
         for (auto listener : m_Listeners)
             func(listener);

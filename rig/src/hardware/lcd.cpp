@@ -23,7 +23,7 @@ void Hardware::LCD::Init()
     chip.backlight();
 }
 
-void Hardware::LCD::Print(const char text[], const int line)
+void Hardware::LCD::PrintLn(const char text[], const int line)
 {
     chip.setCursor(0, line);
     chip.print(text);
