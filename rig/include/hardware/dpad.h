@@ -1,7 +1,7 @@
 #ifndef CTRL_H
 #define CTRL_H
 
-#include <set>
+#include "utils/eventSource.h"
 
 namespace Hardware{
 
@@ -22,12 +22,11 @@ namespace Hardware{
             virtual void OnKeyDown(const DpadButton button) {}
     };
 
-    class IDpad {
+    class IDpad : public Utils::EventSource<IDpadListener> {
     
         struct State {
             public:
                 DpadButton button;
-                int delta;
 
                 inline bool IsDown() const { return button == DpadButton::DOWN; }
                 inline bool IsUp() const { return button == DpadButton::UP; }
@@ -36,16 +35,12 @@ namespace Hardware{
                 inline bool IsSelection() const { return button == DpadButton::SELECTION; }
 
                 State(){}
-                State(DpadButton button, int delta);
+                State(DpadButton button);
         };
 
         public:
             IDpad();
             virtual ~IDpad(){}
-            void AddListener(IDpadListener* listener);
-            void RemoveListener(IDpadListener* listener);
-            void SendUpEvent(const DpadButton button) const;
-            void SendDownEvent(const DpadButton button) const;
             static const char* PrintButton(const DpadButton button);
 
             virtual void Init();
@@ -53,11 +48,11 @@ namespace Hardware{
             virtual DpadButton ReadButton() const =0;
 
         protected:
-            std::set<IDpadListener*> m_Listeners;
             State m_LastState;
         
         private:
-            State CreateState(DpadButton button) const;
+            void SendUpEvent(const DpadButton button) const;
+            void SendDownEvent(const DpadButton button) const;
             void ProcessButton(const State& state) const;
     };
 }

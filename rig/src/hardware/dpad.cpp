@@ -1,52 +1,38 @@
 #include "hardware/dpad.h"
 #include "debug.h"
 
-#include <set>
 #include <esp32-hal-gpio.h>
 
-Hardware::IDpad::State::State(DpadButton button, int delta):
-    button(button),
-    delta(delta)
-{}
+Hardware::IDpad::State::State(DpadButton button):
+    button(button) {}
 
 Hardware::IDpad::IDpad()
-    :m_Listeners()
 {}
 
 void Hardware::IDpad::Init()
 {
-    m_LastState = CreateState(ReadButton());
+    m_LastState = State(ReadButton());
 }
 
 void Hardware::IDpad::Update() 
 {
-    auto currentState = CreateState(ReadButton());
+    auto currentState = State(ReadButton());
     ProcessButton(currentState);
     m_LastState = currentState;
-}
-
-void Hardware::IDpad::AddListener(IDpadListener* listener)
-{
-    m_Listeners.emplace(listener);
-}
-
-void Hardware::IDpad::RemoveListener(IDpadListener* listener)
-{
-    m_Listeners.erase(listener);
 }
 
 void Hardware::IDpad::SendUpEvent(const DpadButton button) const
 {
     Debug.Log("Sending button up: ", PrintButton(button));
-    for(auto listener : m_Listeners)
-        listener->OnKeyUp(button);
+    InvokeListeners(
+        [button](IDpadListener* listener) { listener->OnKeyUp(button); });
 }
 
 void Hardware::IDpad::SendDownEvent(const DpadButton button) const
 {
     Debug.Log("Sending button down: ", PrintButton(button));
-    for(auto listener : m_Listeners)
-        listener->OnKeyDown(button);
+    InvokeListeners(
+        [button](IDpadListener* listener) { listener->OnKeyDown(button); });
 }
 
 const char* Hardware::IDpad::PrintButton(const DpadButton button)
@@ -64,11 +50,6 @@ const char* Hardware::IDpad::PrintButton(const DpadButton button)
             return "selection";
     }
     return "None";
-}
-
-Hardware::IDpad::State Hardware::IDpad::CreateState(Hardware::DpadButton button) const
-{
-    return State(button, 0);
 }
 
 void Hardware::IDpad::ProcessButton(const Hardware::IDpad::State& state) const

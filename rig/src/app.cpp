@@ -26,7 +26,7 @@ void Rig::App::Setup()
     m_Menu->Init();
 
     m_LCD->Print("Salut", 0);
-    m_LCD->Print("Guillaume", 1);
+    m_LCD->Print("Guillaume!", 1);
 }
 
 void Rig::App::Update()
