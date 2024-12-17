@@ -1,8 +1,6 @@
 #include "app.h"
 #include "debug.h"
 
-#include <esp32-hal-timer.h>
-
 constexpr bool IS_SIMULATOR = true;
 
 static Rig::AppConfig CreateConfig()
@@ -30,9 +28,6 @@ void setup() {
 }
 
 void loop() {
-    unsigned long appTimeMs = millis();
-    Utils::Timer::Update(appTimeMs);
-
     app.Update();
 
     if (config.isSimulator) //somehow this makes the timing more accurate...

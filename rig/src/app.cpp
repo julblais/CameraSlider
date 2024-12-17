@@ -3,6 +3,7 @@
 #include "hardware/dpadSimulator.h"
 #include "hardware/lcd.h"
 
+#include <esp32-hal-timer.h>
 #include <memory>
 
 Rig::App::App(const AppConfig &config):
@@ -30,5 +31,8 @@ void Rig::App::Setup()
 
 void Rig::App::Update()
 {
+    unsigned long appTimeMs = millis();
+    Utils::Timer::Update(appTimeMs);
+
     m_Dpad->Update();
 }
