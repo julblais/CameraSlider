@@ -26,12 +26,11 @@ void Rig::App::Setup()
     m_Dpad->Init();
     m_Menu->Init();
 
-    m_LCD->PrintLn("Salut Guillaume!", 0);
-
     Hardware::LCD::CustomChar customChar(m_LCD.get(), LCDSymbols::DoubleLeftRightArrows);
     Hardware::LCD::CustomChar customChar2(m_LCD.get(), LCDSymbols::DoubleUpDownArrows);
-    m_LCD->Write(customChar, 0, 1);
-    m_LCD->Write(customChar2, 1, 1);
+    m_LCD->PrintLn("Salut Guillaume!", 0);
+    m_LCD->PrintLn("12345678", "ABCDEFGH", 1);
+    m_LCD->PrintLn(customChar, "123", "ABC", customChar2, 1);
 }
 
 void Rig::App::Update()
