@@ -6,6 +6,7 @@
 namespace Hardware{
 
     enum DpadButton : char {
+        NONE = 0,
         UP = 1,
         DOWN = 2,
         LEFT = 4,
@@ -22,6 +23,22 @@ namespace Hardware{
     };
 
     class IDpad {
+    
+        struct State {
+            public:
+                DpadButton button;
+                int delta;
+
+                inline bool IsDown() const { return button == DpadButton::DOWN; }
+                inline bool IsUp() const { return button == DpadButton::UP; }
+                inline bool IsLeft() const { return button == DpadButton::LEFT; }
+                inline bool IsRight() const { return button == DpadButton::RIGHT; }
+                inline bool IsSelection() const { return button == DpadButton::SELECTION; }
+
+                State(){}
+                State(DpadButton button, int delta);
+        };
+
         public:
             IDpad();
             virtual ~IDpad(){}
@@ -31,11 +48,17 @@ namespace Hardware{
             void SendDownEvent(const DpadButton button) const;
             static const char* PrintButton(const DpadButton button);
 
-            virtual void Init() =0;
-            virtual void Update() =0;
+            virtual void Init();
+            virtual void Update();
+            virtual DpadButton ReadButton() const =0;
 
         protected:
             std::vector<IDpadListener*> m_Listeners;
+            State m_LastState;
+        
+        private:
+            State CreateState(DpadButton button) const;
+            void ProcessButton(const State& state) const;
     };
 }
 

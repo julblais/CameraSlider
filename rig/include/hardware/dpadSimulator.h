@@ -6,39 +6,23 @@
 namespace Hardware
 {
     class DpadSimulator : public IDpad {
-        
-        struct State {
-            public:
-                int Vertical;
-                int Horizontal;
-                bool Selection;
-
-                State(const int vertical, const int horizontal, const int selection);
-                bool IsLeft() const;
-                bool IsRight() const;
-                bool IsUp() const;
-                bool IsDown() const;
-        };
 
         public:
             DpadSimulator(const int verticalPin, const int horizontalPin, const int selectionPin);
             virtual ~DpadSimulator() override {}
 
             void Init() override;
-            void Update() override;
-
-            int ReadVertical() const;
-            int ReadHorizontal() const;
-            bool SelectionPressed() const;
+            virtual DpadButton ReadButton() const override;
 
         private:
-            State ReadState() const;
-            void ProcessButtons(const State& state) const;
+            static bool IsLeft(const int horizontal);
+            static bool IsRight(const int horizontal);
+            static bool IsUp(const int vertical);
+            static bool IsDown(const int vertical);
 
             const int m_VerticalPin;
             const int m_HorizontalPin;
             const int m_SelectionPin;
-            State m_LastState;
     };
 }
 

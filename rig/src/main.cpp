@@ -1,6 +1,8 @@
 #include "app.h"
 #include "debug.h"
 
+constexpr bool IS_SIMULATOR = true;
+
 static Rig::AppConfig CreateConfig()
 {
     Rig::AppConfig config = Rig::AppConfig();
@@ -8,6 +10,8 @@ static Rig::AppConfig CreateConfig()
     config.DpadVerticalPin      = A18;
     config.DpadSelectionPin     = T8;
     config.LcdAddress           = 0x27;
+    config.isSimulator          = true;
+    config.showMenuDelayMs      = 2000;
     return config;
 }
 

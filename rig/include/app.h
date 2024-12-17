@@ -9,16 +9,15 @@
 
 namespace Rig
 {
-    constexpr bool IS_SIMULATOR = true;
-
     struct AppConfig
     {
         public:
-            bool isSimulator = IS_SIMULATOR;
+            bool isSimulator;
             int DpadVerticalPin;
             int DpadHorizontalPin;
             int DpadSelectionPin;
             int LcdAddress;
+            int showMenuDelayMs;
     };
 
     class App
