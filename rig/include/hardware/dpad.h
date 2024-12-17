@@ -1,7 +1,7 @@
 #ifndef CTRL_H
 #define CTRL_H
 
-#include <vector>
+#include <set>
 
 namespace Hardware{
 
@@ -53,7 +53,7 @@ namespace Hardware{
             virtual DpadButton ReadButton() const =0;
 
         protected:
-            std::vector<IDpadListener*> m_Listeners;
+            std::set<IDpadListener*> m_Listeners;
             State m_LastState;
         
         private:

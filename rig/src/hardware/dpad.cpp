@@ -2,7 +2,7 @@
 #include "debug.h"
 
 #include <algorithm>
-#include <vector>
+#include <set>
 #include <esp32-hal-gpio.h>
 
 Hardware::IDpad::State::State(DpadButton button, int delta):
@@ -26,16 +26,14 @@ void Hardware::IDpad::Update()
     m_LastState = currentState;
 }
 
-void Hardware::IDpad::AddListener(IDpadListener *listener)
+void Hardware::IDpad::AddListener(IDpadListener* listener)
 {
-    m_Listeners.push_back(listener);
+    m_Listeners.emplace(listener);
 }
 
 void Hardware::IDpad::RemoveListener(IDpadListener* listener)
 {
-    auto position = std::find(m_Listeners.begin(), m_Listeners.end(), listener);
-    if (position != m_Listeners.end())
-        m_Listeners.erase(position);
+    m_Listeners.erase(listener);
 }
 
 void Hardware::IDpad::SendUpEvent(const DpadButton button) const
