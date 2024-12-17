@@ -1,17 +1,32 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-class Timer
+#include <functional>
+
+namespace Utils
 {
-    public:
-        Timer();
+    class Timer
+    {
+        public:
+            static void Update(unsigned int appTimeMs);
 
-        void Start();
-        unsigned int GetTimeMs();
-        void Stop();
+            Timer(const char* name);
+            Timer(const char* name, std::function<void(unsigned long time)> callback, unsigned long delay);
+            ~Timer();
 
-    private:
-        unsigned int m_AppTimeMs;
-};
+            void Start();
+            void Stop();
+            unsigned int Delta() const;
 
+        private:
+            void ProcessCallback(unsigned long appTimeMs);
+            
+            const char* const m_Name;
+            bool m_Started;
+            unsigned long m_Delay;
+            unsigned long m_AppTimeMs;
+            std::function<void(unsigned long)> m_Callback;
+    };
+
+}
 #endif
