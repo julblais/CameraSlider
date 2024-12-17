@@ -39,12 +39,17 @@ void Utils::Timer::Start()
 {
     m_Started = true;
     m_AppTimeMs = millis();
+    Debug.Log("Timer \"", m_Name, "\" started at: ", m_AppTimeMs);
 }
 
 void Utils::Timer::Stop()
 {
-    m_Started = false;
-    m_AppTimeMs = 0;
+    if (m_Started)
+    {
+        Debug.Log("Timer \"", m_Name, "\" stopped");
+        m_Started = false;
+        m_AppTimeMs = 0;
+    }
 }
 
 unsigned int Utils::Timer::Delta() const
