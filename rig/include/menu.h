@@ -18,7 +18,7 @@ class Menu : public Hardware::IDpadListener
         void OnKeyDown(const Hardware::DpadButton button) override;
 
     private:
-        void OnOpenMenu(unsigned long time);
+        void OnSelectionLongPress(unsigned long time);
         void OutputMenu();
         
         Hardware::LCD* m_LCD;

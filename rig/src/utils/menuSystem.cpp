@@ -47,7 +47,6 @@ void Utils::MenuSystem::MoveDown()
 
 void Utils::MenuSystem::MoveLeft()
 {
-    Debug.Log("Move left ", m_Items.size());
     if (!m_IsOpened) return;
     m_Items[m_Index]->Invoke(Utils::MenuCommandButton::LEFT);
 }
@@ -63,6 +62,5 @@ Utils::MenuOutput Utils::MenuSystem::GetOutput() const
     if (!m_IsOpened) return Utils::MenuOutput("", "");
 
     auto command = m_Items[m_Index].get();
-    Debug.Log("Command: ", command->GetTitle(), "-", command->GetDesc());
     return Utils::MenuOutput(command->GetTitle(), command->GetDesc());
 }

@@ -10,10 +10,9 @@
 Rig::Menu::Menu(Hardware::LCD* lcd, Hardware::IDpad* dpad) :
     m_LCD(lcd),
     m_Dpad(dpad),
-    m_Timer("Selection menu", [this](unsigned long time){ OnOpenMenu(time); }, MENU_DELAY_MS),
+    m_Timer("Selection menu", [this](unsigned long time){ OnSelectionLongPress(time); }, MENU_DELAY_MS),
     m_MenuSystem()
-{
-}
+{}
 
 void Rig::Menu::Init()
 {
@@ -44,14 +43,23 @@ void Rig::Menu::OnKeyDown(const Hardware::DpadButton button)
     OutputMenu();
 }
 
-void Rig::Menu::OnOpenMenu(unsigned long time)
+void Rig::Menu::OnSelectionLongPress(unsigned long time)
 {
-    Debug.Log("Open menu! ", time);
-    m_LCD->Clear();
-    m_LCD->PrintLn("   -- Menu -- ", 0);
-    delay(1500);
-    m_MenuSystem.Open();
-    OutputMenu();
+    if (m_MenuSystem.IsOpened())
+    {
+        Debug.Log("Close menu!", time);
+        m_LCD->Clear();
+        m_MenuSystem.Close();
+    }
+    else
+    {
+        Debug.Log("Open menu!", time);
+        m_LCD->Clear();
+        m_LCD->PrintLn("   -- Menu --", 0);
+        delay(1500);
+        m_MenuSystem.Open();
+        OutputMenu();
+    }
 }
 
 void Rig::Menu::OutputMenu()
