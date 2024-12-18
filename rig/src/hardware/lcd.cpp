@@ -16,17 +16,19 @@ static const uint8_t DoubleLeftRightArrows[] = {
     0b11011, 
     0b01010, 
     0b00000, 
-    0b00000};
+    0b00000
+};
 
 static const uint8_t DoubleUpDownArrows[] = {
     0b00000,
-    0b00000,
     0b01100,
     0b11110,
     0b00000,
     0b11110,
     0b01100,
-    0b00000 };
+    0b00000,
+    0b00000,
+};
 
 Hardware::LCD::LCD(const uint8_t address):
     chip(address, LCD::NUM_COLS, LCD::NUM_ROWS)
