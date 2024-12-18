@@ -9,17 +9,18 @@ namespace Hardware{
 
     class LCD
     {
-        public:
-          class CustomChar 
-          {
-              friend class LCD;
+        public: 
+        class CustomChar 
+        {
+            friend class LCD;
 
-              public:
-                  CustomChar(LCD* lcd, const uint8_t charmap[]);
+            public:
+                CustomChar();
+                CustomChar(LCD* lcd, const uint8_t charmap[]);
 
-              private:
-                  uint8_t m_Id;
-          };
+            private:
+                uint8_t m_Id;
+        };
 
         public:
             static const uint8_t NUM_COLS = 16;
@@ -29,6 +30,8 @@ namespace Hardware{
             void Init();
             void Clear();
             void Write(const CustomChar& customChar, const int column=0, const int row=0);
+            inline CustomChar GetDoubleLeftRightArrows() const { return m_DoubleLeftRightArrows; }
+            inline CustomChar GetDoubleUpDownArrows() const { return m_DoubleUpDownArrows; }
 
             template <typename T1>
             void PrintLn(T1&& text, const int line)
@@ -71,6 +74,8 @@ namespace Hardware{
         private:
             std::array<char, Hardware::LCD::NUM_COLS> m_Buffer;
             LiquidCrystal_I2C chip;
+            CustomChar m_DoubleLeftRightArrows;
+            CustomChar m_DoubleUpDownArrows;
 
             template <class Any, 
                 typename std::enable_if<!std::is_same<CustomChar, 

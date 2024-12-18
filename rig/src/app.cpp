@@ -1,8 +1,7 @@
 #include "app.h"
 #include "hardware/dpad.h"
-#include "simulator/dpadSimulator.h"
 #include "hardware/lcd.h"
-#include "hardware/lcdSymbols.h"
+#include "simulator/dpadSimulator.h"
 
 #include <esp32-hal-timer.h>
 
@@ -26,11 +25,7 @@ void Rig::App::Setup()
     m_Dpad->Init();
     m_Menu->Init();
 
-    Hardware::LCD::CustomChar customChar(m_LCD.get(), LCDSymbols::DoubleLeftRightArrows);
-    Hardware::LCD::CustomChar customChar2(m_LCD.get(), LCDSymbols::DoubleUpDownArrows);
     m_LCD->PrintLn("Salut Guillaume!", 0);
-    m_LCD->PrintLn("12345678", "ABCDEFGH", 1);
-    m_LCD->PrintLn(customChar, "123", "ABC", customChar2, 1);
 }
 
 void Rig::App::Update()

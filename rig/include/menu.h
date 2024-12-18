@@ -4,6 +4,7 @@
 #include "hardware/lcd.h"
 #include "hardware/dpad.h"
 #include "utils/timer.h"
+#include "utils/menuSystem.h"
 
 namespace Rig{
 
@@ -18,10 +19,12 @@ class Menu : public Hardware::IDpadListener
 
     private:
         void OnOpenMenu(unsigned long time);
+        void OutputMenu();
         
         Hardware::LCD* m_LCD;
         Hardware::IDpad* m_Dpad;
         Utils::Timer m_Timer;
+        Utils::MenuSystem m_MenuSystem;
 };
 
 }
