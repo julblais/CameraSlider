@@ -32,7 +32,7 @@ class SpeedCurveCommand : public Utils::MenuCommand
             CEXP = 2
         };
 
-        SpeedCurveCommand() {}
+        SpeedCurveCommand() :m_Curve(Curve::CLINEAR) {}
         virtual ~SpeedCurveCommand() {}
 
         virtual const char* GetTitle() override;
