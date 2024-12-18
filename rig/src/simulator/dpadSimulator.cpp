@@ -1,4 +1,4 @@
-#include "simulator/dpadSimulator.h"
+#include "dpadSimulator.h"
 #include "hardware/dpad.h"
 #include "debug.h"
 

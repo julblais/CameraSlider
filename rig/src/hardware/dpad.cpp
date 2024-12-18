@@ -1,4 +1,4 @@
-#include "hardware/dpad.h"
+#include "dpad.h"
 #include "debug.h"
 
 #include <esp32-hal-gpio.h>

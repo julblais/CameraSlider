@@ -1,4 +1,4 @@
-#include "utils/menuSystem.h"
+#include "menuSystem.h"
 #include "debug.h"
 
 Utils::MenuSystem::MenuSystem():
