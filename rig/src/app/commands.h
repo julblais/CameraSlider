@@ -6,11 +6,7 @@
 class MaxSpeedCommand : public Utils::MenuCommand
 {
     public:
-        enum Speed  {
-            SLOW = 0,
-            SMED = 1,
-            SHIGH = 2
-        };
+        enum Speed  { SLOW = 0, SMED = 1, SHIGH = 2 };
 
         MaxSpeedCommand() : m_Speed(Speed::SLOW) {}
         virtual ~MaxSpeedCommand() {}
@@ -26,13 +22,9 @@ class MaxSpeedCommand : public Utils::MenuCommand
 class SpeedCurveCommand : public Utils::MenuCommand
 {
     public:
-        enum Curve  {
-            CLINEAR = 0,
-            CQUAD = 1,
-            CEXP = 2
-        };
+        enum Curve  { CLINEAR = 0, CQUAD = 1, CEXP = 2 };
 
-        SpeedCurveCommand() :m_Curve(Curve::CLINEAR) {}
+        SpeedCurveCommand() : m_Curve(Curve::CLINEAR) {}
         virtual ~SpeedCurveCommand() {}
 
         virtual const char* GetTitle() override;
