@@ -18,7 +18,7 @@ void Rig::Menu::Init()
 {
     m_Dpad->AddListener(this);
     
-    m_MenuSystem.AddCommand(new SpeedMaxCommand());
+    m_MenuSystem.AddCommand(new MaxSpeedCommand());
     m_MenuSystem.AddCommand(new SpeedCurveCommand());
 }
 

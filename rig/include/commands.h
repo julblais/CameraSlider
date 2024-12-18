@@ -3,7 +3,7 @@
 
 #include "utils/menuSystem.h"
 
-class SpeedMaxCommand : public Utils::MenuCommand
+class MaxSpeedCommand : public Utils::MenuCommand
 {
     public:
         enum Speed  {
@@ -12,8 +12,8 @@ class SpeedMaxCommand : public Utils::MenuCommand
             SHIGH = 2
         };
 
-        SpeedMaxCommand() : m_Speed(Speed::SLOW) {}
-        virtual ~SpeedMaxCommand() {}
+        MaxSpeedCommand() : m_Speed(Speed::SLOW) {}
+        virtual ~MaxSpeedCommand() {}
 
         virtual const char* GetTitle() override;
         virtual const char* GetDesc() override;
