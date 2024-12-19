@@ -8,15 +8,19 @@ Slider::App::App(const AppConfig &config):
     m_Config(config),
     m_InputDispatcher(InputData())
 {
+    SetupComponents(config);
+    m_Menu = std::unique_ptr<Menu>(new Menu(m_LCD.get(), config.ShowMenuDelayMs));
+    m_InputDispatcher.AddListener(m_Menu.get());
+}
+
+void Slider::App::SetupComponents(const AppConfig &config)
+{    
     m_LCD = std::unique_ptr<Hardware::LCD>(new Hardware::LCD(config.LcdAddress));
 
     #ifdef IS_SIMULATOR
-    m_Dpad = std::unique_ptr<Input::IDpadReader>(new Simulator::DpadSimulator(
-            config.DpadVerticalPin, config.DpadHorizontalPin, config.DpadSelectionPin)); 
+        m_Dpad = std::unique_ptr<Input::IDpadReader>(new Simulator::DpadSimulator(
+                config.DpadVerticalPin, config.DpadHorizontalPin, config.DpadSelectionPin)); 
     #endif
-    
-    m_Menu = std::unique_ptr<Menu>(new Menu(m_LCD.get(), config.ShowMenuDelayMs));
-    m_InputDispatcher.AddListener(m_Menu.get());
 }
 
 void Slider::App::Setup()

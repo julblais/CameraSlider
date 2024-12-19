@@ -28,6 +28,8 @@ namespace Slider
             void Update();
 
         private:
+            void SetupComponents(const AppConfig &config);
+
             AppConfig m_Config;
             std::unique_ptr<Hardware::LCD> m_LCD;
             std::unique_ptr<Input::IDpadReader> m_Dpad;
