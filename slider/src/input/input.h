@@ -64,6 +64,15 @@ namespace Input
     {
         DpadInput dpad;
         JoystickInput joystick;
+
+        InputData() 
+        : dpad(DpadNone), joystick({0, 0}) {}
+        InputData(const DpadInput& dpad) :
+            dpad(dpad), joystick({0, 0}) {} 
+        InputData(const JoystickInput& joystick) :
+            dpad(DpadNone), joystick(joystick) {} 
+        InputData(const DpadInput& dpad, const JoystickInput& joystick) 
+        : dpad(dpad), joystick(joystick) {}
     };
 
     class IDpadReader
