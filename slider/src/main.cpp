@@ -11,9 +11,9 @@
     #include "slider.ino"
 #endif
 
-static Rig::AppConfig CreateConfig()
+static Slider::AppConfig CreateConfig()
 {
-    auto conf = Rig::AppConfig();
+    auto conf = Slider::AppConfig();
     conf.DpadHorizontalPin    = C_DpadHorizontalPin;
     conf.DpadVerticalPin      = C_DpadVerticalPin;
     conf.DpadSelectionPin     = C_DpadSelectionPin;
@@ -22,7 +22,7 @@ static Rig::AppConfig CreateConfig()
     return conf;
 }
 
-static Rig::App app(CreateConfig());
+static Slider::App app(CreateConfig());
 
 void setup() {
     Debug.Init(9600);

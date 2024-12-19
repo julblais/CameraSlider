@@ -7,7 +7,7 @@
 
 #include <memory>
 
-namespace Rig
+namespace Slider
 {
     struct AppConfig
     {

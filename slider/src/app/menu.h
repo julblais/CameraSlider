@@ -6,7 +6,7 @@
 #include "src/utils/timer.h"
 #include "src/utils/menuSystem.h"
 
-namespace Rig{
+namespace Slider{
 
 class Menu : public Hardware::IDpadListener
 {
