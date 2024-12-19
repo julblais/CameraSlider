@@ -3,13 +3,11 @@
 
 #include "src/debug.h"
 
-#define MENU_DELAY_MS 2000
+#define MENU_INTRO_DELAY_MS 1500
 
-using namespace Input;
-
-Slider::Menu::Menu(Hardware::LCD* lcd) :
+Slider::Menu::Menu(Hardware::LCD* lcd, unsigned long delay) :
     m_LCD(lcd),
-    m_Timer("Selection menu", [this](unsigned long time){ OnSelectionLongPress(time); }, MENU_DELAY_MS),
+    m_Timer("Selection menu", [this](unsigned long time){ OnSelectionLongPress(time); }, delay),
     m_MenuSystem()
 {}
 
@@ -19,30 +17,30 @@ void Slider::Menu::Init()
     m_MenuSystem.AddCommand(new SpeedCurveCommand());
 }
 
-bool Slider::Menu::OnButtonReleased(const DpadButton button)
+bool Slider::Menu::OnButtonReleased(const Input::DpadButton button)
 {
     m_Timer.Stop();
     return true; //capture quit menu
 }
 
-bool Slider::Menu::OnButtonPressed(const DpadButton button)
+bool Slider::Menu::OnButtonPressed(const Input::DpadButton button)
 {
-    if (button == DpadNone)
+    if (button == Input::DpadNone)
         return false;
         
-    if(button == DpadSelect)
+    if(button == Input::DpadSelect)
     {
         m_Timer.Start();
         return true;
     }
 
-    if(button == DpadLeft)
+    if(button == Input::DpadLeft)
         m_MenuSystem.MoveLeft();
-    else if(button == DpadRight)
+    else if(button == Input::DpadRight)
         m_MenuSystem.MoveRight();
-    else if(button == DpadUp)
+    else if(button == Input::DpadUp)
         m_MenuSystem.MoveUp();
-    else if(button == DpadDown)
+    else if(button == Input::DpadDown)
         m_MenuSystem.MoveDown();
 
     OutputMenu();
@@ -62,7 +60,7 @@ void Slider::Menu::OnSelectionLongPress(unsigned long time)
         Debug.Log("Open menu!", time);
         m_LCD->Clear();
         m_LCD->PrintLn("   -- Menu --", 0);
-        delay(1500);
+        delay(MENU_INTRO_DELAY_MS);
         m_MenuSystem.Open();
         OutputMenu();
     }

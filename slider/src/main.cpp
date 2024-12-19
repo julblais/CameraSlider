@@ -18,7 +18,7 @@ static Slider::AppConfig CreateConfig()
     conf.DpadVerticalPin      = C_DpadVerticalPin;
     conf.DpadSelectionPin     = C_DpadSelectionPin;
     conf.LcdAddress           = C_LcdAddress;
-    conf.showMenuDelayMs      = C_ShowMenuDelayMs;
+    conf.ShowMenuDelayMs      = C_ShowMenuDelayMs;
     return conf;
 }
 

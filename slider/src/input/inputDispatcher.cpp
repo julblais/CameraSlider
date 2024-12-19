@@ -35,14 +35,14 @@ void Input::InputDispatcher::ProcessInput(const InputData &input)
 
 void Input::InputDispatcher::SendButtonPressEvent(DpadButton button)
 {
-    this->SendEvent([&button](IInputListener* listener){
+    this->SendEvent([button](IInputListener* listener){
         listener->OnButtonPressed(button);
     });
 }
 
 void Input::InputDispatcher::SendButtonReleasedEvent(DpadButton button)
 {
-    this->SendEvent([&button](IInputListener* listener){
+    this->SendEvent([button](IInputListener* listener){
         listener->OnButtonReleased(button);
     });
 }

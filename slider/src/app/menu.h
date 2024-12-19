@@ -13,7 +13,7 @@ namespace Slider{
     class Menu : public Input::IInputListener
     {
         public:
-            Menu(Hardware::LCD* lcd);
+            Menu(Hardware::LCD* lcd, unsigned long delay);
             void Init();
 
             virtual bool OnButtonPressed(const DpadButton button) override;

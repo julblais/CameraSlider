@@ -13,12 +13,11 @@ namespace Slider
     struct AppConfig
     {
         public:
-            bool isSimulator;
             int DpadVerticalPin;
             int DpadHorizontalPin;
             int DpadSelectionPin;
             int LcdAddress;
-            int showMenuDelayMs;
+            int ShowMenuDelayMs;
     };
 
     class App

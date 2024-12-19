@@ -15,7 +15,7 @@ Slider::App::App(const AppConfig &config):
             config.DpadVerticalPin, config.DpadHorizontalPin, config.DpadSelectionPin)); 
     #endif
     
-    m_Menu = std::unique_ptr<Menu>(new Menu(m_LCD.get()));
+    m_Menu = std::unique_ptr<Menu>(new Menu(m_LCD.get(), config.ShowMenuDelayMs));
     m_InputDispatcher.AddListener(m_Menu.get());
 }
 
