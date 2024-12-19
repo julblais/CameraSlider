@@ -10,11 +10,10 @@ Rig::App::App(const AppConfig &config):
 {
     m_LCD = std::unique_ptr<Hardware::LCD>(new Hardware::LCD(config.LcdAddress));
 
-    if (config.isSimulator)
-    {
-        m_Dpad = std::unique_ptr<Hardware::IDpad>(new Hardware::DpadSimulator(
+    #ifdef IS_SIMULATOR
+    m_Dpad = std::unique_ptr<Hardware::IDpad>(new Hardware::DpadSimulator(
             config.DpadVerticalPin, config.DpadHorizontalPin, config.DpadSelectionPin)); 
-    }
+    #endif
     
     m_Menu = std::unique_ptr<Menu>(new Menu(m_LCD.get(), m_Dpad.get()));
 }

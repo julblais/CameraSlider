@@ -1,20 +1,28 @@
 #include "app/app.h"
 #include "debug.h"
 
+#ifdef IS_SIMULATOR
+    #define C_DpadHorizontalPin A19;
+    #define C_DpadVerticalPin   A18;
+    #define C_DpadSelectionPin  T8;
+    #define C_LcdAddress        0x27;
+    #define C_ShowMenuDelayMs   2000;
+#else
+    #include "slider.ino"
+#endif
+
 static Rig::AppConfig CreateConfig()
 {
-    Rig::AppConfig conf = Rig::AppConfig();
-    conf.DpadHorizontalPin    = A19;
-    conf.DpadVerticalPin      = A18;
-    conf.DpadSelectionPin     = T8;
-    conf.LcdAddress           = 0x27;
-    conf.isSimulator          = true;
-    conf.showMenuDelayMs      = 2000;
+    auto conf = Rig::AppConfig();
+    conf.DpadHorizontalPin    = C_DpadHorizontalPin;
+    conf.DpadVerticalPin      = C_DpadVerticalPin;
+    conf.DpadSelectionPin     = C_DpadSelectionPin;
+    conf.LcdAddress           = C_LcdAddress;
+    conf.showMenuDelayMs      = C_ShowMenuDelayMs;
     return conf;
 }
 
-static Rig::AppConfig config = CreateConfig();
-static Rig::App app(config);
+static Rig::App app(CreateConfig());
 
 void setup() {
     Debug.Init(9600);
@@ -28,6 +36,7 @@ void setup() {
 void loop() {
     app.Update();
 
-    if (config.isSimulator) //somehow this makes the timing more accurate...
+    #ifdef IS_SIMULATOR //somehow this makes the timing more accurate...
         delay(10);
+    #endif
 }
