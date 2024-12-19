@@ -1,7 +1,7 @@
 #include "app.h"
-#include "hardware/dpad.h"
-#include "hardware/lcd.h"
-#include "simulator/dpadSimulator.h"
+#include "src/hardware/dpad.h"
+#include "src/hardware/lcd.h"
+#include "src/simulator/dpadSimulator.h"
 
 #include <esp32-hal-timer.h>
 

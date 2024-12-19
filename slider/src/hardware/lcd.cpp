@@ -4,7 +4,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <array>
 
-#include "debug.h"
+#include "src/debug.h"
 
 static uint8_t s_IdCount = 0;
 

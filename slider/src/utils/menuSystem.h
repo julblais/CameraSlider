@@ -1,7 +1,7 @@
 #ifndef MENU_SYSTEM_H
 #define MENU_SYSTEM_H
 
-#include "debug.h"
+#include "src/debug.h"
 
 #include <vector>
 #include <memory>

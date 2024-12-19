@@ -1,10 +1,10 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include "hardware/lcd.h"
-#include "hardware/dpad.h"
-#include "utils/timer.h"
-#include "utils/menuSystem.h"
+#include "src/hardware/lcd.h"
+#include "src/hardware/dpad.h"
+#include "src/utils/timer.h"
+#include "src/utils/menuSystem.h"
 
 namespace Rig{
 

@@ -1,6 +1,6 @@
 #include "dpad.h"
-#include "debug.h"
 
+#include "src/debug.h"
 #include <esp32-hal-gpio.h>
 
 Hardware::IDpad::State::State(DpadButton button):

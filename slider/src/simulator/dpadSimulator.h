@@ -1,7 +1,7 @@
 #ifndef DPAD_SIM_H
 #define DPAD_SIM_H
 
-#include "hardware/dpad.h"
+#include "src/hardware/dpad.h"
 
 namespace Hardware
 {

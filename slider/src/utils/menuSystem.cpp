@@ -1,5 +1,5 @@
 #include "menuSystem.h"
-#include "debug.h"
+#include "src/debug.h"
 
 Utils::MenuSystem::MenuSystem():
     m_Items(),

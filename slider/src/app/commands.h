@@ -1,7 +1,7 @@
 #ifndef CMDS_H
 #define CMDS_H
 
-#include "utils/menuSystem.h"
+#include "src/utils/menuSystem.h"
 
 class MaxSpeedCommand : public Utils::MenuCommand
 {

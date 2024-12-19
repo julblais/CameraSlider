@@ -1,8 +1,8 @@
 #ifndef APP_H
 #define APP_H
 
-#include "hardware/lcd.h"
-#include "hardware/dpad.h"
+#include "src/hardware/lcd.h"
+#include "src/hardware/dpad.h"
 #include "menu.h"
 
 #include <memory>

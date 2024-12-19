@@ -1,5 +1,5 @@
 #include "timer.h"
-#include "debug.h"
+#include "src/debug.h"
 
 #include <esp32-hal-timer.h>
 #include <set>
