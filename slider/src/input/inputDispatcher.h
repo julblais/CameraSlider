@@ -15,8 +15,8 @@ namespace Input
             void ProcessInput(const InputData& input);
 
         private:
-            void SendKeyPressedEvent(DpadButton button);
-            void SendKeyReleasedEvent(DpadButton button);
+            void SendButtonPressEvent(DpadButton button);
+            void SendButtonReleasedEvent(DpadButton button);
             
             InputData m_LastInput;
     };

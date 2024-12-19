@@ -10,35 +10,37 @@ void Input::InputDispatcher::ProcessInput(const InputData &input)
     auto lastDpad = m_LastInput.dpad;
     
     if (lastDpad.IsDown() && !dpad.IsDown())
-        SendKeyReleasedEvent(DpadButton::Down);
+        SendButtonReleasedEvent(DpadButton::Down);
     else if (lastDpad.IsUp() && !dpad.IsUp())
-        SendKeyReleasedEvent(DpadButton::Up);
+        SendButtonReleasedEvent(DpadButton::Up);
     else if (lastDpad.IsLeft() && !dpad.IsLeft())
-        SendKeyReleasedEvent(DpadButton::Left);
+        SendButtonReleasedEvent(DpadButton::Left);
     else if (lastDpad.IsRight() && !dpad.IsRight())
-        SendKeyReleasedEvent(DpadButton::Right);
+        SendButtonReleasedEvent(DpadButton::Right);
     else if (lastDpad.IsSelect() && !dpad.IsSelect())
-        SendKeyReleasedEvent(DpadButton::Select);
+        SendButtonReleasedEvent(DpadButton::Select);
     else if (!lastDpad.IsDown() && dpad.IsDown())
-        SendKeyPressedEvent(DpadButton::Down);
+        SendButtonPressEvent(DpadButton::Down);
     else if (!lastDpad.IsUp() && dpad.IsUp())
-        SendKeyPressedEvent(DpadButton::Up);
+        SendButtonPressEvent(DpadButton::Up);
     else if (!lastDpad.IsLeft() && dpad.IsLeft())
-        SendKeyPressedEvent(DpadButton::Left);
+        SendButtonPressEvent(DpadButton::Left);
     else if (!lastDpad.IsRight() && dpad.IsRight())
-        SendKeyPressedEvent(DpadButton::Right);
+        SendButtonPressEvent(DpadButton::Right);
     else if (!lastDpad.IsSelect() && dpad.IsSelect())
-        SendKeyPressedEvent(DpadButton::Select);
+        SendButtonPressEvent(DpadButton::Select);
+
+    m_LastInput = input;
 }
 
-void Input::InputDispatcher::SendKeyPressedEvent(DpadButton button)
+void Input::InputDispatcher::SendButtonPressEvent(DpadButton button)
 {
     this->SendEvent([&button](IInputListener* listener){
         listener->OnButtonPressed(button);
     });
 }
 
-void Input::InputDispatcher::SendKeyReleasedEvent(DpadButton button)
+void Input::InputDispatcher::SendButtonReleasedEvent(DpadButton button)
 {
     this->SendEvent([&button](IInputListener* listener){
         listener->OnButtonReleased(button);
