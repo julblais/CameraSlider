@@ -1,7 +1,6 @@
 #ifndef DPAD_SIM_H
 #define DPAD_SIM_H
 
-#include "src/hardware/dpad.h"
 #include "src/input/input.h"
 
 namespace Simulator

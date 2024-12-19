@@ -1,5 +1,4 @@
 #include "dpadSimulator.h"
-#include "src/hardware/dpad.h"
 #include "src/debug.h"
 
 #include <esp32-hal-gpio.h>
