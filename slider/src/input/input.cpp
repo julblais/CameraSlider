@@ -24,7 +24,7 @@ const char *Input::DpadInput::ToString(DpadButton button)
             break;
     }
 }
-
+/*
 const char *Input::DpadInput::ToString(DpadState state)
 {
     switch (state)
@@ -40,3 +40,4 @@ const char *Input::DpadInput::ToString(DpadState state)
             break;
     }
 }
+*/

@@ -1,4 +1,4 @@
-#include "inputManager.h"
+#include "inputDispatcher.h"
 
 Input::InputDispatcher::InputDispatcher(const InputData &defaultInput):
     m_LastInput(defaultInput)

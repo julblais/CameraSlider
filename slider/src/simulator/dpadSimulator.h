@@ -6,14 +6,14 @@
 
 namespace Simulator
 {
-    class DpadSimulator : public Hardware::IDpad {
+    class DpadSimulator : public Input::IDpadReader {
 
         public:
             DpadSimulator(const int verticalPin, const int horizontalPin, const int selectionPin);
             virtual ~DpadSimulator() override {}
 
-            void Init() override;
-            virtual Hardware::DpadButton ReadButton() const override;
+            virtual void Init() override;
+            virtual Input::DpadInput ReadInput() override;
 
         private:
             static bool IsLeft(const int horizontal);

@@ -26,24 +26,25 @@ void Simulator::DpadSimulator::Init()
     pinMode(m_SelectionPin, INPUT_PULLUP);
 }
 
-Hardware::DpadButton Simulator::DpadSimulator::ReadButton() const
+Input::DpadInput Simulator::DpadSimulator::ReadInput()
 {
     auto vertical = analogRead(m_VerticalPin);
     auto horizontal = analogRead(m_HorizontalPin);
     auto selection = digitalRead(m_SelectionPin) == LOW;
 
+    auto input = Input::DpadNone;
     if (IsLeft(horizontal))
-        return Hardware::DpadButton::LEFT;
+        input = Input::DpadLeft;
     else if (IsRight(horizontal))
-        return Hardware::DpadButton::RIGHT;
+        input = Input::DpadRight;
     else if (IsUp(vertical))
-        return Hardware::DpadButton::UP;
+        input = Input::DpadUp;
     else if (IsDown(vertical))
-        return Hardware::DpadButton::DOWN;
+        input = Input::DpadDown;
     else if (selection)
-        return Hardware::DpadButton::SELECTION;
-    else
-        return Hardware::DpadButton::NONE;
+        input = Input::DpadSelect;
+
+    return Input::DpadInput(input);
 }
 
 bool Simulator::DpadSimulator::DpadSimulator::IsLeft(const int horizontal)
