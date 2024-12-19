@@ -7,8 +7,8 @@ Input::InputDispatcher::InputDispatcher(const InputData &defaultInput):
 void Input::InputDispatcher::ProcessInput(const InputData &input)
 {
     auto dpad = input.dpad;
+
     auto lastDpad = m_LastInput.dpad;
-    
     if (lastDpad.IsDown() && !dpad.IsDown())
         SendButtonReleasedEvent(DpadButton::Down);
     else if (lastDpad.IsUp() && !dpad.IsUp())
