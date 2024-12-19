@@ -12,21 +12,21 @@ bool IsInBounds(int value, int low, int high) {
     return value >= low && value <= high;
 }
 
-Hardware::DpadSimulator::DpadSimulator(
+Simulator::DpadSimulator::DpadSimulator(
     const int verticalPin, const int horizontalPin, const int selectionPin):
     m_HorizontalPin(horizontalPin),
     m_VerticalPin(verticalPin),
     m_SelectionPin(selectionPin)
 {}
 
-void Hardware::DpadSimulator::Init()
+void Simulator::DpadSimulator::Init()
 {
     pinMode(m_VerticalPin, INPUT);
     pinMode(m_HorizontalPin, INPUT);
     pinMode(m_SelectionPin, INPUT_PULLUP);
 }
 
-Hardware::DpadButton Hardware::DpadSimulator::ReadButton() const
+Hardware::DpadButton Simulator::DpadSimulator::ReadButton() const
 {
     auto vertical = analogRead(m_VerticalPin);
     auto horizontal = analogRead(m_HorizontalPin);
@@ -46,22 +46,22 @@ Hardware::DpadButton Hardware::DpadSimulator::ReadButton() const
         return Hardware::DpadButton::NONE;
 }
 
-bool Hardware::DpadSimulator::DpadSimulator::IsLeft(const int horizontal)
+bool Simulator::DpadSimulator::DpadSimulator::IsLeft(const int horizontal)
 {
     return IsInBounds(horizontal, D_HIGH - D_RANGE, D_HIGH);
 }
 
-bool Hardware::DpadSimulator::DpadSimulator::IsRight(const int horizontal)
+bool Simulator::DpadSimulator::DpadSimulator::IsRight(const int horizontal)
 {
     return IsInBounds(horizontal, D_LOW, D_LOW + D_RANGE);
 }
 
-bool Hardware::DpadSimulator::DpadSimulator::IsUp(const int vertical)
+bool Simulator::DpadSimulator::DpadSimulator::IsUp(const int vertical)
 {
     return IsInBounds(vertical, D_HIGH - D_RANGE, D_HIGH);
 }
 
-bool Hardware::DpadSimulator::DpadSimulator::IsDown(const int vertical)
+bool Simulator::DpadSimulator::DpadSimulator::IsDown(const int vertical)
 {
     return IsInBounds(vertical, D_LOW, D_LOW + D_RANGE);
 }

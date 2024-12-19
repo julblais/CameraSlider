@@ -2,17 +2,18 @@
 #define DPAD_SIM_H
 
 #include "src/hardware/dpad.h"
+#include "src/input/input.h"
 
-namespace Hardware
+namespace Simulator
 {
-    class DpadSimulator : public IDpad {
+    class DpadSimulator : public Hardware::IDpad {
 
         public:
             DpadSimulator(const int verticalPin, const int horizontalPin, const int selectionPin);
             virtual ~DpadSimulator() override {}
 
             void Init() override;
-            virtual DpadButton ReadButton() const override;
+            virtual Hardware::DpadButton ReadButton() const override;
 
         private:
             static bool IsLeft(const int horizontal);

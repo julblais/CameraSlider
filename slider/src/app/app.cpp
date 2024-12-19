@@ -11,7 +11,7 @@ Slider::App::App(const AppConfig &config):
     m_LCD = std::unique_ptr<Hardware::LCD>(new Hardware::LCD(config.LcdAddress));
 
     #ifdef IS_SIMULATOR
-    m_Dpad = std::unique_ptr<Hardware::IDpad>(new Hardware::DpadSimulator(
+    m_Dpad = std::unique_ptr<Hardware::IDpad>(new Simulator::DpadSimulator(
             config.DpadVerticalPin, config.DpadHorizontalPin, config.DpadSelectionPin)); 
     #endif
     
