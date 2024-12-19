@@ -1,15 +1,13 @@
 #include "inputManager.h"
 
-Input::InputManager::InputManager(const InputData &defaultInput):
+Input::InputDispatcher::InputDispatcher(const InputData &defaultInput):
     m_LastInput(defaultInput)
 {}
 
-void Input::InputManager::ProcessInput(const InputData &input)
+void Input::InputDispatcher::ProcessInput(const InputData &input)
 {
     auto dpad = input.dpad;
     auto lastDpad = m_LastInput.dpad;
-
-    SendInputEvent(input);
     
     if (lastDpad.IsDown() && !dpad.IsDown())
         SendKeyReleasedEvent(DpadButton::Down);
@@ -33,21 +31,14 @@ void Input::InputManager::ProcessInput(const InputData &input)
         SendKeyPressedEvent(DpadButton::Select);
 }
 
-void Input::InputManager::SendInputEvent(const InputData &input)
-{
-    this->SendEvent([&input](IInputListener* listener){
-        listener->OnInput(input);
-    });
-}
-
-void Input::InputManager::SendKeyPressedEvent(DpadButton button)
+void Input::InputDispatcher::SendKeyPressedEvent(DpadButton button)
 {
     this->SendEvent([&button](IInputListener* listener){
         listener->OnButtonPressed(button);
     });
 }
 
-void Input::InputManager::SendKeyReleasedEvent(DpadButton button)
+void Input::InputDispatcher::SendKeyReleasedEvent(DpadButton button)
 {
     this->SendEvent([&button](IInputListener* listener){
         listener->OnButtonReleased(button);

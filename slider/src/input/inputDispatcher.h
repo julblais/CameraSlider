@@ -6,16 +6,15 @@
 
 namespace Input
 {
-    class InputManager : public Utils::EventSource<IInputListener>
+    class InputDispatcher : public Utils::EventSource<IInputListener>
     {
         public:
-            InputManager(const InputData& defaultInput);
-            ~InputManager() = default;
+            InputDispatcher(const InputData& defaultInput);
+            ~InputDispatcher() = default;
 
             void ProcessInput(const InputData& input);
 
         private:
-            void SendInputEvent(const InputData& input);
             void SendKeyPressedEvent(DpadButton button);
             void SendKeyReleasedEvent(DpadButton button);
             
