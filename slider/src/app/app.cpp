@@ -1,21 +1,22 @@
 #include "app.h"
-#include "src/hardware/dpad.h"
 #include "src/hardware/lcd.h"
 #include "src/simulator/dpadSimulator.h"
 
 #include <esp32-hal-timer.h>
 
 Slider::App::App(const AppConfig &config):
-    m_Config(config)
+    m_Config(config),
+    m_InputDispatcher(InputData())
 {
     m_LCD = std::unique_ptr<Hardware::LCD>(new Hardware::LCD(config.LcdAddress));
 
     #ifdef IS_SIMULATOR
-    m_Dpad = std::unique_ptr<Hardware::IDpad>(new Simulator::DpadSimulator(
+    m_Dpad = std::unique_ptr<Input::IDpadReader>(new Simulator::DpadSimulator(
             config.DpadVerticalPin, config.DpadHorizontalPin, config.DpadSelectionPin)); 
     #endif
     
-    m_Menu = std::unique_ptr<Menu>(new Menu(m_LCD.get(), m_Dpad.get()));
+    m_Menu = std::unique_ptr<Menu>(new Menu(m_LCD.get()));
+    m_InputDispatcher.AddListener(m_Menu.get());
 }
 
 void Slider::App::Setup()
@@ -32,5 +33,7 @@ void Slider::App::Update()
     unsigned long appTimeMs = millis();
     Utils::Timer::Update(appTimeMs);
 
-    m_Dpad->Update();
+    auto input = InputData(m_Dpad->ReadInput());
+    //process received messages
+    m_InputDispatcher.ProcessInput(input);
 }

@@ -2,7 +2,8 @@
 #define APP_H
 
 #include "src/hardware/lcd.h"
-#include "src/hardware/dpad.h"
+#include "src/input/input.h"
+#include "src/input/inputDispatcher.h"
 #include "menu.h"
 
 #include <memory>
@@ -30,10 +31,10 @@ namespace Slider
         private:
             AppConfig m_Config;
             std::unique_ptr<Hardware::LCD> m_LCD;
-            std::unique_ptr<Hardware::IDpad> m_Dpad;
+            std::unique_ptr<Input::IDpadReader> m_Dpad;
             std::unique_ptr<Menu> m_Menu;
+            Input::InputDispatcher m_InputDispatcher;
     };
 }
-
 
 #endif
