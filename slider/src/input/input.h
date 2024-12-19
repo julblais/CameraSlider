@@ -13,20 +13,12 @@ namespace Input
         Right = 16
     };
 
-    //enum class DpadState : char
-    //{
-    //    Released = 0,
-    //    Pressed = 1
-    //};
-
     constexpr auto DpadNone     = DpadButton::None;
     constexpr auto DpadSelect   = DpadButton::Select;
     constexpr auto DpadUp       = DpadButton::Up;
     constexpr auto DpadDown     = DpadButton::Down;
     constexpr auto DpadLeft     = DpadButton::Left;
     constexpr auto DpadRight    = DpadButton::Right;
-    //constexpr auto DpadRelease  = DpadState::Released;
-    //constexpr auto DpadPressed  = DpadState::Pressed;
 
     struct DpadInput
     {
@@ -34,14 +26,6 @@ namespace Input
         DpadInput(DpadButton btn) : button(btn) {}
 
         DpadButton button;
-        //DpadState state;
-
-        //inline bool IsDown() const { return button == DpadDown && state == DpadPressed; }
-        //inline bool IsUp() const { return button == DpadUp && state == DpadPressed; }
-        //inline bool IsLeft() const { return button == DpadLeft && state == DpadPressed; }
-        //inline bool IsRight() const { return button == DpadRight && state == DpadPressed; }
-        //inline bool IsSelect() const { return button == DpadSelect && state == DpadPressed; }
-        //inline bool IsDefault() const { return button == DpadNone && state == DpadRelease; }
 
         inline bool IsDown() const { return button == DpadDown; }
         inline bool IsUp() const { return button == DpadUp; }
@@ -51,7 +35,6 @@ namespace Input
         inline bool IsDefault() const { return button == DpadNone; }
 
         static const char* ToString(DpadButton button);
-        //static const char* ToString(DpadState state);
     };
 
     struct JoystickInput

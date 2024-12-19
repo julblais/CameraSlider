@@ -1,6 +1,6 @@
 #include "input.h"
 
-const char *Input::DpadInput::ToString(DpadButton button)
+const char* Input::DpadInput::ToString(DpadButton button)
 {
     switch (button)
     {
@@ -24,20 +24,3 @@ const char *Input::DpadInput::ToString(DpadButton button)
             break;
     }
 }
-/*
-const char *Input::DpadInput::ToString(DpadState state)
-{
-    switch (state)
-    {
-        case DpadPressed:
-            return "Pressed";
-            break;
-        case DpadRelease:
-            return "Released";
-            break;
-        default:
-            return "Unknown";
-            break;
-    }
-}
-*/
