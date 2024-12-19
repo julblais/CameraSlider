@@ -2,30 +2,31 @@
 #define MENU_H
 
 #include "src/hardware/lcd.h"
-#include "src/hardware/dpad.h"
+#include "src/input/input.h"
 #include "src/utils/timer.h"
 #include "src/utils/menuSystem.h"
 
-namespace Rig{
+using namespace Input;
 
-class Menu : public Hardware::IDpadListener
-{
-    public:
-        Menu(Hardware::LCD* lcd, Hardware::IDpad* dpad);
-        void Init();
+namespace Slider{
 
-        void OnKeyUp(const Hardware::DpadButton button) override;
-        void OnKeyDown(const Hardware::DpadButton button) override;
+    class Menu : public Input::IInputListener
+    {
+        public:
+            Menu(Hardware::LCD* lcd, unsigned long delay);
+            void Init();
 
-    private:
-        void OnSelectionLongPress(unsigned long time);
-        void OutputMenu();
-        
-        Hardware::LCD* m_LCD;
-        Hardware::IDpad* m_Dpad;
-        Utils::Timer m_Timer;
-        Utils::MenuSystem m_MenuSystem;
-};
+            virtual bool OnButtonPressed(const DpadButton button) override;
+            virtual bool OnButtonReleased(const DpadButton button) override;
+
+        private:
+            void OnSelectionLongPress(unsigned long time);
+            void OutputMenu();
+            
+            Hardware::LCD* m_LCD;
+            Utils::Timer m_Timer;
+            Utils::MenuSystem m_MenuSystem;
+    };
 
 }
 

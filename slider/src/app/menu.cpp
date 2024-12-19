@@ -1,50 +1,53 @@
 #include "menu.h"
 #include "commands.h"
 
-#include "src/hardware/lcd.h"
-#include "src/hardware/dpad.h"
-#include "src/utils/timer.h"
 #include "src/debug.h"
 
-#define MENU_DELAY_MS 2000
+#define MENU_INTRO_DELAY_MS 1500
 
-Rig::Menu::Menu(Hardware::LCD* lcd, Hardware::IDpad* dpad) :
+Slider::Menu::Menu(Hardware::LCD* lcd, unsigned long delay) :
     m_LCD(lcd),
-    m_Dpad(dpad),
-    m_Timer("Selection menu", [this](unsigned long time){ OnSelectionLongPress(time); }, MENU_DELAY_MS),
+    m_Timer("Selection menu", [this](unsigned long time){ OnSelectionLongPress(time); }, delay),
     m_MenuSystem()
 {}
 
-void Rig::Menu::Init()
-{
-    m_Dpad->AddListener(this);
-    
+void Slider::Menu::Init()
+{    
     m_MenuSystem.AddCommand(new MaxSpeedCommand());
     m_MenuSystem.AddCommand(new SpeedCurveCommand());
 }
 
-void Rig::Menu::OnKeyUp(const Hardware::DpadButton button)
+bool Slider::Menu::OnButtonReleased(const Input::DpadButton button)
 {
     m_Timer.Stop();
+    return true; //capture quit menu
 }
 
-void Rig::Menu::OnKeyDown(const Hardware::DpadButton button)
+bool Slider::Menu::OnButtonPressed(const Input::DpadButton button)
 {
-    if(button == Hardware::DpadButton::SELECTION)
+    if (button == Input::DpadNone)
+        return false;
+        
+    if(button == Input::DpadSelect)
+    {
         m_Timer.Start();
-    else if(button == Hardware::DpadButton::LEFT)
+        return true;
+    }
+
+    if(button == Input::DpadLeft)
         m_MenuSystem.MoveLeft();
-    else if(button == Hardware::DpadButton::RIGHT)
+    else if(button == Input::DpadRight)
         m_MenuSystem.MoveRight();
-    else if(button == Hardware::DpadButton::UP)
+    else if(button == Input::DpadUp)
         m_MenuSystem.MoveUp();
-    else if(button == Hardware::DpadButton::DOWN)
+    else if(button == Input::DpadDown)
         m_MenuSystem.MoveDown();
 
     OutputMenu();
+    return m_MenuSystem.IsOpened();
 }
 
-void Rig::Menu::OnSelectionLongPress(unsigned long time)
+void Slider::Menu::OnSelectionLongPress(unsigned long time)
 {
     if (m_MenuSystem.IsOpened())
     {
@@ -57,13 +60,13 @@ void Rig::Menu::OnSelectionLongPress(unsigned long time)
         Debug.Log("Open menu!", time);
         m_LCD->Clear();
         m_LCD->PrintLn("   -- Menu --", 0);
-        delay(1500);
+        delay(MENU_INTRO_DELAY_MS);
         m_MenuSystem.Open();
         OutputMenu();
     }
 }
 
-void Rig::Menu::OutputMenu()
+void Slider::Menu::OutputMenu()
 {
     if (m_MenuSystem.IsOpened())
     {
