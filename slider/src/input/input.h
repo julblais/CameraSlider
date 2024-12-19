@@ -70,9 +70,8 @@ namespace Input
         public:
             IInputListener() = default;
             virtual ~IInputListener() = default;
-            virtual void OnInput(const InputData& input) {}
-            virtual void OnButtonPressed(const DpadButton button) {}
-            virtual void OnButtonReleased(const DpadButton button) {}
+            virtual bool OnButtonPressed(const DpadButton button) { return false; }
+            virtual bool OnButtonReleased(const DpadButton button) { return false; }
     };
 }
 
