@@ -42,6 +42,9 @@ void Process(const Input::JoystickInput& last, const Input::JoystickInput& curre
         SetButtonState(Input::JoystickCenter, Input::ButtonReleased, out);
     else if (!last.IsCenterButton() && current.IsCenterButton())
         SetButtonState(Input::JoystickCenter, Input::ButtonPressed, out);
+
+    out.joystickX = current.x;
+    out.joystickY = current.y;
 }
 
 void Input::InputDispatcher::SetInitialInput(const InputData &input)

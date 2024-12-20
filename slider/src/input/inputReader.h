@@ -1,3 +1,6 @@
+#ifndef INPUTREADER_H
+#define INPUTREADER_H
+
 #include "input.h"
 
 namespace Input
@@ -20,3 +23,5 @@ namespace Input
             virtual JoystickInput ReadInput() = 0;
     };
 }
+
+#endif
