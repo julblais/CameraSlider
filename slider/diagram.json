@@ -3,36 +3,81 @@
   "author": "jblais",
   "editor": "wokwi",
   "parts": [
-    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": -81.7, "left": -149, "attrs": {} },
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": -110.5, "left": -120.2, "attrs": {} },
     {
       "type": "wokwi-lcd1602",
       "id": "lcd1",
-      "top": -32,
-      "left": 24.8,
+      "top": -185.6,
+      "left": 44,
       "attrs": { "pins": "i2c" }
     },
-    { "type": "wokwi-analog-joystick", "id": "joystick1", "top": 124.2, "left": 15, "attrs": {} },
+    { "type": "wokwi-analog-joystick", "id": "joystick1", "top": 220.2, "left": 15, "attrs": {} },
     {
       "type": "wokwi-stepper-motor",
       "id": "stepper1",
-      "top": 147.61,
-      "left": 173.23,
+      "top": -245.99,
+      "left": -402.77,
       "attrs": { "size": "17" }
     },
-    { "type": "wokwi-a4988", "id": "drv1", "top": -120, "left": -254.4, "attrs": {} }
+    { "type": "wokwi-a4988", "id": "drv1", "top": -24, "left": -369.6, "attrs": {} },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": 44.6,
+      "left": 48,
+      "attrs": { "label": "Left", "color": "yellow", "key": "ArrowLeft", "bounce": "0" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn2",
+      "top": 44.6,
+      "left": 230.4,
+      "attrs": { "label": "Right", "color": "yellow", "key": "ArrowRight", "bounce": "0" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn3",
+      "top": -22.6,
+      "left": 144,
+      "attrs": { "label": "Up", "color": "blue", "key": "ArrowUp", "bounce": "0" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn4",
+      "top": 121.4,
+      "left": 144,
+      "attrs": { "label": "Down", "color": "blue", "key": "ArrowDown", "bounce": "0" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn5",
+      "top": 44.6,
+      "left": 144,
+      "attrs": { "label": "Select", "color": "black", "key": " ", "bounce": "0" }
+    }
   ],
   "connections": [
     [ "lcd1:VCC", "esp:3V3", "red", [ "h-38.4", "v172.9" ] ],
-    [ "lcd1:GND", "esp:GND.2", "green", [ "v-9.6", "h-182.4", "v76.9" ] ],
-    [ "lcd1:SCL", "esp:D22", "blue", [ "h-19.2", "v9.9", "h-28.8", "v-86.1" ] ],
+    [ "lcd1:SCL", "esp:D22", "blue", [ "h-19.2", "v9.9", "h-38.4", "v38.7" ] ],
     [ "lcd1:SDA", "esp:D21", "gold", [ "h-19.2", "v-37.8" ] ],
     [ "joystick1:GND", "esp:GND.2", "green", [ "v28.8", "h-259.2", "v-201.5" ] ],
-    [ "joystick1:VCC", "esp:3V3", "red", [ "v-9.6", "h-76.8", "v-153.6" ] ],
-    [ "joystick1:VERT", "esp:D25", "blue", [ "h-220.8", "v-230.4" ] ],
-    [ "joystick1:HORZ", "esp:D26", "blue", [ "v9.6", "h-249.6", "v-230.3" ] ],
-    [ "joystick1:SEL", "esp:D33", "blue", [ "v19.2", "h-249.6", "v-259.2", "h28.8" ] ],
-    [ "esp:TX0", "$serialMonitor:RX", "", [] ], 
-    [ "esp:RX0", "$serialMonitor:TX", "", [] ]
+    [ "joystick1:VCC", "esp:3V3", "red", [ "v-9.6", "h-48", "v-278.4" ] ],
+    [ "joystick1:VERT", "esp:D25", "blue", [ "h-278.4", "v-297.6" ] ],
+    [ "joystick1:HORZ", "esp:D26", "blue", [ "v9.6", "h-278.4", "v-297.5" ] ],
+    [ "joystick1:SEL", "esp:D33", "blue", [ "v19.2", "h-307.2", "v-326.4" ] ],
+    [ "esp:TX0", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX0", "$serialMonitor:TX", "", [] ],
+    [ "lcd1:GND", "esp:GND.1", "green", [ "h-48", "v192" ] ],
+    [ "btn3:2.l", "esp:GND.1", "green", [ "h-115.2", "v19.4" ] ],
+    [ "btn1:2.l", "esp:GND.1", "green", [ "h-19.2", "v-57.3" ] ],
+    [ "btn5:2.l", "esp:GND.1", "green", [ "h-9.6", "v29", "h-105.6", "v-86.4" ] ],
+    [ "btn4:2.l", "esp:GND.1", "green", [ "h-115.2", "v-134.2" ] ],
+    [ "btn2:2.l", "esp:GND.1", "green", [ "h0", "v29", "h-211.2", "v-86.4" ] ],
+    [ "btn3:1.l", "esp:D23", "blue", [ "h-105.6", "v-86.4" ] ],
+    [ "btn2:1.l", "esp:D19", "gold", [ "h-9.6", "v-105.6" ] ],
+    [ "btn5:1.l", "esp:D18", "black", [ "h-19.2", "v-105.6", "h-9.6" ] ],
+    [ "btn1:1.l", "esp:D13", "gold", [ "h-38.4", "v28.8", "h-144", "v-76.8" ] ],
+    [ "btn4:1.l", "esp:D14", "blue", [ "h-288", "v-144" ] ]
   ],
   "dependencies": {}
 }

@@ -8,20 +8,17 @@ namespace Simulator
     class DpadSimulator : public Input::IDpadReader {
 
         public:
-            DpadSimulator(const int verticalPin, const int horizontalPin, const int selectionPin);
+            DpadSimulator(int upPin, int downPin, int leftPin, int rightPin, int selectionPin);
             virtual ~DpadSimulator() override {}
 
             virtual void Init() override;
             virtual Input::DpadInput ReadInput() override;
 
         private:
-            static bool IsLeft(const int horizontal);
-            static bool IsRight(const int horizontal);
-            static bool IsUp(const int vertical);
-            static bool IsDown(const int vertical);
-
-            const int m_VerticalPin;
-            const int m_HorizontalPin;
+            const int m_UpPin;
+            const int m_DownPin;
+            const int m_LeftPin;
+            const int m_RightPin;
             const int m_SelectionPin;
     };
 }

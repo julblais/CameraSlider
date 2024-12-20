@@ -1,67 +1,42 @@
 #include "dpadSimulator.h"
 #include "src/debug.h"
 
-#include <esp32-hal-gpio.h>
-
-static const int D_LOW = 0;
-static const int D_HIGH = 4095;
-static const int D_RANGE = 100;
-
-bool IsInBounds(int value, int low, int high) {
-    return value >= low && value <= high;
-}
-
-Simulator::DpadSimulator::DpadSimulator(
-    const int verticalPin, const int horizontalPin, const int selectionPin):
-    m_HorizontalPin(horizontalPin),
-    m_VerticalPin(verticalPin),
+Simulator::DpadSimulator::DpadSimulator(int upPin, int downPin, int leftPin, int rightPin, int selectionPin) :
+    m_UpPin(upPin),
+    m_DownPin(downPin),
+    m_LeftPin(leftPin),
+    m_RightPin(rightPin),
     m_SelectionPin(selectionPin)
 {}
 
 void Simulator::DpadSimulator::Init()
 {
-    pinMode(m_VerticalPin, INPUT);
-    pinMode(m_HorizontalPin, INPUT);
+    pinMode(m_UpPin, INPUT_PULLUP);
+    pinMode(m_DownPin, INPUT_PULLUP);
+    pinMode(m_LeftPin, INPUT_PULLUP);
+    pinMode(m_RightPin, INPUT_PULLUP);
     pinMode(m_SelectionPin, INPUT_PULLUP);
 }
 
 Input::DpadInput Simulator::DpadSimulator::ReadInput()
 {
-    auto vertical = analogRead(m_VerticalPin);
-    auto horizontal = analogRead(m_HorizontalPin);
+    auto up = digitalRead(m_UpPin) == LOW;
+    auto down = digitalRead(m_DownPin) == LOW;
+    auto left = digitalRead(m_LeftPin) == LOW;
+    auto right = digitalRead(m_RightPin) == LOW;
     auto selection = digitalRead(m_SelectionPin) == LOW;
 
     auto input = Input::DpadNone;
-    if (IsLeft(horizontal))
+    if (left)
         input = Input::DpadLeft;
-    else if (IsRight(horizontal))
+    else if (right)
         input = Input::DpadRight;
-    else if (IsUp(vertical))
+    else if (up)
         input = Input::DpadUp;
-    else if (IsDown(vertical))
+    else if (down)
         input = Input::DpadDown;
     else if (selection)
         input = Input::DpadSelect;
 
     return Input::DpadInput(input);
-}
-
-bool Simulator::DpadSimulator::DpadSimulator::IsLeft(const int horizontal)
-{
-    return IsInBounds(horizontal, D_HIGH - D_RANGE, D_HIGH);
-}
-
-bool Simulator::DpadSimulator::DpadSimulator::IsRight(const int horizontal)
-{
-    return IsInBounds(horizontal, D_LOW, D_LOW + D_RANGE);
-}
-
-bool Simulator::DpadSimulator::DpadSimulator::IsUp(const int vertical)
-{
-    return IsInBounds(vertical, D_HIGH - D_RANGE, D_HIGH);
-}
-
-bool Simulator::DpadSimulator::DpadSimulator::IsDown(const int vertical)
-{
-    return IsInBounds(vertical, D_LOW, D_LOW + D_RANGE);
 }

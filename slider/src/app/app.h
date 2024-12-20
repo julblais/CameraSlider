@@ -13,8 +13,10 @@ namespace Slider
     struct AppConfig
     {
         public:
-            int DpadVerticalPin;
-            int DpadHorizontalPin;
+            int DpadUpPin;
+            int DpadDownPin;
+            int DpadLeftPin;
+            int DpadRightPin;
             int DpadSelectionPin;
             int LcdAddress;
             int ShowMenuDelayMs;
