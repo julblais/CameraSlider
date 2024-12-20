@@ -45,6 +45,7 @@ void Process(const Input::JoystickInput& last, const Input::JoystickInput& curre
 
     out.joystickX = current.x;
     out.joystickY = current.y;
+    out.joystickDirectionChanged = last.x != current.x || last.y != current.y;
 }
 
 void Input::InputDispatcher::ProcessInput(const InputData &input)

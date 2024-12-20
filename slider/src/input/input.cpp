@@ -41,22 +41,17 @@ const char *Input::ToString(JoystickButton button)
     }
 }
 
-bool Input::Event::HasEvent() const
+bool Input::Event::HasChange() const
 {
-    return button != DpadNone || 
-        joystickButton != JoystickNone || 
-        joystickX != 0 || 
-        joystickY != 0 || 
-        dpadButtonState != ButtonNone || 
-        joystickButtonState != ButtonNone;
+    return HadDpadChange() || HasJoystickChange();
 }
 
-bool Input::Event::HasDpadEvent() const
+bool Input::Event::HadDpadChange() const
 {
-    return button != DpadNone;
+    return dpadButtonState != ButtonNone;
 }
 
-bool Input::Event::HasJoystickEvent() const
+bool Input::Event::HasJoystickChange() const
 {
-    return joystickButton != JoystickNone || joystickX != 0 || joystickY != 0;
+    return joystickButton != JoystickNone || joystickDirectionChanged;
 }

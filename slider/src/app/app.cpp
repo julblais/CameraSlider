@@ -14,12 +14,10 @@ class JoystickOutput : public IInputListener
 
         virtual bool OnInputEvent(const Input::Event& event) override
         {
-            if (event.HasJoystickEvent())
+            if (event.HasJoystickChange())
             {
-                auto isCenterPressed = event.IsCenter() && event.joystickButtonState == Input::ButtonPressed;
-                m_LCD->PrintLn("Joystick ", isCenterPressed ? "active!" : "", 0);
+                m_LCD->PrintLn("Joystick ", event.IsJoystickPressed() ? "pressed" : "", 0);
                 m_LCD->PrintLn("X: ", event.joystickX, " Y: ", event.joystickY, 1);
-                delay(100);
             }
             return false;
         }

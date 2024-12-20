@@ -50,11 +50,14 @@ namespace Input
         ButtonState joystickButtonState;
         int joystickX;
         int joystickY;
+        bool joystickDirectionChanged;
 
-        bool HasEvent() const;
-        bool HasDpadEvent() const;
-        bool HasJoystickEvent() const;
+        bool HasChange() const;
+        bool HadDpadChange() const;
+        bool HasJoystickChange() const;
 
+        inline bool IsButtonPressed() const { return dpadButtonState == ButtonPressed; }
+        inline bool IsJoystickPressed() const { return joystickButtonState == ButtonPressed; }
         inline bool IsDown() const { return button == DpadDown; }
         inline bool IsUp() const { return button == DpadUp; }
         inline bool IsLeft() const { return button == DpadLeft; }
