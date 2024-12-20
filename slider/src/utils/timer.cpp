@@ -2,10 +2,11 @@
 #include "src/debug.h"
 
 #include <esp32-hal-timer.h>
-#include <set>
+#include <vector>
+#include <algorithm>
 #include <functional>
 
-static auto Timers = std::set<Utils::Timer*>();
+static auto Timers = std::vector<Utils::Timer*>();
 
 void Utils::Timer::Update(unsigned int appTimeMs)
 {
@@ -19,7 +20,7 @@ Utils::Timer::Timer(const char* name) :
     m_Started(false),
     m_Callback()
 {
-    Timers.emplace(this);
+    Timers.push_back(this);
 }
 
 Utils::Timer::Timer(
@@ -32,7 +33,9 @@ Utils::Timer::Timer(
 
 Utils::Timer::~Timer() 
 {
-    Timers.erase(this);
+    auto position = std::find(Timers.begin(), Timers.end(), this);
+    if (position != Timers.end())
+        Timers.erase(position);
 }
 
 void Utils::Timer::Start()

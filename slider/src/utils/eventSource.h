@@ -1,8 +1,9 @@
 #ifndef EVT_SRC_H
 #define EVT_SRC_H
 
-#include <set>
+#include <vector>
 #include <functional>
+#include <algorithm>
 
 namespace Utils
 {
@@ -17,7 +18,7 @@ namespace Utils
             void SendEvent(std::function<void(TListener*)> event) const;
             void SendEventWithCapture(std::function<bool(TListener*)> event) const;
         private:
-            std::set<TListener*> m_Listeners;
+            std::vector<TListener*> m_Listeners;
     };
 
     template <typename TListener>
@@ -28,13 +29,15 @@ namespace Utils
     template <typename TListener>
     inline void EventSource<TListener>::AddListener(TListener *listener)
     {
-        m_Listeners.emplace(listener);
+        m_Listeners.push_back(listener);
     }
 
     template <typename TListener>
     inline void EventSource<TListener>::RemoveListener(TListener *listener)
     {
-        m_Listeners.erase(listener);
+        auto position = std::find(m_Listeners.begin(), m_Listeners.end(), listener);
+        if (position != m_Listeners.end())
+            m_Listeners.erase(position);
     }
 
     template <typename TListener>
