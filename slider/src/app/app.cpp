@@ -19,7 +19,11 @@ void Slider::App::SetupComponents(const AppConfig &config)
 
     #ifdef IS_SIMULATOR
         m_Dpad = std::unique_ptr<Input::IDpadReader>(new Simulator::DpadSimulator(
-                config.DpadVerticalPin, config.DpadHorizontalPin, config.DpadSelectionPin)); 
+        config.DpadUpPin, 
+        config.DpadDownPin, 
+        config.DpadLeftPin, 
+        config.DpadRightPin, 
+        config.DpadSelectionPin)); 
     #endif
 }
 

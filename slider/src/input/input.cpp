@@ -5,7 +5,7 @@ const char* Input::DpadInput::ToString(DpadButton button)
     switch (button)
     {
         case DpadLeft:
-            return "None";
+            return "Left";
             break;
         case DpadRight:
             return "Right";

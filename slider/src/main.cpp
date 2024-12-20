@@ -2,9 +2,12 @@
 #include "debug.h"
 
 #ifdef IS_SIMULATOR
-    #define C_DpadHorizontalPin A19;
-    #define C_DpadVerticalPin   A18;
-    #define C_DpadSelectionPin  T8;
+    #define C_DpadUpPin         23;
+    #define C_DpadDownPin       14;
+    #define C_DpadLeftPin       13;
+    #define C_DpadRightPin      19;
+    #define C_DpadSelectionPin  18;
+
     #define C_LcdAddress        0x27;
     #define C_ShowMenuDelayMs   2000;
 #else
@@ -14,11 +17,13 @@
 static Slider::AppConfig CreateConfig()
 {
     auto conf = Slider::AppConfig();
-    conf.DpadHorizontalPin    = C_DpadHorizontalPin;
-    conf.DpadVerticalPin      = C_DpadVerticalPin;
-    conf.DpadSelectionPin     = C_DpadSelectionPin;
-    conf.LcdAddress           = C_LcdAddress;
-    conf.ShowMenuDelayMs      = C_ShowMenuDelayMs;
+    conf.DpadUpPin           = C_DpadUpPin;
+    conf.DpadDownPin         = C_DpadDownPin;
+    conf.DpadLeftPin         = C_DpadLeftPin;
+    conf.DpadRightPin        = C_DpadRightPin;
+    conf.DpadSelectionPin    = C_DpadSelectionPin;
+    conf.LcdAddress          = C_LcdAddress;
+    conf.ShowMenuDelayMs     = C_ShowMenuDelayMs;
     return conf;
 }
 
