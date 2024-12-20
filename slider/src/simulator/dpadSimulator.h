@@ -2,6 +2,7 @@
 #define DPAD_SIM_H
 
 #include "src/input/input.h"
+#include "src/input/inputReader.h"
 
 namespace Simulator
 {

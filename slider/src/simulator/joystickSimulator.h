@@ -2,6 +2,7 @@
 #define JOYSTICKSIMULATOR_H
 
 #include "src/input/input.h"
+#include "src/input/inputReader.h"
 
 namespace Simulator
 {

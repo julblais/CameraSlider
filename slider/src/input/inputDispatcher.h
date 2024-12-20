@@ -9,16 +9,10 @@ namespace Input
     class InputDispatcher : public Utils::EventSource<IInputListener>
     {
         public:
-            InputDispatcher(const InputData& defaultInput);
-            ~InputDispatcher() = default;
-
+            void SetInitialInput(const InputData& input);
             void ProcessInput(const InputData& input);
 
-        private:
-            void SendButtonPressEvent(DpadButton button);
-            void SendButtonReleasedEvent(DpadButton button);
-            void SendJoystickMovedEvent(const JoystickInput& input);
-            
+        private:            
             InputData m_LastInput;
     };
 }

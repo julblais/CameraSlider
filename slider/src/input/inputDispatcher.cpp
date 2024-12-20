@@ -1,64 +1,63 @@
 #include "inputDispatcher.h"
 
-Input::InputDispatcher::InputDispatcher(const InputData &defaultInput):
-    m_LastInput(defaultInput)
-{}
-
-void Input::InputDispatcher::ProcessInput(const InputData &input)
+void SetButtonState(Input::DpadButton button, Input::ButtonState state, Input::Event& out)
 {
-    auto dpad = input.dpad;
-    auto lastDpad = m_LastInput.dpad;
+    out.button = button;
+    out.dpadButtonState = state;
+}
 
-    if (lastDpad.IsDown() && !dpad.IsDown())
-        SendButtonReleasedEvent(DpadButton::Down);
-    else if (lastDpad.IsUp() && !dpad.IsUp())
-        SendButtonReleasedEvent(DpadButton::Up);
-    else if (lastDpad.IsLeft() && !dpad.IsLeft())
-        SendButtonReleasedEvent(DpadButton::Left);
-    else if (lastDpad.IsRight() && !dpad.IsRight())
-        SendButtonReleasedEvent(DpadButton::Right);
-    else if (lastDpad.IsSelect() && !dpad.IsSelect())
-        SendButtonReleasedEvent(DpadButton::Select);
-    else if (!lastDpad.IsDown() && dpad.IsDown())
-        SendButtonPressEvent(DpadButton::Down);
-    else if (!lastDpad.IsUp() && dpad.IsUp())
-        SendButtonPressEvent(DpadButton::Up);
-    else if (!lastDpad.IsLeft() && dpad.IsLeft())
-        SendButtonPressEvent(DpadButton::Left);
-    else if (!lastDpad.IsRight() && dpad.IsRight())
-        SendButtonPressEvent(DpadButton::Right);
-    else if (!lastDpad.IsSelect() && dpad.IsSelect())
-        SendButtonPressEvent(DpadButton::Select);
+void SetButtonState(Input::JoystickButton button, Input::ButtonState state, Input::Event& out)
+{
+    out.joystickButton = button;
+    out.joystickButtonState = state;
+}
 
-    auto joystick = input.joystick;
-    auto lastJoystick = m_LastInput.joystick;
+void Process(const Input::DpadInput& last, const Input::DpadInput& current, Input::Event& out)
+{
+    if (last.IsDown() && !current.IsDown())
+        SetButtonState(Input::DpadDown, Input::ButtonReleased, out);
+    else if (last.IsUp() && !current.IsUp())
+        SetButtonState(Input::DpadUp, Input::ButtonReleased, out);
+    else if (last.IsLeft() && !current.IsLeft())
+        SetButtonState(Input::DpadLeft, Input::ButtonReleased, out);
+    else if (last.IsRight() && !current.IsRight())
+        SetButtonState(Input::DpadRight, Input::ButtonReleased, out);
+    else if (last.IsSelect() && !current.IsSelect())
+        SetButtonState(Input::DpadSelect, Input::ButtonReleased, out);
+    else if (!last.IsDown() && current.IsDown())
+        SetButtonState(Input::DpadDown, Input::ButtonPressed, out);
+    else if (!last.IsUp() && current.IsUp())
+        SetButtonState(Input::DpadUp, Input::ButtonPressed, out);
+    else if (!last.IsLeft() && current.IsLeft())
+        SetButtonState(Input::DpadLeft, Input::ButtonPressed, out);
+    else if (!last.IsRight() && current.IsRight())
+        SetButtonState(Input::DpadRight, Input::ButtonPressed, out);
+    else if (!last.IsSelect() && current.IsSelect())
+        SetButtonState(Input::DpadSelect, Input::ButtonPressed, out);
+}
 
-    auto hasChanged = joystick.button != lastJoystick.button || 
-                      joystick.x != lastJoystick.x || 
-                      joystick.y != lastJoystick.y;
-    if (hasChanged)
-        SendJoystickMovedEvent(joystick);
+void Process(const Input::JoystickInput& last, const Input::JoystickInput& current, Input::Event& out)
+{
+    if (last.IsCenterButton() && !current.IsCenterButton())
+        SetButtonState(Input::JoystickCenter, Input::ButtonReleased, out);
+    else if (!last.IsCenterButton() && current.IsCenterButton())
+        SetButtonState(Input::JoystickCenter, Input::ButtonPressed, out);
+}
 
+void Input::InputDispatcher::SetInitialInput(const InputData &input)
+{
     m_LastInput = input;
 }
 
-void Input::InputDispatcher::SendButtonPressEvent(DpadButton button)
+void Input::InputDispatcher::ProcessInput(const InputData &input)
 {
-    this->SendEventCapture([button](IInputListener* listener) -> bool {
-        return listener->OnButtonPressed(button);
+    auto event = Event();
+    Process(m_LastInput.dpad, input.dpad, event);
+    Process(m_LastInput.joystick, input.joystick, event);
+    
+    SendEventWithCapture([event](IInputListener* listener) -> bool {
+        return listener->OnInputEvent(event);
     });
-}
 
-void Input::InputDispatcher::SendButtonReleasedEvent(DpadButton button)
-{
-    this->SendEventCapture([button](IInputListener* listener) -> bool {
-        return listener->OnButtonReleased(button);
-    });
-}
-
-void Input::InputDispatcher::SendJoystickMovedEvent(const JoystickInput &input)
-{
-    this->SendEventCapture([input](IInputListener* listener) -> bool {
-        return listener->OnJoystickMoved(input);
-    });
+    m_LastInput = input;
 }

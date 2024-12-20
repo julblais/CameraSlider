@@ -1,6 +1,15 @@
 #include "input.h"
 
-const char* Input::DpadInput::ToString(DpadButton button)
+Input::Event::Event():
+    button(DpadNone),
+    dpadButtonState(ButtonNone), 
+    joystickButton(JoystickNone), 
+    joystickButtonState(ButtonNone), 
+    joystickX(0), 
+    joystickY(0)
+{}
+
+const char *Input::ToString(DpadButton button)
 {
     switch (button)
     {
@@ -25,7 +34,7 @@ const char* Input::DpadInput::ToString(DpadButton button)
     }
 }
 
-const char *Input::JoystickInput::ToString(JoystickButton button)
+const char *Input::ToString(JoystickButton button)
 {
     switch (button)
     {

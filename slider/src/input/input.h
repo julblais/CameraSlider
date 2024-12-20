@@ -19,15 +19,77 @@ namespace Input
         Center = 1
     };
 
-    constexpr auto DpadNone     = DpadButton::None;
-    constexpr auto DpadSelect   = DpadButton::Select;
-    constexpr auto DpadUp       = DpadButton::Up;
-    constexpr auto DpadDown     = DpadButton::Down;
-    constexpr auto DpadLeft     = DpadButton::Left;
-    constexpr auto DpadRight    = DpadButton::Right;
-    constexpr auto JoystickNone = JoystickButton::None;
-    constexpr auto JoystickCenter = JoystickButton::Center;
+    enum class ButtonState : char
+    {
+        None = 0,
+        Released = 1,
+        Pressed = 2
+    };
 
+    constexpr auto DpadNone         = DpadButton::None;
+    constexpr auto DpadSelect       = DpadButton::Select;
+    constexpr auto DpadUp           = DpadButton::Up;
+    constexpr auto DpadDown         = DpadButton::Down;
+    constexpr auto DpadLeft         = DpadButton::Left;
+    constexpr auto DpadRight        = DpadButton::Right;
+    constexpr auto JoystickNone     = JoystickButton::None;
+    constexpr auto JoystickCenter   = JoystickButton::Center;
+    constexpr auto ButtonNone       = ButtonState::None;
+    constexpr auto ButtonPressed    = ButtonState::Pressed;
+    constexpr auto ButtonReleased   = ButtonState::Released;
+
+    static const char* ToString(DpadButton button);
+    static const char* ToString(JoystickButton button);
+
+    struct Event
+    {
+        DpadButton button;
+        ButtonState dpadButtonState;
+
+        JoystickButton joystickButton;
+        ButtonState joystickButtonState;
+        int joystickX;
+        int joystickY;
+
+        Event();
+
+        inline bool IsDown() const { return button == DpadDown; }
+        inline bool IsUp() const { return button == DpadUp; }
+        inline bool IsLeft() const { return button == DpadLeft; }
+        inline bool IsRight() const { return button == DpadRight; }
+        inline bool IsSelect() const { return button == DpadSelect; }
+        inline bool IsDefault() const { return button == DpadNone; }
+        inline bool IsCenter() const { return joystickButton == JoystickCenter; }
+    };
+
+    class IInputListener
+    {
+        public:
+            IInputListener() = default;
+            virtual ~IInputListener() = default;
+            virtual bool OnInputEvent(const Event& inputEvent) { return false; }
+    };
+
+    struct DpadInput { 
+        DpadButton button; 
+        inline bool IsDown() const { return button == DpadDown; }
+        inline bool IsUp() const { return button == DpadUp; }
+        inline bool IsLeft() const { return button == DpadLeft; }
+        inline bool IsRight() const { return button == DpadRight; }
+        inline bool IsSelect() const { return button == DpadSelect; }
+        inline bool IsDefault() const { return button == DpadNone; }
+    };
+
+    struct JoystickInput { 
+        int x; 
+        int y; 
+        JoystickButton button; 
+        inline bool IsCenterButton() const { return button == JoystickCenter; }
+    };
+
+    struct InputData { DpadInput dpad; JoystickInput joystick; };
+
+/*
     struct DpadInput
     {
         DpadInput() : button(DpadNone) {}
@@ -74,34 +136,8 @@ namespace Input
         InputData(const DpadInput& dpad, const JoystickInput& joystick) 
         : dpad(dpad), joystick(joystick) {}
     };
+*/
 
-    class IDpadReader
-    {
-        public:
-            IDpadReader() = default;
-            virtual ~IDpadReader() = default;
-            virtual void Init() {}
-            virtual DpadInput ReadInput() = 0;
-    };
-
-    class IJoystickReader
-    {
-        public:
-            IJoystickReader() = default;
-            virtual ~IJoystickReader() = default;
-            virtual void Init() {}
-            virtual JoystickInput ReadInput() = 0;
-    };
-
-    class IInputListener
-    {
-        public:
-            IInputListener() = default;
-            virtual ~IInputListener() = default;
-            virtual bool OnButtonPressed(const DpadButton button) { return false; }
-            virtual bool OnButtonReleased(const DpadButton button) { return false; }
-            virtual bool OnJoystickMoved(const JoystickInput& input) { return false; }
-    };
 }
 
 #endif
