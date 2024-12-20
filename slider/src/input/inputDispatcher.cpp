@@ -7,8 +7,8 @@ Input::InputDispatcher::InputDispatcher(const InputData &defaultInput):
 void Input::InputDispatcher::ProcessInput(const InputData &input)
 {
     auto dpad = input.dpad;
-
     auto lastDpad = m_LastInput.dpad;
+
     if (lastDpad.IsDown() && !dpad.IsDown())
         SendButtonReleasedEvent(DpadButton::Down);
     else if (lastDpad.IsUp() && !dpad.IsUp())
@@ -30,19 +30,35 @@ void Input::InputDispatcher::ProcessInput(const InputData &input)
     else if (!lastDpad.IsSelect() && dpad.IsSelect())
         SendButtonPressEvent(DpadButton::Select);
 
+    auto joystick = input.joystick;
+    auto lastJoystick = m_LastInput.joystick;
+
+    auto hasChanged = joystick.button != lastJoystick.button || 
+                      joystick.x != lastJoystick.x || 
+                      joystick.y != lastJoystick.y;
+    if (hasChanged)
+        SendJoystickMovedEvent(joystick);
+
     m_LastInput = input;
 }
 
 void Input::InputDispatcher::SendButtonPressEvent(DpadButton button)
 {
-    this->SendEvent([button](IInputListener* listener){
-        listener->OnButtonPressed(button);
+    this->SendEventCapture([button](IInputListener* listener) -> bool {
+        return listener->OnButtonPressed(button);
     });
 }
 
 void Input::InputDispatcher::SendButtonReleasedEvent(DpadButton button)
 {
-    this->SendEvent([button](IInputListener* listener){
-        listener->OnButtonReleased(button);
+    this->SendEventCapture([button](IInputListener* listener) -> bool {
+        return listener->OnButtonReleased(button);
+    });
+}
+
+void Input::InputDispatcher::SendJoystickMovedEvent(const JoystickInput &input)
+{
+    this->SendEventCapture([input](IInputListener* listener) -> bool {
+        return listener->OnJoystickMoved(input);
     });
 }

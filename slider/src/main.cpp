@@ -7,7 +7,9 @@
     #define C_DpadLeftPin       13;
     #define C_DpadRightPin      19;
     #define C_DpadSelectionPin  18;
-
+    #define C_JoystickXPin      26;
+    #define C_JoystickYPin      25;
+    #define C_JoystickCenterPin 5;
     #define C_LcdAddress        0x27;
     #define C_ShowMenuDelayMs   2000;
 #else
@@ -22,6 +24,9 @@ static Slider::AppConfig CreateConfig()
     conf.DpadLeftPin         = C_DpadLeftPin;
     conf.DpadRightPin        = C_DpadRightPin;
     conf.DpadSelectionPin    = C_DpadSelectionPin;
+    conf.JoystickXPin        = C_JoystickXPin;
+    conf.JoystickYPin        = C_JoystickYPin;
+    conf.JoystickCenterPin   = C_JoystickCenterPin;
     conf.LcdAddress          = C_LcdAddress;
     conf.ShowMenuDelayMs     = C_ShowMenuDelayMs;
     return conf;

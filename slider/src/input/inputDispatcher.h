@@ -17,6 +17,7 @@ namespace Input
         private:
             void SendButtonPressEvent(DpadButton button);
             void SendButtonReleasedEvent(DpadButton button);
+            void SendJoystickMovedEvent(const JoystickInput& input);
             
             InputData m_LastInput;
     };

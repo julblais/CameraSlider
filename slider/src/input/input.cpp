@@ -24,3 +24,19 @@ const char* Input::DpadInput::ToString(DpadButton button)
             break;
     }
 }
+
+const char *Input::JoystickInput::ToString(JoystickButton button)
+{
+    switch (button)
+    {
+        case JoystickCenter:
+            return "Center";
+            break;
+        case JoystickNone:
+            return "None";
+            break;
+        default:
+            return "Unknown";
+            break;
+    }
+}

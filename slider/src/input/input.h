@@ -13,12 +13,20 @@ namespace Input
         Right = 16
     };
 
+    enum class JoystickButton : char
+    {
+        None = 0,
+        Center = 1
+    };
+
     constexpr auto DpadNone     = DpadButton::None;
     constexpr auto DpadSelect   = DpadButton::Select;
     constexpr auto DpadUp       = DpadButton::Up;
     constexpr auto DpadDown     = DpadButton::Down;
     constexpr auto DpadLeft     = DpadButton::Left;
     constexpr auto DpadRight    = DpadButton::Right;
+    constexpr auto JoystickNone = JoystickButton::None;
+    constexpr auto JoystickCenter = JoystickButton::Center;
 
     struct DpadInput
     {
@@ -39,8 +47,17 @@ namespace Input
 
     struct JoystickInput
     {
+        JoystickInput() : x(0), y(0), button(JoystickNone) {}
+        JoystickInput(int x, int y, JoystickButton btn=JoystickNone) : x(x), y(y), button(btn) {}
+        JoystickInput(JoystickButton button) : x(0), y(0), button(button) {}
+
         int x;
         int y;
+        JoystickButton button;
+
+        inline bool IsCenterButton() const { return button == JoystickCenter; }
+        
+        static const char* ToString(JoystickButton button);
     };
 
     struct InputData
@@ -67,6 +84,15 @@ namespace Input
             virtual DpadInput ReadInput() = 0;
     };
 
+    class IJoystickReader
+    {
+        public:
+            IJoystickReader() = default;
+            virtual ~IJoystickReader() = default;
+            virtual void Init() {}
+            virtual JoystickInput ReadInput() = 0;
+    };
+
     class IInputListener
     {
         public:
@@ -74,6 +100,7 @@ namespace Input
             virtual ~IInputListener() = default;
             virtual bool OnButtonPressed(const DpadButton button) { return false; }
             virtual bool OnButtonReleased(const DpadButton button) { return false; }
+            virtual bool OnJoystickMoved(const JoystickInput& input) { return false; }
     };
 }
 

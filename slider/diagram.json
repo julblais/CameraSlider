@@ -64,7 +64,6 @@
     [ "joystick1:VCC", "esp:3V3", "red", [ "v-9.6", "h-48", "v-278.4" ] ],
     [ "joystick1:VERT", "esp:D25", "blue", [ "h-278.4", "v-297.6" ] ],
     [ "joystick1:HORZ", "esp:D26", "blue", [ "v9.6", "h-278.4", "v-297.5" ] ],
-    [ "joystick1:SEL", "esp:D33", "blue", [ "v19.2", "h-307.2", "v-326.4" ] ],
     [ "esp:TX0", "$serialMonitor:RX", "", [] ],
     [ "esp:RX0", "$serialMonitor:TX", "", [] ],
     [ "lcd1:GND", "esp:GND.1", "green", [ "h-48", "v192" ] ],
@@ -77,7 +76,8 @@
     [ "btn2:1.l", "esp:D19", "gold", [ "h-9.6", "v-105.6" ] ],
     [ "btn5:1.l", "esp:D18", "black", [ "h-19.2", "v-105.6", "h-9.6" ] ],
     [ "btn1:1.l", "esp:D13", "gold", [ "h-38.4", "v28.8", "h-144", "v-76.8" ] ],
-    [ "btn4:1.l", "esp:D14", "blue", [ "h-288", "v-144" ] ]
+    [ "btn4:1.l", "esp:D14", "blue", [ "h-288", "v-144" ] ],
+    [ "joystick1:SEL", "esp:D5", "blue", [ "v19.2", "h-115.2", "v-374.4" ] ]
   ],
   "dependencies": {}
 }

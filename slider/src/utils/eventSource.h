@@ -15,7 +15,7 @@ namespace Utils
             inline void RemoveListener(TListener* listener);
         protected:
             void SendEvent(std::function<void(TListener*)> event) const;
-            void SendEvent(std::function<bool(TListener*)> event) const;
+            void SendEventCapture(std::function<bool(TListener*)> event) const;
         private:
             std::set<TListener*> m_Listeners;
     };
@@ -45,7 +45,7 @@ namespace Utils
     }
 
     template <typename TListener>
-    inline void EventSource<TListener>::SendEvent(std::function<bool(TListener *)> event) const
+    inline void EventSource<TListener>::SendEventCapture(std::function<bool(TListener *)> event) const
     {
         for (auto listener : m_Listeners)
             if (event(listener))

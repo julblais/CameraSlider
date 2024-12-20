@@ -9,7 +9,7 @@ namespace Simulator
 
         public:
             DpadSimulator(int upPin, int downPin, int leftPin, int rightPin, int selectionPin);
-            virtual ~DpadSimulator() override {}
+            virtual ~DpadSimulator() override = default;
 
             virtual void Init() override;
             virtual Input::DpadInput ReadInput() override;
