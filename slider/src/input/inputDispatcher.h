@@ -9,7 +9,6 @@ namespace Input
     class InputDispatcher : public Utils::EventSource<IInputListener>
     {
         public:
-            void SetInitialInput(const InputData& input);
             void ProcessInput(const InputData& input);
 
         private:            

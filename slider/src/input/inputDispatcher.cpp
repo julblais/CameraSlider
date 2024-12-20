@@ -47,11 +47,6 @@ void Process(const Input::JoystickInput& last, const Input::JoystickInput& curre
     out.joystickY = current.y;
 }
 
-void Input::InputDispatcher::SetInitialInput(const InputData &input)
-{
-    m_LastInput = input;
-}
-
 void Input::InputDispatcher::ProcessInput(const InputData &input)
 {
     auto event = Event();

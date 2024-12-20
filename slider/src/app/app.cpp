@@ -5,9 +5,6 @@
 
 #include <esp32-hal-timer.h>
 
-#define DEFAULT_JOYSTICK_X 2048
-#define DEFAULT_JOYSTICK_Y 2048
-
 class JoystickOutput : public IInputListener
 {
     public:
@@ -19,8 +16,10 @@ class JoystickOutput : public IInputListener
         {
             if (event.HasJoystickEvent())
             {
-                m_LCD->PrintLn("Joystick ", event.IsCenter() ? "active!" : "", 0);
+                auto isCenterPressed = event.IsCenter() && event.joystickButtonState == Input::ButtonPressed;
+                m_LCD->PrintLn("Joystick ", isCenterPressed ? "active!" : "", 0);
                 m_LCD->PrintLn("X: ", event.joystickX, " Y: ", event.joystickY, 1);
+                delay(100);
             }
             return false;
         }
@@ -33,8 +32,6 @@ Slider::App::App(const AppConfig &config):
     m_Config(config)
 {
     SetupComponents(config);
-    Input::InputData input = { .dpad = DpadInput(), .joystick = JoystickInput{DEFAULT_JOYSTICK_X, DEFAULT_JOYSTICK_Y, Input::JoystickNone} };
-    m_InputDispatcher.SetInitialInput(input);
     m_Menu = std::unique_ptr<Menu>(new Menu(m_LCD.get(), config.ShowMenuDelayMs));
     m_InputDispatcher.AddListener(m_Menu.get());
     m_InputDispatcher.AddListener(m_JoystickOutput.get());
