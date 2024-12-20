@@ -16,8 +16,7 @@ namespace Slider{
             Menu(Hardware::LCD* lcd, unsigned long delay);
             void Init();
 
-            virtual bool OnButtonPressed(const DpadButton button) override;
-            virtual bool OnButtonReleased(const DpadButton button) override;
+            virtual bool OnInputEvent(const Input::Event& inputEvent) override;
 
         private:
             void OnSelectionLongPress(unsigned long time);

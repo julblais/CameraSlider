@@ -17,33 +17,36 @@ void Slider::Menu::Init()
     m_MenuSystem.AddCommand(new SpeedCurveCommand());
 }
 
-bool Slider::Menu::OnButtonReleased(const Input::DpadButton button)
+bool Slider::Menu::OnInputEvent(const Input::Event &inputEvent)
 {
-    m_Timer.Stop();
-    return true; //capture quit menu
-}
-
-bool Slider::Menu::OnButtonPressed(const Input::DpadButton button)
-{
-    if (button == Input::DpadNone)
-        return false;
-        
-    if(button == Input::DpadSelect)
+    if (inputEvent.dpadButtonState == Input::ButtonReleased)
+        m_Timer.Stop();
+    else if (inputEvent.dpadButtonState == Input::ButtonPressed)
     {
-        m_Timer.Start();
-        return true;
+        switch(inputEvent.button)
+        {
+            case Input::DpadLeft:
+                m_MenuSystem.MoveLeft();
+                break;
+            case Input::DpadRight:
+                m_MenuSystem.MoveRight();
+                break;
+            case Input::DpadUp:
+                m_MenuSystem.MoveUp();
+                break;
+            case Input::DpadDown:
+                m_MenuSystem.MoveDown();
+                break;
+            case Input::DpadSelect:
+                m_Timer.Start();
+                break;
+            default:
+                break;
+        }
+        if (m_MenuSystem.IsOpened())
+            OutputMenu();
     }
-
-    if(button == Input::DpadLeft)
-        m_MenuSystem.MoveLeft();
-    else if(button == Input::DpadRight)
-        m_MenuSystem.MoveRight();
-    else if(button == Input::DpadUp)
-        m_MenuSystem.MoveUp();
-    else if(button == Input::DpadDown)
-        m_MenuSystem.MoveDown();
-
-    OutputMenu();
+    
     return m_MenuSystem.IsOpened();
 }
 
@@ -68,10 +71,7 @@ void Slider::Menu::OnSelectionLongPress(unsigned long time)
 
 void Slider::Menu::OutputMenu()
 {
-    if (m_MenuSystem.IsOpened())
-    {
-        auto out = m_MenuSystem.GetOutput();
-        m_LCD->PrintLn(m_LCD->GetDoubleUpDownArrows(), out.title, 0);
-        m_LCD->PrintLn(" ", m_LCD->GetDoubleLeftRightArrows(), out.desc, 1);
-    }
+    auto out = m_MenuSystem.GetOutput();
+    m_LCD->PrintLn(m_LCD->GetDoubleUpDownArrows(), out.title, 0);
+    m_LCD->PrintLn(" ", m_LCD->GetDoubleLeftRightArrows(), out.desc, 1);
 }

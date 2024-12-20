@@ -3,6 +3,7 @@
 
 #include "src/hardware/lcd.h"
 #include "src/input/input.h"
+#include "src/input/inputReader.h"
 #include "src/input/inputDispatcher.h"
 #include "menu.h"
 

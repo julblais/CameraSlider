@@ -1,14 +1,5 @@
 #include "input.h"
 
-Input::Event::Event():
-    button(DpadNone),
-    dpadButtonState(ButtonNone), 
-    joystickButton(JoystickNone), 
-    joystickButtonState(ButtonNone), 
-    joystickX(0), 
-    joystickY(0)
-{}
-
 const char *Input::ToString(DpadButton button)
 {
     switch (button)
@@ -48,4 +39,24 @@ const char *Input::ToString(JoystickButton button)
             return "Unknown";
             break;
     }
+}
+
+bool Input::Event::HasEvent() const
+{
+    return button != DpadNone || 
+        joystickButton != JoystickNone || 
+        joystickX != 0 || 
+        joystickY != 0 || 
+        dpadButtonState != ButtonNone || 
+        joystickButtonState != ButtonNone;
+}
+
+bool Input::Event::HasDpadEvent() const
+{
+    return button != DpadNone;
+}
+
+bool Input::Event::HasJoystickEvent() const
+{
+    return joystickButton != JoystickNone || joystickX != 0 || joystickY != 0;
 }

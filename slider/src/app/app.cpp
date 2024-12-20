@@ -15,10 +15,13 @@ class JoystickOutput : public IInputListener
             m_LCD(nullptr) {}
         JoystickOutput(Hardware::LCD* lcd): m_LCD(lcd) {}
 
-        virtual bool OnJoystickMoved(const JoystickInput& input) override
+        virtual bool OnInputEvent(const Input::Event& event) override
         {
-            m_LCD->PrintLn("Joystick ", input.IsCenterButton() ? "active!" : "", 0);
-            m_LCD->PrintLn("X: ", input.x, " Y: ", input.y, 1);
+            if (event.HasJoystickEvent())
+            {
+                m_LCD->PrintLn("Joystick ", event.IsCenter() ? "active!" : "", 0);
+                m_LCD->PrintLn("X: ", event.joystickX, " Y: ", event.joystickY, 1);
+            }
             return false;
         }
 
@@ -27,10 +30,11 @@ class JoystickOutput : public IInputListener
 };
 
 Slider::App::App(const AppConfig &config):
-    m_Config(config),
-    m_InputDispatcher(InputData(DpadInput(), JoystickInput(DEFAULT_JOYSTICK_X, DEFAULT_JOYSTICK_Y)))
+    m_Config(config)
 {
     SetupComponents(config);
+    Input::InputData input = { .dpad = DpadInput(), .joystick = JoystickInput{DEFAULT_JOYSTICK_X, DEFAULT_JOYSTICK_Y, Input::JoystickNone} };
+    m_InputDispatcher.SetInitialInput(input);
     m_Menu = std::unique_ptr<Menu>(new Menu(m_LCD.get(), config.ShowMenuDelayMs));
     m_InputDispatcher.AddListener(m_Menu.get());
     m_InputDispatcher.AddListener(m_JoystickOutput.get());
@@ -82,7 +86,7 @@ void Slider::App::Update()
     unsigned long appTimeMs = millis();
     Utils::Timer::Update(appTimeMs);
 
-    auto input = InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
+    auto input = Input::InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
     //process received messages
     m_InputDispatcher.ProcessInput(input);
 }

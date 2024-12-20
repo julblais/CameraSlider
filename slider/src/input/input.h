@@ -51,7 +51,9 @@ namespace Input
         int joystickX;
         int joystickY;
 
-        Event();
+        bool HasEvent() const;
+        bool HasDpadEvent() const;
+        bool HasJoystickEvent() const;
 
         inline bool IsDown() const { return button == DpadDown; }
         inline bool IsUp() const { return button == DpadUp; }
@@ -87,7 +89,13 @@ namespace Input
         inline bool IsCenterButton() const { return button == JoystickCenter; }
     };
 
-    struct InputData { DpadInput dpad; JoystickInput joystick; };
+    struct InputData { 
+        DpadInput dpad; 
+        JoystickInput joystick;
+        
+        InputData() : dpad{DpadNone}, joystick{0, 0, JoystickNone} {}
+        InputData(DpadInput dpad, JoystickInput joystick) : dpad(dpad), joystick(joystick) {}
+    };
 
 /*
     struct DpadInput
