@@ -67,14 +67,6 @@ namespace Input
         inline bool IsCenter() const { return joystickButton == JoystickCenter; }
     };
 
-    class IInputListener
-    {
-        public:
-            IInputListener() = default;
-            virtual ~IInputListener() = default;
-            virtual bool OnInputEvent(const Event& inputEvent) { return false; }
-    };
-
     struct DpadInput { 
         DpadButton button; 
         inline bool IsDown() const { return button == DpadDown; }

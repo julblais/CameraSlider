@@ -10,13 +10,13 @@ using namespace Input;
 
 namespace Slider{
 
-    class Menu : public Input::IInputListener
+    class Menu
     {
         public:
             Menu(Hardware::LCD* lcd, unsigned long delay);
             void Init();
 
-            virtual bool OnInputEvent(const Input::Event& inputEvent) override;
+            bool OnInputEvent(const Input::Event& inputEvent);
 
         private:
             void OnSelectionLongPress(unsigned long time);
