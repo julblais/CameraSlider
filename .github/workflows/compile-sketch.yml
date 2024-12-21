@@ -33,6 +33,8 @@ jobs:
           path: sketches-reports
 
   report:
+    permissions: 
+      pull-requests: write
     needs: compile-sketch # Wait for the compile job to finish to get the data for the report
     if: github.event_name == 'pull_request' # Only run the job when the workflow is triggered by a pull request
     runs-on: ubuntu-latest
