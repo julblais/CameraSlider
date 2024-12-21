@@ -1,11 +1,11 @@
-#ifndef LCDPRINT_H
-#define LCDPRINT_H
+#ifndef DISPLAY_BUFFER_H
+#define DISPLAY_BUFFER_H
 
 #include <array>
 #include <Print.h>
 #include <HardwareSerial.h>
 
-class LCDPRint : private Print 
+class DisplayBuffer : private Print 
 {
     constexpr static auto LCD_LINE_LENGTH = 16;
     constexpr static auto LCD_NUM_LINES = 2;
@@ -15,12 +15,12 @@ class LCDPRint : private Print
         std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES>::const_iterator;
 
     public:
-        LCDPRint() : m_Cursor(0), m_Buffer()
+        DisplayBuffer() : m_Cursor(0), m_Buffer()
         {
             m_Buffer.fill(' ');
         }
 
-        virtual ~LCDPRint() = default;
+        virtual ~DisplayBuffer() = default;
 
 
         void print_internal() {}
