@@ -2,6 +2,7 @@
 #include "src/hardware/lcd.h"
 #include "src/simulator/dpadSimulator.h"
 #include "src/simulator/joystickSimulator.h"
+#include "src/hardware/lcdPrint.h"
 
 #include <esp32-hal-timer.h>
 
@@ -13,6 +14,12 @@ static bool OnInputEvent(Hardware::LCD* lcd, const Input::Event& event)
         lcd->PrintLn("Joystick ", event.IsJoystickPressed() ? "pressed" : "", 0);
         lcd->PrintLn("X: ", event.joystickX, " Y: ", event.joystickY, 1);
     }
+    LCDPRint lcdPrint;
+    lcdPrint.println("test");
+    lcdPrint.println(2);
+    lcdPrint.println(3.14);
+    lcdPrint.println(true);
+
     return false;
 }
 
