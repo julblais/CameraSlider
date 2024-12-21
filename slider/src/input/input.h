@@ -13,67 +13,83 @@ namespace Input
         Right = 16
     };
 
-    constexpr auto DpadNone     = DpadButton::None;
-    constexpr auto DpadSelect   = DpadButton::Select;
-    constexpr auto DpadUp       = DpadButton::Up;
-    constexpr auto DpadDown     = DpadButton::Down;
-    constexpr auto DpadLeft     = DpadButton::Left;
-    constexpr auto DpadRight    = DpadButton::Right;
-
-    struct DpadInput
+    enum class JoystickButton : char
     {
-        DpadInput() : button(DpadNone) {}
-        DpadInput(DpadButton btn) : button(btn) {}
+        None = 0,
+        Center = 1
+    };
 
+    enum class ButtonState : char
+    {
+        None = 0,
+        Released = 1,
+        Pressed = 2
+    };
+
+    constexpr auto DpadNone         = DpadButton::None;
+    constexpr auto DpadSelect       = DpadButton::Select;
+    constexpr auto DpadUp           = DpadButton::Up;
+    constexpr auto DpadDown         = DpadButton::Down;
+    constexpr auto DpadLeft         = DpadButton::Left;
+    constexpr auto DpadRight        = DpadButton::Right;
+    constexpr auto JoystickNone     = JoystickButton::None;
+    constexpr auto JoystickCenter   = JoystickButton::Center;
+    constexpr auto ButtonNone       = ButtonState::None;
+    constexpr auto ButtonPressed    = ButtonState::Pressed;
+    constexpr auto ButtonReleased   = ButtonState::Released;
+
+    static const char* ToString(DpadButton button);
+    static const char* ToString(JoystickButton button);
+
+    struct Event
+    {
         DpadButton button;
+        ButtonState dpadButtonState;
 
+        JoystickButton joystickButton;
+        ButtonState joystickButtonState;
+        int joystickX;
+        int joystickY;
+        bool joystickDirectionChanged;
+
+        bool HasChange() const;
+        bool HadDpadChange() const;
+        bool HasJoystickChange() const;
+
+        inline bool IsButtonPressed() const { return dpadButtonState == ButtonPressed; }
+        inline bool IsJoystickPressed() const { return joystickButtonState == ButtonPressed; }
         inline bool IsDown() const { return button == DpadDown; }
         inline bool IsUp() const { return button == DpadUp; }
         inline bool IsLeft() const { return button == DpadLeft; }
         inline bool IsRight() const { return button == DpadRight; }
         inline bool IsSelect() const { return button == DpadSelect; }
         inline bool IsDefault() const { return button == DpadNone; }
-
-        static const char* ToString(DpadButton button);
+        inline bool IsCenter() const { return joystickButton == JoystickCenter; }
     };
 
-    struct JoystickInput
-    {
-        int x;
-        int y;
+    struct DpadInput { 
+        DpadButton button; 
+        inline bool IsDown() const { return button == DpadDown; }
+        inline bool IsUp() const { return button == DpadUp; }
+        inline bool IsLeft() const { return button == DpadLeft; }
+        inline bool IsRight() const { return button == DpadRight; }
+        inline bool IsSelect() const { return button == DpadSelect; }
+        inline bool IsDefault() const { return button == DpadNone; }
     };
 
-    struct InputData
-    {
-        DpadInput dpad;
+    struct JoystickInput { 
+        int x; 
+        int y; 
+        JoystickButton button; 
+        inline bool IsCenterButton() const { return button == JoystickCenter; }
+    };
+
+    struct InputData { 
+        DpadInput dpad; 
         JoystickInput joystick;
-
-        InputData() 
-        : dpad(DpadNone), joystick({0, 0}) {}
-        InputData(const DpadInput& dpad) :
-            dpad(dpad), joystick({0, 0}) {} 
-        InputData(const JoystickInput& joystick) :
-            dpad(DpadNone), joystick(joystick) {} 
-        InputData(const DpadInput& dpad, const JoystickInput& joystick) 
-        : dpad(dpad), joystick(joystick) {}
-    };
-
-    class IDpadReader
-    {
-        public:
-            IDpadReader() = default;
-            virtual ~IDpadReader() = default;
-            virtual void Init() {}
-            virtual DpadInput ReadInput() = 0;
-    };
-
-    class IInputListener
-    {
-        public:
-            IInputListener() = default;
-            virtual ~IInputListener() = default;
-            virtual bool OnButtonPressed(const DpadButton button) { return false; }
-            virtual bool OnButtonReleased(const DpadButton button) { return false; }
+        
+        InputData() : dpad{DpadNone}, joystick{0, 0, JoystickNone} {}
+        InputData(DpadInput dpad, JoystickInput joystick) : dpad(dpad), joystick(joystick) {}
     };
 }
 

@@ -3,6 +3,7 @@
 
 #include "src/hardware/lcd.h"
 #include "src/input/input.h"
+#include "src/input/inputReader.h"
 #include "src/input/inputDispatcher.h"
 #include "menu.h"
 
@@ -18,6 +19,9 @@ namespace Slider
             int DpadLeftPin;
             int DpadRightPin;
             int DpadSelectionPin;
+            int JoystickXPin;
+            int JoystickYPin;
+            int JoystickCenterPin;
             int LcdAddress;
             int ShowMenuDelayMs;
     };
@@ -35,6 +39,7 @@ namespace Slider
             AppConfig m_Config;
             std::unique_ptr<Hardware::LCD> m_LCD;
             std::unique_ptr<Input::IDpadReader> m_Dpad;
+            std::unique_ptr<Input::IJoystickReader> m_Joystick;
             std::unique_ptr<Menu> m_Menu;
             Input::InputDispatcher m_InputDispatcher;
     };

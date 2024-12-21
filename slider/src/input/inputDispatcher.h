@@ -3,21 +3,15 @@
 
 #include "input.h"
 #include "src/utils/eventSource.h"
+#include <functional>
 
 namespace Input
 {
-    class InputDispatcher : public Utils::EventSource<IInputListener>
+    class InputDispatcher : public Utils::EventSource<const Event&>
     {
         public:
-            InputDispatcher(const InputData& defaultInput);
-            ~InputDispatcher() = default;
-
             void ProcessInput(const InputData& input);
-
         private:
-            void SendButtonPressEvent(DpadButton button);
-            void SendButtonReleasedEvent(DpadButton button);
-            
             InputData m_LastInput;
     };
 }

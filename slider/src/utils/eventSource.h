@@ -1,54 +1,61 @@
 #ifndef EVT_SRC_H
 #define EVT_SRC_H
 
-#include <set>
+#include <vector>
 #include <functional>
+#include <algorithm>
 
 namespace Utils
 {
-    template <typename TListener>
+    template <typename... TArgs>
     class EventSource
     {
+        using TListener = std::function<bool(TArgs...)>;
+
         public:
-            EventSource();
-            inline void AddListener(TListener* listener);
-            inline void RemoveListener(TListener* listener);
+            EventSource(): m_Listeners() {}
+            void AddListener(TListener listener);
+
+            // AddListener for classes that have OnInputEvent method
+            template <typename C>
+            auto AddListener(C listener)-> decltype(listener.OnInputEvent(std::declval<TArgs...>()), void());
+            template <typename C>
+            auto AddListener(C* listener)-> decltype(listener->OnInputEvent(std::declval<TArgs...>()), void());
+
         protected:
-            void SendEvent(std::function<void(TListener*)> event) const;
-            void SendEvent(std::function<bool(TListener*)> event) const;
+            void SendEvent(TArgs... args) const;
+
         private:
-            std::set<TListener*> m_Listeners;
+            std::vector<TListener> m_Listeners;
     };
 
-    template <typename TListener>
-    inline EventSource<TListener>::EventSource():
-        m_Listeners()
-    {}
-
-    template <typename TListener>
-    inline void EventSource<TListener>::AddListener(TListener *listener)
+    template <typename... TArgs>
+    inline void EventSource<TArgs...>::AddListener(TListener listener)
     {
-        m_Listeners.emplace(listener);
+        m_Listeners.push_back(listener);
     }
 
-    template <typename TListener>
-    inline void EventSource<TListener>::RemoveListener(TListener *listener)
+    template <typename... TArgs>
+    template <typename C>
+    inline auto EventSource<TArgs...>::AddListener(C listener) 
+        -> decltype(listener.OnInputEvent(std::declval<TArgs...>()), void())
     {
-        m_Listeners.erase(listener);
+        m_Listeners.push_back([listener](TArgs... args) { return listener.OnInputEvent(args...); });
     }
 
-    template <typename TListener>
-    inline void EventSource<TListener>::SendEvent(std::function<void(TListener *)> event) const
+    template <typename... TArgs>
+    template <typename C>
+    inline auto EventSource<TArgs...>::AddListener(C* listener) 
+        -> decltype(listener->OnInputEvent(std::declval<TArgs...>()), void())
+    {
+        m_Listeners.push_back([listener](TArgs... args) { return listener->OnInputEvent(args...); });
+    }
+    
+    template <typename... TArgs>
+    inline void EventSource<TArgs...>::SendEvent(TArgs... args) const
     {
         for (auto listener : m_Listeners)
-            event(listener);
-    }
-
-    template <typename TListener>
-    inline void EventSource<TListener>::SendEvent(std::function<bool(TListener *)> event) const
-    {
-        for (auto listener : m_Listeners)
-            if (event(listener))
+            if (listener(args...))
                 return;
     }
 }

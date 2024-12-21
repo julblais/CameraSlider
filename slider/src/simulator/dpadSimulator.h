@@ -2,6 +2,7 @@
 #define DPAD_SIM_H
 
 #include "src/input/input.h"
+#include "src/input/inputReader.h"
 
 namespace Simulator
 {
@@ -9,7 +10,7 @@ namespace Simulator
 
         public:
             DpadSimulator(int upPin, int downPin, int leftPin, int rightPin, int selectionPin);
-            virtual ~DpadSimulator() override {}
+            virtual ~DpadSimulator() override = default;
 
             virtual void Init() override;
             virtual Input::DpadInput ReadInput() override;

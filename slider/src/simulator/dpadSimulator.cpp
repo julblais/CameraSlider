@@ -38,5 +38,6 @@ Input::DpadInput Simulator::DpadSimulator::ReadInput()
     else if (selection)
         input = Input::DpadSelect;
 
-    return Input::DpadInput(input);
+    Input::DpadInput result = { .button = input };
+    return result;
 }
