@@ -6,11 +6,6 @@
 #include "src/utils/timer.h"
 #include "src/utils/menuSystem.h"
 
-//Add dummy change for ci.
-//And another one.
-//Another one!
-//Test permissions.
-
 using namespace Input;
 
 namespace Slider{
