@@ -29,6 +29,8 @@ namespace Hardware{
             LCD(const uint8_t address);
             void Init();
             void Clear();
+            void Write(uint8_t value) { chip.write(value); }
+            void SetCursor(const int column, const int row) { chip.setCursor(column, row); }
             void Write(const CustomChar& customChar, const int column=0, const int row=0);
             inline CustomChar GetDoubleLeftRightArrows() const { return m_DoubleLeftRightArrows; }
             inline CustomChar GetDoubleUpDownArrows() const { return m_DoubleUpDownArrows; }

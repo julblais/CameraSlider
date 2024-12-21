@@ -6,6 +6,7 @@
 
 #include <esp32-hal-timer.h>
 
+static LCDPRint lcdPrint = LCDPRint();
 
 static bool OnInputEvent(Hardware::LCD* lcd, const Input::Event& event)
 {
@@ -14,11 +15,27 @@ static bool OnInputEvent(Hardware::LCD* lcd, const Input::Event& event)
         lcd->PrintLn("Joystick ", event.IsJoystickPressed() ? "pressed" : "", 0);
         lcd->PrintLn("X: ", event.joystickX, " Y: ", event.joystickY, 1);
     }
-    LCDPRint lcdPrint;
-    lcdPrint.println("test");
-    lcdPrint.println(2);
-    lcdPrint.println(3.14);
-    lcdPrint.println(true);
+
+    else{
+
+    lcdPrint.Print("abcdef", 123456, 7890, "NOOOOO");
+    lcdPrint.PrintLine(1, "THIS_TEXT_SHOULD_NOT_APPEAR");
+    lcdPrint.PrintLine(1, "blank_after:");
+
+    lcd->SetCursor(0, 0);
+    int i = 0;
+    for (auto it = lcdPrint.cbegin(); it != lcdPrint.cend(); ++it)
+    {
+        if (i >= 16)
+        {
+          lcd->SetCursor(0, 1);
+          i = 0;
+        }
+        i++;
+        lcd->Write(*it);
+    }
+    delay(100);
+    }
 
     return false;
 }
