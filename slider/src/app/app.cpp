@@ -5,40 +5,33 @@
 
 #include <esp32-hal-timer.h>
 
-class JoystickOutput : public IInputListener
+
+static bool OnInputEvent(Hardware::LCD* lcd, const Input::Event& event)
 {
-    public:
-        JoystickOutput():
-            m_LCD(nullptr) {}
-        JoystickOutput(Hardware::LCD* lcd): m_LCD(lcd) {}
-
-        virtual bool OnInputEvent(const Input::Event& event) override
-        {
-            if (event.HasJoystickChange())
-            {
-                m_LCD->PrintLn("Joystick ", event.IsJoystickPressed() ? "pressed" : "", 0);
-                m_LCD->PrintLn("X: ", event.joystickX, " Y: ", event.joystickY, 1);
-            }
-            return false;
-        }
-
-    private:
-        Hardware::LCD* m_LCD;
-};
+    if (event.HasJoystickChange())
+    {
+        lcd->PrintLn("Joystick ", event.IsJoystickPressed() ? "pressed" : "", 0);
+        lcd->PrintLn("X: ", event.joystickX, " Y: ", event.joystickY, 1);
+    }
+    return false;
+}
 
 Slider::App::App(const AppConfig &config):
     m_Config(config)
 {
     SetupComponents(config);
     m_Menu = std::unique_ptr<Menu>(new Menu(m_LCD.get(), config.ShowMenuDelayMs));
+    
     m_InputDispatcher.AddListener(m_Menu.get());
-    m_InputDispatcher.AddListener(m_JoystickOutput.get());
+    m_InputDispatcher.AddListener([this](const Input::Event& event) 
+    { 
+        return OnInputEvent(m_LCD.get(), event); 
+    });
 }
 
 void Slider::App::SetupComponents(const AppConfig &config)
 {    
     m_LCD = std::unique_ptr<Hardware::LCD>(new Hardware::LCD(config.LcdAddress));
-    m_JoystickOutput = std::unique_ptr<Input::IInputListener>(new JoystickOutput(m_LCD.get()));
 
     #ifdef IS_SIMULATOR
         m_Dpad = std::unique_ptr<Input::IDpadReader>(new Simulator::DpadSimulator(

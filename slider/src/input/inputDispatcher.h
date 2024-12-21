@@ -3,15 +3,15 @@
 
 #include "input.h"
 #include "src/utils/eventSource.h"
+#include <functional>
 
 namespace Input
 {
-    class InputDispatcher : public Utils::EventSource<IInputListener>
+    class InputDispatcher : public Utils::EventSource<const Event&>
     {
         public:
             void ProcessInput(const InputData& input);
-
-        private:            
+        private:
             InputData m_LastInput;
     };
 }

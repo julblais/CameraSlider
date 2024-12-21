@@ -54,9 +54,7 @@ void Input::InputDispatcher::ProcessInput(const InputData &input)
     Process(m_LastInput.dpad, input.dpad, event);
     Process(m_LastInput.joystick, input.joystick, event);
     
-    SendEventWithCapture([event](IInputListener* listener) -> bool {
-        return listener->OnInputEvent(event);
-    });
+    SendEvent(event);
 
     m_LastInput = input;
 }

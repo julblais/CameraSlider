@@ -41,7 +41,6 @@ namespace Slider
             std::unique_ptr<Input::IDpadReader> m_Dpad;
             std::unique_ptr<Input::IJoystickReader> m_Joystick;
             std::unique_ptr<Menu> m_Menu;
-            std::unique_ptr<Input::IInputListener> m_JoystickOutput;
             Input::InputDispatcher m_InputDispatcher;
     };
 }
