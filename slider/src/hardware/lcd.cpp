@@ -1,5 +1,6 @@
 
 #include "lcd.h"
+#include "src/output/displayBuffer.h"
 
 #include <LiquidCrystal_I2C.h>
 #include <array>
@@ -67,4 +68,21 @@ void Hardware::LCD::Write(const CustomChar &customChar, const int column, const 
 {
     chip.setCursor(column, row);
     chip.write(customChar.m_Id);
+}
+
+void Hardware::LCD::PrintBuffer(const Output::DisplayBuffer &buffer)
+{
+    chip.setCursor(0, 0);
+    unsigned int count = 0;
+    unsigned int line = 0;
+    for (const auto it : buffer)
+    {
+        if (count >= LCD::NUM_COLS)
+        {
+            chip.setCursor(0, ++line);
+            count = 0;
+        }
+        count++;
+        chip.write(it);
+    }
 }
