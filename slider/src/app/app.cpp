@@ -2,11 +2,11 @@
 #include "src/hardware/lcd.h"
 #include "src/simulator/dpadSimulator.h"
 #include "src/simulator/joystickSimulator.h"
-#include "src/hardware/displayBuffer.h"
+#include "src/output/displayBuffer.h"
 
 #include <esp32-hal-timer.h>
 
-static DisplayBuffer lcdPrint = DisplayBuffer();
+static Output::DisplayBuffer lcdPrint = Output::DisplayBuffer();
 
 static bool OnInputEvent(Hardware::LCD* lcd, const Input::Event& event)
 {
