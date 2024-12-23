@@ -2,11 +2,12 @@
 #include "commands.h"
 
 #include "src/debug.h"
+#include "src/output/displayBuffer.h"
 
 #define MENU_INTRO_DELAY_MS 1500
 
-Slider::Menu::Menu(Hardware::LCD* lcd, unsigned long delay) :
-    m_LCD(lcd),
+Slider::Menu::Menu(Output::DisplayBuffer* display, int delay) :
+    m_DisplayBuffer(display),
     m_Timer("Selection menu", [this](unsigned long time){ OnSelectionLongPress(time); }, delay),
     m_MenuSystem()
 {}
@@ -55,14 +56,14 @@ void Slider::Menu::OnSelectionLongPress(unsigned long time)
     if (m_MenuSystem.IsOpened())
     {
         Debug.Log("Close menu!", time);
-        m_LCD->Clear();
+        m_DisplayBuffer->Clear();
         m_MenuSystem.Close();
     }
     else
     {
         Debug.Log("Open menu!", time);
-        m_LCD->Clear();
-        m_LCD->PrintLn("   -- Menu --", 0);
+        m_DisplayBuffer->Clear();
+        m_DisplayBuffer->PrintLine(0, "   -- Menu --");
         delay(MENU_INTRO_DELAY_MS);
         m_MenuSystem.Open();
         OutputMenu();
@@ -72,6 +73,6 @@ void Slider::Menu::OnSelectionLongPress(unsigned long time)
 void Slider::Menu::OutputMenu()
 {
     auto out = m_MenuSystem.GetOutput();
-    m_LCD->PrintLn(m_LCD->GetDoubleUpDownArrows(), out.title, 0);
-    m_LCD->PrintLn(" ", m_LCD->GetDoubleLeftRightArrows(), out.desc, 1);
+    m_DisplayBuffer->PrintLine(0, out.title);
+    m_DisplayBuffer->PrintLine(1, out.desc);
 }

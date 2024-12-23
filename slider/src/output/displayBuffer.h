@@ -22,10 +22,12 @@ namespace Output
             template <typename... TArgs> void Print(TArgs&&... args);
             template <typename... TArgs> void PrintLine(const int line, TArgs&&... args);
 
+            bool AreEqual(const DisplayBuffer& other);
+            void Clear();
             void SetCursor(const int line, const int column = 0);
 
-            inline const ConstIterator cbegin() const { return m_Buffer.cbegin(); }
-            inline const ConstIterator cend() const { return m_Buffer.cend(); }
+            inline const ConstIterator begin() const { return m_Buffer.begin(); }
+            inline const ConstIterator end() const { return m_Buffer.end(); }
 
         private:
             virtual size_t write(Keycode value) override;

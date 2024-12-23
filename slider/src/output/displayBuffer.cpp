@@ -22,6 +22,17 @@ size_t Output::DisplayBuffer::write(Keycode value)
     return 1;
 }
 
+bool Output::DisplayBuffer::AreEqual(const DisplayBuffer &other)
+{
+    return std::equal(std::begin(m_Buffer), std::end(m_Buffer), std::begin(other.m_Buffer));
+}
+
+void Output::DisplayBuffer::Clear()
+{
+    m_Cursor = 0;
+    m_Buffer.fill(' ');
+}
+
 void Output::DisplayBuffer::SetCursor(const int line, const int column)
 {
     if (line >= LCD_NUM_LINES || line < 0)

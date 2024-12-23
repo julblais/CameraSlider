@@ -8,48 +8,29 @@
 
 static Output::DisplayBuffer lcdPrint = Output::DisplayBuffer();
 
-static bool OnInputEvent(Hardware::LCD* lcd, const Input::Event& event)
+static bool OnInputEvent(Output::DisplayBuffer& display, const Input::Event& event)
 {
     if (event.HasJoystickChange())
     {
-        lcd->PrintLn("Joystick ", event.IsJoystickPressed() ? "pressed" : "", 0);
-        lcd->PrintLn("X: ", event.joystickX, " Y: ", event.joystickY, 1);
-    }
-
-    else{
-
-    lcdPrint.Print("abcdef", 123456, 7890, "NOOOOO");
-    lcdPrint.PrintLine(1, "THIS_TEXT_SHOULD_NOT_APPEAR");
-    lcdPrint.PrintLine(1, "blank_after:");
-
-    lcd->SetCursor(0, 0);
-    int i = 0;
-    for (auto it = lcdPrint.cbegin(); it != lcdPrint.cend(); ++it)
-    {
-        if (i >= 16)
-        {
-          lcd->SetCursor(0, 1);
-          i = 0;
-        }
-        i++;
-        lcd->Write(*it);
-    }
-    delay(100);
+        display.PrintLine(0, "Joystick ", event.IsJoystickPressed() ? "pressed" : "");
+        display.PrintLine(1, "X: ", event.joystickX, " Y: ", event.joystickY);
     }
 
     return false;
 }
 
 Slider::App::App(const AppConfig &config):
-    m_Config(config)
+    m_Config(config), 
+    m_DisplayBuffer(),
+    m_PreviousBuffer()
 {
     SetupComponents(config);
-    m_Menu = std::unique_ptr<Menu>(new Menu(m_LCD.get(), config.ShowMenuDelayMs));
+    m_Menu = std::unique_ptr<Menu>(new Menu(&m_DisplayBuffer, config.ShowMenuDelayMs));
     
     m_InputDispatcher.AddListener(m_Menu.get());
     m_InputDispatcher.AddListener([this](const Input::Event& event) 
     { 
-        return OnInputEvent(m_LCD.get(), event); 
+        return OnInputEvent(m_DisplayBuffer, event); 
     });
 }
 
@@ -90,7 +71,7 @@ void Slider::App::Setup()
     m_Dpad->Init();
     m_Menu->Init();
 
-    m_LCD->PrintLn("Salut Guillaume!", 0);
+    m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
 }
 
 void Slider::App::Update()
@@ -101,4 +82,11 @@ void Slider::App::Update()
     auto input = Input::InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
     //process received messages
     m_InputDispatcher.ProcessInput(input);
+
+    //output final display buffer
+    if (!m_DisplayBuffer.AreEqual(m_PreviousBuffer))
+    {
+        m_LCD->PrintBuffer(m_DisplayBuffer);
+        m_PreviousBuffer = m_DisplayBuffer;
+    }
 }

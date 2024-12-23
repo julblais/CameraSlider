@@ -1,10 +1,14 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include "src/hardware/lcd.h"
 #include "src/input/input.h"
 #include "src/utils/timer.h"
 #include "src/utils/menuSystem.h"
+
+namespace Output
+{
+    class DisplayBuffer;
+};
 
 using namespace Input;
 
@@ -13,7 +17,7 @@ namespace Slider{
     class Menu
     {
         public:
-            Menu(Hardware::LCD* lcd, unsigned long delay);
+            Menu(Output::DisplayBuffer* display, int delay);
             void Init();
 
             bool OnInputEvent(const Input::Event& inputEvent);
@@ -22,7 +26,7 @@ namespace Slider{
             void OnSelectionLongPress(unsigned long time);
             void OutputMenu();
             
-            Hardware::LCD* m_LCD;
+            Output::DisplayBuffer* m_DisplayBuffer;
             Utils::Timer m_Timer;
             Utils::MenuSystem m_MenuSystem;
     };
