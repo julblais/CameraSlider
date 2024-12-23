@@ -1,9 +1,11 @@
 #include "displayBuffer.h"
+#include "src/output/display.h"
 
-Output::DisplayBuffer::DisplayBuffer():
-    m_Cursor(0), m_Buffer()
+Output::DisplayBuffer::DisplayBuffer(Display *display):
+    m_Cursor(0), m_Buffer(), m_Display(display)
 {
     m_Buffer.fill(' ');
+    m_PreviousBuffer.fill(' ');
 }
 
 void Output::DisplayBuffer::fillCurrentLine()
@@ -22,11 +24,6 @@ size_t Output::DisplayBuffer::write(Keycode value)
     return 1;
 }
 
-bool Output::DisplayBuffer::AreEqual(const DisplayBuffer &other)
-{
-    return std::equal(std::begin(m_Buffer), std::end(m_Buffer), std::begin(other.m_Buffer));
-}
-
 void Output::DisplayBuffer::Clear()
 {
     m_Cursor = 0;
@@ -40,4 +37,16 @@ void Output::DisplayBuffer::SetCursor(const int line, const int column)
     if (column >= LCD_LINE_LENGTH || column < 0)
         return;
     m_Cursor = line * LCD_LINE_LENGTH + column;
+}
+
+void Output::DisplayBuffer::PrintToDisplay() const
+{
+    const auto areEqual = std::equal(
+        std::begin(m_Buffer), std::end(m_Buffer), std::begin(m_PreviousBuffer));
+
+    if (!areEqual)
+    {
+        m_Display->PrintBuffer(*this);
+        std::copy(std::begin(m_Buffer), std::end(m_Buffer), std::begin(m_PreviousBuffer));
+    }
 }

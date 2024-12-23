@@ -6,25 +6,29 @@
 
 namespace Output 
 {
+    using Keycode = uint8_t;
+
+    class Display;
+
+    template <typename TDisplay>
     class DisplayBuffer : private Print 
     {
         constexpr static auto LCD_LINE_LENGTH = 16;
         constexpr static auto LCD_NUM_LINES = 2;
 
-        using Keycode = uint8_t;
         using ConstIterator =
             std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES>::const_iterator;
 
         public:
-            DisplayBuffer();
+            DisplayBuffer(Display* display);
             virtual ~DisplayBuffer() = default;
 
             template <typename... TArgs> void Print(TArgs&&... args);
             template <typename... TArgs> void PrintLine(const int line, TArgs&&... args);
 
-            bool AreEqual(const DisplayBuffer& other);
             void Clear();
             void SetCursor(const int line, const int column = 0);
+            void PrintToDisplay() const;
 
             inline const ConstIterator begin() const { return m_Buffer.begin(); }
             inline const ConstIterator end() const { return m_Buffer.end(); }
@@ -39,7 +43,9 @@ namespace Output
             void fillCurrentLine();
 
             unsigned int m_Cursor;
+            Display* const m_Display;
             std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES> m_Buffer;
+            std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES> m_PreviousBuffer;
     };
     
     template <typename T, typename... TArgs>

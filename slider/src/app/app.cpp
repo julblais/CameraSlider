@@ -6,8 +6,6 @@
 
 #include <esp32-hal-timer.h>
 
-static Output::DisplayBuffer lcdPrint = Output::DisplayBuffer();
-
 static bool OnInputEvent(Output::DisplayBuffer& display, const Input::Event& event)
 {
     if (event.HasJoystickChange())
@@ -20,11 +18,10 @@ static bool OnInputEvent(Output::DisplayBuffer& display, const Input::Event& eve
 }
 
 Slider::App::App(const AppConfig &config):
-    m_Config(config), 
-    m_DisplayBuffer(),
-    m_PreviousBuffer()
+    m_Config(config)
 {
     SetupComponents(config);
+    m_DisplayBuffer = Output::DisplayBuffer(m_LCD.get());
     m_Menu = std::unique_ptr<Menu>(new Menu(&m_DisplayBuffer, config.ShowMenuDelayMs));
     
     m_InputDispatcher.AddListener(m_Menu.get());
@@ -84,9 +81,5 @@ void Slider::App::Update()
     m_InputDispatcher.ProcessInput(input);
 
     //output final display buffer
-    if (!m_DisplayBuffer.AreEqual(m_PreviousBuffer))
-    {
-        m_LCD->PrintBuffer(m_DisplayBuffer);
-        m_PreviousBuffer = m_DisplayBuffer;
-    }
+    
 }

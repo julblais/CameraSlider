@@ -43,7 +43,6 @@ namespace Slider
             std::unique_ptr<Input::IJoystickReader> m_Joystick;
             std::unique_ptr<Menu> m_Menu;
             Output::DisplayBuffer m_DisplayBuffer;
-            Output::DisplayBuffer m_PreviousBuffer;
             Input::InputDispatcher m_InputDispatcher;
     };
 }

@@ -4,6 +4,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <array>
 #include <type_traits>
+#include <Printable.h>
 
 namespace Output
 {
@@ -14,14 +15,19 @@ namespace Hardware{
 
     class LCD
     {
-        public: 
-        class CustomChar 
+        class CustomChar : public Printable
         {
             friend class LCD;
 
             public:
                 CustomChar();
                 CustomChar(LCD* lcd, const uint8_t charmap[]);
+               // operator uint8_t() const { return m_Id; }
+                virtual size_t printTo(Print& p) const override
+                {
+                    p.write(m_Id);
+                    return 1;
+                }
 
             private:
                 uint8_t m_Id;
