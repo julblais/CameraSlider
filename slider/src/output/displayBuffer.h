@@ -47,20 +47,20 @@ namespace Output
             mutable std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES> m_PreviousBuffer;
     };
 
-    template <typename... TArgs>
-    inline void passArgs(TArgs&&... args) {}
+    //use this weird thing to avoid undefined order of variadic template arguments
+    struct passArgs { template<typename ...T> passArgs(T...) {} };
 
     template <typename... TArgs>
     inline void DisplayBuffer::Print(TArgs &&...args)
     {
-        passArgs(print(args)...);
+        passArgs{(print(args), 1)...};
     }
 
     template <typename... TArgs>
     void DisplayBuffer::PrintLine(const int line, TArgs &&...args)
     {
         SetCursor(0, line);
-        passArgs(print(args)...);
+        passArgs{(print(args), 1)...};
         FillCurrentLine();
     }
 }
