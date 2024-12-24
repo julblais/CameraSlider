@@ -10,21 +10,20 @@ namespace Output
 
     enum class Symbol : char
     {
-        DoubleLeftRightArrows,
-        DoubleUpDownArrows
+        LeftRightArrows,
+        UpDownArrows
     };
 
-    class SymbolHandle /*: public Printable*/
+    class SymbolHandle : public Printable
     {
         public:
             SymbolHandle(Keycode id) : m_Id(id) {};
 
-             operator uint8_t() const { return m_Id; }
-            /*virtual size_t printTo(Print& p) const override
+            virtual size_t printTo(Print& p) const override
             {
                 p.write(m_Id);
                 return 1;
-            }*/
+            }
 
         private:
             uint8_t m_Id;

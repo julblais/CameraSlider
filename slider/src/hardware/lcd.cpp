@@ -7,7 +7,7 @@
 
 #include "src/debug.h"
 
-static const uint8_t DoubleLeftRightArrows[] = {
+static const uint8_t LeftRightArrows[] = {
     0b00000, 
     0b00000, 
     0b01010, 
@@ -18,7 +18,7 @@ static const uint8_t DoubleLeftRightArrows[] = {
     0b00000
 };
 
-static const uint8_t DoubleUpDownArrows[] = {
+static const uint8_t UpDownArrows[] = {
     0b00000,
     0b01100,
     0b11110,
@@ -39,9 +39,9 @@ void Hardware::LCD::Init()
     chip.init();
     
     auto id = 0;
-    CreateSymbol(id, DoubleLeftRightArrows);
+    CreateSymbol(id, LeftRightArrows);
     m_DoubleLeftRightArrows = id++;
-    CreateSymbol(id, DoubleUpDownArrows);
+    CreateSymbol(id, UpDownArrows);
     m_DoubleUpDownArrows = id++;
     
     chip.backlight();
@@ -73,9 +73,9 @@ Output::SymbolHandle Hardware::LCD::GetSymbol(Symbol symbol) const
     using namespace Output;
     switch (symbol)
     {
-        case Symbol::DoubleLeftRightArrows:
+        case Symbol::LeftRightArrows:
             return SymbolHandle(m_DoubleLeftRightArrows);
-        case Symbol::DoubleUpDownArrows:
+        case Symbol::UpDownArrows:
             return SymbolHandle(m_DoubleUpDownArrows);
     };
     return SymbolHandle(-1);
