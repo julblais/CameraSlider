@@ -81,4 +81,11 @@ void Slider::App::Update()
 
     //output final display buffer
     m_DisplayBuffer.PrintToDisplay();
+
+    //other idea: for the menu
+    //remove isOpened from menu system
+    //add an update method to menu
+    //add a timer to menu with the menu open delay
+    //the update method will print the output for the menu
+
 }
