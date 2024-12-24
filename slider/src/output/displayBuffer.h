@@ -23,7 +23,8 @@ namespace Output
             DisplayBuffer();
             virtual ~DisplayBuffer() = default;
             void Init(Display* display);
-
+            
+            template <typename... TArgs> void Print(TArgs&&... args);
             template <typename... TArgs> void PrintLine(const int line, TArgs&&... args);
 
             virtual void Write(Keycode value) override;
@@ -48,6 +49,12 @@ namespace Output
 
     template <typename... TArgs>
     inline void passArgs(TArgs&&... args) {}
+
+    template <typename... TArgs>
+    inline void DisplayBuffer::Print(TArgs &&...args)
+    {
+        passArgs(print(args)...);
+    }
 
     template <typename... TArgs>
     void DisplayBuffer::PrintLine(const int line, TArgs &&...args)
