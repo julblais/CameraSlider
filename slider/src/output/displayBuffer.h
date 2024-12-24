@@ -24,7 +24,6 @@ namespace Output
             virtual ~DisplayBuffer() = default;
             void Init(Display* display);
 
-            template <typename... TArgs> void Print(TArgs&&... args);
             template <typename... TArgs> void PrintLine(const int line, TArgs&&... args);
 
             virtual void Write(Keycode value) override;
@@ -39,10 +38,6 @@ namespace Output
 
         private:
             virtual size_t write(uint8_t value) override;
-
-            template <typename T, typename... TArgs>
-            void Print_internal(T&& arg1, TArgs&&... args);
-            inline void Print_internal() {}
             void FillCurrentLine();
 
             unsigned int m_Cursor;
@@ -52,23 +47,13 @@ namespace Output
     };
 
     template <typename... TArgs>
-    void DisplayBuffer::Print(TArgs &&...args)
-    {
-        Print_internal(args...);
-    }
-
-    template <typename T, typename... TArgs>
-    void DisplayBuffer::Print_internal(T &&arg1, TArgs &&...args)
-    {
-        print(arg1);
-        Print_internal(args...);
-    }
+    inline void passArgs(TArgs&&... args) {}
 
     template <typename... TArgs>
     void DisplayBuffer::PrintLine(const int line, TArgs &&...args)
     {
         SetCursor(0, line);
-        Print_internal(args...);
+        passArgs(print(args)...);
         FillCurrentLine();
     }
 }
