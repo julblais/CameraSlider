@@ -14,17 +14,17 @@ namespace Output
         DoubleUpDownArrows
     };
 
-    class SymbolHandle : public Printable
+    class SymbolHandle /*: public Printable*/
     {
         public:
             SymbolHandle(Keycode id) : m_Id(id) {};
 
-            // operator uint8_t() const { return m_Id; }
-            virtual size_t printTo(Print& p) const override
+             operator uint8_t() const { return m_Id; }
+            /*virtual size_t printTo(Print& p) const override
             {
                 p.write(m_Id);
                 return 1;
-            }
+            }*/
 
         private:
             uint8_t m_Id;
@@ -37,7 +37,7 @@ namespace Output
             virtual ~Display() = default;
 
             virtual void Init() {}
-            virtual void Write(uint8_t value) = 0;
+            virtual void Write(Keycode value) = 0;
             virtual void SetCursor(const int column, const int row) = 0;
             virtual SymbolHandle GetSymbol(Symbol symbol) const = 0;
     };

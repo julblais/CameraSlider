@@ -15,8 +15,13 @@ void Output::DisplayBuffer::FillCurrentLine()
         m_Buffer[m_Cursor++] = ' ';
 }
 
-size_t Output::DisplayBuffer::write(Keycode value)
+void Output::DisplayBuffer::Write(Keycode value)
 {
+    write(value);
+}
+
+size_t Output::DisplayBuffer::write(uint8_t value)
+{ 
     //do not go over the line!
     const auto maxCursor = ((m_Cursor / LCD_LINE_LENGTH) + 1) * LCD_LINE_LENGTH;
     if (m_Cursor < maxCursor)
@@ -35,13 +40,18 @@ void Output::DisplayBuffer::Clear()
     m_Buffer.fill(' ');
 }
 
-void Output::DisplayBuffer::SetCursor(const int line, const int column)
+void Output::DisplayBuffer::SetCursor(const int column, const int row)
 {
-    if (line >= LCD_NUM_LINES || line < 0)
+    if (row >= LCD_NUM_LINES || row < 0)
         return;
     if (column >= LCD_LINE_LENGTH || column < 0)
         return;
-    m_Cursor = line * LCD_LINE_LENGTH + column;
+    m_Cursor = row * LCD_LINE_LENGTH + column;
+}
+
+Output::SymbolHandle Output::DisplayBuffer::GetSymbol(Symbol symbol) const
+{
+    return m_Display->GetSymbol(symbol);
 }
 
 void Output::DisplayBuffer::PrintToDisplay() const

@@ -3,14 +3,13 @@
 
 #include <array>
 #include <Print.h>
+#include "display.h"
 
 namespace Output 
 {
     using Keycode = uint8_t;
 
-    class Display;
-
-    class DisplayBuffer : private Print 
+    class DisplayBuffer : private Print, public Display
     {
         constexpr static auto LCD_LINE_LENGTH = 16;
         constexpr static auto LCD_NUM_LINES = 2;
@@ -23,25 +22,26 @@ namespace Output
         public:
             DisplayBuffer();
             virtual ~DisplayBuffer() = default;
+            void Init(Display* display);
 
             template <typename... TArgs> void Print(TArgs&&... args);
             template <typename... TArgs> void PrintLine(const int line, TArgs&&... args);
 
-            void Init(Display* display);
+            virtual void Write(Keycode value) override;
+            virtual void SetCursor(const int column, const int row) override;
+            virtual SymbolHandle GetSymbol(Symbol symbol) const override;
+
             void Clear();
-            void SetCursor(const int line, const int column = 0);
             void PrintToDisplay() const;
 
             inline const ConstIterator begin() const { return m_Buffer.begin(); }
             inline const ConstIterator end() const { return m_Buffer.end(); }
 
         private:
-
-            virtual size_t write(Keycode value) override;
+            virtual size_t write(uint8_t value) override;
 
             template <typename T, typename... TArgs>
             void Print_internal(T&& arg1, TArgs&&... args);
-
             inline void Print_internal() {}
             void FillCurrentLine();
 
@@ -56,6 +56,7 @@ namespace Output
     {
         Print_internal(args...);
     }
+
     template <typename T, typename... TArgs>
     void DisplayBuffer::Print_internal(T &&arg1, TArgs &&...args)
     {
@@ -66,7 +67,7 @@ namespace Output
     template <typename... TArgs>
     void DisplayBuffer::PrintLine(const int line, TArgs &&...args)
     {
-        SetCursor(line);
+        SetCursor(0, line);
         Print_internal(args...);
         FillCurrentLine();
     }

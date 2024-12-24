@@ -57,6 +57,7 @@ void Hardware::LCD::Clear()
 {
     chip.clear();
 }
+
 void Hardware::LCD::Write(uint8_t value)
 {
     chip.write(value);
