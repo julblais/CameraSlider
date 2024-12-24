@@ -1,14 +1,14 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
+#include <Print.h>
 #include <Printable.h>
 
 namespace Output
 {    
     using Keycode = uint8_t;
-    class DisplayBuffer;
 
-    enum Symbol : char
+    enum class Symbol : char
     {
         DoubleLeftRightArrows,
         DoubleUpDownArrows
@@ -36,8 +36,9 @@ namespace Output
             Display() = default;
             virtual ~Display() = default;
 
+            virtual void Init() {}
             virtual void Write(uint8_t value) = 0;
-            virtual void PrintBuffer(const Output::DisplayBuffer& buffer) = 0;
+            virtual void SetCursor(const int column, const int row) = 0;
             virtual SymbolHandle GetSymbol(Symbol symbol) const = 0;
     };
 }

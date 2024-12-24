@@ -2,7 +2,6 @@
 #include "src/hardware/lcd.h"
 #include "src/simulator/dpadSimulator.h"
 #include "src/simulator/joystickSimulator.h"
-#include "src/output/displayBuffer.h"
 
 #include <esp32-hal-timer.h>
 
@@ -18,10 +17,9 @@ static bool OnInputEvent(Output::DisplayBuffer& display, const Input::Event& eve
 }
 
 Slider::App::App(const AppConfig &config):
-    m_Config(config)
+    m_Config(config), m_DisplayBuffer()
 {
     SetupComponents(config);
-    m_DisplayBuffer = Output::DisplayBuffer(m_LCD.get());
     m_Menu = std::unique_ptr<Menu>(new Menu(&m_DisplayBuffer, config.ShowMenuDelayMs));
     
     m_InputDispatcher.AddListener(m_Menu.get());
@@ -33,7 +31,7 @@ Slider::App::App(const AppConfig &config):
 
 void Slider::App::SetupComponents(const AppConfig &config)
 {    
-    m_LCD = std::unique_ptr<Hardware::LCD>(new Hardware::LCD(config.LcdAddress));
+    m_Display = std::unique_ptr<Hardware::LCD>(new Hardware::LCD(config.LcdAddress));
 
     #ifdef IS_SIMULATOR
         m_Dpad = std::unique_ptr<Input::IDpadReader>(new Simulator::DpadSimulator(
@@ -64,7 +62,8 @@ void Slider::App::SetupComponents(const AppConfig &config)
 
 void Slider::App::Setup()
 {
-    m_LCD->Init();
+    m_Display->Init();
+    m_DisplayBuffer.Init(m_Display.get());
     m_Dpad->Init();
     m_Menu->Init();
 
@@ -81,5 +80,5 @@ void Slider::App::Update()
     m_InputDispatcher.ProcessInput(input);
 
     //output final display buffer
-    
+    m_DisplayBuffer.PrintToDisplay();
 }
