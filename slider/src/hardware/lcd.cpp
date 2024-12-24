@@ -1,14 +1,13 @@
 
 #include "lcd.h"
+#include "src/output/displayBuffer.h"
 
 #include <LiquidCrystal_I2C.h>
 #include <array>
 
 #include "src/debug.h"
 
-static uint8_t s_IdCount = 0;
-
-static const uint8_t DoubleLeftRightArrows[] = {
+static const uint8_t LeftRightArrows[] = {
     0b00000, 
     0b00000, 
     0b01010, 
@@ -19,7 +18,7 @@ static const uint8_t DoubleLeftRightArrows[] = {
     0b00000
 };
 
-static const uint8_t DoubleUpDownArrows[] = {
+static const uint8_t UpDownArrows[] = {
     0b00000,
     0b01100,
     0b11110,
@@ -32,20 +31,26 @@ static const uint8_t DoubleUpDownArrows[] = {
 
 Hardware::LCD::LCD(const uint8_t address):
     chip(address, LCD::NUM_COLS, LCD::NUM_ROWS)
-{
-} 
+{} 
 
 void Hardware::LCD::Init()
 {
-    m_Buffer.fill(' ');
-
     Debug.Log("Init LCD.");
     chip.init();
     
-    m_DoubleLeftRightArrows = LCD::CustomChar(this, DoubleLeftRightArrows);
-    m_DoubleUpDownArrows =  LCD::CustomChar(this, DoubleUpDownArrows);
+    auto id = 0;
+    CreateSymbol(id, LeftRightArrows);
+    m_DoubleLeftRightArrows = id++;
+    CreateSymbol(id, UpDownArrows);
+    m_DoubleUpDownArrows = id++;
     
     chip.backlight();
+}
+
+void Hardware::LCD::CreateSymbol(const int id, const uint8_t *charmap)
+{
+    Debug.Log("Creating custom character with id: ", id);
+    chip.createChar(id, const_cast<uint8_t*>(charmap));
 }
 
 void Hardware::LCD::Clear()
@@ -53,18 +58,25 @@ void Hardware::LCD::Clear()
     chip.clear();
 }
 
-Hardware::LCD::CustomChar::CustomChar()
-    : m_Id(0){}
-
-Hardware::LCD::CustomChar::CustomChar(LCD *lcd, const uint8_t charmap[])
-    : m_Id(s_IdCount++)
+void Hardware::LCD::Write(uint8_t value)
 {
-    lcd->chip.createChar(m_Id, const_cast<uint8_t*>(charmap));
-    Debug.Log("Creating custom character with id: ", m_Id);
+    chip.write(value);
 }
 
-void Hardware::LCD::Write(const CustomChar &customChar, const int column, const int row)
+void Hardware::LCD::SetCursor(const int column, const int row)
 {
     chip.setCursor(column, row);
-    chip.write(customChar.m_Id);
+}
+
+Output::SymbolHandle Hardware::LCD::GetSymbol(Symbol symbol) const
+{
+    using namespace Output;
+    switch (symbol)
+    {
+        case Symbol::LeftRightArrows:
+            return SymbolHandle(m_DoubleLeftRightArrows);
+        case Symbol::UpDownArrows:
+            return SymbolHandle(m_DoubleUpDownArrows);
+    };
+    return SymbolHandle(-1);
 }

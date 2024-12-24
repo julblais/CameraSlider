@@ -1,16 +1,16 @@
-#ifndef DPAD_SIM_H
-#define DPAD_SIM_H
+#ifndef DPAD_H
+#define DPAD_H
 
 #include "src/input/input.h"
 #include "src/input/inputReader.h"
 
-namespace Simulator
+namespace Hardware
 {
-    class DpadSimulator : public Input::IDpadReader {
+    class Dpad : public Input::IDpadReader {
 
         public:
-            DpadSimulator(int upPin, int downPin, int leftPin, int rightPin, int selectionPin);
-            virtual ~DpadSimulator() override = default;
+            Dpad(int upPin, int downPin, int leftPin, int rightPin, int selectionPin);
+            virtual ~Dpad() override = default;
 
             virtual void Init() override;
             virtual Input::DpadInput ReadInput() override;
