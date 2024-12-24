@@ -72,7 +72,7 @@ void Slider::Menu::OnSelectionLongPress(unsigned long time)
 
 void Slider::Menu::OutputMenu()
 {
-    auto out = m_MenuSystem.GetOutput();
+    const auto out = m_MenuSystem.GetOutput();
     const auto upDownArrows = m_DisplayBuffer->GetSymbol(Output::Symbol::UpDownArrows);
     const auto leftRightArrows = m_DisplayBuffer->GetSymbol(Output::Symbol::LeftRightArrows);
     m_DisplayBuffer->PrintLine(0, upDownArrows, out.title);
