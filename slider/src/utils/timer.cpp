@@ -8,7 +8,7 @@
 
 static auto Timers = std::vector<Utils::Timer*>();
 
-void Utils::Timer::Update(unsigned int appTimeMs)
+void Utils::Timer::Update(unsigned long appTimeMs)
 {
     for(auto timer : Timers)
         timer->ProcessCallback(appTimeMs);
@@ -16,9 +16,8 @@ void Utils::Timer::Update(unsigned int appTimeMs)
 
 Utils::Timer::Timer(const char* name) :
     m_Name(name),
-    m_AppTimeMs(0),
-    m_Started(false),
-    m_Callback()
+    m_Callback(),
+    m_StartTimeMs(0)
 {
     Timers.push_back(this);
 }
@@ -40,31 +39,34 @@ Utils::Timer::~Timer()
 
 void Utils::Timer::Start()
 {
-    m_Started = true;
-    m_AppTimeMs = millis();
-    Debug.Log("Timer \"", m_Name, "\" started at: ", m_AppTimeMs);
+    m_StartTimeMs = millis();
+    Debug.Log("Timer \"", m_Name, "\" started at: ", m_StartTimeMs);
 }
 
 void Utils::Timer::Stop()
 {
-    if (m_Started)
+    if (m_StartTimeMs != 0)
     {
         Debug.Log("Timer \"", m_Name, "\" stopped");
-        m_Started = false;
-        m_AppTimeMs = 0;
+        m_StartTimeMs = 0;
     }
+}
+
+void Utils::Timer::Trigger()
+{
+    ProcessCallback(ULONG_MAX);
 }
 
 unsigned int Utils::Timer::Delta() const
 {
-    return m_Started ? millis() - m_AppTimeMs : 0;
+    return m_StartTimeMs != 0 ? millis() - m_StartTimeMs : 0;
 }
 
 void Utils::Timer::ProcessCallback(unsigned long appTimeMs)
 {
-    if (m_Started && m_Callback)
+    if (m_StartTimeMs != 0 && m_Callback)
     {
-        auto delta = appTimeMs - m_AppTimeMs;
+        const auto delta = m_StartTimeMs < appTimeMs ? appTimeMs - m_StartTimeMs : 0u;
         if (delta >= m_Delay)
         {
             Debug.Log("Timer \"", m_Name, "\" activated at: ", appTimeMs);

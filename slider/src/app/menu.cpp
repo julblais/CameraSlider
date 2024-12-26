@@ -2,13 +2,17 @@
 #include "commands.h"
 
 #include "src/debug.h"
+#include "src/output/displayBuffer.h"
 
 #define MENU_INTRO_DELAY_MS 1500
+#define MENU_INTRO_MSG "   -- Menu --"
 
-Slider::Menu::Menu(Hardware::LCD* lcd, unsigned long delay) :
-    m_LCD(lcd),
-    m_Timer("Selection menu", [this](unsigned long time){ OnSelectionLongPress(time); }, delay),
-    m_MenuSystem()
+Slider::Menu::Menu(Output::DisplayBuffer* display, int delay) :
+    m_DisplayBuffer(display),
+    m_ShowHideTimer("Selection menu", [this](unsigned long time){ OnSelectionLongPress(time); }, delay),
+    m_IntroTimer("Intro menu", [this](unsigned long time){ OnIntroFinished(time); }, MENU_INTRO_DELAY_MS),
+    m_MenuSystem(),
+    m_State(State::Hidden)
 {}
 
 void Slider::Menu::Init()
@@ -20,58 +24,69 @@ void Slider::Menu::Init()
 bool Slider::Menu::OnInputEvent(const Input::Event &inputEvent)
 {
     if (inputEvent.dpadButtonState == Input::ButtonReleased)
-        m_Timer.Stop();
-    else if (inputEvent.dpadButtonState == Input::ButtonPressed)
     {
-        switch(inputEvent.button)
-        {
-            case Input::DpadLeft:
-                m_MenuSystem.MoveLeft();
-                break;
-            case Input::DpadRight:
-                m_MenuSystem.MoveRight();
-                break;
-            case Input::DpadUp:
-                m_MenuSystem.MoveUp();
-                break;
-            case Input::DpadDown:
-                m_MenuSystem.MoveDown();
-                break;
-            case Input::DpadSelect:
-                m_Timer.Start();
-                break;
-            default:
-                break;
-        }
-        if (m_MenuSystem.IsOpened())
-            OutputMenu();
+        m_ShowHideTimer.Stop();
+        return false;
     }
     
-    return m_MenuSystem.IsOpened();
+    if (inputEvent.dpadButtonState == Input::ButtonPressed)
+    {
+        if (inputEvent.button == Input::DpadSelect)
+            m_ShowHideTimer.Start();
+        else if (m_State == State::Shown)
+        {
+            switch(inputEvent.button)
+            {
+                case Input::DpadLeft:
+                    m_MenuSystem.MoveLeft();
+                    break;
+                case Input::DpadRight:
+                    m_MenuSystem.MoveRight();
+                    break;
+                case Input::DpadUp:
+                    m_MenuSystem.MoveUp();
+                    break;
+                case Input::DpadDown:
+                    m_MenuSystem.MoveDown();
+                    break;
+                default:
+                    break;
+            };
+            OutputMenu();
+        }
+    }
+    
+    return m_State != State::Hidden;
 }
 
 void Slider::Menu::OnSelectionLongPress(unsigned long time)
 {
-    if (m_MenuSystem.IsOpened())
+    if (m_State == State::Hidden)
     {
-        Debug.Log("Close menu!", time);
-        m_LCD->Clear();
-        m_MenuSystem.Close();
+        m_State = State::Intro;
+        m_IntroTimer.Start();
+        m_DisplayBuffer->Clear();
+        m_DisplayBuffer->Print(MENU_INTRO_MSG);
     }
-    else
-    {
-        Debug.Log("Open menu!", time);
-        m_LCD->Clear();
-        m_LCD->PrintLn("   -- Menu --", 0);
-        delay(MENU_INTRO_DELAY_MS);
-        m_MenuSystem.Open();
-        OutputMenu();
+    else {
+        m_State = State::Hidden;
+        m_IntroTimer.Stop();
+        m_DisplayBuffer->Clear();
     }
+}
+
+void Slider::Menu::OnIntroFinished(unsigned long time)
+{
+    m_State = State::Shown;
+    m_MenuSystem.Reset();
+    OutputMenu();
 }
 
 void Slider::Menu::OutputMenu()
 {
-    auto out = m_MenuSystem.GetOutput();
-    m_LCD->PrintLn(m_LCD->GetDoubleUpDownArrows(), out.title, 0);
-    m_LCD->PrintLn(" ", m_LCD->GetDoubleLeftRightArrows(), out.desc, 1);
+    const auto out = m_MenuSystem.GetOutput();
+    const auto upDownArrows = m_DisplayBuffer->GetSymbol(Output::Symbol::UpDownArrows);
+    const auto leftRightArrows = m_DisplayBuffer->GetSymbol(Output::Symbol::LeftRightArrows);
+    m_DisplayBuffer->PrintLine(0, upDownArrows, out.title);
+    m_DisplayBuffer->PrintLine(1, " ", leftRightArrows, out.desc);
 }

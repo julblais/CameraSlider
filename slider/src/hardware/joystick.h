@@ -1,16 +1,16 @@
-#ifndef JOYSTICKSIMULATOR_H
-#define JOYSTICKSIMULATOR_H
+#ifndef JOYSTICK_H
+#define JOYSTICK_H
 
 #include "src/input/input.h"
 #include "src/input/inputReader.h"
 
-namespace Simulator
+namespace Hardware
 {
-    class JoystickSimulator : public Input::IJoystickReader
+    class Joystick : public Input::IJoystickReader
     {
         public:
-            JoystickSimulator(int horizontalPin, int verticalPin, int centerPin);
-            virtual ~JoystickSimulator() override = default;
+            Joystick(int horizontalPin, int verticalPin, int centerPin);
+            virtual ~Joystick() override = default;
 
             virtual void Init() override;
             virtual Input::JoystickInput ReadInput() override;

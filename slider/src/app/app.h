@@ -1,16 +1,20 @@
 #ifndef APP_H
 #define APP_H
 
-#include "src/hardware/lcd.h"
 #include "src/input/input.h"
-#include "src/input/inputReader.h"
 #include "src/input/inputDispatcher.h"
+#include "src/input/inputReader.h"
+#include "src/output/display.h"
+#include "src/output/displayBuffer.h"
 #include "menu.h"
 
 #include <memory>
 
 namespace Slider
 {
+    using namespace Input;
+    using namespace Output;
+
     struct AppConfig
     {
         public:
@@ -37,11 +41,12 @@ namespace Slider
             void SetupComponents(const AppConfig &config);
 
             AppConfig m_Config;
-            std::unique_ptr<Hardware::LCD> m_LCD;
-            std::unique_ptr<Input::IDpadReader> m_Dpad;
-            std::unique_ptr<Input::IJoystickReader> m_Joystick;
+            std::unique_ptr<Display> m_Display;
+            std::unique_ptr<IDpadReader> m_Dpad;
+            std::unique_ptr<IJoystickReader> m_Joystick;
             std::unique_ptr<Menu> m_Menu;
-            Input::InputDispatcher m_InputDispatcher;
+            DisplayBuffer m_DisplayBuffer;
+            InputDispatcher m_InputDispatcher;
     };
 }
 

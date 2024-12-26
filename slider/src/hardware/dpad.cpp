@@ -1,7 +1,7 @@
-#include "dpadSimulator.h"
+#include "dpad.h"
 #include "src/debug.h"
 
-Simulator::DpadSimulator::DpadSimulator(int upPin, int downPin, int leftPin, int rightPin, int selectionPin) :
+Hardware::Dpad::Dpad(int upPin, int downPin, int leftPin, int rightPin, int selectionPin) :
     m_UpPin(upPin),
     m_DownPin(downPin),
     m_LeftPin(leftPin),
@@ -9,7 +9,7 @@ Simulator::DpadSimulator::DpadSimulator(int upPin, int downPin, int leftPin, int
     m_SelectionPin(selectionPin)
 {}
 
-void Simulator::DpadSimulator::Init()
+void Hardware::Dpad::Init()
 {
     pinMode(m_UpPin, INPUT_PULLUP);
     pinMode(m_DownPin, INPUT_PULLUP);
@@ -18,7 +18,7 @@ void Simulator::DpadSimulator::Init()
     pinMode(m_SelectionPin, INPUT_PULLUP);
 }
 
-Input::DpadInput Simulator::DpadSimulator::ReadInput()
+Input::DpadInput Hardware::Dpad::ReadInput()
 {
     auto up = digitalRead(m_UpPin) == LOW;
     auto down = digitalRead(m_DownPin) == LOW;

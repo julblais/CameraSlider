@@ -1,53 +1,64 @@
 #include "commands.h"
+#include "src/app/settings.h"
 
-const char* MaxSpeedCommand::GetTitle()
+const char* Slider::MaxSpeedCommand::GetTitle()
 {
     return "Vitesse max.";
 }
 
-const char* SpeedCurveCommand::GetTitle()
+const char* Slider::SpeedCurveCommand::GetTitle()
 {
     return "Courbe vitesse";
 }
 
-const char* MaxSpeedCommand::GetDesc()
+const char* Slider::MaxSpeedCommand::GetDesc()
 {
-    if (m_Speed == MaxSpeedCommand::Speed::SLOW)
-        return "Pas vite";
-    else if (m_Speed == MaxSpeedCommand::Speed::SMED)
-        return "Moyen vite";
-    else if (m_Speed == MaxSpeedCommand::Speed::SHIGH)
-        return "Fuckin vite";
-    else return nullptr;
+    switch (AppSettings.GetSpeed())
+    {
+        case Settings::SpeedSlow:
+            return "Pas vite";
+        case Settings::SpeedMedium:
+            return "Moyen vite";
+        case Settings::SpeedHigh:
+            return "Fuckin vite";
+        default:
+            return nullptr;
+    };
 }
 
- void MaxSpeedCommand::Invoke(Utils::MenuCommandButton command)
+void Slider::MaxSpeedCommand::Invoke(Utils::MenuCommandButton command)
 {
-    if (m_Speed == MaxSpeedCommand::Speed::SLOW)
-        m_Speed = MaxSpeedCommand::Speed::SMED;
-    else if (m_Speed == MaxSpeedCommand::Speed::SMED)
-        m_Speed = MaxSpeedCommand::Speed::SHIGH;
-    else if (m_Speed == MaxSpeedCommand::Speed::SHIGH)
-        m_Speed = MaxSpeedCommand::Speed::SLOW;
+    const auto speed = AppSettings.GetSpeed();
+    if (speed == Settings::SpeedSlow)
+        AppSettings.SetSpeed(Settings::SpeedMedium);
+    else if (speed == Settings::SpeedMedium)
+        AppSettings.SetSpeed(Settings::SpeedHigh);
+    else if (speed == Settings::SpeedHigh)
+        AppSettings.SetSpeed(Settings::SpeedSlow);
 }
 
-const char* SpeedCurveCommand::GetDesc()
+const char* Slider::SpeedCurveCommand::GetDesc()
 {
-    if (m_Curve == SpeedCurveCommand::Curve::CLINEAR)
-        return "Lineaire";
-    else if (m_Curve == SpeedCurveCommand::Curve::CQUAD)
-        return "Quadratique";
-    else if (m_Curve == SpeedCurveCommand::Curve::CEXP)
-        return "Exponentielle";
-    else return nullptr;
+    switch (AppSettings.GetCurve())
+    {
+        case Settings::CurveLinear:
+            return "Lineaire";
+        case Settings::CurveQuadratic:
+            return "Quadratique";
+        case Settings::CurveExponential:
+            return "Exponentielle";
+        default:
+            return nullptr;
+    };
 }
 
-void SpeedCurveCommand::Invoke(Utils::MenuCommandButton command)
+void Slider::SpeedCurveCommand::Invoke(Utils::MenuCommandButton command)
 {
-    if (m_Curve == SpeedCurveCommand::Curve::CLINEAR)
-        m_Curve = SpeedCurveCommand::Curve::CQUAD;
-    else if (m_Curve == SpeedCurveCommand::Curve::CQUAD)
-        m_Curve = SpeedCurveCommand::Curve::CEXP;
-    else if (m_Curve == SpeedCurveCommand::Curve::CEXP)
-        m_Curve = SpeedCurveCommand::Curve::CLINEAR;
+    const auto curve = AppSettings.GetCurve();
+    if (curve == Settings::CurveLinear)
+        AppSettings.SetCurve(Settings::CurveQuadratic);
+    else if (curve == Settings::CurveQuadratic)
+        AppSettings.SetCurve(Settings::CurveExponential);
+    else if (curve == Settings::CurveExponential)
+        AppSettings.SetCurve(Settings::CurveLinear);
 }
