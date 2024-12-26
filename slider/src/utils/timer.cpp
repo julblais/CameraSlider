@@ -16,7 +16,6 @@ void Utils::Timer::Update(unsigned long appTimeMs)
 
 Utils::Timer::Timer(const char* name) :
     m_Name(name),
-    m_Started(false),
     m_Callback(),
     m_StartTimeMs(0)
 {
@@ -40,17 +39,15 @@ Utils::Timer::~Timer()
 
 void Utils::Timer::Start()
 {
-    m_Started = true;
     m_StartTimeMs = millis();
     Debug.Log("Timer \"", m_Name, "\" started at: ", m_StartTimeMs);
 }
 
 void Utils::Timer::Stop()
 {
-    if (m_Started)
+    if (m_StartTimeMs != 0)
     {
         Debug.Log("Timer \"", m_Name, "\" stopped");
-        m_Started = false;
         m_StartTimeMs = 0;
     }
 }
@@ -62,12 +59,12 @@ void Utils::Timer::Trigger()
 
 unsigned int Utils::Timer::Delta() const
 {
-    return m_Started ? millis() - m_StartTimeMs : 0;
+    return m_StartTimeMs != 0 ? millis() - m_StartTimeMs : 0;
 }
 
 void Utils::Timer::ProcessCallback(unsigned long appTimeMs)
 {
-    if (m_Started && m_Callback)
+    if (m_StartTimeMs != 0 && m_Callback)
     {
         const auto delta = m_StartTimeMs < appTimeMs ? appTimeMs - m_StartTimeMs : 0u;
         if (delta >= m_Delay)

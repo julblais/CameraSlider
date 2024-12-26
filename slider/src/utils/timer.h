@@ -23,7 +23,6 @@ namespace Utils
             void ProcessCallback(unsigned long appTimeMs);
             
             const char* const m_Name;
-            bool m_Started;
             unsigned long m_Delay;
             unsigned long m_StartTimeMs;
             std::function<void(unsigned long)> m_Callback;
