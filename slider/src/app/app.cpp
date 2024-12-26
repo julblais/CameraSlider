@@ -65,16 +65,11 @@ void Slider::App::Update()
     Utils::Timer::Update(appTimeMs);
 
     auto input = InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
-    //process received messages
+    /*-> process received messages here <- */
     m_InputDispatcher.ProcessInput(input);
+
+    //update all systems
 
     //output final display buffer
     m_DisplayBuffer.PrintToDisplay();
-
-    //other idea: for the menu
-    //remove isOpened from menu system
-    //add an update method to menu
-    //add a timer to menu with the menu open delay
-    //the update method will print the output for the menu
-
 }

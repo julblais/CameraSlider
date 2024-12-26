@@ -39,8 +39,7 @@ namespace Utils
         public:
             MenuSystem();
 
-            void Open();
-            void Close();
+            void Reset();
             void AddCommand(MenuCommand* command);
 
             void MoveUp();
@@ -49,11 +48,10 @@ namespace Utils
             void MoveRight();
 
             MenuOutput GetOutput() const;
-            inline bool IsOpened() const { return m_IsOpened; }
+            
         private:
             std::vector<std::unique_ptr<MenuCommand>> m_Items;
             int m_Index;
-            bool m_IsOpened;
     };
 }
 
