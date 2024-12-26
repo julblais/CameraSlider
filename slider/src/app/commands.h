@@ -2,37 +2,32 @@
 #define CMDS_H
 
 #include "src/utils/menuSystem.h"
+#include "src/app/settings.h"
 
-class MaxSpeedCommand : public Utils::MenuCommand
+namespace Slider
 {
-    public:
-        enum Speed  { SLOW = 0, SMED = 1, SHIGH = 2 };
+    class MaxSpeedCommand : public Utils::MenuCommand
+    {
+        public:
+            MaxSpeedCommand() = default;
+            virtual ~MaxSpeedCommand() = default;
 
-        MaxSpeedCommand() : m_Speed(Speed::SLOW) {}
-        virtual ~MaxSpeedCommand() {}
+            virtual const char* GetTitle() override;
+            virtual const char* GetDesc() override;
+            virtual void Invoke(Utils::MenuCommandButton command) override;
+    };
 
-        virtual const char* GetTitle() override;
-        virtual const char* GetDesc() override;
-        virtual void Invoke(Utils::MenuCommandButton command) override;
+    class SpeedCurveCommand : public Utils::MenuCommand
+    {
+        public:
+            SpeedCurveCommand() = default;
+            virtual ~SpeedCurveCommand() = default;
 
-    private:
-        Speed m_Speed;
-};
+            virtual const char* GetTitle() override;
+            virtual const char* GetDesc() override;
+            virtual void Invoke(Utils::MenuCommandButton command) override;
+    };
+}
 
-class SpeedCurveCommand : public Utils::MenuCommand
-{
-    public:
-        enum Curve  { CLINEAR = 0, CQUAD = 1, CEXP = 2 };
-
-        SpeedCurveCommand() : m_Curve(Curve::CLINEAR) {}
-        virtual ~SpeedCurveCommand() {}
-
-        virtual const char* GetTitle() override;
-        virtual const char* GetDesc() override;
-        virtual void Invoke(Utils::MenuCommandButton command) override;
-
-    private:
-        Curve m_Curve;
-};
 
 #endif
