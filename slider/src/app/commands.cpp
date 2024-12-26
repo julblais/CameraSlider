@@ -26,7 +26,7 @@ const char* Slider::MaxSpeedCommand::GetDesc()
     };
 }
 
- void Slider::MaxSpeedCommand::Invoke(Utils::MenuCommandButton command)
+void Slider::MaxSpeedCommand::Invoke(Utils::MenuCommandButton command)
 {
     const auto speed = AppSettings.GetSpeed();
     if (speed == Settings::SpeedSlow)

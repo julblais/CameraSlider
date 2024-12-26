@@ -20,7 +20,6 @@ namespace Slider
 
         inline void SetSpeed(Speed value) { m_Speed = value; }
         inline void SetCurve(Curve value) { m_Curve = value; }
-        
 
         static Settings Default()
         {
