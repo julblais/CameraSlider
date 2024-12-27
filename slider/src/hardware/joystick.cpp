@@ -1,11 +1,10 @@
 #include "joystick.h"
+#include "src/utils/mathUtils.h"
 
 #include <esp32-hal-gpio.h>
 
-constexpr auto JOYSTICK_RANGE_X = 4095;
-constexpr auto JOYSTICK_RANGE_Y = 4095;
-constexpr auto JOYSTICK_REMAP_X = (JOYSTICK_RANGE_X + 1) / 2;
-constexpr auto JOYSTICK_REMAP_Y = (JOYSTICK_RANGE_Y + 1) / 2;
+constexpr auto JOYSTICK_RANGE_X = 4096;
+constexpr auto JOYSTICK_RANGE_Y = 4096;
 
 Hardware::Joystick::Joystick(int horizontalPin, int verticalPin, int centerPin):
     m_HorizontalPin(horizontalPin),
@@ -22,14 +21,14 @@ void Hardware::Joystick::Init()
 
 Input::JoystickInput Hardware::Joystick::ReadInput()
 { 
-    auto vertical = analogRead(m_VerticalPin) - JOYSTICK_REMAP_Y;
-    auto horizontal = analogRead(m_HorizontalPin) - JOYSTICK_REMAP_X;
+    auto v = analogRead(m_VerticalPin);
+    auto h = analogRead(m_HorizontalPin);
     auto selection = digitalRead(m_CenterPin) == LOW;
     auto button = selection ? Input::JoystickCenter : Input::JoystickNone;
 
     Input::JoystickInput input = { 
-        .x = -((float)horizontal / (float) JOYSTICK_RANGE_X), 
-        .y = (float)vertical / (float) JOYSTICK_RANGE_Y, 
+        .x = -Remap((float)h, 0.0f, (float)JOYSTICK_RANGE_X, -1.0f, 1.0f), 
+        .y = Remap((float)v, 0.0f, (float)JOYSTICK_RANGE_Y, -1.0f, 1.0f), 
         .button = button };
     return input;
 }
