@@ -17,8 +17,6 @@ namespace Slider
         static constexpr auto CurveQuadratic = Curve::C_QUAD;
         static constexpr auto CurveExponential = Curve::C_EXP;
 
-        Settings();
-
         Speed GetSpeed() const;
         Curve GetCurve() const;
 
@@ -28,7 +26,10 @@ namespace Slider
         static Settings& GetInstance();
 
         private:
-            mutable Preferences m_Prefs;
+            Settings();
+            Settings(const Settings&) = delete;
+
+        mutable Preferences m_Prefs;
     };
 }
 
