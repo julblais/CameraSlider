@@ -3,7 +3,7 @@
 #define MAX_SPEED 1000
 #define MAX_ACCEL 100
 
-Stepper::Stepper(const int directionPin, const int stepPin):
+Stepper::Stepper(const unsigned char directionPin, const unsigned char stepPin):
     m_Stepper(AccelStepper::DRIVER, stepPin, directionPin)
 {}
 

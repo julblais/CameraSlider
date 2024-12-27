@@ -49,7 +49,7 @@ void Hardware::LCD::Init()
     chip.backlight();
 }
 
-void Hardware::LCD::CreateSymbol(const int id, const uint8_t *charmap)
+void Hardware::LCD::CreateSymbol(const unsigned char id, const uint8_t *charmap)
 {
     Debug.Log("Creating custom character with id: ", id);
     chip.createChar(id, const_cast<uint8_t*>(charmap));
@@ -65,7 +65,7 @@ void Hardware::LCD::Write(uint8_t value)
     chip.write(value);
 }
 
-void Hardware::LCD::SetCursor(const int column, const int row)
+void Hardware::LCD::SetCursor(const unsigned char column, const unsigned char row)
 {
     chip.setCursor(column, row);
 }

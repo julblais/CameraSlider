@@ -9,16 +9,16 @@ namespace Hardware
     class Joystick : public Input::IJoystickReader
     {
         public:
-            Joystick(int horizontalPin, int verticalPin, int centerPin);
+            Joystick(const unsigned char horizontalPin, const unsigned char verticalPin, const unsigned char centerPin);
             virtual ~Joystick() override = default;
 
             virtual void Init() override;
             virtual Input::JoystickInput ReadInput() override;
 
         private:
-            const int m_HorizontalPin;
-            const int m_VerticalPin;
-            const int m_CenterPin;
+            const unsigned char m_HorizontalPin;
+            const unsigned char m_VerticalPin;
+            const unsigned char m_CenterPin;
     };
 }
 

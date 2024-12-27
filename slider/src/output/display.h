@@ -37,7 +37,7 @@ namespace Output
 
             virtual void Init() {}
             virtual void Write(Keycode value) = 0;
-            virtual void SetCursor(const int column, const int row) = 0;
+            virtual void SetCursor(const unsigned char column, const unsigned char row) = 0;
             virtual SymbolHandle GetSymbol(Symbol symbol) const = 0;
     };
 }

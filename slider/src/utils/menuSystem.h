@@ -51,7 +51,7 @@ namespace Utils
             
         private:
             std::vector<std::unique_ptr<MenuCommand>> m_Items;
-            int m_Index;
+            char m_Index;
     };
 }
 
