@@ -16,7 +16,7 @@ void Utils::MenuSystem::Reset()
     m_Index = 0;
 }
 
-void Utils::MenuSystem::MoveUp()
+void Utils::MenuSystem::Up()
 {
     auto newIdx = m_Index-1;
     if (newIdx < 0) //wrap
@@ -25,7 +25,7 @@ void Utils::MenuSystem::MoveUp()
         m_Index = newIdx;
 }
 
-void Utils::MenuSystem::MoveDown()
+void Utils::MenuSystem::Down()
 {
     auto newIdx = m_Index+1;
     if (newIdx >= m_Items.size()) //wrap
@@ -34,14 +34,19 @@ void Utils::MenuSystem::MoveDown()
         m_Index = newIdx;
 }
 
-void Utils::MenuSystem::MoveLeft()
+void Utils::MenuSystem::Left()
 {
-    m_Items[m_Index]->Invoke(Utils::MenuCommandButton::LEFT);
+    m_Items[m_Index]->Invoke(MenuCommand::ButtonLeft);
 }
 
-void Utils::MenuSystem::MoveRight()
+void Utils::MenuSystem::Right()
 {
-    m_Items[m_Index]->Invoke(Utils::MenuCommandButton::RIGHT);
+    m_Items[m_Index]->Invoke(MenuCommand::ButtonRight);
+}
+
+void Utils::MenuSystem::Select()
+{
+    m_Items[m_Index]->Invoke(MenuCommand::ButtonSelect);
 }
 
 Utils::MenuOutput Utils::MenuSystem::GetOutput() const

@@ -8,15 +8,20 @@
 
 namespace Utils
 {
-    enum MenuCommandButton
+    enum class MenuCommandButton : char
     {
         LEFT,
-        RIGHT
+        RIGHT,
+        SELECT
     };
 
     class MenuCommand
     {
         public:
+            static constexpr auto ButtonLeft = MenuCommandButton::LEFT;
+            static constexpr auto ButtonRight = MenuCommandButton::RIGHT;
+            static constexpr auto ButtonSelect = MenuCommandButton::SELECT;
+
             MenuCommand() {};
             virtual ~MenuCommand() {}
             virtual const char* GetTitle()=0;
@@ -42,10 +47,11 @@ namespace Utils
             void Reset();
             void AddCommand(MenuCommand* command);
 
-            void MoveUp();
-            void MoveDown();
-            void MoveLeft();
-            void MoveRight();
+            void Up();
+            void Down();
+            void Left();
+            void Right();
+            void Select();
 
             MenuOutput GetOutput() const;
             
