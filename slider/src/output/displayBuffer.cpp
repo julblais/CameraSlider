@@ -1,7 +1,8 @@
 #include "displayBuffer.h"
 #include "src/output/display.h"
 
-Output::DisplayBuffer::DisplayBuffer()
+Output::DisplayBuffer::DisplayBuffer():
+    m_Display(nullptr)
 {
     m_Buffer.fill(' ');
     m_PreviousBuffer.fill(' ');
