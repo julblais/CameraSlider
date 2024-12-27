@@ -34,8 +34,8 @@ namespace Output
             void Clear();
             void PrintToDisplay() const;
 
-            inline const ConstIterator begin() const { return m_Buffer.begin(); }
-            inline const ConstIterator end() const { return m_Buffer.end(); }
+            inline ConstIterator begin() const { return m_Buffer.begin(); }
+            inline ConstIterator end() const { return m_Buffer.end(); }
 
         private:
             virtual size_t write(uint8_t value) override;
