@@ -70,8 +70,6 @@ void Slider::Menu::OnSelectionLongPress(unsigned long time)
         m_DisplayBuffer->Print(MENU_INTRO_MSG);
     }
     else { //quit menu
-        
-        Settings::GetInstance().Save();
         m_State = State::Hidden;
         m_IntroTimer.Stop();
         m_DisplayBuffer->Clear();

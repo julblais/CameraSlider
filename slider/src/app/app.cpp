@@ -2,7 +2,6 @@
 #include "src/hardware/lcd.h"
 #include "src/hardware/dpad.h"
 #include "src/hardware/joystick.h"
-#include "src/app/settings.h"
 
 #include <esp32-hal-timer.h>
 
@@ -52,8 +51,6 @@ void Slider::App::SetupComponents(const AppConfig &config)
 
 void Slider::App::Setup()
 {
-    Settings::GetInstance().Restore();
-
     m_Display->Init();
     m_DisplayBuffer.Init(m_Display.get());
     m_Dpad->Init();
