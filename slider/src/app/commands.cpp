@@ -13,7 +13,7 @@ const char* Slider::SpeedCurveCommand::GetTitle()
 
 const char* Slider::MaxSpeedCommand::GetDesc()
 {
-    switch (AppSettings.GetSpeed())
+    switch (Settings::GetInstance().GetSpeed())
     {
         case Settings::SpeedSlow:
             return "Pas vite";
@@ -28,18 +28,18 @@ const char* Slider::MaxSpeedCommand::GetDesc()
 
 void Slider::MaxSpeedCommand::Invoke(Utils::MenuCommandButton command)
 {
-    const auto speed = AppSettings.GetSpeed();
+    const auto speed = Settings::GetInstance().GetSpeed();
     if (speed == Settings::SpeedSlow)
-        AppSettings.SetSpeed(Settings::SpeedMedium);
+        Settings::GetInstance().SetSpeed(Settings::SpeedMedium);
     else if (speed == Settings::SpeedMedium)
-        AppSettings.SetSpeed(Settings::SpeedHigh);
+        Settings::GetInstance().SetSpeed(Settings::SpeedHigh);
     else if (speed == Settings::SpeedHigh)
-        AppSettings.SetSpeed(Settings::SpeedSlow);
+        Settings::GetInstance().SetSpeed(Settings::SpeedSlow);
 }
 
 const char* Slider::SpeedCurveCommand::GetDesc()
 {
-    switch (AppSettings.GetCurve())
+    switch (Settings::GetInstance().GetCurve())
     {
         case Settings::CurveLinear:
             return "Lineaire";
@@ -54,11 +54,11 @@ const char* Slider::SpeedCurveCommand::GetDesc()
 
 void Slider::SpeedCurveCommand::Invoke(Utils::MenuCommandButton command)
 {
-    const auto curve = AppSettings.GetCurve();
+    const auto curve = Settings::GetInstance().GetCurve();
     if (curve == Settings::CurveLinear)
-        AppSettings.SetCurve(Settings::CurveQuadratic);
+        Settings::GetInstance().SetCurve(Settings::CurveQuadratic);
     else if (curve == Settings::CurveQuadratic)
-        AppSettings.SetCurve(Settings::CurveExponential);
+        Settings::GetInstance().SetCurve(Settings::CurveExponential);
     else if (curve == Settings::CurveExponential)
-        AppSettings.SetCurve(Settings::CurveLinear);
+        Settings::GetInstance().SetCurve(Settings::CurveLinear);
 }

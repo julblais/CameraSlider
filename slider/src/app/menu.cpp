@@ -1,5 +1,6 @@
 #include "menu.h"
 #include "commands.h"
+#include "settings.h"
 
 #include "src/debug.h"
 #include "src/output/displayBuffer.h"
@@ -61,14 +62,16 @@ bool Slider::Menu::OnInputEvent(const Input::Event &inputEvent)
 
 void Slider::Menu::OnSelectionLongPress(unsigned long time)
 {
-    if (m_State == State::Hidden)
+    if (m_State == State::Hidden) //show intro
     {
         m_State = State::Intro;
         m_IntroTimer.Start();
         m_DisplayBuffer->Clear();
         m_DisplayBuffer->Print(MENU_INTRO_MSG);
     }
-    else {
+    else { //quit menu
+        
+        Settings::GetInstance().Save();
         m_State = State::Hidden;
         m_IntroTimer.Stop();
         m_DisplayBuffer->Clear();
@@ -77,6 +80,7 @@ void Slider::Menu::OnSelectionLongPress(unsigned long time)
 
 void Slider::Menu::OnIntroFinished(unsigned long time)
 {
+    //show menu
     m_State = State::Shown;
     m_MenuSystem.Reset();
     OutputMenu();
