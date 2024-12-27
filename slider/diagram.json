@@ -11,15 +11,15 @@
       "left": 44,
       "attrs": { "pins": "i2c" }
     },
-    { "type": "wokwi-analog-joystick", "id": "joystick1", "top": 220.2, "left": 15, "attrs": {} },
+    { "type": "wokwi-analog-joystick", "id": "joystick1", "top": 181.8, "left": 15, "attrs": {} },
     {
       "type": "wokwi-stepper-motor",
       "id": "stepper1",
-      "top": -245.99,
-      "left": -402.77,
+      "top": 128.41,
+      "left": -325.97,
       "attrs": { "size": "17" }
     },
-    { "type": "wokwi-a4988", "id": "drv1", "top": -24, "left": -369.6, "attrs": {} },
+    { "type": "wokwi-a4988", "id": "drv1", "top": -100.8, "left": -283.2, "attrs": {} },
     {
       "type": "wokwi-pushbutton",
       "id": "btn1",
@@ -60,10 +60,10 @@
     [ "lcd1:VCC", "esp:3V3", "red", [ "h-38.4", "v172.9" ] ],
     [ "lcd1:SCL", "esp:D22", "blue", [ "h-19.2", "v9.9", "h-38.4", "v38.7" ] ],
     [ "lcd1:SDA", "esp:D21", "gold", [ "h-19.2", "v-37.8" ] ],
-    [ "joystick1:GND", "esp:GND.2", "green", [ "v28.8", "h-259.2", "v-201.5" ] ],
+    [ "joystick1:GND", "esp:GND.2", "green", [ "v28.8", "h-211.2", "v-287.9" ] ],
     [ "joystick1:VCC", "esp:3V3", "red", [ "v-9.6", "h-48", "v-278.4" ] ],
-    [ "joystick1:VERT", "esp:D25", "blue", [ "h-278.4", "v-297.6" ] ],
-    [ "joystick1:HORZ", "esp:D26", "blue", [ "v9.6", "h-278.4", "v-297.5" ] ],
+    [ "joystick1:VERT", "esp:D25", "blue", [ "h-220.8", "v-316.8" ] ],
+    [ "joystick1:HORZ", "esp:D26", "blue", [ "v9.6", "h-220.8", "v-316.7" ] ],
     [ "esp:TX0", "$serialMonitor:RX", "", [] ],
     [ "esp:RX0", "$serialMonitor:TX", "", [] ],
     [ "lcd1:GND", "esp:GND.1", "green", [ "h-48", "v192" ] ],
@@ -74,10 +74,29 @@
     [ "btn2:2.l", "esp:GND.1", "green", [ "h0", "v29", "h-211.2", "v-86.4" ] ],
     [ "btn3:1.l", "esp:D23", "blue", [ "h-105.6", "v-86.4" ] ],
     [ "btn2:1.l", "esp:D19", "gold", [ "h-9.6", "v-105.6" ] ],
-    [ "btn5:1.l", "esp:D18", "black", [ "h-19.2", "v-105.6", "h-9.6" ] ],
+    [ "btn5:1.l", "esp:D18", "black", [ "h-19.2", "v-86.4", "h-143.7" ] ],
     [ "btn1:1.l", "esp:D13", "gold", [ "h-38.4", "v28.8", "h-144", "v-76.8" ] ],
     [ "btn4:1.l", "esp:D14", "blue", [ "h-288", "v-144" ] ],
-    [ "joystick1:SEL", "esp:D5", "blue", [ "v19.2", "h-115.2", "v-374.4" ] ]
+    [ "joystick1:SEL", "esp:D5", "blue", [ "v19.2", "h-86.4", "v-336" ] ],
+    [ "stepper1:A-", "drv1:2B", "#8f4814", [ "v0", "h-76.8", "v-432", "h115.2", "v48" ] ],
+    [
+      "stepper1:A+",
+      "drv1:2A",
+      "#8f4814",
+      [ "v9.6", "h-86.4", "v0", "h-9.6", "v-451.2", "h134.4", "v67.2" ]
+    ],
+    [ "stepper1:B+", "drv1:1A", "#8f4814", [ "v19.2", "h-115.2", "v-470.4", "h153.6", "v86.4" ] ],
+    [
+      "stepper1:B-",
+      "drv1:1B",
+      "#8f4814",
+      [ "v28.8", "h-134.41", "v-489.6", "h172.8", "v105.6" ]
+    ],
+    [ "esp:3V3", "drv1:VDD", "red", [ "v48", "h-182.7", "v-134.4", "h-28.95" ] ],
+    [ "drv1:GND.1", "esp:GND.2", "green", [ "v67.28", "h9.75" ] ],
+    [ "drv1:STEP", "esp:D33", "blue", [ "h-9.6", "v38.4", "h115.2", "v-28.8" ] ],
+    [ "drv1:DIR", "esp:D32", "blue", [ "v19.2", "h86.4", "v-28.8", "h76.8" ] ],
+    [ "drv1:SLEEP", "drv1:RESET", "violet", [ "h-19.2", "v-9.6" ] ]
   ],
   "dependencies": {}
 }
