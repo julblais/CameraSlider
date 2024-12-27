@@ -13,12 +13,14 @@ Slider::Settings::Settings():
 
 Slider::Settings::Speed Slider::Settings::GetSpeed() const 
 {
-    return static_cast<Speed>(m_Prefs.getChar(SPEED_KEY, 0));
+    static constexpr auto s_default = static_cast<char>(SpeedMedium);
+    return static_cast<Speed>(m_Prefs.getChar(SPEED_KEY, s_default));
 }
 
 Slider::Settings::Curve Slider::Settings::GetCurve() const
 {
-    return static_cast<Curve>(m_Prefs.getChar(CURVE_KEY, 0));
+    static constexpr auto s_default = static_cast<char>(CurveLinear);
+    return static_cast<Curve>(m_Prefs.getChar(CURVE_KEY, s_default));
 }
 
 void Slider::Settings::SetSpeed(Speed value)

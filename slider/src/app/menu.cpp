@@ -34,22 +34,24 @@ bool Slider::Menu::OnInputEvent(const Input::Event &inputEvent)
     {
         if (inputEvent.button == Input::DpadSelect)
             m_ShowHideTimer.Start();
-        else if (m_State == State::Shown)
+        if (m_State == State::Shown)
         {
             switch(inputEvent.button)
             {
                 case Input::DpadLeft:
-                    m_MenuSystem.MoveLeft();
+                    m_MenuSystem.Left();
                     break;
                 case Input::DpadRight:
-                    m_MenuSystem.MoveRight();
+                    m_MenuSystem.Right();
                     break;
                 case Input::DpadUp:
-                    m_MenuSystem.MoveUp();
+                    m_MenuSystem.Up();
                     break;
                 case Input::DpadDown:
-                    m_MenuSystem.MoveDown();
+                    m_MenuSystem.Down();
                     break;
+                case Input::DpadSelect:
+                    m_MenuSystem.Select();
                 default:
                     break;
             };

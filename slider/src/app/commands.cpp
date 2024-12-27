@@ -1,5 +1,6 @@
 #include "commands.h"
 #include "src/app/settings.h"
+#include "src/utils/mathUtils.h"
 
 const char* Slider::MaxSpeedCommand::GetTitle()
 {
@@ -29,12 +30,10 @@ const char* Slider::MaxSpeedCommand::GetDesc()
 void Slider::MaxSpeedCommand::Invoke(Utils::MenuCommandButton command)
 {
     const auto speed = Settings::GetInstance().GetSpeed();
-    if (speed == Settings::SpeedSlow)
-        Settings::GetInstance().SetSpeed(Settings::SpeedMedium);
-    else if (speed == Settings::SpeedMedium)
-        Settings::GetInstance().SetSpeed(Settings::SpeedHigh);
-    else if (speed == Settings::SpeedHigh)
-        Settings::GetInstance().SetSpeed(Settings::SpeedSlow);
+    if (command == MenuCommand::ButtonLeft)
+        Settings::GetInstance().SetSpeed(GetPreviousEnumValue(speed));
+    else if (command == MenuCommand::ButtonRight)
+        Settings::GetInstance().SetSpeed(GetNextEnumValue(speed));
 }
 
 const char* Slider::SpeedCurveCommand::GetDesc()
@@ -55,10 +54,8 @@ const char* Slider::SpeedCurveCommand::GetDesc()
 void Slider::SpeedCurveCommand::Invoke(Utils::MenuCommandButton command)
 {
     const auto curve = Settings::GetInstance().GetCurve();
-    if (curve == Settings::CurveLinear)
-        Settings::GetInstance().SetCurve(Settings::CurveQuadratic);
-    else if (curve == Settings::CurveQuadratic)
-        Settings::GetInstance().SetCurve(Settings::CurveExponential);
-    else if (curve == Settings::CurveExponential)
-        Settings::GetInstance().SetCurve(Settings::CurveLinear);
+    if (command == MenuCommand::ButtonLeft)
+        Settings::GetInstance().SetCurve(GetPreviousEnumValue(curve));
+    else if (command == MenuCommand::ButtonRight)
+        Settings::GetInstance().SetCurve(GetNextEnumValue(curve));
 }
