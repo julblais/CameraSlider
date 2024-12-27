@@ -27,6 +27,8 @@ namespace Slider
             int JoystickXPin;
             int JoystickYPin;
             int JoystickCenterPin;
+            int StepperDirectionPin;
+            int StepperStepPin;
             int LcdAddress;
             int ShowMenuDelayMs;
     };
