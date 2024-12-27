@@ -1,12 +1,14 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include <Preferences.h>
+
 namespace Slider
 {
     struct Settings
     {
-        enum class Speed { S_SLOW = 0, S_MED = 1, S_HIGH = 2 };
-        enum class Curve { C_LINEAR = 0, C_QUAD = 1, C_EXP = 2 };
+        enum class Speed : char { S_MED = 0, S_SLOW = 1, S_HIGH = 2 };
+        enum class Curve : char { C_LINEAR = 0, C_QUAD = 1, C_EXP = 2 };
         
         static constexpr auto SpeedSlow = Speed::S_SLOW;
         static constexpr auto SpeedMedium = Speed::S_MED;
@@ -15,26 +17,20 @@ namespace Slider
         static constexpr auto CurveQuadratic = Curve::C_QUAD;
         static constexpr auto CurveExponential = Curve::C_EXP;
 
-        inline Speed GetSpeed() const { return m_Speed; }
-        inline Curve GetCurve() const { return m_Curve; }
+        Speed GetSpeed() const;
+        Curve GetCurve() const;
 
-        inline void SetSpeed(Speed value) { m_Speed = value; }
-        inline void SetCurve(Curve value) { m_Curve = value; }
-
-        static Settings Default()
-        {
-            auto s = Settings();
-            s.SetSpeed(SpeedMedium);
-            s.SetCurve(CurveLinear);
-            return s;
-        }
+        void SetSpeed(Speed value);
+        void SetCurve(Curve value);
+        
+        static Settings& GetInstance();
 
         private:
-            Speed m_Speed;
-            Curve m_Curve;
-    };
+            Settings();
+            Settings(const Settings&) = delete;
 
-    static Settings AppSettings = Settings::Default();
+        mutable Preferences m_Prefs;
+    };
 }
 
 #endif

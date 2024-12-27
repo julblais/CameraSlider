@@ -30,7 +30,9 @@ static const uint8_t UpDownArrows[] = {
 };
 
 Hardware::LCD::LCD(const uint8_t address):
-    chip(address, LCD::NUM_COLS, LCD::NUM_ROWS)
+    chip(address, LCD::NUM_COLS, LCD::NUM_ROWS),
+    m_DoubleLeftRightArrows(0),
+    m_DoubleUpDownArrows(0)
 {} 
 
 void Hardware::LCD::Init()
