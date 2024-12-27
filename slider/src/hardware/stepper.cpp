@@ -1,12 +1,10 @@
 #include "stepper.h"
 
-#define DIR_PIN 32
-#define STEP_PIN 33
 #define MAX_SPEED 1000
 #define MAX_ACCEL 100
 
-Stepper::Stepper():
-    m_Stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN)
+Stepper::Stepper(const int directionPin, const int stepPin):
+    m_Stepper(AccelStepper::DRIVER, stepPin, directionPin)
 {}
 
 void Stepper::Init()

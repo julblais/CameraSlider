@@ -19,14 +19,16 @@ namespace Slider
     struct AppConfig
     {
         public:
-            int DpadUpPin;
-            int DpadDownPin;
-            int DpadLeftPin;
-            int DpadRightPin;
-            int DpadSelectionPin;
-            int JoystickXPin;
-            int JoystickYPin;
-            int JoystickCenterPin;
+            unsigned char DpadUpPin;
+            unsigned char DpadDownPin;
+            unsigned char DpadLeftPin;
+            unsigned char DpadRightPin;
+            unsigned char DpadSelectionPin;
+            unsigned char JoystickXPin;
+            unsigned char JoystickYPin;
+            unsigned char JoystickCenterPin;
+            unsigned char StepperDirectionPin;
+            unsigned char StepperStepPin;
             int LcdAddress;
             int ShowMenuDelayMs;
     };

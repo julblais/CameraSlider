@@ -38,18 +38,20 @@ void Slider::App::SetupComponents(const AppConfig &config)
     m_Display = std::unique_ptr<Display>(new Hardware::LCD(config.LcdAddress));
 
     m_Dpad = std::unique_ptr<IDpadReader>(new Hardware::Dpad(
-    config.DpadUpPin, 
-    config.DpadDownPin, 
-    config.DpadLeftPin, 
-    config.DpadRightPin, 
-    config.DpadSelectionPin)); 
+        config.DpadUpPin, 
+        config.DpadDownPin, 
+        config.DpadLeftPin, 
+        config.DpadRightPin, 
+        config.DpadSelectionPin)); 
 
     m_Joystick = std::unique_ptr<IJoystickReader>(new Hardware::Joystick(
-    config.JoystickXPin,
-    config.JoystickYPin,
-    config.JoystickCenterPin));
+        config.JoystickXPin,
+        config.JoystickYPin,
+        config.JoystickCenterPin));
 
-    m_Stepper = std::unique_ptr<Stepper>(new Stepper());
+    m_Stepper = std::unique_ptr<Stepper>(new Stepper(
+        config.StepperDirectionPin, 
+        config.StepperStepPin));
 }
 
 void Slider::App::Setup()
