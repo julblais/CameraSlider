@@ -47,6 +47,6 @@ void loop() {
     app.Update();
 
     #ifdef IS_SIMULATOR //somehow this makes the timing more accurate...
-        delay(20);
+        delay(10);
     #endif
 }

@@ -26,6 +26,7 @@ Slider::App::App(const AppConfig &config):
     m_Menu = std::unique_ptr<Menu>(new Menu(&m_DisplayBuffer, config.ShowMenuDelayMs));
     
     m_InputDispatcher.AddListener(m_Menu.get());
+    m_InputDispatcher.AddListener(m_Stepper.get());
     m_InputDispatcher.AddListener([this](const Event& event) 
     { 
         return OnInputEvent(m_DisplayBuffer, event); 
@@ -47,6 +48,8 @@ void Slider::App::SetupComponents(const AppConfig &config)
     config.JoystickXPin,
     config.JoystickYPin,
     config.JoystickCenterPin));
+
+    m_Stepper = std::unique_ptr<Stepper>(new Stepper());
 }
 
 void Slider::App::Setup()
@@ -55,6 +58,7 @@ void Slider::App::Setup()
     m_DisplayBuffer.Init(m_Display.get());
     m_Dpad->Init();
     m_Menu->Init();
+    m_Stepper->Init();
 
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
 }
@@ -69,6 +73,7 @@ void Slider::App::Update()
     m_InputDispatcher.ProcessInput(input);
 
     //update all systems
+    m_Stepper->Update();
 
     //output final display buffer
     m_DisplayBuffer.PrintToDisplay();
