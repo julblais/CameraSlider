@@ -27,6 +27,9 @@ Input::JoystickInput Hardware::Joystick::ReadInput()
     auto selection = digitalRead(m_CenterPin) == LOW;
     auto button = selection ? Input::JoystickCenter : Input::JoystickNone;
 
-    Input::JoystickInput input = { .x = horizontal, .y = vertical, .button = button };
+    Input::JoystickInput input = { 
+        .x = -((float)horizontal / (float) JOYSTICK_RANGE_X), 
+        .y = (float)vertical / (float) JOYSTICK_RANGE_Y, 
+        .button = button };
     return input;
 }

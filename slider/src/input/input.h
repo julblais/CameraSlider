@@ -48,8 +48,8 @@ namespace Input
 
         JoystickButton joystickButton;
         ButtonState joystickButtonState;
-        int joystickX;
-        int joystickY;
+        float joystickX;
+        float joystickY;
         bool joystickDirectionChanged;
 
         bool HasChange() const;
@@ -78,8 +78,8 @@ namespace Input
     };
 
     struct JoystickInput { 
-        int x; 
-        int y; 
+        float x; 
+        float y; 
         JoystickButton button; 
         inline bool IsCenterButton() const { return button == JoystickCenter; }
     };
