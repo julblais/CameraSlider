@@ -7,7 +7,7 @@
 class Stepper
 {
     public:
-        Stepper(const unsigned char directionPin, const unsigned char stepPin);
+        Stepper(const int directionPin, const int stepPin);
         void Init();
         void Update();
         bool OnInputEvent(const Input::Event& inputEvent);

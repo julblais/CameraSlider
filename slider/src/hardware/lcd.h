@@ -13,19 +13,19 @@ namespace Hardware{
     class LCD : public Display
     {
         public:
-            constexpr static unsigned char NUM_COLS = 16;
-            constexpr static unsigned char NUM_ROWS = 2;
+            constexpr static int NUM_COLS = 16;
+            constexpr static int NUM_ROWS = 2;
 
             LCD(const uint8_t address);
             virtual void Init() override;
 
             void Clear();
             virtual void Write(uint8_t value) override;
-            void SetCursor(const unsigned char column, const unsigned char row) override;
+            void SetCursor(const int column, const int row) override;
             virtual SymbolHandle GetSymbol(Symbol symbol) const override;
             
         private:
-            void CreateSymbol(const unsigned char id, const uint8_t* charmap);
+            void CreateSymbol(const int id, const uint8_t* charmap);
 
             LiquidCrystal_I2C chip;
             Keycode m_DoubleLeftRightArrows;

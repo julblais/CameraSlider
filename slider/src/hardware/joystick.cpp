@@ -6,8 +6,7 @@
 constexpr auto JOYSTICK_RANGE_X = 4096;
 constexpr auto JOYSTICK_RANGE_Y = 4096;
 
-Hardware::Joystick::Joystick(
-    const unsigned char horizontalPin, const unsigned char verticalPin, const unsigned char centerPin):
+Hardware::Joystick::Joystick(int horizontalPin, int verticalPin, int centerPin):
     m_HorizontalPin(horizontalPin),
     m_VerticalPin(verticalPin),
     m_CenterPin(centerPin)

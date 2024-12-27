@@ -25,10 +25,10 @@ namespace Output
             void Init(Display* display);
             
             template <typename... TArgs> void Print(TArgs&&... args);
-            template <typename... TArgs> void PrintLine(const unsigned char line, TArgs&&... args);
+            template <typename... TArgs> void PrintLine(const int line, TArgs&&... args);
 
             virtual void Write(Keycode value) override;
-            virtual void SetCursor(const unsigned char column, const unsigned char row) override;
+            virtual void SetCursor(const int column, const int row) override;
             virtual SymbolHandle GetSymbol(Symbol symbol) const override;
 
             void Clear();
@@ -41,7 +41,7 @@ namespace Output
             virtual size_t write(uint8_t value) override;
             void FillCurrentLine();
 
-            unsigned char m_Cursor;
+            unsigned int m_Cursor;
             Display* m_Display;
             std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES> m_Buffer;
             mutable std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES> m_PreviousBuffer;
@@ -57,7 +57,7 @@ namespace Output
     }
 
     template <typename... TArgs>
-    void DisplayBuffer::PrintLine(const unsigned char line, TArgs &&...args)
+    void DisplayBuffer::PrintLine(const int line, TArgs &&...args)
     {
         SetCursor(0, line);
         passArgs{(print(args), 1)...};

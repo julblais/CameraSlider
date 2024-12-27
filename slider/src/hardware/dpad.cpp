@@ -1,8 +1,7 @@
 #include "dpad.h"
 #include "src/debug.h"
 
-Hardware::Dpad::Dpad(const unsigned char upPin, const unsigned char downPin, 
-    const unsigned char leftPin, const unsigned char rightPin, const unsigned char selectionPin) :
+Hardware::Dpad::Dpad(int upPin, int downPin, int leftPin, int rightPin, int selectionPin) :
     m_UpPin(upPin),
     m_DownPin(downPin),
     m_LeftPin(leftPin),

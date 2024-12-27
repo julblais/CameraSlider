@@ -41,7 +41,7 @@ void Output::DisplayBuffer::Clear()
     m_Buffer.fill(' ');
 }
 
-void Output::DisplayBuffer::SetCursor(const unsigned char column, const unsigned char row)
+void Output::DisplayBuffer::SetCursor(const int column, const int row)
 {
     if (row >= LCD_NUM_LINES || row < 0)
         return;
