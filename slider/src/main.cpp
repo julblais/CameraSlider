@@ -18,8 +18,6 @@
     #include "slider.ino"
 #endif
 
-Debug::Level loglevel = Debug::Level::ERROR;
-
 static Slider::AppConfig CreateConfig()
 {
     auto conf = Slider::AppConfig();
@@ -43,9 +41,9 @@ static Slider::App app(CreateConfig());
 void setup() {
     Debug::Init(9600);
 
-    LogInfo << "Being setup...";
+    LogInfo("Being setup...");
     app.Setup();
-    LogInfo << "End setup.";
+    LogInfo("End setup.");
 }
 
 void loop() {

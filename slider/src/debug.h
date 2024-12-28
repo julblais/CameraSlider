@@ -5,31 +5,48 @@
 
 #include <HardwareSerial.h>
 
-#define ENABLE_LOG 1
+#define LOG_LEVEL_NONE 0
+#define LOG_LEVEL_ERROR 1
+#define LOG_LEVEL_WARNING 2
+#define LOG_LEVEL_INFO 3
+#define LOG_LEVEL_DEBUG 4
 
-#if ENABLE_LOG
-#define CLOG(val) Serial.print(__FILE__);Serial.print(val)
+#define LOG_LEVEL LOG_LEVEL_DEBUG
+
+//-------------------------------------
+
+#if LOG_LEVEL >= LOG_LEVEL_ERROR
+#define LogError(...) Debug::Logger().Log(__FILE__, "(", __LINE__, "): ",  __VA_ARGS__)
 #else
-#define CLOG(val)
+#define LogError(...) ;
+#endif
+
+#if LOG_LEVEL >= LOG_LEVEL_WARNING
+#define LogWarning(...) Debug::Logger().Log(__VA_ARGS__)
+#else
+#define LogWarning(...) ;
+#endif
+
+#if LOG_LEVEL >= LOG_LEVEL_INFO
+#define LogInfo(...) Debug::Logger().Log(__VA_ARGS__)
+#else
+#define LogInfo(...) ;
+#endif
+
+#if LOG_LEVEL >= LOG_LEVEL_DEBUG
+#define LogDebug(...) Debug::Logger().Log(__VA_ARGS__)
+#else
+#define LogDebug(...) ;
 #endif
 
 namespace Debug
 {
-    enum class Level : char
-    {
-        ERROR,
-        WARNING,
-        INFO,
-        DEBUG
-    };
-
     struct Logger 
     {
-        template <typename T>
-        Logger& operator<<(T&& value)
+        template <typename... TArgs>
+        void Log(TArgs&&... args)
         {
-            CLOG(value);
-            return *this;
+            PassParamPack{(Serial.print(args), 1)...};
         }
 
         ~Logger() 
@@ -40,24 +57,5 @@ namespace Debug
 
     void Init(const int baud);
 }
-
-extern Debug::Level loglevel;
-
-#define Log(level) if (level > loglevel) ; \
-    else Debug::Logger()
-    
-#define LogError if (Debug::Level::ERROR > loglevel) ; \
-    else Debug::Logger()
-    
-#define LogWarn if (Debug::Level::WARNING > loglevel) ; \
-    else Debug::Logger()
-    
-#define LogInfo if (Debug::Level::INFO > loglevel) ; \
-    else Debug::Logger()
-
-#define LogDebug if (Debug::Level::DEBUG > loglevel) ; \
-    else Debug::Logger()
-
-
 
 #endif

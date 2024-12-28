@@ -37,7 +37,7 @@ Hardware::LCD::LCD(const uint8_t address):
 
 void Hardware::LCD::Init()
 {
-    LogInfo << "Init LCD.";
+    LogInfo("Init LCD.");
     chip.init();
     
     auto id = 0;
@@ -51,7 +51,7 @@ void Hardware::LCD::Init()
 
 void Hardware::LCD::CreateSymbol(const int id, const uint8_t *charmap)
 {
-    LogInfo << "Creating custom character with id: " << id;
+    LogInfo("Creating custom character with id: ", id);
     chip.createChar(id, const_cast<uint8_t*>(charmap));
 }
 
