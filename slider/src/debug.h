@@ -9,28 +9,21 @@
     #include <HardwareSerial.h>
 #endif
 
-class Debugger
+namespace Debug
 {
-    public:
-        Debugger() {}
+    void Init(const int baud);
 
-        void Init(const int baud)
-        {
-            #if USE_SERIAL
-                Serial.begin(baud);
-            #endif
-        }
+    template <typename... TArgs>
+    void Log(TArgs&&... args);
+}
 
-        template <typename... TArgs>
-        void Log(TArgs&&... args)
-        {
-            #if USE_SERIAL
-                PassParamPack{(Serial.print(args), 1)...};
-                Serial.println();
-            #endif
-        }
-};
-
-static Debugger Debug = Debugger();
+template <typename... TArgs>
+void Debug::Log(TArgs&&... args)
+{
+    #if USE_SERIAL
+        PassParamPack{(Serial.print(args), 1)...};
+        Serial.println();
+    #endif
+}
 
 #endif

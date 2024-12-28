@@ -40,14 +40,14 @@ Utils::Timer::~Timer()
 void Utils::Timer::Start()
 {
     m_StartTimeMs = millis();
-    Debug.Log("Timer \"", m_Name, "\" started at: ", m_StartTimeMs);
+    Debug::Log("Timer \"", m_Name, "\" started at: ", m_StartTimeMs);
 }
 
 void Utils::Timer::Stop()
 {
     if (m_StartTimeMs != 0)
     {
-        Debug.Log("Timer \"", m_Name, "\" stopped");
+        Debug::Log("Timer \"", m_Name, "\" stopped");
         m_StartTimeMs = 0;
     }
 }
@@ -69,7 +69,7 @@ void Utils::Timer::ProcessCallback(unsigned long appTimeMs)
         const auto delta = m_StartTimeMs < appTimeMs ? appTimeMs - m_StartTimeMs : 0u;
         if (delta >= m_Delay)
         {
-            Debug.Log("Timer \"", m_Name, "\" activated at: ", appTimeMs);
+            Debug::Log("Timer \"", m_Name, "\" activated at: ", appTimeMs);
             m_Callback(delta);
             Stop();
         }
