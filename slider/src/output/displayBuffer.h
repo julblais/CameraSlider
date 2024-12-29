@@ -11,10 +11,11 @@ namespace Output
 {
     using Keycode = uint8_t;
 
+    constexpr static auto LCD_LINE_LENGTH = 16;
+    constexpr static auto LCD_NUM_LINES = 2;
+    
     class DisplayBuffer : private Print, public Display
     {
-        constexpr static auto LCD_LINE_LENGTH = 16;
-        constexpr static auto LCD_NUM_LINES = 2;
 
         using ConstIterator =
             std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES>::const_iterator;
