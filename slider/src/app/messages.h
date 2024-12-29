@@ -18,7 +18,11 @@ namespace Messages
             DisplayText
         };
 
-        Type type;
+        static BrainMessage BuildDisplayTextMessage(const std::array<char, TEXT_SIZE>& text);
+
+        inline bool IsDisplayText() const { return type == Type::DisplayText; }
+
+        const Type type;
         std::array<char, TEXT_SIZE> text;
     };
 
@@ -30,7 +34,11 @@ namespace Messages
             InputEvent
         };
 
-        Type type;
+        static ControllerMessage BuildDisplayTextMessage(const Input::Event& event);
+
+        inline bool IsInputEvent() const { return type == Type::InputEvent; }
+
+        const Type type;
         Input::Event event;
     };
 }

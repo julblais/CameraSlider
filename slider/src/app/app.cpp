@@ -2,6 +2,7 @@
 #include "src/hardware/lcd.h"
 #include "src/hardware/dpad.h"
 #include "src/hardware/joystick.h"
+#include "messages.h"
 
 #include <esp32-hal-timer.h>
 
