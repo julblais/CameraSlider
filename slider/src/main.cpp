@@ -39,12 +39,11 @@ static Slider::AppConfig CreateConfig()
 static Slider::App app(CreateConfig());
 
 void setup() {
-    Debug.Init(9600);
-    Debug.Log("Being setup...");
+    Debug::Init(9600);
 
+    LogInfo("Being setup...");
     app.Setup();
-
-    Debug.Log("End setup.");
+    LogInfo("End setup.");
 }
 
 void loop() {

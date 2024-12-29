@@ -1,9 +1,11 @@
 #ifndef DISPLAY_BUFFER_H
 #define DISPLAY_BUFFER_H
 
+#include "display.h"
+#include "src/utils/templateUtils.h"
+
 #include <array>
 #include <Print.h>
-#include "display.h"
 
 namespace Output 
 {
@@ -47,20 +49,17 @@ namespace Output
             mutable std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES> m_PreviousBuffer;
     };
 
-    //use this weird thing to avoid undefined order of variadic template arguments
-    struct passArgs { template<typename ...T> passArgs(T...) {} };
-
     template <typename... TArgs>
     inline void DisplayBuffer::Print(TArgs &&...args)
     {
-        passArgs{(print(args), 1)...};
+        PassParamPack{(print(args), 1)...};
     }
 
     template <typename... TArgs>
     void DisplayBuffer::PrintLine(const int line, TArgs &&...args)
     {
         SetCursor(0, line);
-        passArgs{(print(args), 1)...};
+        PassParamPack{(print(args), 1)...};
         FillCurrentLine();
     }
 }

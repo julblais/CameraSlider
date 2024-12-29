@@ -1,60 +1,61 @@
 #ifndef DBG_H
 #define DBG_H
 
-#define USE_SERIAL 1
+#include "src/utils/templateUtils.h"
 
-#ifdef USE_SERIAL
-    #include <HardwareSerial.h>
+#include <HardwareSerial.h>
+
+#define LOG_LEVEL_NONE 0
+#define LOG_LEVEL_ERROR 1
+#define LOG_LEVEL_WARNING 2
+#define LOG_LEVEL_INFO 3
+#define LOG_LEVEL_DEBUG 4
+
+#define LOG_LEVEL LOG_LEVEL_DEBUG
+
+//-------------------------------------
+
+#if LOG_LEVEL >= LOG_LEVEL_ERROR
+#define LogError(...) Debug::Logger().Log(__FILE__, "(", __LINE__, "): ",  __VA_ARGS__)
+#else
+#define LogError(...) ;
 #endif
 
-class Debugger
+#if LOG_LEVEL >= LOG_LEVEL_WARNING
+#define LogWarning(...) Debug::Logger().Log(__VA_ARGS__)
+#else
+#define LogWarning(...) ;
+#endif
+
+#if LOG_LEVEL >= LOG_LEVEL_INFO
+#define LogInfo(...) Debug::Logger().Log(__VA_ARGS__)
+#else
+#define LogInfo(...) ;
+#endif
+
+#if LOG_LEVEL >= LOG_LEVEL_DEBUG
+#define LogDebug(...) Debug::Logger().Log(__VA_ARGS__)
+#else
+#define LogDebug(...) ;
+#endif
+
+namespace Debug
 {
-    public:
-        Debugger() {}
-
-        void Init(const int baud)
+    struct Logger 
+    {
+        template <typename... TArgs>
+        void Log(TArgs&&... args)
         {
-            #if USE_SERIAL
-                Serial.begin(baud);
-            #endif
+            PassParamPack{(Serial.print(args), 1)...};
         }
 
-        template <typename T>
-        void Log(T&& t) 
+        ~Logger() 
         {
-            #if USE_SERIAL
-                Serial.println(t);
-            #endif
+            Serial.println();
         }
+    };
 
-        template <typename T1, typename T2>
-        void Log(T1&& t1, T2&& t2) 
-        {
-            #if USE_SERIAL
-                Serial.print(t1);
-                Log(t2);
-            #endif
-        }
-
-        template <typename T1, typename T2, typename T3>
-        void Log(T1&& t1, T2&& t2, T3&& t3) 
-        {
-            #if USE_SERIAL
-                Serial.print(t1);
-                Log(t2, t3);
-            #endif
-        }
-
-        template <typename T1, typename T2, typename T3, typename T4>
-        void Log(T1&& t1, T2&& t2, T3&& t3, T4&& t4) 
-        {
-            #if USE_SERIAL
-                Serial.print(t1);
-                Log(t2, t3, t4);
-            #endif
-        }
-};
-
-static Debugger Debug = Debugger();
+    void Init(const int baud);
+}
 
 #endif

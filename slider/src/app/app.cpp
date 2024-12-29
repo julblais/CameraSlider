@@ -56,11 +56,13 @@ void Slider::App::SetupComponents(const AppConfig &config)
 
 void Slider::App::Setup()
 {
+    LogInfo("Setup components...");
     m_Display->Init();
     m_DisplayBuffer.Init(m_Display.get());
     m_Dpad->Init();
     m_Menu->Init();
     m_Stepper->Init();
+    LogInfo("Components setup complete.");
 
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
 }
