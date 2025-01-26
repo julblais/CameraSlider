@@ -3,6 +3,7 @@
 #include "src/hardware/dpad.h"
 #include "src/hardware/joystick.h"
 #include "messages.h"
+#include "src/hardware/broadcast.h"
 
 #include <esp32-hal-timer.h>
 
@@ -32,6 +33,9 @@ Slider::App::App(const AppConfig &config):
     { 
         return OnInputEvent(m_DisplayBuffer, event); 
     });
+
+    broadcast broadcast;
+    broadcast.setup();
 }
 
 void Slider::App::SetupComponents(const AppConfig &config)
