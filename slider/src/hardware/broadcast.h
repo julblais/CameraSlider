@@ -2,7 +2,7 @@
 #define BROADCAST_H
 
 //#include <WifiEspNowBroadcast.h>
-
+#include "src/debug.h"
 #include <WiFi.h>
 #include <esp_wifi.h>
 //#include "ESPNowW.h"
@@ -15,7 +15,7 @@ void readMacAddress(){
                   baseMac[0], baseMac[1], baseMac[2],
                   baseMac[3], baseMac[4], baseMac[5]);
   } else {
-    Serial.println("Failed to read MAC address");
+   LogError("Failed to read MAC address");
   }
 }
 
@@ -30,10 +30,10 @@ public:
 void broadcast::setup(/* args */)
 {
     // Set device as a Wi-Fi Station
-  WiFi.mode(WIFI_MODE_STA);
+  //WiFi.mode(WIFI_MODE_STA);
   //WiFi.disconnect();
 
-  Serial.print("[DEFAULT] ESP32 Board MAC Address: ");
+  LogInfo("[DEFAULT] ESP32 Board MAC Address: ");
   readMacAddress();
     //WiFi.persistent(false);
     //bool ok = WifiEspNowBroadcast.begin("ESPNOW", 3);

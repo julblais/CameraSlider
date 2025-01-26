@@ -33,9 +33,6 @@ Slider::App::App(const AppConfig &config):
     { 
         return OnInputEvent(m_DisplayBuffer, event); 
     });
-
-    broadcast broadcast;
-    broadcast.setup();
 }
 
 void Slider::App::SetupComponents(const AppConfig &config)
@@ -61,6 +58,8 @@ void Slider::App::SetupComponents(const AppConfig &config)
 
 void Slider::App::Setup()
 {
+    broadcast broadcast;
+    broadcast.setup();
     LogInfo("Setup components...");
     m_Display->Init();
     m_DisplayBuffer.Init(m_Display.get());
