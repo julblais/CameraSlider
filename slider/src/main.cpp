@@ -1,5 +1,8 @@
-#include "app/app.h"
+#include "app/app_base.h"
 #include "debug.h"
+#include <memory>
+
+using namespace Slider;
 
 #ifdef IS_SIMULATOR
     #define C_DpadUpPin             23;
@@ -18,9 +21,9 @@
     #include "slider.ino"
 #endif
 
-static Slider::AppConfig CreateConfig()
+static AppConfig CreateConfig()
 {
-    auto conf = Slider::AppConfig();
+    auto conf = AppConfig();
     conf.DpadUpPin           = C_DpadUpPin;
     conf.DpadDownPin         = C_DpadDownPin;
     conf.DpadLeftPin         = C_DpadLeftPin;
@@ -36,18 +39,18 @@ static Slider::AppConfig CreateConfig()
     return conf;
 }
 
-static Slider::App app(CreateConfig());
+static auto app = AppCreator::Create(CreateConfig());
 
 void setup() {
     Debug::Init(9600);
 
     LogInfo("Being setup...");
-    app.Setup();
+    app->Setup();
     LogInfo("End setup.");
 }
 
 void loop() {
-    app.Update();
+    app->Update();
 
     #ifdef IS_SIMULATOR //somehow this makes the timing more accurate...
         delay(10);

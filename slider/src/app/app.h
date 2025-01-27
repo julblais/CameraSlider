@@ -1,12 +1,13 @@
 #ifndef APP_H
 #define APP_H
 
+#include "app_base.h"
+#include "menu.h"
 #include "src/input/input.h"
 #include "src/input/inputDispatcher.h"
 #include "src/input/inputReader.h"
 #include "src/output/display.h"
 #include "src/output/displayBuffer.h"
-#include "menu.h"
 
 #include <memory>
 #include "src/hardware/stepper.h"
@@ -16,29 +17,12 @@ namespace Slider
     using namespace Input;
     using namespace Output;
 
-    struct AppConfig
-    {
-        public:
-            unsigned char DpadUpPin;
-            unsigned char DpadDownPin;
-            unsigned char DpadLeftPin;
-            unsigned char DpadRightPin;
-            unsigned char DpadSelectionPin;
-            unsigned char JoystickXPin;
-            unsigned char JoystickYPin;
-            unsigned char JoystickCenterPin;
-            unsigned char StepperDirectionPin;
-            unsigned char StepperStepPin;
-            int LcdAddress;
-            int ShowMenuDelayMs;
-    };
-
-    class App
+    class App : public AppBase
     {
         public:
             App(const AppConfig& config);
-            void Setup();
-            void Update();
+            virtual void Setup();
+            virtual void Update();
 
         private:
             void SetupComponents(const AppConfig &config);
