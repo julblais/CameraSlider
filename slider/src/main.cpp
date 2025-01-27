@@ -1,4 +1,5 @@
 #include "app/app_base.h"
+#include "app/appConfig.h"
 #include "debug.h"
 #include <memory>
 
@@ -39,7 +40,7 @@ static AppConfig CreateConfig()
     return conf;
 }
 
-static auto app = AppCreator::Create(CreateConfig());
+static auto app = AppCreator<AppConfig>::Create(CreateConfig());
 
 void setup() {
     Debug::Init(9600);

@@ -5,23 +5,6 @@
 
 namespace Slider
 {
-    struct AppConfig
-    {
-        public:
-            unsigned char DpadUpPin;
-            unsigned char DpadDownPin;
-            unsigned char DpadLeftPin;
-            unsigned char DpadRightPin;
-            unsigned char DpadSelectionPin;
-            unsigned char JoystickXPin;
-            unsigned char JoystickYPin;
-            unsigned char JoystickCenterPin;
-            unsigned char StepperDirectionPin;
-            unsigned char StepperStepPin;
-            int LcdAddress;
-            int ShowMenuDelayMs;
-    };
-    
     class AppBase
     {
         public:
@@ -29,10 +12,11 @@ namespace Slider
             virtual void Update() = 0;
     };
 
+    template<class TConfig>
     class AppCreator
     {
         public:
-            static std::unique_ptr<AppBase> Create(const AppConfig& config);
+            static std::unique_ptr<AppBase> Create(const TConfig& config);
     };
 }
 
