@@ -23,7 +23,7 @@ namespace Utils
             auto AddListener(C* listener)-> decltype(listener->OnInputEvent(std::declval<TArgs...>()), void());
 
         protected:
-            void SendEvent(TArgs... args) const;
+            void SendEvent(TArgs&&... args) const;
 
         private:
             std::vector<TListener> m_Listeners;
@@ -52,10 +52,10 @@ namespace Utils
     }
     
     template <typename... TArgs>
-    inline void EventSource<TArgs...>::SendEvent(TArgs... args) const
+    inline void EventSource<TArgs...>::SendEvent(TArgs&&... args) const
     {
         for (auto listener : m_Listeners)
-            if (listener(args...))
+            if (listener(std::forward<TArgs>(args)...))
                 return;
     }
 }
