@@ -14,15 +14,11 @@ namespace Slider
             virtual void Update() = 0;
 
             template <class TComponent>
+            void AddComponent(TComponent* component);
+            template <class TComponent>
             void AddComponent(std::unique_ptr<TComponent> component);
             template <class TComponent, typename... TArgs>
             void AddComponent(TArgs&&... args);
-
-            template <class TBase>
-            void AddComponentWrapper(TBase* base)
-            {
-                //AddComponent(std::make_unique<ComponentWrapper<TBase>>(base));
-            }
 
             void SetupComponents();
             void UpdateComponents();
@@ -38,9 +34,15 @@ namespace Slider
     };
     
     template <class TComponent>
+    void AppBase::AddComponent(TComponent* component)
+    {
+        m_Components.emplace_back(component);
+    }
+
+    template <class TComponent>
     void AppBase::AddComponent(std::unique_ptr<TComponent> component)
     {
-        m_Components.push_back(std::move(component));
+        m_Components.emplace_back(std::move(component));
     }
 
     template <class TComponent, typename... TArgs>

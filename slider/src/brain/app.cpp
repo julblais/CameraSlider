@@ -22,7 +22,7 @@ static bool OnInputEvent(DisplayBuffer& display, const Event& event)
 Slider::App::App(const AppConfig &config):
     m_Config(config), m_DisplayBuffer()
 {
-    SetupComponents(config);
+    CreateComponents(config);
     m_Menu = std::unique_ptr<Menu>(new Menu(&m_DisplayBuffer, config.ShowMenuDelayMs));
     
     m_InputDispatcher.AddListener(m_Menu.get());
@@ -33,7 +33,7 @@ Slider::App::App(const AppConfig &config):
     });
 }
 
-void Slider::App::SetupComponents(const AppConfig &config)
+void Slider::App::CreateComponents(const AppConfig &config)
 {    
     m_Display = std::unique_ptr<Display>(new Hardware::LCD(config.LcdAddress));
 
@@ -43,6 +43,12 @@ void Slider::App::SetupComponents(const AppConfig &config)
         config.DpadLeftPin, 
         config.DpadRightPin, 
         config.DpadSelectionPin)); 
+
+    AddComponent(ComponentWrapper::Create<Hardware::Dpad>(config.DpadUpPin, 
+        config.DpadDownPin, 
+        config.DpadLeftPin, 
+        config.DpadRightPin, 
+        config.DpadSelectionPin));
 
     m_Joystick = std::unique_ptr<IJoystickReader>(new Hardware::Joystick(
         config.JoystickXPin,
@@ -58,8 +64,9 @@ void Slider::App::Setup()
 {
     LogInfo("Setup components...");
     m_Display->Init();
+    SetupComponents();
     m_DisplayBuffer.Init(m_Display.get());
-    m_Dpad->Init();
+    m_Dpad->Setup();
     m_Menu->Init();
     m_Stepper->Init();
     LogInfo("Components setup complete.");

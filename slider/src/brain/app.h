@@ -26,7 +26,7 @@ namespace Slider
             virtual void Update() override;
 
         private:
-            void SetupComponents(const AppConfig &config);
+            void CreateComponents(const AppConfig &config);
 
             AppConfig m_Config;
             std::unique_ptr<Display> m_Display;
