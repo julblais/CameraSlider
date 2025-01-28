@@ -15,10 +15,8 @@ namespace Slider
 
             template <class TComponent>
             void AddComponent(TComponent* component);
-            template <class TComponent>
-            void AddComponent(std::unique_ptr<TComponent> component);
             template <class TComponent, typename... TArgs>
-            void AddComponent(TArgs&&... args);
+            TComponent* AddComponent(TArgs&&... args);
 
             void SetupComponents();
             void UpdateComponents();
@@ -38,18 +36,13 @@ namespace Slider
     {
         m_Components.emplace_back(component);
     }
-
-    template <class TComponent>
-    void AppBase::AddComponent(std::unique_ptr<TComponent> component)
-    {
-        m_Components.emplace_back(std::move(component));
-    }
-
+    
     template <class TComponent, typename... TArgs>
-    void AppBase::AddComponent(TArgs&&... args)
+    TComponent* AppBase::AddComponent(TArgs&&... args)
     {
         auto ptr = new TComponent(std::forward<TArgs>(args)...);
         m_Components.emplace_back(ptr);
+        return ptr;
     }
 }
 

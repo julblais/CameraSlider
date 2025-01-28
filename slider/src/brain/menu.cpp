@@ -16,7 +16,7 @@ Slider::Menu::Menu(Output::DisplayBuffer* display, int delay) :
     m_State(State::Hidden)
 {}
 
-void Slider::Menu::Init()
+void Slider::Menu::Setup()
 {    
     m_MenuSystem.AddCommand(new MaxSpeedCommand());
     m_MenuSystem.AddCommand(new SpeedCurveCommand());

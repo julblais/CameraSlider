@@ -9,8 +9,8 @@ namespace Slider
     class Component
     {
         public:
-            virtual void Setup() = 0;
-            virtual void Update() = 0;
+            virtual void Setup() {};
+            virtual void Update() {};
     };
 
     template <typename T>

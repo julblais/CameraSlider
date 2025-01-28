@@ -20,54 +20,52 @@ static bool OnInputEvent(DisplayBuffer& display, const Event& event)
 }
 
 Slider::App::App(const AppConfig &config):
-    m_Config(config), m_DisplayBuffer()
-{
-    CreateComponents(config);
-    m_Menu = std::unique_ptr<Menu>(new Menu(&m_DisplayBuffer, config.ShowMenuDelayMs));
+    m_Config(config)
+{}
+
+void Slider::App::CreateComponents(const AppConfig &config)
+{    
+   
+}
+
+void Slider::App::Setup()
+{ 
+    m_Display = std::unique_ptr<Display>(new Hardware::LCD(m_Config.LcdAddress));
+
+    auto dpad = new Hardware::Dpad(
+        m_Config.DpadUpPin, 
+        m_Config.DpadDownPin, 
+        m_Config.DpadLeftPin, 
+        m_Config.DpadRightPin, 
+        m_Config.DpadSelectionPin); 
+
+    m_Dpad = std::unique_ptr<IDpadReader>(dpad);
+
+    m_Joystick = std::unique_ptr<IJoystickReader>(new Hardware::Joystick(
+        m_Config.JoystickXPin,
+        m_Config.JoystickYPin,
+        m_Config.JoystickCenterPin));
+
+    m_Stepper = std::unique_ptr<Stepper>(new Stepper(
+        m_Config.StepperDirectionPin, 
+        m_Config.StepperStepPin));
+        
+    auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     
-    m_InputDispatcher.AddListener(m_Menu.get());
+    m_InputDispatcher.AddListener(menu);
     m_InputDispatcher.AddListener(m_Stepper.get());
     m_InputDispatcher.AddListener([this](const Event& event) 
     { 
         return OnInputEvent(m_DisplayBuffer, event); 
     });
-}
 
-void Slider::App::CreateComponents(const AppConfig &config)
-{    
-    m_Display = std::unique_ptr<Display>(new Hardware::LCD(config.LcdAddress));
 
-    auto dpad = new Hardware::Dpad(
-        config.DpadUpPin, 
-        config.DpadDownPin, 
-        config.DpadLeftPin, 
-        config.DpadRightPin, 
-        config.DpadSelectionPin); 
-
-    m_Dpad = std::unique_ptr<IDpadReader>(dpad); 
-
-    auto dpadComp = new ComponentWrapper<Hardware::Dpad>(dpad, 
-        [this]() { m_Dpad->Init(); }, []() {});
-    AddComponent(dpadComp);
-
-    m_Joystick = std::unique_ptr<IJoystickReader>(new Hardware::Joystick(
-        config.JoystickXPin,
-        config.JoystickYPin,
-        config.JoystickCenterPin));
-
-    m_Stepper = std::unique_ptr<Stepper>(new Stepper(
-        config.StepperDirectionPin, 
-        config.StepperStepPin));
-}
-
-void Slider::App::Setup()
-{
     LogInfo("Setup components...");
-    m_Display->Init();
     SetupComponents();
+    m_Display->Init();
     m_DisplayBuffer.Init(m_Display.get());
     m_Dpad->Init();
-    m_Menu->Init();
+    //m_Menu->Setup();
     m_Stepper->Init();
     LogInfo("Components setup complete.");
 
@@ -84,6 +82,7 @@ void Slider::App::Update()
     m_InputDispatcher.ProcessInput(input);
 
     //update all systems
+    UpdateComponents();
     m_Stepper->Update();
 
     //output final display buffer
