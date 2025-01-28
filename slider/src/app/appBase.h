@@ -2,6 +2,8 @@
 #define APP_BASE_H
 
 #include <memory>
+#include <vector>
+#include "component.h"
 
 namespace Slider
 {
@@ -10,14 +12,43 @@ namespace Slider
         public:
             virtual void Setup() = 0;
             virtual void Update() = 0;
+
+            template <class TComponent>
+            void AddComponent(std::unique_ptr<TComponent> component);
+            template <class TComponent, typename... TArgs>
+            void AddComponent(TArgs&&... args);
+
+            template <class TBase>
+            void AddComponentWrapper(TBase* base)
+            {
+                //AddComponent(std::make_unique<ComponentWrapper<TBase>>(base));
+            }
+
+            void SetupComponents();
+            void UpdateComponents();
+
+        private:
+            std::vector<std::unique_ptr<Component>> m_Components;
     };
 
     template<class TConfig>
-    class AppCreator
+    struct AppCreator
     {
-        public:
-            static std::unique_ptr<AppBase> Create(const TConfig& config);
+        static std::unique_ptr<AppBase> Create(const TConfig& config);
     };
+    
+    template <class TComponent>
+    void AppBase::AddComponent(std::unique_ptr<TComponent> component)
+    {
+        m_Components.push_back(std::move(component));
+    }
+
+    template <class TComponent, typename... TArgs>
+    void AppBase::AddComponent(TArgs&&... args)
+    {
+        auto ptr = new TComponent(std::forward<TArgs>(args)...);
+        m_Components.emplace_back(ptr);
+    }
 }
 
 #endif
