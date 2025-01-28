@@ -22,8 +22,8 @@ namespace Slider
     {
         public:
             App(const AppConfig& config);
-            virtual void Setup();
-            virtual void Update();
+            virtual void Setup() override;
+            virtual void Update() override;
 
         private:
             void SetupComponents(const AppConfig &config);
