@@ -37,18 +37,18 @@ void Slider::App::CreateComponents(const AppConfig &config)
 {    
     m_Display = std::unique_ptr<Display>(new Hardware::LCD(config.LcdAddress));
 
-    m_Dpad = std::unique_ptr<IDpadReader>(new Hardware::Dpad(
+    auto dpad = new Hardware::Dpad(
         config.DpadUpPin, 
         config.DpadDownPin, 
         config.DpadLeftPin, 
         config.DpadRightPin, 
-        config.DpadSelectionPin)); 
+        config.DpadSelectionPin); 
 
-    AddComponent(ComponentWrapper::Create<Hardware::Dpad>(config.DpadUpPin, 
-        config.DpadDownPin, 
-        config.DpadLeftPin, 
-        config.DpadRightPin, 
-        config.DpadSelectionPin));
+    m_Dpad = std::unique_ptr<IDpadReader>(dpad); 
+
+    auto dpadComp = new ComponentWrapper<Hardware::Dpad>(dpad, 
+        [this]() { m_Dpad->Init(); }, []() {});
+    AddComponent(dpadComp);
 
     m_Joystick = std::unique_ptr<IJoystickReader>(new Hardware::Joystick(
         config.JoystickXPin,
@@ -66,7 +66,7 @@ void Slider::App::Setup()
     m_Display->Init();
     SetupComponents();
     m_DisplayBuffer.Init(m_Display.get());
-    m_Dpad->Setup();
+    m_Dpad->Init();
     m_Menu->Init();
     m_Stepper->Init();
     LogInfo("Components setup complete.");

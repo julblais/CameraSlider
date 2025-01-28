@@ -12,7 +12,7 @@ namespace Hardware
             Dpad(int upPin, int downPin, int leftPin, int rightPin, int selectionPin);
             virtual ~Dpad() override = default;
 
-            virtual void Setup() override;
+            virtual void Init() override;
             virtual Input::DpadInput ReadInput() override;
 
         private:

@@ -9,7 +9,7 @@ Hardware::Dpad::Dpad(int upPin, int downPin, int leftPin, int rightPin, int sele
     m_SelectionPin(selectionPin)
 {}
 
-void Hardware::Dpad::Setup()
+void Hardware::Dpad::Init()
 {
     pinMode(m_UpPin, INPUT_PULLUP);
     pinMode(m_DownPin, INPUT_PULLUP);

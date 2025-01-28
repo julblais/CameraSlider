@@ -13,37 +13,33 @@ namespace Slider
             virtual void Update() = 0;
     };
 
+    template <typename T>
     class ComponentWrapper : public Component
     {
+        using Method = std::function<void()>;
+
         public:
+            ComponentWrapper(T* component, Method setup, Method update) 
+                : m_Component(component), m_Setup(setup), m_Update(update) {}
             virtual void Setup() override;
             virtual void Update() override;
 
-            template <typename T, typename... TArgs>
-            static std::unique_ptr<ComponentWrapper> Create(TArgs&&... args);
-
         private:
-            using TSetup = std::function<void()>;
-            using TUpdate = std::function<void()>;
-            
-            ComponentWrapper(const TSetup& setup, const TUpdate& update)
-                : m_SetupMethod(setup), m_UpdateMethod(update) {}
-
-        private:
-            const TSetup m_SetupMethod;
-            const TUpdate m_UpdateMethod;
+            std::unique_ptr<T> m_Component;
+            const Method m_Setup;
+            const Method m_Update;
     };
 
-    
-    template <typename T, typename... TArgs>
-    std::unique_ptr<ComponentWrapper> ComponentWrapper::Create(TArgs&&... args)
+    template <typename T>
+    void ComponentWrapper<T>::Setup()
     {
-        auto ptr = new T(std::forward<TArgs>(args)...);
-        auto base = std::unique_ptr<T>(ptr);
-        auto setup = [base]() { base->Setup(); };
-        auto update = [base]() { base->Update(); };
-        auto component = new ComponentWrapper(setup, update);
-        return std::unique_ptr<ComponentWrapper>(component);
+        m_Setup();
+    }
+
+    template <typename T>
+    void ComponentWrapper<T>::Update()
+    {
+        m_Update();
     }
 }
 
