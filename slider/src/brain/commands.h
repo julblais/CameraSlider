@@ -2,7 +2,7 @@
 #define CMDS_H
 
 #include "src/utils/menuSystem.h"
-#include "src/app/settings.h"
+#include "settings.h"
 
 namespace Slider
 {
