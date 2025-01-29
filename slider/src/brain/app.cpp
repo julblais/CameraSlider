@@ -23,14 +23,10 @@ Slider::App::App(const AppConfig &config):
     m_Config(config)
 {}
 
-void Slider::App::CreateComponents(const AppConfig &config)
-{    
-   
-}
-
 void Slider::App::Setup()
 { 
     m_Display = std::unique_ptr<Display>(new Hardware::LCD(m_Config.LcdAddress));
+    auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
 
     auto dpad = new Hardware::Dpad(
         m_Config.DpadUpPin, 
@@ -50,7 +46,6 @@ void Slider::App::Setup()
         m_Config.StepperDirectionPin, 
         m_Config.StepperStepPin));
         
-    auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     
     m_InputDispatcher.AddListener(menu);
     m_InputDispatcher.AddListener(m_Stepper.get());

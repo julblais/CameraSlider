@@ -1,9 +1,8 @@
 #ifndef APP_BASE_H
 #define APP_BASE_H
 
-#include <memory>
+#include "src/component/component.h"
 #include <vector>
-#include "component.h"
 
 namespace Slider
 {
@@ -36,7 +35,7 @@ namespace Slider
     {
         m_Components.emplace_back(component);
     }
-    
+
     template <class TComponent, typename... TArgs>
     TComponent* AppBase::AddComponent(TArgs&&... args)
     {
