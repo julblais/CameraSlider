@@ -10,6 +10,9 @@ class NetApp : public Slider::AppBase
         NetApp(const Slider::AppConfig &config);
         virtual void Setup() override;
         virtual void Update() override;
+
+    private:
+        bool isMaster;
 };
 
 #endif

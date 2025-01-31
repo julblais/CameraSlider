@@ -45,6 +45,7 @@ static auto app = AppCreator<AppConfig>::Create(CreateConfig());
 void setup() {
     Debug::Init(9600);
 
+    LogInfo();
     LogInfo("Being setup...");
     app->Setup();
     LogInfo("End setup.");
