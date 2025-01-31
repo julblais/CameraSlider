@@ -1,5 +1,5 @@
 #include "src/app/appBase.h"
-#include "src/brain/appConfig.h"
+#include "src/app/appConfig.h"
 #include "debug.h"
 #include <memory>
 
