@@ -4,7 +4,7 @@
 #define TEST_NETWORK
 
 #ifdef TEST_NETWORK
-    #include "test/network/netApp.h"
+    #include "src/test/network/netApp.h"
  #else
     #include "app.h"
 #endif
