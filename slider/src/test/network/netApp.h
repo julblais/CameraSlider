@@ -11,8 +11,12 @@ class NetApp : public Slider::AppBase
         virtual void Setup() override;
         virtual void Update() override;
 
+        void UpdateSender();
+        void UpdateReceiver();
+
     private:
-        bool isMaster;
+        bool isReceiver;
+        bool isConnected;
 };
 
 #endif
