@@ -27,6 +27,7 @@ void Slider::App::Setup()
 { 
     m_Display = std::unique_ptr<Display>(new Hardware::LCD(m_Config.LcdAddress));
     auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
+    auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
 
     auto dpad = new Hardware::Dpad(
         m_Config.DpadUpPin, 
@@ -42,13 +43,8 @@ void Slider::App::Setup()
         m_Config.JoystickYPin,
         m_Config.JoystickCenterPin));
 
-    m_Stepper = std::unique_ptr<Stepper>(new Stepper(
-        m_Config.StepperDirectionPin, 
-        m_Config.StepperStepPin));
-        
-    
     m_InputDispatcher.AddListener(menu);
-    m_InputDispatcher.AddListener(m_Stepper.get());
+    m_InputDispatcher.AddListener(stepper);
     m_InputDispatcher.AddListener([this](const Event& event) 
     { 
         return OnInputEvent(m_DisplayBuffer, event); 
@@ -60,8 +56,6 @@ void Slider::App::Setup()
     m_Display->Init();
     m_DisplayBuffer.Init(m_Display.get());
     m_Dpad->Init();
-    //m_Menu->Setup();
-    m_Stepper->Init();
     LogInfo("Components setup complete.");
 
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
@@ -78,7 +72,6 @@ void Slider::App::Update()
 
     //update all systems
     UpdateComponents();
-    m_Stepper->Update();
 
     //output final display buffer
     m_DisplayBuffer.PrintToDisplay();

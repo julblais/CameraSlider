@@ -30,7 +30,6 @@ namespace Slider
             std::unique_ptr<Display> m_Display;
             std::unique_ptr<IDpadReader> m_Dpad;
             std::unique_ptr<IJoystickReader> m_Joystick;
-            std::unique_ptr<Stepper> m_Stepper;
             DisplayBuffer m_DisplayBuffer;
             InputDispatcher m_InputDispatcher;
     };

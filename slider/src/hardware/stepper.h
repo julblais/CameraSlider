@@ -2,18 +2,22 @@
 #define STEPPER_H
 
 #include <AccelStepper.h>
+#include "src/component/component.h"
 #include "src/input/input.h"
 
-class Stepper
+namespace Slider
 {
-    public:
-        Stepper(const int directionPin, const int stepPin);
-        void Init();
-        void Update();
-        bool OnInputEvent(const Input::Event& inputEvent);
+    class Stepper : public Component
+    {
+        public:
+            Stepper(const int directionPin, const int stepPin);
+            virtual void Setup() override;
+            virtual void Update() override;
+            bool OnInputEvent(const Input::Event& inputEvent);
 
-    private:
-        AccelStepper m_Stepper;
-};
+        private:
+            AccelStepper m_Stepper;
+    };
+}
 
 #endif
