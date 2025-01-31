@@ -1,6 +1,7 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include "src/component/component.h"
 #include "src/input/input.h"
 #include "src/utils/timer.h"
 #include "src/utils/menuSystem.h"
@@ -14,11 +15,11 @@ using namespace Input;
 
 namespace Slider{
 
-    class Menu
+    class Menu : public Component
     {
         public:
             Menu(Output::DisplayBuffer* display, int delay);
-            void Init();
+            void Setup();
             bool OnInputEvent(const Input::Event& inputEvent);
 
         private:

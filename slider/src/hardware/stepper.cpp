@@ -3,11 +3,13 @@
 #define MAX_SPEED 1000
 #define MAX_ACCEL 100
 
+using namespace Slider;
+
 Stepper::Stepper(const int directionPin, const int stepPin):
     m_Stepper(AccelStepper::DRIVER, stepPin, directionPin)
 {}
 
-void Stepper::Init()
+void Stepper::Setup()
 {
     m_Stepper.setMaxSpeed(MAX_SPEED);
     m_Stepper.setAcceleration(MAX_ACCEL);

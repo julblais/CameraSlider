@@ -1,5 +1,5 @@
 #include "commands.h"
-#include "src/app/settings.h"
+#include "settings.h"
 #include "src/utils/mathUtils.h"
 
 const char* Slider::MaxSpeedCommand::GetTitle()
