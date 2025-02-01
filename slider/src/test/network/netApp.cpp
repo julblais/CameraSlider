@@ -37,7 +37,7 @@ bool isMacAddress(const uint8_t* const mac, const uint8_t* const candidate){
 
 using namespace Slider;
 
-#define Led_Pin 4
+#define Led_Pin 17
 
 struct Message {
     int x;
