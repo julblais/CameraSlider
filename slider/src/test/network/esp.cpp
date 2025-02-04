@@ -1,19 +1,13 @@
 #include "esp.h"
 #include "src/debug.h"
+#include "address.h"
 
-#include <array>
 #include <functional>
 #include <WiFi.h>
 #include <esp_wifi.h>
 #include <esp_now.h>
 
-MacAddress::MacAddress(std::array<uint8_t, 6> address)
-    : Address(address) {}
-
-MacAddress::MacAddress(const uint8_t* address) : Address()
-{
-    std::copy(address, address + 6, m_Address.begin());
-}
+using namespace Network;
 
 bool Esp::Init()
 {
@@ -43,7 +37,7 @@ MacAddress Esp::GetMacAddress()
     else 
     {
         LogError("Failed to read mac address: ", esp_err_to_name(ret));
-        return INVALID;
+        return INVALID_ADDRESS;
     }
 }
 
