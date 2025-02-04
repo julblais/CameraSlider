@@ -8,7 +8,7 @@
 //#include <WifiEspNowBroadcast.h>
 
 const uint8_t receiver_mac[6] = { 0x94, 0x54, 0xc5, 0x63, 0x0a, 0xec };
-const uint8_t sender_mac[6] = { 0x5c, 0x01, 0x3b, 0x68, 0xb1, 0x0c};
+//const uint8_t sender_mac[6] = { 0x5c, 0x01, 0x3b, 0x68, 0xb1, 0x0c};
 const uint8_t uni_mac[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 uint8_t* readMacAddress(){
@@ -52,8 +52,10 @@ struct Message {
 const Message msg = {type:Type::COORDS, x:11, y:22};
 bool receivedMsg = false;
 bool msgSent = false;
+bool isDiscovered = false;
+bool isConn = false;
 
-NetApp::NetApp(const AppConfig &config): isConnected(false) {}
+NetApp::NetApp(const AppConfig &config) {}
 
 void OnSendData(const uint8_t *mac_addr, esp_now_send_status_t status) 
 {
@@ -71,49 +73,93 @@ void OnReceiveMessage(const uint8_t * mac, const uint8_t *incomingData, int len)
     Message myData;
     memcpy(&myData, incomingData, sizeof(myData));
     
-    LogInfo("Received message: ", myData.x, " ", myData.y);
     if (myData.type == Type::COORDS && myData.x == msg.x && myData.y == msg.y)
     {
+        LogInfo("Received message: ", myData.x, " ", myData.y);
         receivedMsg = true;
     }
-}
-
-void NetApp::UpdateReceiver()
-{
-    if (isConnected)
-        return;
-    
-    LogInfo("Trying to connect to sender");
-    esp_now_register_recv_cb(esp_now_recv_cb_t(OnReceiveMessage));
-
-    LogInfo("Now connected to sender!");
-    isConnected = true;
-}
-
-void NetApp::UpdateSender()
-{
-    if (!isConnected)
+    else if (myData.type == Type::HANDSHAKE)
     {
-        LogInfo("Trying to connect ");
-        esp_now_register_send_cb(OnSendData);
-
+        char macStr[18];
+        snprintf(macStr, sizeof(myData.mac), "%02x:%02x:%02x:%02x:%02x:%02x",
+           myData.mac[0], myData.mac[1], myData.mac[2], myData.mac[3], myData.mac[4], myData.mac[5]);
+           
+        LogInfo("Discovered sender: ", macStr);
         esp_now_peer_info_t peerInfo {};
         peerInfo.channel = 0;  
         peerInfo.encrypt = false;
-        memcpy(peerInfo.peer_addr, uni_mac, 6);
+        memcpy(peerInfo.peer_addr, myData.mac, 6);
         if (esp_now_add_peer(&peerInfo) != ESP_OK){
             LogError("Failed to add peer");
             delay(3000);
             return;
         }
-        LogInfo("Now connected to receiver!");
-        isConnected = true;
+        LogInfo("Now connected to sender!");
+
+        uint8_t* macAddress = readMacAddress();
+        Message msg = {type:Type::HANDSHAKE };
+        memcpy(&msg.mac, &macAddress[0], sizeof(msg.mac));
+        esp_err_t result = esp_now_send(myData.mac, (uint8_t *) &msg, sizeof(Message));
+        if (result == ESP_OK) 
+        {
+            LogInfo("Handshake request sent!");
+        }
+        else 
+        {
+            LogInfo("Error sending handshake: ", esp_err_to_name(result));
+        }
+
+        isDiscovered = true;
+    }
+}
+
+void NetApp::UpdateReceiver()
+{
+    if (!isDiscovered)
+    {
+        //LogInfo("Waiting for sender...");
+        return;
     }
 
-    if (isConnected && !msgSent)
+    if (isConn)
+        return;
+    
+
+    //LogInfo("Now connected to sender!");
+    isConn = true;
+}
+
+void NetApp::UpdateSender()
+{
+    if (!isDiscovered)
+    {
+        LogInfo("Trying to discover receiver...");
+        uint8_t* macAddress = readMacAddress();
+
+     
+
+        Message msg = {type:Type::HANDSHAKE, x:0, y:0};
+        memcpy(&msg.mac, &macAddress[0], sizeof(msg.mac));
+        //send own mac address to receiver
+        esp_err_t result = esp_now_send(uni_mac, (uint8_t *) &msg, sizeof(Message));
+        if (result == ESP_OK) 
+        {
+            LogInfo("Handshake request sent!");
+            delay(1500);
+        }
+        else 
+        {
+            LogInfo("Error sending handshake: ", esp_err_to_name(result));
+        }
+    }
+    else if (!isConn)
+    {
+        LogInfo("Waiting for receiver connection...");
+    }
+    else if (isConn && !msgSent)
     {
         LogInfo("Trying to send message: ");
-        esp_err_t result = esp_now_send(uni_mac, (uint8_t *) &msg, sizeof(Message));
+        esp_err_t result = esp_now_send(0, (uint8_t *) &msg, sizeof(Message));
         
         if (result == ESP_OK) 
         {
@@ -124,6 +170,35 @@ void NetApp::UpdateSender()
             LogInfo("Error sending the data");
         }
         delay(1000);
+    }
+}
+
+void OnSenderReceiveData(const uint8_t * mac, const uint8_t *incomingData, int len)
+{
+    Message myData;
+    memcpy(&myData, incomingData, sizeof(myData));
+
+    if (myData.type == Type::HANDSHAKE)
+    {
+        isDiscovered = true;
+        LogInfo("Discovered receiver! now adding peer");
+        char macStr[18];
+        snprintf(macStr, sizeof(myData.mac), "%02x:%02x:%02x:%02x:%02x:%02x",
+           myData.mac[0], myData.mac[1], myData.mac[2], myData.mac[3], myData.mac[4], myData.mac[5]);
+           
+        LogInfo("Discovered receiver: ", macStr);
+        esp_now_peer_info_t peerInfo {};
+        peerInfo.channel = 0;
+        peerInfo.encrypt = false;
+        memcpy(peerInfo.peer_addr, myData.mac, 6);
+        if (esp_now_add_peer(&peerInfo) != ESP_OK){
+            LogError("Failed to add peer");
+            delay(3000);
+            return;
+        }
+        isConn = true;
+        msgSent = false;
+        LogInfo("Peer added!");
     }
 }
 
@@ -146,12 +221,33 @@ void NetApp::Setup()
     isReceiver = isMacAddress(receiver_mac, mac);
     LogInfo("Is receiver: ", isReceiver);
 
+    if (!isReceiver)
+    {
+        esp_now_register_recv_cb(esp_now_recv_cb_t(OnSenderReceiveData));
+        esp_now_register_send_cb(OnSendData);   
+        esp_now_peer_info_t peerInfo {};
+        peerInfo.channel = 0;  
+        peerInfo.encrypt = false;
+        memcpy(peerInfo.peer_addr, uni_mac, 6);
+        auto res = esp_now_add_peer(&peerInfo);
+        if (res != ESP_OK){
+            LogError("Failed to add peer: ", esp_err_to_name(res));
+            delay(3000);
+            return;
+        }
+    }
+    else{
+        
+        LogInfo("Adding callback");
+        esp_now_register_recv_cb(esp_now_recv_cb_t(OnReceiveMessage));
+    }
+
     delete[] mac;
 }
 
 void NetApp::Update()
 {
-    if (isConnected && (receivedMsg || msgSent))
+    if (isConn && (receivedMsg || msgSent))
         digitalWrite(Led_Pin, LOW);
     else
         digitalWrite(Led_Pin, HIGH);

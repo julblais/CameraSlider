@@ -16,7 +16,7 @@ class NetApp : public Slider::AppBase
 
     private:
         bool isReceiver;
-        bool isConnected;
+        //bool isConnected;
 };
 
 #endif
