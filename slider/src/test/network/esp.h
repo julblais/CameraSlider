@@ -8,6 +8,7 @@
 
 #include "src/utils/templateUtils.h"
 #include "address.h"
+#include "src/debug.h"
 
 template<class T> 
 struct MessageTypeId 
@@ -24,44 +25,38 @@ namespace Network
 {
     struct MessageBase
     {
-        //virtual ~MessageBase() = default;
         unsigned int id;
     };
 
-
-    struct MessageExample : public MessageBase
+    template <typename T>
+    struct MessageWrapper : public MessageBase
     {
-        int x;
-        int y;
+        T data;
     };
-    struct CustomMessage : public MessageBase
-    {
-        int x;
-        int y;
-        bool toto;
-    };
-
-    template<class T>
-    using MessageCb = std::function<void(T)>; 
 
     class BaseCb
     {   
     public:
-        virtual void Invoke(const MessageBase* arg) const = 0;
+        virtual void Invoke(const uint8_t* data, size_t length) const = 0;
         virtual ~BaseCb() {}
     };
 
-    template <class ArgType>
+    template <class T>
     class Cmd : public BaseCb
     {
-        typedef std::function<void(ArgType)> FuncType;
-        FuncType f_;
+        std::function<void(T)>  f_;
         public:
-            Cmd(FuncType f) : f_(f) {}
-            virtual void Invoke(const MessageBase* arg) const override
+            Cmd(std::function<void(T)> f) : f_(f) {}
+            virtual void Invoke(const uint8_t* data, size_t length) const override
             {
-                auto msg = reinterpret_cast<const ArgType*>(arg);
-                f_(*msg);
+                auto expectedSize = sizeof(MessageWrapper<T>);
+                if (length != expectedSize)
+                {
+                    LogDebug("Invalid message size, expected: ", expectedSize, " got: ", length);
+                    return;
+                }
+                auto msg = reinterpret_cast<const MessageWrapper<T>*>(data);
+                f_(msg->data);
             }
     };
 
@@ -70,22 +65,29 @@ namespace Network
 
         public:
             template <class T>
-            void AddCb(MessageCb<T> cb)
+            void AddCb(std::function<void(T)> cb)
             {
                 selector[MessageTypeId<T>::id] = std::unique_ptr<BaseCb>(new Cmd<T>(cb));
             }
 
-            void Invoke(const uint8_t* data)
+            template <class T>
+            MessageWrapper<T> CreateMessage(const T& message)
             {
-                MessageBase myData;
-                //memcpy(&myData, incomingData, sizeof(myData));
+                MessageWrapper<T> wrapper;
+                wrapper.data = message;
+                wrapper.id = MessageTypeId<T>::id;
+                return wrapper;
+            } 
+
+            void Invoke(const uint8_t* data, size_t length)
+            {
                 auto message = reinterpret_cast<const MessageBase*>(data);
                 auto it = selector.find(message->id);
                 if (it != selector.end())
                 {
                     auto cmd = it->second.get();
                     if (cmd)
-                        cmd->Invoke(message);
+                        cmd->Invoke(data, length);
                 }
             }
 

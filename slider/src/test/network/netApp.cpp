@@ -206,23 +206,34 @@ void OnSenderReceiveData(const uint8_t * mac, const uint8_t *incomingData, int l
     }
 }
 
-REGISTER_TYPE_ID(Network::MessageExample, 1);
-REGISTER_TYPE_ID(Network::CustomMessage, 2);
+
+
+    struct MessageExample
+    {
+        int x;
+        int y;
+    };
+    struct CustomMessage
+    {
+        int x;
+        int y;
+        bool toto;
+    };
+
+REGISTER_TYPE_ID(MessageExample, 1);
+REGISTER_TYPE_ID(CustomMessage, 2);
 
 void NetApp::Setup()
 {    
     LogInfo("Setup NetApp");
-    Network::MessageExample example;
-    example.id = MessageTypeId<MessageExample>::id;
+    MessageExample example;
     example.x = 10;
     example.y = 20;
 
-    Network::CustomMessage custom;
-    custom.id = MessageTypeId<CustomMessage>::id;
+    CustomMessage custom;
     custom.x = 10;
     custom.y = 20;
     custom.toto = true;
-    LogInfo("Example: ", MessageTypeId<MessageExample>::id, " ", example.x, " ", example.y);
 
     handler.AddCb<MessageExample>([](MessageExample msg){
         LogInfo("Handled message example: ", msg.x, " ", msg.y);
@@ -231,8 +242,10 @@ void NetApp::Setup()
         LogInfo("Handled custom message: ", msg.x, " ", msg.y, " ", msg.toto);
     });
 
-    handler.Invoke((uint8_t*)&example);
-    handler.Invoke((uint8_t*)&custom);
+    auto msgExample = handler.CreateMessage(example);
+    auto msgCustom = handler.CreateMessage(custom);
+    handler.Invoke((uint8_t*)&msgExample, sizeof(msgExample));
+    handler.Invoke((uint8_t*)&msgCustom, sizeof(msgCustom));
 
     pinMode(Led_Pin, OUTPUT);
     digitalWrite(Led_Pin, HIGH);
