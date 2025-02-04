@@ -3,6 +3,8 @@
 
 #include <array>
 #include <functional>
+#include <map>
+#include <memory>
 
 #include "src/utils/templateUtils.h"
 #include "address.h"
@@ -15,21 +17,81 @@ struct MessageTypeId
 
 #define REGISTER_TYPE_ID(T, id_value) \
     template<> struct MessageTypeId<T> \
-    { static constexpr int id = id_value; }; \
-    constexpr int MessageTypeId<T>::id; 
+    { static constexpr unsigned int id = id_value; }; \
+    constexpr unsigned int MessageTypeId<T>::id; 
 
 namespace Network
 {
-
-    struct MessageExample
+    struct MessageBase
     {
-        public:
+        //virtual ~MessageBase() = default;
+        unsigned int id;
+    };
+
+
+    struct MessageExample : public MessageBase
+    {
         int x;
         int y;
+    };
+    struct CustomMessage : public MessageBase
+    {
+        int x;
+        int y;
+        bool toto;
+    };
+
+    template<class T>
+    using MessageCb = std::function<void(T)>; 
+
+    class BaseCb
+    {   
+    public:
+        virtual void Invoke(const MessageBase* arg) const = 0;
+        virtual ~BaseCb() {}
+    };
+
+    template <class ArgType>
+    class Cmd : public BaseCb
+    {
+        typedef std::function<void(ArgType)> FuncType;
+        FuncType f_;
+        public:
+            Cmd(FuncType f) : f_(f) {}
+            virtual void Invoke(const MessageBase* arg) const override
+            {
+                auto msg = reinterpret_cast<const ArgType*>(arg);
+                f_(*msg);
+            }
     };
 
     class MessageHandler
     {
+
+        public:
+            template <class T>
+            void AddCb(MessageCb<T> cb)
+            {
+                selector[MessageTypeId<T>::id] = std::unique_ptr<BaseCb>(new Cmd<T>(cb));
+            }
+
+            void Invoke(const uint8_t* data)
+            {
+                MessageBase myData;
+                //memcpy(&myData, incomingData, sizeof(myData));
+                auto message = reinterpret_cast<const MessageBase*>(data);
+                auto it = selector.find(message->id);
+                if (it != selector.end())
+                {
+                    auto cmd = it->second.get();
+                    if (cmd)
+                        cmd->Invoke(message);
+                }
+            }
+
+        private:
+    
+        std::map<int, std::unique_ptr<BaseCb>> selector;
 
     };
 

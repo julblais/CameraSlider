@@ -57,6 +57,7 @@ bool receivedMsg = false;
 bool msgSent = false;
 bool isDiscovered = false;
 bool isConn = false;
+MessageHandler handler;
 
 NetApp::NetApp(const AppConfig &config) {}
 
@@ -206,13 +207,32 @@ void OnSenderReceiveData(const uint8_t * mac, const uint8_t *incomingData, int l
 }
 
 REGISTER_TYPE_ID(Network::MessageExample, 1);
+REGISTER_TYPE_ID(Network::CustomMessage, 2);
 
 void NetApp::Setup()
 {    
     LogInfo("Setup NetApp");
     Network::MessageExample example;
+    example.id = MessageTypeId<MessageExample>::id;
+    example.x = 10;
+    example.y = 20;
+
+    Network::CustomMessage custom;
+    custom.id = MessageTypeId<CustomMessage>::id;
+    custom.x = 10;
+    custom.y = 20;
+    custom.toto = true;
     LogInfo("Example: ", MessageTypeId<MessageExample>::id, " ", example.x, " ", example.y);
-    //LogInfo("Example: ", MessageTypeId<NetApp>::id, " ", example.x, " ", example.y);
+
+    handler.AddCb<MessageExample>([](MessageExample msg){
+        LogInfo("Handled message example: ", msg.x, " ", msg.y);
+    });
+    handler.AddCb<CustomMessage>([](CustomMessage msg){
+        LogInfo("Handled custom message: ", msg.x, " ", msg.y, " ", msg.toto);
+    });
+
+    handler.Invoke((uint8_t*)&example);
+    handler.Invoke((uint8_t*)&custom);
 
     pinMode(Led_Pin, OUTPUT);
     digitalWrite(Led_Pin, HIGH);
