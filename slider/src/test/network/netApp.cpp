@@ -5,6 +5,8 @@
 #include <WiFi.h>
 #include <esp_wifi.h>
 #include <esp_now.h>
+
+#include "esp.h"
 //#include <WifiEspNowBroadcast.h>
 
 const uint8_t receiver_mac[6] = { 0x94, 0x54, 0xc5, 0x63, 0x0a, 0xec };
@@ -37,6 +39,7 @@ bool isMacAddress(const uint8_t* const mac, const uint8_t* const candidate){
 /////////////////////////////////
 
 using namespace Slider;
+using namespace Network;
 
 #define Led_Pin 17
 
@@ -202,9 +205,14 @@ void OnSenderReceiveData(const uint8_t * mac, const uint8_t *incomingData, int l
     }
 }
 
+REGISTER_TYPE_ID(Network::MessageExample, 1);
+
 void NetApp::Setup()
 {    
     LogInfo("Setup NetApp");
+    Network::MessageExample example;
+    LogInfo("Example: ", MessageTypeId<MessageExample>::id, " ", example.x, " ", example.y);
+    //LogInfo("Example: ", MessageTypeId<NetApp>::id, " ", example.x, " ", example.y);
 
     pinMode(Led_Pin, OUTPUT);
     digitalWrite(Led_Pin, HIGH);

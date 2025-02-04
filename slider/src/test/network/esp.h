@@ -1,13 +1,38 @@
-#ifndef ESP_H
-#define ESP_H
+#ifndef ESP_UTILS_H
+#define ESP_UTILS_H
 
 #include <array>
 #include <functional>
 
+#include "src/utils/templateUtils.h"
 #include "address.h"
+
+template<class T> 
+struct MessageTypeId 
+{ 
+    static_assert(IsTypeComplete<MessageTypeId<T>>::value, "You need to call REGISTER_TYPE_ID.");
+};
+
+#define REGISTER_TYPE_ID(T, id_value) \
+    template<> struct MessageTypeId<T> \
+    { static constexpr int id = id_value; }; \
+    constexpr int MessageTypeId<T>::id; 
 
 namespace Network
 {
+
+    struct MessageExample
+    {
+        public:
+        int x;
+        int y;
+    };
+
+    class MessageHandler
+    {
+
+    };
+
     class Esp
     {
         public:
