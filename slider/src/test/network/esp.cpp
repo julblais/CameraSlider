@@ -85,6 +85,32 @@ bool Esp::RemovePeer(const MacAddress& address)
     }
 }
 
+void Network::Esp::Send(const uint8_t *data, size_t len)
+{
+    esp_err_t result = esp_now_send(nullptr, data, len);
+    if (result == ESP_OK) 
+    {
+        LogDebug("Message sent!");
+    }
+    else 
+    {
+        LogInfo("Error sending message: ", esp_err_to_name(result));
+    }
+}
+
+void Network::Esp::Send(const MacAddress &address, const uint8_t* data, size_t len)
+{
+    esp_err_t result = esp_now_send(address.Data(), data, len);
+    if (result == ESP_OK) 
+    {
+        LogDebug("Message sent to:", address);
+    }
+    else 
+    {
+        LogInfo("Error sending message to: ", address, " - ", esp_err_to_name(result));
+    }
+}
+
 static Esp::ReceiveCallback s_ReceiveCallback;
 static Esp::SendCallback s_SendCallback;
 

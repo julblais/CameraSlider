@@ -16,6 +16,7 @@ namespace Network
             Address(const uint8_t* address);
 
             void CopyTo(uint8_t* dest) const;
+            const uint8_t* Data() const { return m_Address.data(); }
             virtual size_t printTo(Print& p) const override;
 
         protected:
