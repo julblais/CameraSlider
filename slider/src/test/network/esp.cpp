@@ -91,25 +91,27 @@ bool Esp::RemovePeer(const MacAddress& address)
     }
 }
 
-static Esp::ReceiveCallback rcb;
-static Esp::SendCallback scb;
+static Esp::ReceiveCallback s_ReceiveCallback;
+static Esp::SendCallback s_SendCallback;
 
-void OnReceive(const uint8_t *mac_addr, const uint8_t *data, int data_len)
+void OnReceive(const uint8_t* mac_addr, const uint8_t *data, int data_len)
 {
     MacAddress from(mac_addr);
     LogDebug("Received message from: ", from);
-    rcb(from, data, data_len);
+    if (s_ReceiveCallback)
+        s_ReceiveCallback(from, data, data_len);
 }
 
-void OnSend(const uint8_t *mac_addr, esp_now_send_status_t status)
+void OnSend(const uint8_t* mac_addr, esp_now_send_status_t status)
 {
     MacAddress to(mac_addr);
-    scb(to, status == ESP_NOW_SEND_SUCCESS);
+    if (s_SendCallback)
+        s_SendCallback(to, status == ESP_NOW_SEND_SUCCESS);
 }
 
 void Esp::RegisterReceiveCallback(ReceiveCallback callback)
 {
-    rcb = callback;
+    s_ReceiveCallback = callback;
     auto res = esp_now_register_recv_cb(esp_now_recv_cb_t(OnReceive));
     if (res != ESP_OK)
     {
@@ -119,7 +121,7 @@ void Esp::RegisterReceiveCallback(ReceiveCallback callback)
 
 void Esp::RegisterSendCallback(SendCallback callback)
 {
-    scb = callback;
+    s_SendCallback = callback;
     auto res = esp_now_register_send_cb(esp_now_send_cb_t(OnSend));
     if (res != ESP_OK)
     {
