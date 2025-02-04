@@ -9,6 +9,7 @@
 
 const uint8_t receiver_mac[6] = { 0x94, 0x54, 0xc5, 0x63, 0x0a, 0xec };
 const uint8_t sender_mac[6] = { 0x5c, 0x01, 0x3b, 0x68, 0xb1, 0x0c};
+const uint8_t uni_mac[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 uint8_t* readMacAddress(){
   uint8_t* baseMac = new uint8_t[6];
@@ -39,12 +40,16 @@ using namespace Slider;
 
 #define Led_Pin 17
 
+enum Type { HANDSHAKE, COORDS };
+
 struct Message {
+    Type type;
     int x;
     int y;
+    uint8_t mac[6];
 };
 
-const Message msg = {11, 22};
+const Message msg = {type:Type::COORDS, x:11, y:22};
 bool receivedMsg = false;
 bool msgSent = false;
 
@@ -67,7 +72,7 @@ void OnReceiveMessage(const uint8_t * mac, const uint8_t *incomingData, int len)
     memcpy(&myData, incomingData, sizeof(myData));
     
     LogInfo("Received message: ", myData.x, " ", myData.y);
-    if (myData.x == msg.x && myData.y == msg.y)
+    if (myData.type == Type::COORDS && myData.x == msg.x && myData.y == msg.y)
     {
         receivedMsg = true;
     }
@@ -95,7 +100,7 @@ void NetApp::UpdateSender()
         esp_now_peer_info_t peerInfo {};
         peerInfo.channel = 0;  
         peerInfo.encrypt = false;
-        memcpy(peerInfo.peer_addr, receiver_mac, 6);
+        memcpy(peerInfo.peer_addr, uni_mac, 6);
         if (esp_now_add_peer(&peerInfo) != ESP_OK){
             LogError("Failed to add peer");
             delay(3000);
@@ -108,7 +113,7 @@ void NetApp::UpdateSender()
     if (isConnected && !msgSent)
     {
         LogInfo("Trying to send message: ");
-        esp_err_t result = esp_now_send(0, (uint8_t *) &msg, sizeof(Message));
+        esp_err_t result = esp_now_send(uni_mac, (uint8_t *) &msg, sizeof(Message));
         
         if (result == ESP_OK) 
         {
