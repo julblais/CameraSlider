@@ -13,22 +13,23 @@ namespace Network
 {
     class MessageHandler
     {
-        class InvokerBase
-        {   
-            public:
-                virtual void Invoke(const uint8_t* data, size_t length) const = 0;
-                virtual ~InvokerBase() {}
-        };
+        private:
+            class InvokerBase
+            {   
+                public:
+                    virtual void Invoke(const uint8_t* data, size_t length) const = 0;
+                    virtual ~InvokerBase() {}
+            };
 
-        template <class TMessage>
-        class Invoker : public InvokerBase
-        {
-            public:
-                Invoker(std::function<void(TMessage)> f) : f_(f) {}
-                virtual void Invoke(const uint8_t* data, size_t length) const override;
-            private:
-                std::function<void(TMessage)>  f_;
-        };
+            template <class TMessage>
+            class Invoker : public InvokerBase
+            {
+                public:
+                    Invoker(std::function<void(TMessage)> function) : m_Function(function) {}
+                    virtual void Invoke(const uint8_t* data, size_t length) const override;
+                private:
+                    std::function<void(TMessage)>  m_Function;
+            };
 
         public:
             template <class T>
@@ -40,8 +41,8 @@ namespace Network
             void Invoke(const uint8_t* data, size_t length);
 
         private:
-        using Selector = std::pair<int, std::unique_ptr<InvokerBase>>;
-        std::vector<Selector> m_Selectors;
+            using Selector = std::pair<int, std::unique_ptr<InvokerBase>>;
+            std::vector<Selector> m_Selectors;
     };
 
     template <class TMessage>
@@ -54,7 +55,7 @@ namespace Network
             return;
         }
         auto msg = reinterpret_cast<const MessageWrapper<TMessage>*>(data);
-        f_(msg->data);
+        m_Function(msg->data);
     }
 
     template <class T>

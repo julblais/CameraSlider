@@ -1,6 +1,7 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
+#include "src/utils/templateUtils.h"
 
 #define REGISTER_MESSAGE_TYPE(T, id_value) \
     template<> struct Network::MessageWrapper<T> : public MessageBase \

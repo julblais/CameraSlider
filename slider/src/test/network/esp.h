@@ -1,12 +1,11 @@
 #ifndef ESP_UTILS_H
 #define ESP_UTILS_H
 
-#include <functional>
-
-#include "src/utils/templateUtils.h"
 #include "address.h"
 #include "src/debug.h"
 #include "message.h"
+
+#include <functional>
 
 namespace Network
 {

@@ -235,10 +235,10 @@ void NetApp::Setup()
     custom.y = 20;
     custom.toto = true;
 
-    handler.AddCb<MessageExample>([](MessageExample msg){
+    handler.AddCallback<MessageExample>([](MessageExample msg){
         LogInfo("Handled message example: ", msg.x, " ", msg.y);
     });
-    handler.AddCb<CustomMessage>([](CustomMessage msg){
+    handler.AddCallback<CustomMessage>([](CustomMessage msg){
         LogInfo("Handled custom message: ", msg.x, " ", msg.y, " ", msg.toto);
     });
 
