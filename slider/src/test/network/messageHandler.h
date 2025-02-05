@@ -1,76 +1,77 @@
 #ifndef MESSAGEHANDLER_H
 #define MESSAGEHANDLER_H
 
+#include "message.h"
+#include "src/debug.h"
+
 #include <vector>
 #include <functional>
+#include <memory>
 #include <utility>
-
-#include "message.h"
 
 namespace Network
 {
     class MessageHandler
     {
-        class BaseCb
+        class InvokerBase
         {   
-        public:
-            virtual void Invoke(const uint8_t* data, size_t length) const = 0;
-            virtual ~BaseCb() {}
-        };
-
-        template <class T>
-        class Cmd : public BaseCb
-        {
-            std::function<void(T)>  f_;
             public:
-                Cmd(std::function<void(T)> f) : f_(f) {}
-                virtual void Invoke(const uint8_t* data, size_t length) const override
-                {
-                    auto expectedSize = sizeof(MessageWrapper<T>);
-                    if (length != expectedSize)
-                    {
-                        LogDebug("Invalid message size, expected: ", expectedSize, " got: ", length);
-                        return;
-                    }
-                    auto msg = reinterpret_cast<const MessageWrapper<T>*>(data);
-                    f_(msg->data);
-                }
+                virtual void Invoke(const uint8_t* data, size_t length) const = 0;
+                virtual ~InvokerBase() {}
+        };
+
+        template <class TMessage>
+        class Invoker : public InvokerBase
+        {
+            public:
+                Invoker(std::function<void(TMessage)> f) : f_(f) {}
+                virtual void Invoke(const uint8_t* data, size_t length) const override;
+            private:
+                std::function<void(TMessage)>  f_;
         };
 
         public:
             template <class T>
-            void AddCb(std::function<void(T)> cb)
-            {
-                m_Selectors.emplace_back(MessageWrapper<T>::typeId, std::unique_ptr<BaseCb>(new Cmd<T>(cb)));
-            }
+            void AddCallback(std::function<void(T)> cb);
 
             template <class T>
-            MessageWrapper<T> CreateMessage(const T& message)
-            {
-                MessageWrapper<T> wrapper;
-                wrapper.data = message;
-                wrapper.id = MessageWrapper<T>::typeId;
-                return wrapper;
-            } 
+            MessageWrapper<T> CreateMessage(const T& message);
 
-            void Invoke(const uint8_t* data, size_t length)
-            {
-                auto message = reinterpret_cast<const MessageBase*>(data);
-                for(const auto& selector : m_Selectors)
-                {
-                    if (selector.first == message->id)
-                    {
-                        auto cmd = selector.second.get();
-                        if (cmd)
-                            cmd->Invoke(data, length);
-                    }
-                }
-            }
+            void Invoke(const uint8_t* data, size_t length);
 
         private:
-        using Selector = std::pair<int, std::unique_ptr<BaseCb>>;
+        using Selector = std::pair<int, std::unique_ptr<InvokerBase>>;
         std::vector<Selector> m_Selectors;
     };
+
+    template <class TMessage>
+    inline void MessageHandler::Invoker<TMessage>::Invoke(const uint8_t *data, size_t length) const
+    {
+        auto expectedSize = sizeof(MessageWrapper<TMessage>);
+        if (length != expectedSize)
+        {
+            LogDebug("Invalid message size, expected: ", expectedSize, " got: ", length);
+            return;
+        }
+        auto msg = reinterpret_cast<const MessageWrapper<TMessage>*>(data);
+        f_(msg->data);
+    }
+
+    template <class T>
+    inline void MessageHandler::AddCallback(std::function<void(T)> callback)
+    {
+        auto ptr = new Invoker<T>(callback);
+        m_Selectors.emplace_back(MessageWrapper<T>::typeId, std::unique_ptr<InvokerBase>(ptr));
+    }
+
+    template <class T>
+    inline MessageWrapper<T> MessageHandler::CreateMessage(const T &message)
+    {
+        MessageWrapper<T> wrapper;
+        wrapper.data = message;
+        wrapper.id = MessageWrapper<T>::typeId;
+        return wrapper;
+    }
 }
 
 #endif
