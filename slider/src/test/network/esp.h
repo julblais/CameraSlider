@@ -31,6 +31,11 @@ namespace Network
             template <typename Message>
             static bool Send(const Message& message);
             
+#ifdef IS_SIMULATOR
+            template <typename TMessage>
+            static void RegisterSendCallback(std::function<void(TMessage)> callback);
+#endif
+
         private:
             static bool Send(const uint8_t *data, size_t len);
             static bool Send(const MacAddress& address, const uint8_t* data, size_t len);
