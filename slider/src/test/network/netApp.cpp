@@ -220,8 +220,8 @@ void OnSenderReceiveData(const uint8_t * mac, const uint8_t *incomingData, int l
         bool toto;
     };
 
-REGISTER_TYPE_ID(MessageExample, 1);
-REGISTER_TYPE_ID(CustomMessage, 2);
+REGISTER_MESSAGE_TYPE(MessageExample, 1);
+REGISTER_MESSAGE_TYPE(CustomMessage, 2);
 
 void NetApp::Setup()
 {    

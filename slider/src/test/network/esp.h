@@ -1,73 +1,70 @@
 #ifndef ESP_UTILS_H
 #define ESP_UTILS_H
 
-#include <array>
+#include <vector>
 #include <functional>
-#include <map>
+#include <utility>
 #include <memory>
 
 #include "src/utils/templateUtils.h"
 #include "address.h"
 #include "src/debug.h"
 
-template<class T> 
-struct MessageTypeId 
-{ 
-    static_assert(IsTypeComplete<MessageTypeId<T>>::value, "You need to call REGISTER_TYPE_ID.");
-};
-
-#define REGISTER_TYPE_ID(T, id_value) \
-    template<> struct MessageTypeId<T> \
-    { static constexpr unsigned int id = id_value; }; \
-    constexpr unsigned int MessageTypeId<T>::id; 
+#define REGISTER_MESSAGE_TYPE(T, id_value) \
+    template<> struct Network::MessageHandler::MessageWrapper<T> : public MessageBase \
+    { \
+        static constexpr unsigned int typeId = id_value; \
+        T data; \
+    }; \
+    constexpr unsigned int Network::MessageHandler::MessageWrapper<T>::typeId; 
 
 namespace Network
 {
-    struct MessageBase
-    {
-        unsigned int id;
-    };
-
-    template <typename T>
-    struct MessageWrapper : public MessageBase
-    {
-        T data;
-    };
-
-    class BaseCb
-    {   
-    public:
-        virtual void Invoke(const uint8_t* data, size_t length) const = 0;
-        virtual ~BaseCb() {}
-    };
-
-    template <class T>
-    class Cmd : public BaseCb
-    {
-        std::function<void(T)>  f_;
-        public:
-            Cmd(std::function<void(T)> f) : f_(f) {}
-            virtual void Invoke(const uint8_t* data, size_t length) const override
-            {
-                auto expectedSize = sizeof(MessageWrapper<T>);
-                if (length != expectedSize)
-                {
-                    LogDebug("Invalid message size, expected: ", expectedSize, " got: ", length);
-                    return;
-                }
-                auto msg = reinterpret_cast<const MessageWrapper<T>*>(data);
-                f_(msg->data);
-            }
-    };
-
     class MessageHandler
     {
+
+        struct MessageBase
+        {
+            unsigned int id;
+        };
+
+        template<class T> 
+        struct MessageWrapper : public MessageBase
+        { 
+            static_assert(IsTypeComplete<MessageWrapper<T>>::value, "You need to call REGISTER_TYPE_ID.");
+        };
+
+        class BaseCb
+        {   
+        public:
+            virtual void Invoke(const uint8_t* data, size_t length) const = 0;
+            virtual ~BaseCb() {}
+        };
+
+        template <class T>
+        class Cmd : public BaseCb
+        {
+            std::function<void(T)>  f_;
+            public:
+                Cmd(std::function<void(T)> f) : f_(f) {}
+                virtual void Invoke(const uint8_t* data, size_t length) const override
+                {
+                    auto expectedSize = sizeof(MessageWrapper<T>);
+                    if (length != expectedSize)
+                    {
+                        LogDebug("Invalid message size, expected: ", expectedSize, " got: ", length);
+                        return;
+                    }
+                    auto msg = reinterpret_cast<const MessageWrapper<T>*>(data);
+                    f_(msg->data);
+                }
+        };
 
         public:
             template <class T>
             void AddCb(std::function<void(T)> cb)
             {
-                selector[MessageTypeId<T>::id] = std::unique_ptr<BaseCb>(new Cmd<T>(cb));
+                m_Selectors.emplace_back(MessageWrapper<T>::typeId, std::unique_ptr<BaseCb>(new Cmd<T>(cb)));
             }
 
             template <class T>
@@ -75,26 +72,27 @@ namespace Network
             {
                 MessageWrapper<T> wrapper;
                 wrapper.data = message;
-                wrapper.id = MessageTypeId<T>::id;
+                wrapper.id = MessageWrapper<T>::typeId;
                 return wrapper;
             } 
 
             void Invoke(const uint8_t* data, size_t length)
             {
                 auto message = reinterpret_cast<const MessageBase*>(data);
-                auto it = selector.find(message->id);
-                if (it != selector.end())
+                for(const auto& selector : m_Selectors)
                 {
-                    auto cmd = it->second.get();
-                    if (cmd)
-                        cmd->Invoke(data, length);
+                    if (selector.first == message->id)
+                    {
+                        auto cmd = selector.second.get();
+                        if (cmd)
+                            cmd->Invoke(data, length);
+                    }
                 }
             }
 
         private:
-    
-        std::map<int, std::unique_ptr<BaseCb>> selector;
-
+        using Selector = std::pair<int, std::unique_ptr<BaseCb>>;
+        std::vector<Selector> m_Selectors;
     };
 
     class Esp
