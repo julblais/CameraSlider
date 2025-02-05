@@ -206,47 +206,9 @@ void OnSenderReceiveData(const uint8_t * mac, const uint8_t *incomingData, int l
     }
 }
 
-
-
-    struct MessageExample
-    {
-        int x;
-        int y;
-    };
-    struct CustomMessage
-    {
-        int x;
-        int y;
-        bool toto;
-    };
-
-REGISTER_MESSAGE_TYPE(MessageExample, 1);
-REGISTER_MESSAGE_TYPE(CustomMessage, 2);
-
 void NetApp::Setup()
 {    
     LogInfo("Setup NetApp");
-    MessageExample example;
-    example.x = 10;
-    example.y = 20;
-
-    CustomMessage custom;
-    custom.x = 10;
-    custom.y = 20;
-    custom.toto = true;
-
-    handler.AddCallback<MessageExample>([](MessageExample msg){
-        LogInfo("Handled message example: ", msg.x, " ", msg.y);
-    });
-    handler.AddCallback<CustomMessage>([](CustomMessage msg){
-        LogInfo("Handled custom message: ", msg.x, " ", msg.y, " ", msg.toto);
-    });
-
-    auto msgExample = handler.CreateMessage(example);
-    auto msgCustom = handler.CreateMessage(custom);
-    handler.Invoke((uint8_t*)&msgExample, sizeof(msgExample));
-    handler.Invoke((uint8_t*)&msgCustom, sizeof(msgCustom));
-
     pinMode(Led_Pin, OUTPUT);
     digitalWrite(Led_Pin, HIGH);
 
