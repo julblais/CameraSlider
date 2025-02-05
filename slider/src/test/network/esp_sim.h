@@ -1,4 +1,4 @@
-#ifndef IS_SIMULATOR
+#ifdef IS_SIMULATOR
 
 #ifndef ESP_UTILS_H
 #define ESP_UTILS_H
@@ -33,13 +33,28 @@ namespace Network
             template <typename Message>
             static bool Send(const Message& message);
 
+            template <typename TMessage>
+            static void RegisterSendCallback(std::function<void(TMessage)> callback);
+
         private:
             static bool Send(const uint8_t *data, size_t len);
             static bool Send(const MacAddress& address, const uint8_t* data, size_t len);
             
+            static MessageHandler s_ReceiveHandler;
+            static MessageHandler s_SendHandler;
     };
-    static MessageHandler s_ReceiveHandler;
-    static Esp::SendCallback s_SendCallback;
+    
+    template <typename TMessage>
+    void Network::Esp::RegisterSendCallback(std::function<void(TMessage)> callback)
+    {
+        s_SendHandler.AddCallback<TMessage>(callback);
+    }
+
+    template <typename TMessage>
+    void Esp::RegisterReceiveCallback(std::function<void(TMessage)> callback)
+    {
+        s_ReceiveHandler.AddCallback<TMessage>(callback);
+    }
 
     template <typename Message>
     bool Esp::Send(const MacAddress &address, const Message &message)
@@ -54,13 +69,6 @@ namespace Network
         auto wrapper = s_ReceiveHandler.CreateMessage(message);
         return Send(reinterpret_cast<const uint8_t*>(&wrapper), sizeof(Message));
     }
-    
-    template <typename TMessage>
-    void Esp::RegisterReceiveCallback(std::function<void(TMessage)> callback)
-    {
-        s_ReceiveHandler.AddCallback<TMessage>(callback);
-    }
-
 }
 
 #endif

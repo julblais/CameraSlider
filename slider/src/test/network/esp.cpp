@@ -1,3 +1,5 @@
+#ifndef IS_SIMULATOR
+
 #include "esp.h"
 #include "src/debug.h"
 #include "address.h"
@@ -9,12 +11,6 @@
 
 using namespace Network;
 
-
-#ifndef IS_SIMULATOR
-
-static MessageHandler s_ReceiveHandler;
-static Esp::SendCallback s_SendCallback;
-
 void OnReceive(const uint8_t* mac_addr, const uint8_t *data, size_t length)
 {
     LogDebug("Received message from: ", MacAddress(mac_addr));
@@ -25,7 +21,8 @@ void OnSend(const uint8_t* mac_addr, esp_now_send_status_t status)
 {
     MacAddress address(mac_addr);
     LogDebug("Sending message to: ", address);
-    s_SendCallback(address, status == ESP_NOW_SEND_SUCCESS);
+    if (s_SendCallback)
+        s_SendCallback(address, status == ESP_NOW_SEND_SUCCESS);
 }
 
 bool Esp::Init()
@@ -126,26 +123,6 @@ void Esp::RegisterSendCallback(const Esp::SendCallback& callback)
     s_SendCallback = callback;
 }
 
-template <typename TMessage>
-void Esp::RegisterReceiveCallback(std::function<void(TMessage)> callback)
-{
-    s_ReceiveHandler.AddCallback<TMessage>(callback);
-}
-
-template <typename Message>
-bool Esp::Send(const MacAddress &address, const Message &message)
-{
-    auto wrapper = s_ReceiveHandler.CreateMessage(message);
-    return Send(address, reinterpret_cast<const uint8_t*>(&wrapper), sizeof(Message));
-}
-
-template <typename Message>
-bool Esp::Send(const Message &message)
-{
-    auto wrapper = s_ReceiveHandler.CreateMessage(message);
-    return Send(reinterpret_cast<const uint8_t*>(&wrapper), sizeof(Message));
-}
-
 bool Network::Esp::Send(const uint8_t *data, size_t len)
 {
     esp_err_t result = esp_now_send(nullptr, data, len);
@@ -174,59 +151,6 @@ bool Network::Esp::Send(const MacAddress &address, const uint8_t* data, size_t l
         LogInfo("Error sending message to: ", address, " - ", esp_err_to_name(result));
         return false;
     }
-}
-
-#else ///////////////////////////////////////////////////////////////////////
-
-static MessageHandler s_ReceiveHandler;
-static MessageHandler s_SendHandler;
-
-bool Esp::Init()
-{
-    LogInfo("Bypassing network initialization.");
-    return true;
-}
-
-MacAddress Esp::GetMacAddress(){ return INVALID_ADDRESS; }
-bool Esp::AddPeer(const MacAddress& address) { return true; }
-bool Esp::RemovePeer(const MacAddress& address) { return true; }
-void Esp::RegisterSendCallback(const Esp::SendCallback& callback) { }
-
-template <typename TMessage>
-void Network::Esp::RegisterSendCallback(std::function<void(TMessage)> callback)
-{
-    s_SendHandler.AddCallback<TMessage>(callback);
-}
-
-template <typename TMessage>
-void Esp::RegisterReceiveCallback(std::function<void(TMessage)> callback)
-{
-    s_ReceiveHandler.AddCallback<TMessage>(callback);
-}
-
-template <typename Message>
-bool Esp::Send(const MacAddress &address, const Message &message)
-{
-    auto wrapper = s_ReceiveHandler.CreateMessage(message);
-    return Send(address, reinterpret_cast<const uint8_t*>(&wrapper), sizeof(Message));
-}
-
-template <typename Message>
-bool Esp::Send(const Message &message)
-{
-    auto wrapper = s_ReceiveHandler.CreateMessage(message);
-    return Send(reinterpret_cast<const uint8_t*>(&wrapper), sizeof(Message));
-}
-
-bool Network::Esp::Send(const MacAddress &address, const uint8_t* data, size_t len)
-{
-    return Send(data, len);
-}
-
-bool Network::Esp::Send(const uint8_t *data, size_t len)
-{
-    s_SendHandler.Invoke(data, len);
-    return true;
 }
 
 #endif
