@@ -22,7 +22,21 @@ using namespace Network;
 
 #define Led_Pin 17
 
-REGISTER_MESSAGE_TYPE(HandshakeMessage, 1);
+
+struct ConnectionRequest
+{
+    uint8_t mac[6];
+};
+
+struct HandshakeComplete {};
+
+struct InputMessage
+{
+    int x;
+    int y;
+};
+
+REGISTER_MESSAGE_TYPE(ConnectionRequest, 1);
 REGISTER_MESSAGE_TYPE(InputMessage, 2);
 REGISTER_MESSAGE_TYPE(HandshakeComplete, 3);
 
@@ -32,7 +46,7 @@ void NetApp::UpdateReceiver()
 {
     if (!isConnected)
     {
-        HandshakeMessage msg;
+        ConnectionRequest msg;
         MacAddress mac = Esp::GetMacAddress();
         mac.CopyTo(&msg.mac[0]);
         Esp::Send(msg);
@@ -52,7 +66,7 @@ void NetApp::UpdateController()
     if (!isConnected)
     {
 #ifdef IS_SIMULATOR
-        HandshakeMessage msg;
+        ConnectionRequest msg;
         MacAddress receiverMac{{0x11, 0x22, 0x33, 0x44, 0x55, 0x66}};
         receiverMac.CopyTo(&msg.mac[0]);
         Esp::SimulateSend(msg);
@@ -63,7 +77,7 @@ void NetApp::UpdateController()
     if (!hasHandshake)
     {
         auto mac = Esp::GetMacAddress();
-        HandshakeMessage msg;
+        ConnectionRequest msg;
         mac.CopyTo(&msg.mac[0]);
         Esp::Send(msg);
         delay(1000);
@@ -87,7 +101,7 @@ void NetApp::Setup()
     Esp::Init();
 
 #ifdef IS_RECEIVER
-    Esp::RegisterReceiveCallback<HandshakeMessage>([this](HandshakeMessage msg) { 
+    Esp::RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) { 
         isConnected = true;
         otherMac = msg.mac;
      });
@@ -100,9 +114,9 @@ void NetApp::Setup()
         isCompleted = isConnected && ok;
      });
 #ifdef IS_SIMULATOR
-    Esp::RegisterSimulateSendCallback<HandshakeMessage>([this](HandshakeMessage msg) {
+    Esp::RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) {
         MacAddress otherMac{{0x11, 0x22, 0x33, 0x44, 0x55, 0x66}}; 
-        HandshakeMessage omsg;
+        ConnectionRequest omsg;
         otherMac.CopyTo(&omsg.mac[0]);
         Esp::SimulateSend(omsg);
      });

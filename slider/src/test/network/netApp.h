@@ -5,20 +5,6 @@
 #include "src/app/appConfig.h"
 #include "src/test/network/address.h"
 
-struct HandshakeMessage
-{
-    uint8_t mac[6];
-};
-
-struct InputMessage
-{
-    int x;
-    int y;
-};
-
-
-struct HandshakeComplete {};
-
 class NetApp : public Slider::AppBase
 {
     public:
