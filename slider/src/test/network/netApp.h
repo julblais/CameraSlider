@@ -3,6 +3,7 @@
 
 #include "src/app/appBase.h"
 #include "src/app/appConfig.h"
+#include "src/test/network/address.h"
 
 struct HandshakeMessage
 {
@@ -15,6 +16,9 @@ struct InputMessage
     int y;
 };
 
+
+struct HandshakeComplete {};
+
 class NetApp : public Slider::AppBase
 {
     public:
@@ -22,14 +26,15 @@ class NetApp : public Slider::AppBase
         virtual void Setup() override;
         virtual void Update() override;
 
-        void UpdateSender();
+        void UpdateController();
         void UpdateReceiver();
-        
-        void Sender__ReceiveMsg(HandshakeMessage message);
-        void Sender__ReceiveMsg(InputMessage message);
 
     private:
         bool isReceiver;
+        bool isConnected;
+        bool hasHandshake;
+        bool isCompleted;
+        Network::MacAddress otherMac;
         //bool isConnected;
 };
 

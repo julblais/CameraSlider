@@ -26,48 +26,48 @@ namespace Network
             static void RegisterReceiveCallback(std::function<void(TMessage)> callback);
 
             static void RegisterSendCallback(const SendCallback& callback);
-            
-            template <typename Message>
-            static bool Send(const MacAddress& address, const Message& message);
 
             template <typename Message>
             static bool Send(const Message& message);
 
+            template <typename Message>
+            static bool SimulateSend(const Message& message);
+
             template <typename TMessage>
-            static void RegisterSendCallback(std::function<void(TMessage)> callback);
+            static void RegisterSimulateSendCallback(std::function<void(TMessage)> callback);
 
         private:
             static bool Send(const uint8_t *data, size_t len);
-            static bool Send(const MacAddress& address, const uint8_t* data, size_t len);
             
-            static MessageHandler s_ReceiveHandler;
-            static MessageHandler s_SendHandler;
+            static MessageHandler s_Handler;
+            static MessageHandler s_SimulateHandler;
     };
-    
-    template <typename TMessage>
-    void Network::Esp::RegisterSendCallback(std::function<void(TMessage)> callback)
+
+    template <typename Message>
+    bool Esp::SimulateSend(const Message &message)
     {
-        s_SendHandler.AddCallback<TMessage>(callback);
+        auto wrapper = s_Handler.CreateMessage(message);
+        s_Handler.Invoke(reinterpret_cast<const uint8_t*>(&wrapper), sizeof(wrapper));
+        return true;
+    }
+
+    template <typename TMessage>
+    void Network::Esp::RegisterSimulateSendCallback(std::function<void(TMessage)> callback)
+    {
+        s_SimulateHandler.AddCallback<TMessage>(callback);
     }
 
     template <typename TMessage>
     void Esp::RegisterReceiveCallback(std::function<void(TMessage)> callback)
     {
-        s_ReceiveHandler.AddCallback<TMessage>(callback);
-    }
-
-    template <typename Message>
-    bool Esp::Send(const MacAddress &address, const Message &message)
-    {
-        auto wrapper = s_ReceiveHandler.CreateMessage(message);
-        return Send(address, reinterpret_cast<const uint8_t*>(&wrapper), sizeof(Message));
+        s_Handler.AddCallback<TMessage>(callback);
     }
 
     template <typename Message>
     bool Esp::Send(const Message &message)
     {
-        auto wrapper = s_ReceiveHandler.CreateMessage(message);
-        return Send(reinterpret_cast<const uint8_t*>(&wrapper), sizeof(Message));
+        auto wrapper = s_Handler.CreateMessage(message);
+        return Send(reinterpret_cast<const uint8_t*>(&wrapper), sizeof(wrapper));
     }
 }
 

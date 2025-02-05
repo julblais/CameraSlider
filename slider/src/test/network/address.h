@@ -25,6 +25,7 @@ namespace Network
 
     struct MacAddress : public Address<6> {
         public:
+            MacAddress();
             MacAddress(std::array<uint8_t, 6> address);
             MacAddress(const uint8_t* address);
     };
