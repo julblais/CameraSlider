@@ -15,7 +15,12 @@ template<>
 std::unique_ptr<AppBase> AppCreator<AppConfig>::Create(const AppConfig &config)
 {
 #ifdef TEST_NETWORK
-    return std::unique_ptr<AppBase>(new NetApp(config));
+    #ifdef IS_RECEIVER
+        return std::unique_ptr<AppBase>(new BrainApp(config));
+    #endif
+    #ifdef IS_SENDER
+        return std::unique_ptr<AppBase>(new ControllerApp(config));
+    #endif
 #else
     return std::unique_ptr<AppBase>(new App(config));
 #endif
