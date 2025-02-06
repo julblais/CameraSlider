@@ -32,7 +32,7 @@ REGISTER_MESSAGE_TYPE(InputMessage, 2);
 REGISTER_MESSAGE_TYPE(HandshakeComplete, 3);
 
 BrainApp::BrainApp(const AppConfig &config)
-    : isCompleted(false), isConnected(false), hasHandshake(false) {}
+    : isCompleted(false), isConnected(false), hasSentHandshake(false) {}
 
 void BrainApp::Setup()
 {
@@ -51,9 +51,7 @@ void BrainApp::Setup()
         isCompleted = true;
         LogInfo("Received message x:", msg.x, " y:", msg.y);
     });
-    Esp::RegisterSendCallback([this](const Network::MacAddress& a, bool ok) { 
-        hasHandshake = isConnected && ok;
-     });
+    Esp::AddPeer(BROADCAST_ADDRESS);
 
 #ifdef IS_SIMULATOR
     Esp::RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) {
@@ -79,23 +77,30 @@ void BrainApp::Update()
 
     if (!isConnected)
     {
+        LogInfo("Sending connection request...");
         ConnectionRequest msg;
         MacAddress mac = Esp::GetMacAddress();
         mac.CopyTo(&msg.mac[0]);
-        Esp::Send(msg);
+        Esp::Send(BROADCAST_ADDRESS, msg);
+        delay(2000);
         return;
     }
 
-    if (!hasHandshake)
+    if (!hasSentHandshake)
     {
-        HandshakeComplete msg2;
-        Esp::Send(msg2);
+        Esp::RemovePeer(BROADCAST_ADDRESS);
+        LogInfo("Adding peer: ", controllerMac);
+        Esp::AddPeer(controllerMac);
+        LogInfo("Sending handshake message...");
+        HandshakeComplete msg;
+        Esp::Send(msg);
+        hasSentHandshake = true;
         return;
     }
 }
 
 ControllerApp::ControllerApp(const AppConfig &config)
-    : isCompleted(false), isConnected(false), hasHandshake(false) {}
+    : isCompleted(false), isConnected(false), hasHandshake(false), hasSentHandshake(false) {}
 
 void ControllerApp::Setup()
 {
@@ -112,9 +117,6 @@ void ControllerApp::Setup()
      });
     Esp::RegisterReceiveCallback<HandshakeComplete>([this](HandshakeComplete msg) { 
         hasHandshake = true;
-     });
-    Esp::RegisterSendCallback([this](const Network::MacAddress& a, bool ok) { 
-        isCompleted = isConnected && hasHandshake && ok;
      });
 
 #ifdef IS_SIMULATOR
@@ -140,22 +142,31 @@ void ControllerApp::Update()
         receiverMac.CopyTo(&msg.mac[0]);
         Esp::SimulateSend(msg);
 #endif
-        delay(2000);
+        LogInfo("Waiting for connection request");
+        delay(1000);
         return;
     }
 
-    if (!hasHandshake)
+    if (!hasSentHandshake)
     {
+        LogInfo("Received connection request");
+        LogInfo("Adding peer: ", brainMac);
+        Esp::AddPeer(brainMac);
         auto mac = Esp::GetMacAddress();
+        LogInfo("Sending connection request.");
         ConnectionRequest msg;
         mac.CopyTo(&msg.mac[0]);
+        hasSentHandshake = true;
         Esp::Send(msg);
         return;
     }
 
-    if (!isCompleted)
+    if (hasHandshake && !isCompleted)
     {
+        LogInfo("Received handshake");
+        LogInfo("Sending input message");
         InputMessage msg { x:10, y:20 };
         Esp::Send(msg);
+        isCompleted = true;
     }
 }

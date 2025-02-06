@@ -36,11 +36,12 @@ namespace Network
 
         private:
             static bool Send(const uint8_t* address, const uint8_t *data, size_t len);
-            
-        static MessageHandler s_Handler;
-        static Esp::SendCallback s_SendCallback;
-    #ifdef IS_SIMULATOR
-        static MessageHandler s_OtherDeviceHandler;
+
+        public:
+            static MessageHandler s_Handler;
+            static Esp::SendCallback s_SendCallback;
+#ifdef IS_SIMULATOR
+            static MessageHandler s_OtherDeviceHandler;
 #endif
     };
 

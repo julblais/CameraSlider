@@ -14,8 +14,8 @@ class BrainApp : public Slider::AppBase
 
     private:
         bool isConnected;
-        bool hasHandshake;
         bool isCompleted;
+        bool hasSentHandshake;
         Network::MacAddress controllerMac;
 };
 
@@ -30,6 +30,7 @@ class ControllerApp : public Slider::AppBase
         bool isConnected;
         bool hasHandshake;
         bool isCompleted;
+        bool hasSentHandshake;
         Network::MacAddress brainMac;
 };
 

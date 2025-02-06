@@ -22,15 +22,15 @@ MessageHandler Esp::s_OtherDeviceHandler{};
 void OnReceive(const uint8_t* mac_addr, const uint8_t *data, size_t length)
 {
     LogDebug("Received message from: ", MacAddress(mac_addr));
-    s_Handler.Invoke(data, length);
+    Esp::s_Handler.Invoke(data, length);
 }
 
 void OnSend(const uint8_t* mac_addr, esp_now_send_status_t status)
 {
     MacAddress address(mac_addr);
     LogDebug("Sending message to: ", address);
-    if (s_SendCallback)
-        s_SendCallback(address, status == ESP_NOW_SEND_SUCCESS);
+    if (Esp::s_SendCallback)
+        Esp::s_SendCallback(address, status == ESP_NOW_SEND_SUCCESS);
 }
 #endif
 
@@ -83,7 +83,7 @@ MacAddress Esp::GetMacAddress()
     if (ret == ESP_OK) 
     {
         MacAddress mac(address);
-        LogDebug("Found mac address: ", mac);
+        LogDebug("Get mac address: ", mac);
         return mac;
     } 
     else 
