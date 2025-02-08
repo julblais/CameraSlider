@@ -5,6 +5,15 @@
 #include "src/app/appConfig.h"
 #include "src/test/network/address.h"
 
+    enum ConnectionState
+    {
+        BROADCASTING,
+        SENDING_HANDSHAKE,
+        SENDING_REQUEST,
+        WAITING_FOR_HANDSHAKE,
+        CONNECTED
+    };
+
 class BrainApp : public Slider::AppBase
 {
     public:
@@ -13,9 +22,9 @@ class BrainApp : public Slider::AppBase
         virtual void Update() override;
 
     private:
-        bool isConnected;
-        bool isCompleted;
-        bool hasSentHandshake;
+        std::atomic_flag fl;
+        ConnectionState state;
+        bool isComplete;
         Network::MacAddress controllerMac;
 };
 
