@@ -144,7 +144,15 @@ void Esp::RegisterSendCallback(const Esp::SendCallback& callback)
     s_SendCallback = callback;
 }
 
-bool Network::Esp::Send(const uint8_t* address, const uint8_t* data, size_t len)
+void Network::Esp::Update()
+{
+    s_Handler.ProcessMessages();
+#ifdef IS_SIMULATOR
+    s_OtherDeviceHandler.ProcessMessages();
+#endif
+}
+
+bool Network::Esp::Send(const uint8_t *address, const uint8_t *data, size_t len)
 {
 #ifdef IS_SIMULATOR
     if (s_SendCallback)

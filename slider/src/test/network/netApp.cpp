@@ -100,6 +100,8 @@ void BrainApp::Setup()
 
 void BrainApp::Update()
 {
+    Esp::Update();
+    
     if (isComplete)
         digitalWrite(Led_Pin, LOW);
     else
@@ -161,6 +163,8 @@ void ControllerApp::Setup()
 
 void ControllerApp::Update()
 { 
+    Esp::Update();
+
     if (isConnected && isCompleted)
         digitalWrite(Led_Pin, LOW);
     else

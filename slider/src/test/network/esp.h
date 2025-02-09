@@ -34,6 +34,8 @@ namespace Network
             template <typename TMessage>
             static void RegisterSimulateSendCallback(std::function<void(TMessage)> callback);
 
+            static void Update();
+
         private:
             static bool Send(const uint8_t* address, const uint8_t *data, size_t len);
 

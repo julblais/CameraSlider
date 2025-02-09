@@ -11,6 +11,17 @@
 
 namespace Network
 {
+    struct QueueItem
+    {
+            QueueItem();
+            QueueItem(const uint8_t* data, size_t length);
+            static QueueItem CopyData(const uint8_t* data, size_t length);
+            void Finish();
+
+            const uint8_t* data;
+            const size_t length;
+    };
+
     class MessageHandler
     {
         private:
@@ -32,17 +43,22 @@ namespace Network
             };
 
         public:
+            MessageHandler();
+
             template <class T>
             void AddCallback(std::function<void(T)> cb);
 
             template <class T>
-            MessageWrapper<T> CreateMessage(const T& message);
+            MessageWrapper<T> CreateMessage(const T& message) const;
 
-            void Invoke(const uint8_t* data, size_t length);
+            void Invoke(const uint8_t* data, size_t length) const;
+            void ProcessMessages() const;
 
         private:
+
             using Selector = std::pair<int, std::unique_ptr<InvokerBase>>;
             std::vector<Selector> m_Selectors;
+            QueueHandle_t m_Queue;
     };
 
     template <class TMessage>
@@ -66,7 +82,7 @@ namespace Network
     }
 
     template <class T>
-    inline MessageWrapper<T> MessageHandler::CreateMessage(const T &message)
+    inline MessageWrapper<T> MessageHandler::CreateMessage(const T &message) const
     {
         MessageWrapper<T> wrapper;
         wrapper.data = message;
