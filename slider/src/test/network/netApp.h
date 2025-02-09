@@ -8,6 +8,7 @@
     enum ConnectionState
     {
         BROADCASTING,
+        WAITING_FOR_CONNECTION,
         SENDING_HANDSHAKE,
         SENDING_REQUEST,
         WAITING_FOR_HANDSHAKE,
@@ -22,7 +23,6 @@ class BrainApp : public Slider::AppBase
         virtual void Update() override;
 
     private:
-        std::atomic_flag fl;
         ConnectionState state;
         bool isComplete;
         Network::MacAddress controllerMac;
@@ -36,10 +36,8 @@ class ControllerApp : public Slider::AppBase
         virtual void Update() override;
 
     private:
-        bool isConnected;
-        bool hasHandshake;
-        bool isCompleted;
-        bool hasSentHandshake;
+        ConnectionState state;
+        bool isComplete;
         Network::MacAddress brainMac;
 };
 

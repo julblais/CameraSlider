@@ -9,6 +9,8 @@ using namespace Slider;
 using namespace Network;
 
 #define Led_Pin 17
+#define CONTROLLER_CONNECTION_DELAY 1000
+#define BRAIN_BROADCAST_DELAY 1000
 
 /*
                  ┌─────────┐                              ┌────────────┐                 
@@ -70,16 +72,13 @@ void BrainApp::Setup()
     Esp::RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) {
         state = ConnectionState::SENDING_HANDSHAKE;
         controllerMac = msg.mac;
-        LogInfo("Received connection msg, Thread: ", xPortGetCoreID());
     });
     Esp::RegisterReceiveCallback<Handshake>([this](Handshake msg) { 
         state = ConnectionState::CONNECTED;
-        LogInfo("received handshake: Thread: ", xPortGetCoreID());
     });
     Esp::RegisterReceiveCallback<InputMessage>([this](InputMessage msg) { 
-        isComplete = true;
+        isComplete = state == ConnectionState::CONNECTED;
         LogInfo("Received message x:", msg.x, " y:", msg.y);
-        LogInfo("input msg Thread: ", xPortGetCoreID());
     });
     Esp::AddPeer(BROADCAST_ADDRESS);
 
@@ -101,7 +100,7 @@ void BrainApp::Setup()
 void BrainApp::Update()
 {
     Esp::Update();
-    
+
     if (isComplete)
         digitalWrite(Led_Pin, LOW);
     else
@@ -114,7 +113,7 @@ void BrainApp::Update()
         MacAddress mac = Esp::GetMacAddress();
         mac.CopyTo(&msg.mac[0]);
         Esp::Send(BROADCAST_ADDRESS, msg);
-        delay(2000);
+        delay(BRAIN_BROADCAST_DELAY);
     }
     else if (state == ConnectionState::SENDING_HANDSHAKE)
     {
@@ -134,7 +133,7 @@ void BrainApp::Update()
 }
 
 ControllerApp::ControllerApp(const AppConfig &config)
-    : isCompleted(false), isConnected(false), hasHandshake(false), hasSentHandshake(false) {}
+    : state(ConnectionState::WAITING_FOR_CONNECTION), isComplete(false) {}
 
 void ControllerApp::Setup()
 {
@@ -145,19 +144,21 @@ void ControllerApp::Setup()
     LogInfo("Init espnow...");
     Esp::Init();
 
-    Esp::RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) { 
-        isConnected = true;
+    Esp::RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+        state = ConnectionState::SENDING_REQUEST;
         brainMac = msg.mac;
+        LogInfo("Received connection request from: ", brainMac);
      });
     Esp::RegisterReceiveCallback<Handshake>([this](Handshake msg) { 
-        hasHandshake = true;
+        state = SENDING_HANDSHAKE;
+        LogInfo("Received handshake message");
      });
 
 #ifdef IS_SIMULATOR
     Esp::RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) { 
-        Handshake rmsg;
-        Esp::SimulateSend(rmsg);
-     });
+        Handshake hand;
+        Esp::SimulateSend(hand);
+    });
 #endif
 }
 
@@ -165,44 +166,49 @@ void ControllerApp::Update()
 { 
     Esp::Update();
 
-    if (isConnected && isCompleted)
+    if (isComplete)
         digitalWrite(Led_Pin, LOW);
     else
         digitalWrite(Led_Pin, HIGH);
 
-    if (!isConnected)
+    if (state == ConnectionState::WAITING_FOR_CONNECTION)
     {
+        LogInfo("Waiting for connection request");
+        delay(CONTROLLER_CONNECTION_DELAY);
 #ifdef IS_SIMULATOR
+        //Simulate a connection from brain
         ConnectionRequest msg;
         MacAddress receiverMac{{0x11, 0x22, 0x33, 0x44, 0x55, 0x66}};
         receiverMac.CopyTo(&msg.mac[0]);
         Esp::SimulateSend(msg);
 #endif
-        LogInfo("Waiting for connection request");
-        delay(1000);
-        return;
     }
 
-    if (!hasSentHandshake)
+    if (state == ConnectionState::SENDING_REQUEST)
     {
-        LogInfo("Received connection request");
         LogInfo("Adding peer: ", brainMac);
         Esp::AddPeer(brainMac);
         auto mac = Esp::GetMacAddress();
         LogInfo("Sending connection request.");
         ConnectionRequest msg;
         mac.CopyTo(&msg.mac[0]);
-        hasSentHandshake = true;
         Esp::Send(msg);
+        state = ConnectionState::WAITING_FOR_HANDSHAKE;
         return;
     }
-
-    if (hasHandshake && !isCompleted)
+    if (state == ConnectionState::SENDING_HANDSHAKE)
     {
-        LogInfo("Received handshake");
+        LogInfo("Sending handshake to: ", brainMac);
+        Handshake handshake;
+        Esp::Send(handshake);
+        state = ConnectionState::CONNECTED;
+        return;
+    }
+    if (state == ConnectionState::CONNECTED && !isComplete)
+    {
         LogInfo("Sending input message");
         InputMessage msg { x:10, y:20 };
         Esp::Send(msg);
-        isCompleted = true;
+        isComplete = true;
     }
 }
