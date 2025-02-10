@@ -8,6 +8,7 @@
     { \
         static constexpr unsigned int typeId = id_value; \
         T data; \
+        MessageWrapper(int id, T data): MessageBase(id), data(data){}\
     }; \
     constexpr unsigned int Network::MessageWrapper<T>::typeId; 
 
@@ -15,7 +16,8 @@ namespace Network
 {
     struct MessageBase
     {
-        unsigned int id;
+        const int id;
+        MessageBase(const int id) : id(id) {}
     };
 
     template<class T> 

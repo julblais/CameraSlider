@@ -84,10 +84,7 @@ namespace Network
     template <class T>
     inline MessageWrapper<T> MessageHandler::CreateMessage(const T &message) const
     {
-        MessageWrapper<T> wrapper;
-        wrapper.data = message;
-        wrapper.id = MessageWrapper<T>::typeId;
-        return wrapper;
+        return MessageWrapper<T>(MessageWrapper<T>::typeId, message);
     }
 }
 

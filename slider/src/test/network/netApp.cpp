@@ -19,33 +19,52 @@ using namespace Network;
                  │         │                              │            │                 
                  └─────┬───┘                              └─────┬──────┘                 
                        │                                        │                        
-         BROADCASTING  │                                        │  WAITING_FOR_CONNECTION
-                       │      ConnectionRequest                 │                        
+         BROADCASTING  │   ConnectionRequest                    │  WAITING_FOR_CONNECTION
                        ├───────────────────────────────────────►│                        
                        │                                        │                        
-                       │                   ConnectionRequest    │  SENDING_REQUEST       
+                       │                    ConnectionRequest   │  SENDING_REQUEST       
                        │◄───────────────────────────────────────┤                        
                        │                                        │                        
-    SENDING_HANDSHAKE  │                                        │  WAITING_FOR_HANDSHAKE 
-                       │   Handshake                            │                        
+    SENDING_HANDSHAKE  │   Handshake                            │  WAITING_FOR_HANDSHAKE 
                        ├───────────────────────────────────────►│                        
                        │                                        │                        
-WAITING_FOR_HANDSHAKE  │                                        │  SENDING_HANDSHAKE     
-                       │                           Handshake    │                        
+WAITING_FOR_HANDSHAKE  │                            Handshake   │  SENDING_HANDSHAKE     
                        │◄───────────────────────────────────────┤                        
-                       │                                        │                        
             CONNECTED  │                                        │  CONNECTED             
  */
 
 //const uint8_t receiver_mac[6] = { 0x94, 0x54, 0xc5, 0x63, 0x0a, 0xec };
 //const uint8_t sender_mac[6] = { 0x5c, 0x01, 0x3b, 0x68, 0xb1, 0x0c};
 
-struct ConnectionRequest
+struct ConnectionRequest : public Printable
 {
-    uint8_t mac[6];
+    uint8_t from[6];
+
+    ConnectionRequest(const MacAddress& address)
+    {
+        address.CopyTo(&from[0]);
+    }
+
+    virtual size_t printTo(Print& p) const override
+    {
+        return p.print("ConnectionRequest");
+    }
 };
 
-struct Handshake {};
+struct Handshake : public Printable
+{
+    uint8_t from[6];
+
+    Handshake(const MacAddress& address)
+    {
+        address.CopyTo(&from[0]);
+    }
+
+    virtual size_t printTo(Print& p) const override
+    {
+        return p.print("Handshake");
+    }
+};
 
 struct InputMessage
 {
@@ -70,13 +89,15 @@ void BrainApp::Setup()
     Esp::Init();
 
     Esp::RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+        LogDebug("Received: ", msg);
         state = ConnectionState::SENDING_HANDSHAKE;
-        controllerMac = msg.mac;
+        controllerMac = msg.from;
     });
-    Esp::RegisterReceiveCallback<Handshake>([this](Handshake msg) { 
+    Esp::RegisterReceiveCallback<Handshake>([this](Handshake msg) {
+        LogDebug("Received: ", msg);
         state = ConnectionState::CONNECTED;
     });
-    Esp::RegisterReceiveCallback<InputMessage>([this](InputMessage msg) { 
+    Esp::RegisterReceiveCallback<InputMessage>([this](InputMessage msg) {
         isComplete = state == ConnectionState::CONNECTED;
         LogInfo("Received message x:", msg.x, " y:", msg.y);
     });
@@ -85,8 +106,7 @@ void BrainApp::Setup()
 #ifdef IS_SIMULATOR
     Esp::RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) {
         MacAddress otherMac{{0x11, 0x22, 0x33, 0x44, 0x55, 0x66}}; 
-        ConnectionRequest connectMsg;
-        otherMac.CopyTo(&msg.mac[0]);
+        ConnectionRequest connectMsg(otherMac);
         Esp::SimulateSend(msg);
      });
      Esp::RegisterSimulateSendCallback<Handshake>([this](Handshake msg) {
@@ -109,10 +129,8 @@ void BrainApp::Update()
     if (state == ConnectionState::BROADCASTING)
     {
         LogInfo("Sending connection request..., thread: ", xPortGetCoreID());
-        ConnectionRequest msg;
-        MacAddress mac = Esp::GetMacAddress();
-        mac.CopyTo(&msg.mac[0]);
-        Esp::Send(BROADCAST_ADDRESS, msg);
+        ConnectionRequest request(Esp::GetMacAddress());
+        Esp::Send(BROADCAST_ADDRESS, request);
         delay(BRAIN_BROADCAST_DELAY);
     }
     else if (state == ConnectionState::SENDING_HANDSHAKE)
@@ -122,8 +140,8 @@ void BrainApp::Update()
         LogInfo("Adding peer: ", controllerMac);
         Esp::AddPeer(controllerMac);
         LogInfo("Sending handshake message..., thread", xPortGetCoreID());
-        Handshake msg;
-        Esp::Send(msg);
+        Handshake handshake(Esp::GetMacAddress());
+        Esp::Send(handshake);
         state = ConnectionState::WAITING_FOR_HANDSHAKE;
     }
     else if (state == ConnectionState::CONNECTED)
@@ -146,7 +164,7 @@ void ControllerApp::Setup()
 
     Esp::RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) {
         state = ConnectionState::SENDING_REQUEST;
-        brainMac = msg.mac;
+        brainMac = msg.from;
         LogInfo("Received connection request from: ", brainMac);
      });
     Esp::RegisterReceiveCallback<Handshake>([this](Handshake msg) { 
@@ -155,8 +173,9 @@ void ControllerApp::Setup()
      });
 
 #ifdef IS_SIMULATOR
-    Esp::RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) { 
-        Handshake hand;
+    Esp::RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+        MacAddress otherMac{{0x11, 0x22, 0x33, 0x44, 0x55, 0x66}}; 
+        Handshake hand(otherMac);
         Esp::SimulateSend(hand);
     });
 #endif
@@ -177,9 +196,8 @@ void ControllerApp::Update()
         delay(CONTROLLER_CONNECTION_DELAY);
 #ifdef IS_SIMULATOR
         //Simulate a connection from brain
-        ConnectionRequest msg;
         MacAddress receiverMac{{0x11, 0x22, 0x33, 0x44, 0x55, 0x66}};
-        receiverMac.CopyTo(&msg.mac[0]);
+        ConnectionRequest msg(receiverMac);
         Esp::SimulateSend(msg);
 #endif
     }
@@ -188,18 +206,16 @@ void ControllerApp::Update()
     {
         LogInfo("Adding peer: ", brainMac);
         Esp::AddPeer(brainMac);
-        auto mac = Esp::GetMacAddress();
         LogInfo("Sending connection request.");
-        ConnectionRequest msg;
-        mac.CopyTo(&msg.mac[0]);
-        Esp::Send(msg);
+        ConnectionRequest request(Esp::GetMacAddress());
+        Esp::Send(request);
         state = ConnectionState::WAITING_FOR_HANDSHAKE;
         return;
     }
     if (state == ConnectionState::SENDING_HANDSHAKE)
     {
         LogInfo("Sending handshake to: ", brainMac);
-        Handshake handshake;
+        Handshake handshake(Esp::GetMacAddress());
         Esp::Send(handshake);
         state = ConnectionState::CONNECTED;
         return;
