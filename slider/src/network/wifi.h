@@ -3,7 +3,7 @@
 
 #include "src/component/component.h"
 
-namespace Network
+namespace Net
 {
     class Wifi : public Slider::Component
     {

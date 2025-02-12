@@ -9,9 +9,8 @@
 #include <memory>
 #include <utility>
 
-namespace Network
+namespace Net
 {
-
     class MessageHandler
     {
         private:

@@ -6,7 +6,7 @@
 
 #include "esp.h"
 using namespace Slider;
-using namespace Network;
+using namespace Net;
 
 #define Led_Pin 17
 #define CONTROLLER_CONNECTION_DELAY 1000

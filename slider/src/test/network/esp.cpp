@@ -10,7 +10,7 @@
 #include <esp_now.h>
 #endif
 
-using namespace Network;
+using namespace Net;
 
 MessageHandler Esp::s_Handler{};
 Esp::SendCallback Esp::s_SendCallback{};
@@ -144,7 +144,7 @@ void Esp::RegisterSendCallback(const Esp::SendCallback& callback)
     s_SendCallback = callback;
 }
 
-void Network::Esp::Update()
+void Esp::Update()
 {
     s_Handler.ProcessMessages();
 #ifdef IS_SIMULATOR
@@ -152,7 +152,7 @@ void Network::Esp::Update()
 #endif
 }
 
-bool Network::Esp::Send(const uint8_t *address, const uint8_t *data, size_t len)
+bool Esp::Send(const uint8_t *address, const uint8_t *data, size_t len)
 {
 #ifdef IS_SIMULATOR
     if (s_SendCallback)

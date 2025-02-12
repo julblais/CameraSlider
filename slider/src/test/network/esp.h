@@ -8,7 +8,7 @@
 
 #include <functional>
 
-namespace Network
+namespace Net
 {
     class Esp
     {
@@ -68,7 +68,7 @@ namespace Network
     }
 
     template <typename TMessage>
-    void Network::Esp::RegisterSimulateSendCallback(std::function<void(TMessage)> callback)
+    void Esp::RegisterSimulateSendCallback(std::function<void(TMessage)> callback)
     {
 #ifdef IS_SIMULATOR
         s_OtherDeviceHandler.AddCallback<TMessage>(callback);

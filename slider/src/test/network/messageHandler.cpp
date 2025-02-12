@@ -2,7 +2,7 @@
 
 #define QUEUE_LENGTH 10
 
-using namespace Network;
+using namespace Net;
 
 MessageHandler::QueueItem::QueueItem()
     :data(0), length(0) {}
@@ -22,12 +22,12 @@ void MessageHandler::QueueItem::Finish()
     delete[] data;
 }
 
-Network::MessageHandler::MessageHandler()
+MessageHandler::MessageHandler()
 {
     m_Queue = xQueueCreate(QUEUE_LENGTH, sizeof(QueueItem));
 }
 
-void Network::MessageHandler::ProcessMessages() const
+void MessageHandler::ProcessMessages() const
 {
     QueueItem item;
     if (xQueueReceive(m_Queue, &item, 0))
@@ -46,7 +46,7 @@ void Network::MessageHandler::ProcessMessages() const
     }
 }
 
-void Network::MessageHandler::Invoke(const uint8_t *data, size_t length) const
+void MessageHandler::Invoke(const uint8_t *data, size_t length) const
 {
     //copy data in dynamic array
     QueueItem item = QueueItem::CopyData(data, length);

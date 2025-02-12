@@ -25,7 +25,7 @@ class BrainApp : public Slider::AppBase
     private:
         ConnectionState state;
         bool isComplete;
-        Network::MacAddress controllerMac;
+        Net::MacAddress controllerMac;
 };
 
 class ControllerApp : public Slider::AppBase
@@ -38,7 +38,7 @@ class ControllerApp : public Slider::AppBase
     private:
         ConnectionState state;
         bool isComplete;
-        Network::MacAddress brainMac;
+        Net::MacAddress brainMac;
 };
 
 #endif

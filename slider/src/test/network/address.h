@@ -5,7 +5,7 @@
 #include <Print.h>
 #include <Printable.h>
 
-namespace Network
+namespace Net
 {
     template<int Length>
     struct Address : public Printable

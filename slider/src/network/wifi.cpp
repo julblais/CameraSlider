@@ -1,14 +1,14 @@
 #include "wifi.h"
 
+using namespace Net;
+
 #ifndef IS_SIMULATOR
 
-using namespace Network;
-
-#include "test/network/esp.h"
+#include "src/test/network/esp.h"
 
 void Wifi::Setup()
 {
-    Network::Esp::Init();
+    Esp::Init();
 }
 
 void Wifi::Update()

@@ -1,8 +1,8 @@
 #include "address.h"
 
-using namespace Network;
+using namespace Net;
 
-Network::MacAddress::MacAddress() : Address() {}
+MacAddress::MacAddress() : Address() {}
 
 MacAddress::MacAddress(std::array<uint8_t, 6> address)
     : Address(address) {}
