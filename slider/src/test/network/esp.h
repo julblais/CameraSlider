@@ -16,6 +16,8 @@ namespace Net
             using SendCallback = std::function<void(const MacAddress&, bool)>;
 
             static bool Init();
+            static void Update();
+
             static MacAddress GetMacAddress();
             static bool AddPeer(const MacAddress& address);
             static bool RemovePeer(const MacAddress& address);
@@ -33,8 +35,6 @@ namespace Net
             static bool SimulateSend(const TMessage& message);
             template <typename TMessage>
             static void RegisterSimulateSendCallback(std::function<void(TMessage)> callback);
-
-            static void Update();
 
         private:
             static bool Send(const uint8_t* address, const uint8_t *data, size_t len);

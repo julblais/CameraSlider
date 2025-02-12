@@ -3,6 +3,7 @@
 #include "src/debug.h"
 #include "messageHandler.h"
 #include "address.h"
+#include "src/network/wifi.h"
 
 #include "esp.h"
 using namespace Slider;
@@ -86,7 +87,9 @@ void BrainApp::Setup()
     digitalWrite(Led_Pin, HIGH);
     
     LogInfo("Init espnow...");
-    Esp::Init();
+    auto c = new WifiComponent();
+    AddComponent(c);
+    SetupComponents();
 
     Esp::RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) {
         LogDebug("Received: ", msg);
@@ -119,7 +122,8 @@ void BrainApp::Setup()
 
 void BrainApp::Update()
 {
-    Esp::Update();
+    UpdateComponents();
+    //Esp::Update();
 
     if (isComplete)
         digitalWrite(Led_Pin, LOW);
