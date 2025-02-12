@@ -1,7 +1,7 @@
 #include "src/app/appBase.h"
 #include "src/app/appConfig.h"
 
-#define TEST_NETWORK
+#define TEST_NETWORK true
 
 #ifdef TEST_NETWORK
     #include "src/test/network/netApp.h"
@@ -14,7 +14,7 @@ using namespace Slider;
 template<>
 std::unique_ptr<AppBase> AppCreator<AppConfig>::Create(const AppConfig &config)
 {
-#ifdef TEST_NETWORK
+#if TEST_NETWORK
     #ifdef IS_RECEIVER
         return std::unique_ptr<AppBase>(new BrainApp(config));
     #endif
