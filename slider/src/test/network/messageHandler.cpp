@@ -2,20 +2,22 @@
 
 #define QUEUE_LENGTH 10
 
-Network::QueueItem::QueueItem()
+using namespace Network;
+
+MessageHandler::QueueItem::QueueItem()
     :data(0), length(0) {}
 
-Network::QueueItem::QueueItem(const uint8_t *data, size_t length)
+MessageHandler::QueueItem::QueueItem(const uint8_t *data, size_t length)
     : data(data), length(length) {}
 
-Network::QueueItem Network::QueueItem::CopyData(const uint8_t *data, size_t length)
+MessageHandler::QueueItem MessageHandler::QueueItem::CopyData(const uint8_t *data, size_t length)
 {
     auto dataCopy = new uint8_t[length];
     std::copy(data, data + length, dataCopy);
     return QueueItem(dataCopy, length);
 }
 
-void Network::QueueItem::Finish()
+void MessageHandler::QueueItem::Finish()
 {
     delete[] data;
 }

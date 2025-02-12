@@ -11,16 +11,6 @@
 
 namespace Network
 {
-    struct QueueItem
-    {
-            QueueItem();
-            QueueItem(const uint8_t* data, size_t length);
-            static QueueItem CopyData(const uint8_t* data, size_t length);
-            void Finish();
-
-            const uint8_t* data;
-            const size_t length;
-    };
 
     class MessageHandler
     {
@@ -42,6 +32,17 @@ namespace Network
                     std::function<void(TMessage)>  m_Function;
             };
 
+            struct QueueItem
+            {
+                    QueueItem();
+                    QueueItem(const uint8_t* data, size_t length);
+                    static QueueItem CopyData(const uint8_t* data, size_t length);
+                    void Finish();
+
+                    const uint8_t* data;
+                    const size_t length;
+            };
+
         public:
             MessageHandler();
 
@@ -55,7 +56,6 @@ namespace Network
             void ProcessMessages() const;
 
         private:
-
             using Selector = std::pair<int, std::unique_ptr<InvokerBase>>;
             std::vector<Selector> m_Selectors;
             QueueHandle_t m_Queue;
