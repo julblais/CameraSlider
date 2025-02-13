@@ -1,7 +1,6 @@
 #include "netApp.h"
 #include "src/app/appConfig.h"
 #include "src/debug.h"
-#include "messageHandler.h"
 #include "src/network/address.h"
 #include "src/network/wifi.h"
 

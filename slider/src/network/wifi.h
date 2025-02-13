@@ -2,7 +2,7 @@
 #define WIFI_H
 
 #include "src/component/component.h"
-#include "src/test/network/messageHandler.h"
+#include "src/network/messageHandler.h"
 #include "src/network/address.h"
 
 namespace Net
