@@ -85,7 +85,7 @@ REGISTER_MESSAGE_TYPE(InputMessage, 2);
 REGISTER_MESSAGE_TYPE(Handshake, 3);
 
 BrainApp::BrainApp(const AppConfig &config)
-    : state(ConnectionState::BROADCASTING), isComplete(false) {}
+    : state(ConnectionState::BROADCASTING), isComplete(false), m_Wifi(nullptr) {}
 
 void BrainApp::Setup()
 {
@@ -166,7 +166,7 @@ void BrainApp::Update()
 }
 
 ControllerApp::ControllerApp(const AppConfig &config)
-    : state(ConnectionState::WAITING_FOR_CONNECTION), isComplete(false) {}
+    : state(ConnectionState::WAITING_FOR_CONNECTION), isComplete(false), m_Wifi(nullptr) {}
 
 void ControllerApp::Setup()
 {

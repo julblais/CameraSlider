@@ -16,6 +16,7 @@ void Utils::Timer::Update(unsigned long appTimeMs)
 
 Utils::Timer::Timer(const char* name) :
     m_Name(name),
+    m_Delay(0),
     m_Callback(),
     m_StartTimeMs(0)
 {
