@@ -3,7 +3,7 @@
 
 #include "src/app/appBase.h"
 #include "src/app/appConfig.h"
-#include "src/test/network/address.h"
+#include "src/network/address.h"
 
 namespace Net { class WifiModule; }
 

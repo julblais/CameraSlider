@@ -3,7 +3,7 @@
 
 #include "src/component/component.h"
 #include "src/test/network/messageHandler.h"
-#include "src/test/network/address.h"
+#include "src/network/address.h"
 
 namespace Net
 {
