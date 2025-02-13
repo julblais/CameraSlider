@@ -11,5 +11,3 @@
 #define C_StepperDirectionPin   32;
 #define C_LcdAddress            0x27;
 #define C_ShowMenuDelayMs       2000;
-
-#define IS_SIMULATOR            TRUE;
