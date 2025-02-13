@@ -18,8 +18,6 @@ namespace Output
 
         using ConstIterator =
             std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES>::const_iterator;
-        using Iterator =
-            std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES>::iterator;
 
         public:
             DisplayBuffer();
