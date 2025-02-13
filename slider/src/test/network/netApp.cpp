@@ -47,7 +47,9 @@ struct ConnectionRequest : public Printable
 
     virtual size_t printTo(Print& p) const override
     {
-        return p.print("ConnectionRequest");
+        auto s = p.print("-ConnectionRequest- from: ");
+        s += p.print(MacAddress(from));
+        return s;
     }
 };
 
@@ -62,14 +64,21 @@ struct Handshake : public Printable
 
     virtual size_t printTo(Print& p) const override
     {
-        return p.print("Handshake");
+        auto s = p.print("-Handshake- from: ");
+        s += p.print(MacAddress(from));
+        return s;
     }
 };
 
-struct InputMessage
+struct InputMessage : public Printable
 {
     int x;
     int y;
+
+    virtual size_t printTo(Print& p) const override
+    {
+        return p.printf("-InputMessage- {x: %i, y: %i}", x, y);
+    }
 };
 
 REGISTER_MESSAGE_TYPE(ConnectionRequest, 1);

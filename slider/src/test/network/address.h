@@ -58,7 +58,7 @@ namespace Net
         size_t n = 0;
         for (int i = 0; i < Length; i++)
         {
-            n += p.printf("0x%02x", m_Address[i]);
+            n += p.printf("%02x", m_Address[i]);
             if (i < Length - 1)
                 n += p.print(':');
         }
