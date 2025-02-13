@@ -60,9 +60,9 @@ void Hardware::LCD::Clear()
     chip.clear();
 }
 
-void Hardware::LCD::Write(uint8_t value)
+size_t Hardware::LCD::write(uint8_t value)
 {
-    chip.write(value);
+    return chip.write(value);
 }
 
 void Hardware::LCD::SetCursor(const int column, const int row)

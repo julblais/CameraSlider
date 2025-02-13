@@ -21,8 +21,7 @@ namespace Output
 
             virtual size_t printTo(Print& p) const override
             {
-                p.write(m_Id);
-                return 1;
+                return p.write(m_Id);
             }
 
         private:
@@ -36,7 +35,7 @@ namespace Output
             virtual ~Display() = default;
 
             virtual void Init() {}
-            virtual void Write(Keycode value) = 0;
+            virtual size_t write(Keycode value) = 0;
             virtual void SetCursor(const int column, const int row) = 0;
             virtual SymbolHandle GetSymbol(Symbol symbol) const = 0;
     };
