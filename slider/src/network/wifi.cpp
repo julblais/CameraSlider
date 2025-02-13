@@ -5,11 +5,7 @@ using namespace Net;
 
 #ifndef IS_SIMULATOR
 
-#include "src/test/network/esp.h"
-#include <WiFi.h>
-#include <esp_wifi.h>
-#include <esp_now.h>
-#include "src/test/network/messageHandler.h"
+#include "src/network/esp.h"
 
 void WifiModule::Setup()
 {

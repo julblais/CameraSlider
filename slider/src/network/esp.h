@@ -3,12 +3,12 @@
 #ifndef ESP_UTILS_H
 #define ESP_UTILS_H
 
+#include <functional>
+
 #include "address.h"
 #include "src/debug.h"
 #include "message.h"
 #include "messageHandler.h"
-
-#include <functional>
 
 namespace Net
 {
