@@ -5,7 +5,6 @@
 #include "address.h"
 #include "src/network/wifi.h"
 
-#include "esp.h"
 using namespace Slider;
 using namespace Net;
 
@@ -86,35 +85,41 @@ void BrainApp::Setup()
     pinMode(Led_Pin, OUTPUT);
     digitalWrite(Led_Pin, HIGH);
     
-    LogInfo("Init espnow...");
-    auto c = new WifiComponent();
-    AddComponent(c);
+    LogInfo("Init wifi...");
+    m_Wifi = new WifiModule();
+    AddComponent(m_Wifi);
     SetupComponents();
 
-    Esp::RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) {
-        LogDebug("Received: ", msg);
+    m_Wifi->RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+        if (state != ConnectionState::BROADCASTING) return;
+        LogInfo("Received: ", msg);
         state = ConnectionState::SENDING_HANDSHAKE;
         controllerMac = msg.from;
     });
-    Esp::RegisterReceiveCallback<Handshake>([this](Handshake msg) {
-        LogDebug("Received: ", msg);
+    m_Wifi->RegisterReceiveCallback<Handshake>([this](Handshake msg) {
+        if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
+        LogInfo("Received: ", msg);
         state = ConnectionState::CONNECTED;
     });
-    Esp::RegisterReceiveCallback<InputMessage>([this](InputMessage msg) {
+    m_Wifi->RegisterReceiveCallback<InputMessage>([this](InputMessage msg) {
+        LogInfo("Received: ", msg);
         isComplete = state == ConnectionState::CONNECTED;
-        LogInfo("Received message x:", msg.x, " y:", msg.y);
     });
-    Esp::AddPeer(BROADCAST_ADDRESS);
+    m_Wifi->AddPeer(BROADCAST_ADDRESS);
 
 #ifdef IS_SIMULATOR
-    Esp::RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+    m_Wifi->RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) {
         MacAddress otherMac{{0x11, 0x22, 0x33, 0x44, 0x55, 0x66}}; 
         ConnectionRequest connectMsg(otherMac);
-        Esp::SimulateSend(msg);
+        m_Wifi->SimulateSend(msg);
      });
-     Esp::RegisterSimulateSendCallback<Handshake>([this](Handshake msg) {
-        InputMessage inoutMsg {x:10, y:20};
-        Esp::SimulateSend(msg);
+     m_Wifi->RegisterSimulateSendCallback<Handshake>([this](Handshake msg) {
+        Handshake handshake(MacAddress({0x11, 0x22, 0x33, 0x44, 0x55, 0x66}));
+        m_Wifi->SimulateSend(handshake);
+        InputMessage inoutMsg;
+        inoutMsg.x = 10;
+        inoutMsg.y = 20;
+        m_Wifi->SimulateSend(inoutMsg);
         delay(1000);
      });
 #endif
@@ -123,7 +128,6 @@ void BrainApp::Setup()
 void BrainApp::Update()
 {
     UpdateComponents();
-    //Esp::Update();
 
     if (isComplete)
         digitalWrite(Led_Pin, LOW);
@@ -132,20 +136,19 @@ void BrainApp::Update()
 
     if (state == ConnectionState::BROADCASTING)
     {
-        LogInfo("Sending connection request..., thread: ", xPortGetCoreID());
-        ConnectionRequest request(Esp::GetMacAddress());
-        Esp::Send(BROADCAST_ADDRESS, request);
+        LogInfo("Sending connection request...");
+        ConnectionRequest request(m_Wifi->GetMacAddress());
+        m_Wifi->Send(BROADCAST_ADDRESS, request);
         delay(BRAIN_BROADCAST_DELAY);
     }
     else if (state == ConnectionState::SENDING_HANDSHAKE)
     {
         //add a timer here to return to BROADCASTING after a while + add broadcast peer again
-        Esp::RemovePeer(BROADCAST_ADDRESS);
-        LogInfo("Adding peer: ", controllerMac);
-        Esp::AddPeer(controllerMac);
-        LogInfo("Sending handshake message..., thread", xPortGetCoreID());
-        Handshake handshake(Esp::GetMacAddress());
-        Esp::Send(handshake);
+        m_Wifi->RemovePeer(BROADCAST_ADDRESS);
+        m_Wifi->AddPeer(controllerMac);
+        LogInfo("Sending handshake message...");
+        Handshake handshake(m_Wifi->GetMacAddress());
+        m_Wifi->Send(handshake);
         state = ConnectionState::WAITING_FOR_HANDSHAKE;
     }
     else if (state == ConnectionState::CONNECTED)
@@ -163,31 +166,35 @@ void ControllerApp::Setup()
     pinMode(Led_Pin, OUTPUT);
     digitalWrite(Led_Pin, HIGH);
     
-    LogInfo("Init espnow...");
-    Esp::Init();
+    LogInfo("Init wifi...");
+    m_Wifi = new WifiModule();
+    AddComponent(m_Wifi);
+    SetupComponents();
 
-    Esp::RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+    m_Wifi->RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+        if (state != ConnectionState::WAITING_FOR_CONNECTION) return;
+        LogInfo("Received: ", msg);
         state = ConnectionState::SENDING_REQUEST;
         brainMac = msg.from;
-        LogInfo("Received connection request from: ", brainMac);
-     });
-    Esp::RegisterReceiveCallback<Handshake>([this](Handshake msg) { 
+    });
+    m_Wifi->RegisterReceiveCallback<Handshake>([this](Handshake msg) { 
+        if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
+        LogInfo("Received: ", msg);
         state = SENDING_HANDSHAKE;
-        LogInfo("Received handshake message");
-     });
+    });
 
 #ifdef IS_SIMULATOR
-    Esp::RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+    m_Wifi->RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) {
         MacAddress otherMac{{0x11, 0x22, 0x33, 0x44, 0x55, 0x66}}; 
         Handshake hand(otherMac);
-        Esp::SimulateSend(hand);
+        m_Wifi->SimulateSend(hand);
     });
 #endif
 }
 
 void ControllerApp::Update()
 { 
-    Esp::Update();
+    UpdateComponents();
 
     if (isComplete)
         digitalWrite(Led_Pin, LOW);
@@ -202,33 +209,34 @@ void ControllerApp::Update()
         //Simulate a connection from brain
         MacAddress receiverMac{{0x11, 0x22, 0x33, 0x44, 0x55, 0x66}};
         ConnectionRequest msg(receiverMac);
-        Esp::SimulateSend(msg);
+        m_Wifi->SimulateSend(msg);
 #endif
     }
 
     if (state == ConnectionState::SENDING_REQUEST)
     {
-        LogInfo("Adding peer: ", brainMac);
-        Esp::AddPeer(brainMac);
+        m_Wifi->AddPeer(brainMac);
         LogInfo("Sending connection request.");
-        ConnectionRequest request(Esp::GetMacAddress());
-        Esp::Send(request);
+        ConnectionRequest request(m_Wifi->GetMacAddress());
+        m_Wifi->Send(request);
         state = ConnectionState::WAITING_FOR_HANDSHAKE;
         return;
     }
     if (state == ConnectionState::SENDING_HANDSHAKE)
     {
         LogInfo("Sending handshake to: ", brainMac);
-        Handshake handshake(Esp::GetMacAddress());
-        Esp::Send(handshake);
+        Handshake handshake(m_Wifi->GetMacAddress());
+        m_Wifi->Send(handshake);
         state = ConnectionState::CONNECTED;
         return;
     }
     if (state == ConnectionState::CONNECTED && !isComplete)
     {
         LogInfo("Sending input message");
-        InputMessage msg { x:10, y:20 };
-        Esp::Send(msg);
+        InputMessage msg;
+        msg.x = 10;
+        msg.y = 20;
+        m_Wifi->Send(msg);
         isComplete = true;
     }
 }

@@ -49,7 +49,7 @@ namespace Net
             void AddCallback(std::function<void(T)> cb);
 
             template <class T>
-            MessageWrapper<T> CreateMessage(const T& message) const;
+            static MessageWrapper<T> CreateMessage(const T& message);
 
             void Invoke(const uint8_t* data, size_t length) const;
             void ProcessMessages() const;
@@ -81,7 +81,7 @@ namespace Net
     }
 
     template <class T>
-    inline MessageWrapper<T> MessageHandler::CreateMessage(const T &message) const
+    inline MessageWrapper<T> MessageHandler::CreateMessage(const T &message)
     {
         return MessageWrapper<T>(MessageWrapper<T>::typeId, message);
     }

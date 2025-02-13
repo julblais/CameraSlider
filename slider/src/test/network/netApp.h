@@ -5,15 +5,17 @@
 #include "src/app/appConfig.h"
 #include "src/test/network/address.h"
 
-    enum ConnectionState
-    {
-        BROADCASTING,
-        WAITING_FOR_CONNECTION,
-        SENDING_HANDSHAKE,
-        SENDING_REQUEST,
-        WAITING_FOR_HANDSHAKE,
-        CONNECTED
-    };
+namespace Net { class WifiModule; }
+
+enum ConnectionState
+{
+    BROADCASTING,
+    WAITING_FOR_CONNECTION,
+    SENDING_HANDSHAKE,
+    SENDING_REQUEST,
+    WAITING_FOR_HANDSHAKE,
+    CONNECTED
+};
 
 class BrainApp : public Slider::AppBase
 {
@@ -23,6 +25,7 @@ class BrainApp : public Slider::AppBase
         virtual void Update() override;
 
     private:
+        Net::WifiModule* m_Wifi;
         ConnectionState state;
         bool isComplete;
         Net::MacAddress controllerMac;
@@ -36,6 +39,7 @@ class ControllerApp : public Slider::AppBase
         virtual void Update() override;
 
     private:
+        Net::WifiModule* m_Wifi;
         ConnectionState state;
         bool isComplete;
         Net::MacAddress brainMac;
