@@ -2,7 +2,7 @@
 #define NETAPP_H
 
 #include "src/app/appBase.h"
-#include "src/app/appConfig.h"
+#include "appConfig.h"
 #include "src/network/address.h"
 
 namespace Net { class WifiModule; }

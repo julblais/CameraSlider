@@ -1,5 +1,5 @@
 #include "src/app/appBase.h"
-#include "src/app/appConfig.h"
+#include "appConfig.h"
 
 #define TEST_NETWORK true
 
