@@ -2,7 +2,7 @@
 
 #define QUEUE_LENGTH 10
 
-using namespace Net;
+using namespace Core;
 
 MessageHandler::QueueItem::QueueItem()
     :data(0), length(0)

@@ -6,15 +6,17 @@
 #include <algorithm>
 #include <functional>
 
-static auto Timers = std::vector<Utils::Timer*>();
+using namespace Core;
 
-void Utils::Timer::Update(unsigned long appTimeMs)
+static auto Timers = std::vector<Timer*>();
+
+void Timer::Update(unsigned long appTimeMs)
 {
     for (auto timer : Timers)
         timer->ProcessCallback(appTimeMs);
 }
 
-Utils::Timer::Timer(const char* name) :
+Timer::Timer(const char* name) :
     m_Name(name),
     m_Delay(0),
     m_Callback(),
@@ -23,7 +25,7 @@ Utils::Timer::Timer(const char* name) :
     Timers.push_back(this);
 }
 
-Utils::Timer::Timer(
+Timer::Timer(
     const char* name, std::function<void(unsigned long time)> callback, unsigned long delay) :
     Timer(name)
 {
@@ -31,20 +33,20 @@ Utils::Timer::Timer(
     m_Delay = delay;
 }
 
-Utils::Timer::~Timer()
+Timer::~Timer()
 {
     auto position = std::find(Timers.begin(), Timers.end(), this);
     if (position != Timers.end())
         Timers.erase(position);
 }
 
-void Utils::Timer::Start()
+void Timer::Start()
 {
     m_StartTimeMs = millis();
     LogInfo("Timer \"", m_Name, "\" started at: ", m_StartTimeMs);
 }
 
-void Utils::Timer::Stop()
+void Timer::Stop()
 {
     if (m_StartTimeMs != 0)
     {
@@ -53,17 +55,17 @@ void Utils::Timer::Stop()
     }
 }
 
-void Utils::Timer::Trigger()
+void Timer::Trigger()
 {
     ProcessCallback(ULONG_MAX);
 }
 
-unsigned int Utils::Timer::Delta() const
+unsigned int Timer::Delta() const
 {
     return m_StartTimeMs != 0 ? millis() - m_StartTimeMs : 0;
 }
 
-void Utils::Timer::ProcessCallback(unsigned long appTimeMs)
+void Timer::ProcessCallback(unsigned long appTimeMs)
 {
     if (m_StartTimeMs != 0 && m_Callback)
     {

@@ -1,5 +1,5 @@
 #include "joystick.h"
-#include "src/utils/mathUtils.h"
+#include "src/core/utils/mathUtils.h"
 
 #include <esp32-hal-gpio.h>
 
@@ -27,8 +27,8 @@ Input::JoystickInput Hardware::Joystick::ReadInput()
     auto button = selection ? Input::JoystickCenter : Input::JoystickNone;
 
     Input::JoystickInput input = {
-        .x = -Remap((float)h, 0.0f, (float)JOYSTICK_RANGE_X, -1.0f, 1.0f),
-        .y = Remap((float)v, 0.0f, (float)JOYSTICK_RANGE_Y, -1.0f, 1.0f),
+        .x = -Core::Remap((float)h, 0.0f, (float)JOYSTICK_RANGE_X, -1.0f, 1.0f),
+        .y = Core::Remap((float)v, 0.0f, (float)JOYSTICK_RANGE_Y, -1.0f, 1.0f),
         .button = button };
     return input;
 }

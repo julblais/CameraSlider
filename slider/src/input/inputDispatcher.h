@@ -2,12 +2,12 @@
 #define INPUTMANAGER_H
 
 #include "input.h"
-#include "src/utils/eventSource.h"
+#include "src/core/event/eventSource.h"
 #include <functional>
 
 namespace Input
 {
-    class InputDispatcher : public Utils::EventSource<const Event&>
+    class InputDispatcher : public Core::EventSource<const Event&>
     {
     public:
         void ProcessInput(const InputData& input);

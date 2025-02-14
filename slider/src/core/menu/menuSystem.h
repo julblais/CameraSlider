@@ -6,7 +6,7 @@
 #include <vector>
 #include <memory>
 
-namespace Utils
+namespace Core
 {
     enum class MenuCommandButton : char
     {

@@ -2,7 +2,7 @@
 #define DISPLAY_BUFFER_H
 
 #include "display.h"
-#include "src/utils/templateUtils.h"
+#include "src/core/utils/templateUtils.h"
 
 #include <array>
 #include <Print.h>
@@ -49,14 +49,14 @@ namespace Output
     template <typename... TArgs>
     inline void DisplayBuffer::Print(TArgs &&...args)
     {
-        PassParamPack { (print(args), 1)... };
+        Core::PassParamPack { (print(args), 1)... };
     }
 
     template <typename... TArgs>
     void DisplayBuffer::PrintLine(const int line, TArgs &&...args)
     {
         SetCursor(0, line);
-        PassParamPack { (print(args), 1)... };
+        Core::PassParamPack { (print(args), 1)... };
         FillCurrentLine();
     }
 }

@@ -1,7 +1,7 @@
 #ifndef APP_H
 #define APP_H
 
-#include "src/app/appBase.h"
+#include "src/core/app/appBase.h"
 #include "appConfig.h"
 #include "menu.h"
 #include "src/input/input.h"
@@ -18,7 +18,7 @@ namespace Slider
     using namespace Input;
     using namespace Output;
 
-    class App : public AppBase
+    class App : public Core::AppBase
     {
     public:
         App(const AppConfig& config);

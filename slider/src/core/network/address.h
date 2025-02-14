@@ -5,7 +5,7 @@
 #include <Print.h>
 #include <Printable.h>
 
-namespace Net
+namespace Core
 {
     struct MacAddress : public Printable
     {

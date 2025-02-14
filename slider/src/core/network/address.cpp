@@ -1,6 +1,6 @@
 #include "address.h"
 
-using namespace Net;
+using namespace Core;
 
 MacAddress::MacAddress() {}
 

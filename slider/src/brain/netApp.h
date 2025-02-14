@@ -1,9 +1,9 @@
 #ifndef NETAPP_H
 #define NETAPP_H
 
-#include "src/app/appBase.h"
 #include "appConfig.h"
-#include "src/network/address.h"
+#include "src/core/app/appBase.h"
+#include "src/core/network/address.h"
 
 namespace Net { class WifiModule; }
 
@@ -17,7 +17,7 @@ enum ConnectionState
     CONNECTED
 };
 
-class BrainApp : public Slider::AppBase
+class BrainApp : public Core::AppBase
 {
 public:
     BrainApp(const Slider::AppConfig& config);
@@ -28,10 +28,10 @@ private:
     Net::WifiModule* m_Wifi;
     ConnectionState state;
     bool isComplete;
-    Net::MacAddress controllerMac;
+    Core::MacAddress controllerMac;
 };
 
-class ControllerApp : public Slider::AppBase
+class ControllerApp : public Core::AppBase
 {
 public:
     ControllerApp(const Slider::AppConfig& config);
@@ -42,7 +42,7 @@ private:
     Net::WifiModule* m_Wifi;
     ConnectionState state;
     bool isComplete;
-    Net::MacAddress brainMac;
+    Core::MacAddress brainMac;
 };
 
 #endif

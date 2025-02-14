@@ -7,7 +7,7 @@ charset = utf-8
 indent_style = space
 indent_size = 4
 
-[*.{c,h,cpp,hpp}]
+[*.{c,h,cpp,hpp,tpp}]
 cpp_indent_braces = false
 cpp_indent_case_labels = true
 cpp_indent_preprocessor = none

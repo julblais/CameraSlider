@@ -1,10 +1,10 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include "src/component/component.h"
+#include "src/core/component/component.h"
 #include "src/input/input.h"
-#include "src/utils/timer.h"
-#include "src/utils/menuSystem.h"
+#include "src/core/time/timer.h"
+#include "src/core/menu/menuSystem.h"
 
 namespace Output
 {
@@ -15,7 +15,7 @@ using namespace Input;
 
 namespace Slider {
 
-    class Menu : public Component
+    class Menu : public Core::Component
     {
     public:
         Menu(Output::DisplayBuffer* display, int delay);
@@ -30,9 +30,9 @@ namespace Slider {
         void OutputMenu();
 
         Output::DisplayBuffer* m_DisplayBuffer;
-        Utils::Timer m_ShowHideTimer;
-        Utils::Timer m_IntroTimer;
-        Utils::MenuSystem m_MenuSystem;
+        Core::Timer m_ShowHideTimer;
+        Core::Timer m_IntroTimer;
+        Core::MenuSystem m_MenuSystem;
         State m_State;
     };
 }

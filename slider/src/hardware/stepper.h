@@ -2,12 +2,12 @@
 #define STEPPER_H
 
 #include <AccelStepper.h>
-#include "src/component/component.h"
+#include "src/core/component/component.h"
 #include "src/input/input.h"
 
 namespace Slider
 {
-    class Stepper : public Component
+    class Stepper : public Core::Component
     {
     public:
         Stepper(const int directionPin, const int stepPin);

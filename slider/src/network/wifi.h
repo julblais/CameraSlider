@@ -1,13 +1,15 @@
 #ifndef WIFI_H
 #define WIFI_H
 
-#include "src/component/component.h"
-#include "src/network/messageHandler.h"
-#include "src/network/address.h"
+#include "src/core/component/component.h"
+#include "src/core/network/messageHandler.h"
+#include "src/core/network/address.h"
+
+using namespace Core;
 
 namespace Net
 {
-    class WifiModule : public Slider::Component
+    class WifiModule : public Component
     {
     public:
         virtual void Setup() override;
