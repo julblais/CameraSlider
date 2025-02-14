@@ -10,7 +10,7 @@ using namespace Core;
 
 static auto Timers = std::vector<Timer*>();
 
-void Timer::Update(unsigned long appTimeMs)
+void Timer::UpdateS(unsigned long appTimeMs)
 {
     for (auto timer : Timers)
         timer->ProcessCallback(appTimeMs);
@@ -43,14 +43,14 @@ Timer::~Timer()
 void Timer::Start()
 {
     m_StartTimeMs = millis();
-    LogInfo("Timer \"", m_Name, "\" started at: ", m_StartTimeMs);
+    LogDebug("Timer \"", m_Name, "\" started at: ", m_StartTimeMs);
 }
 
 void Timer::Stop()
 {
     if (m_StartTimeMs != 0)
     {
-        LogInfo("Timer \"", m_Name, "\" stopped");
+        LogDebug("Timer \"", m_Name, "\" stopped");
         m_StartTimeMs = 0;
     }
 }
@@ -72,9 +72,42 @@ void Timer::ProcessCallback(unsigned long appTimeMs)
         const auto delta = m_StartTimeMs < appTimeMs ? appTimeMs - m_StartTimeMs : 0u;
         if (delta >= m_Delay)
         {
-            LogInfo("Timer \"", m_Name, "\" activated at: ", appTimeMs);
+            LogDebug("Timer \"", m_Name, "\" activated at: ", appTimeMs);
             m_Callback(delta);
             Stop();
         }
     }
 }
+
+void TimerComponent::Update()
+{
+    m_TimeMs = millis();
+    for (auto cb : m_Callbacks) //be careful when iterating on the vector/list/forward list
+        ProcessCallback(m_TimeMs, cb);
+}
+
+Core::TimerComponent::TimerComponent()
+    :m_TimeMs(0)
+{}
+
+TimerObj Core::TimerComponent::Add(const char* name, TimerCallback callback, Time delay)
+{
+    m_Callbacks.push_back(TimerData { callback, delay, m_TimeMs });
+    return TimerObj();
+}
+
+bool TimerComponent::ProcessCallback(const Time current, const TimerData& callback)
+{
+    if (callback.cb)
+    {
+        const auto delta = callback.startTime < current ? current - callback.startTime : 0u;
+        if (delta >= callback.delay)
+        {
+            LogDebug("Timer \"", m_Name, "\" activated at: ", appTimeMs);
+            callback.cb(delta);
+            return true;
+        }
+    }
+    return false;
+}
+
