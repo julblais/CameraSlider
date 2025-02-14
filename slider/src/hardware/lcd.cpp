@@ -8,13 +8,13 @@
 #include "src/debug.h"
 
 static const uint8_t LeftRightArrows[] = {
-    0b00000, 
-    0b00000, 
-    0b01010, 
-    0b11011, 
-    0b11011, 
-    0b01010, 
-    0b00000, 
+    0b00000,
+    0b00000,
+    0b01010,
+    0b11011,
+    0b11011,
+    0b01010,
+    0b00000,
     0b00000
 };
 
@@ -29,27 +29,27 @@ static const uint8_t UpDownArrows[] = {
     0b00000,
 };
 
-Hardware::LCD::LCD(const uint8_t address):
+Hardware::LCD::LCD(const uint8_t address) :
     chip(address, LCD::NUM_COLS, LCD::NUM_ROWS),
     m_DoubleLeftRightArrows(0),
     m_DoubleUpDownArrows(0)
-{} 
+{}
 
 void Hardware::LCD::Init()
 {
     LogInfo("Init LCD.");
     chip.init();
-    
+
     auto id = 0;
     CreateSymbol(id, LeftRightArrows);
     m_DoubleLeftRightArrows = id++;
     CreateSymbol(id, UpDownArrows);
     m_DoubleUpDownArrows = id++;
-    
+
     chip.backlight();
 }
 
-void Hardware::LCD::CreateSymbol(const int id, const uint8_t *charmap)
+void Hardware::LCD::CreateSymbol(const int id, const uint8_t* charmap)
 {
     LogInfo("Creating custom character with id: ", id);
     chip.createChar(id, const_cast<uint8_t*>(charmap));

@@ -5,7 +5,7 @@
 
 using namespace Slider;
 
-Stepper::Stepper(const int directionPin, const int stepPin):
+Stepper::Stepper(const int directionPin, const int stepPin) :
     m_Stepper(AccelStepper::DRIVER, stepPin, directionPin)
 {}
 
@@ -20,7 +20,7 @@ void Stepper::Update()
     m_Stepper.runSpeed();
 }
 
-bool Stepper::OnInputEvent(const Input::Event &inputEvent)
+bool Stepper::OnInputEvent(const Input::Event& inputEvent)
 {
     if (inputEvent.joystickX < 0)
     {

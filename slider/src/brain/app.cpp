@@ -19,22 +19,22 @@ static bool OnInputEvent(DisplayBuffer& display, const Event& event)
     return false;
 }
 
-Slider::App::App(const AppConfig &config):
+Slider::App::App(const AppConfig& config) :
     m_Config(config)
 {}
 
 void Slider::App::Setup()
-{ 
+{
     m_Display = std::unique_ptr<Display>(new Hardware::LCD(m_Config.LcdAddress));
     auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
 
     auto dpad = new Hardware::Dpad(
-        m_Config.DpadUpPin, 
-        m_Config.DpadDownPin, 
-        m_Config.DpadLeftPin, 
-        m_Config.DpadRightPin, 
-        m_Config.DpadSelectionPin); 
+        m_Config.DpadUpPin,
+        m_Config.DpadDownPin,
+        m_Config.DpadLeftPin,
+        m_Config.DpadRightPin,
+        m_Config.DpadSelectionPin);
 
     m_Dpad = std::unique_ptr<IDpadReader>(dpad);
 
@@ -45,9 +45,8 @@ void Slider::App::Setup()
 
     m_InputDispatcher.AddListener(menu);
     m_InputDispatcher.AddListener(stepper);
-    m_InputDispatcher.AddListener([this](const Event& event) 
-    { 
-        return OnInputEvent(m_DisplayBuffer, event); 
+    m_InputDispatcher.AddListener([this](const Event& event) {
+        return OnInputEvent(m_DisplayBuffer, event);
     });
 
 

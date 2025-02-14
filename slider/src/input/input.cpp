@@ -25,7 +25,7 @@ const char* Input::ToString(DpadButton button)
     }
 }
 
-const char *Input::ToString(JoystickButton button)
+const char* Input::ToString(JoystickButton button)
 {
     switch (button)
     {

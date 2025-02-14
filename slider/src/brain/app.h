@@ -20,18 +20,18 @@ namespace Slider
 
     class App : public AppBase
     {
-        public:
-            App(const AppConfig& config);
-            virtual void Setup() override;
-            virtual void Update() override;
+    public:
+        App(const AppConfig& config);
+        virtual void Setup() override;
+        virtual void Update() override;
 
-        private:
-            AppConfig m_Config;
-            std::unique_ptr<Display> m_Display;
-            std::unique_ptr<IDpadReader> m_Dpad;
-            std::unique_ptr<IJoystickReader> m_Joystick;
-            DisplayBuffer m_DisplayBuffer;
-            InputDispatcher m_InputDispatcher;
+    private:
+        AppConfig m_Config;
+        std::unique_ptr<Display> m_Display;
+        std::unique_ptr<IDpadReader> m_Dpad;
+        std::unique_ptr<IJoystickReader> m_Joystick;
+        DisplayBuffer m_DisplayBuffer;
+        InputDispatcher m_InputDispatcher;
     };
 }
 

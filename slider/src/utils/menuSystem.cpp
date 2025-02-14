@@ -1,7 +1,7 @@
 #include "menuSystem.h"
 #include "src/debug.h"
 
-Utils::MenuSystem::MenuSystem():
+Utils::MenuSystem::MenuSystem() :
     m_Items(),
     m_Index(0)
 {}
@@ -18,16 +18,16 @@ void Utils::MenuSystem::Reset()
 
 void Utils::MenuSystem::Up()
 {
-    auto newIdx = m_Index-1;
+    auto newIdx = m_Index - 1;
     if (newIdx < 0) //wrap
-        m_Index = m_Items.size()-1;
+        m_Index = m_Items.size() - 1;
     else
         m_Index = newIdx;
 }
 
 void Utils::MenuSystem::Down()
 {
-    auto newIdx = m_Index+1;
+    auto newIdx = m_Index + 1;
     if (newIdx >= m_Items.size()) //wrap
         m_Index = 0;
     else
@@ -54,3 +54,8 @@ Utils::MenuOutput Utils::MenuSystem::GetOutput() const
     auto command = m_Items[m_Index].get();
     return Utils::MenuOutput(command->GetTitle(), command->GetDesc());
 }
+
+Utils::MenuOutput::MenuOutput(const char* title, const char* desc) :
+    title(title),
+    desc(desc)
+{}

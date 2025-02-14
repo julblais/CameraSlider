@@ -17,16 +17,16 @@ namespace Utils
 
     class MenuCommand
     {
-        public:
-            static constexpr auto ButtonLeft = MenuCommandButton::LEFT;
-            static constexpr auto ButtonRight = MenuCommandButton::RIGHT;
-            static constexpr auto ButtonSelect = MenuCommandButton::SELECT;
+    public:
+        static constexpr auto ButtonLeft = MenuCommandButton::LEFT;
+        static constexpr auto ButtonRight = MenuCommandButton::RIGHT;
+        static constexpr auto ButtonSelect = MenuCommandButton::SELECT;
 
-            MenuCommand() {};
-            virtual ~MenuCommand() {}
-            virtual const char* GetTitle()=0;
-            virtual const char* GetDesc()=0;
-            virtual void Invoke(MenuCommandButton command)=0;
+        MenuCommand() {};
+        virtual ~MenuCommand() {}
+        virtual const char* GetTitle() = 0;
+        virtual const char* GetDesc() = 0;
+        virtual void Invoke(MenuCommandButton command) = 0;
     };
 
     struct MenuOutput
@@ -34,30 +34,28 @@ namespace Utils
         const char* title;
         const char* desc;
 
-        MenuOutput(const char* title, const char* desc):
-            title(title),
-            desc(desc){}
+        MenuOutput(const char* title, const char* desc);
     };
 
     class MenuSystem
     {
-        public:
-            MenuSystem();
+    public:
+        MenuSystem();
 
-            void Reset();
-            void AddCommand(MenuCommand* command);
+        void Reset();
+        void AddCommand(MenuCommand* command);
 
-            void Up();
-            void Down();
-            void Left();
-            void Right();
-            void Select();
+        void Up();
+        void Down();
+        void Left();
+        void Right();
+        void Select();
 
-            MenuOutput GetOutput() const;
-            
-        private:
-            std::vector<std::unique_ptr<MenuCommand>> m_Items;
-            int m_Index;
+        MenuOutput GetOutput() const;
+
+    private:
+        std::vector<std::unique_ptr<MenuCommand>> m_Items;
+        int m_Index;
     };
 }
 

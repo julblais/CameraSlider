@@ -9,14 +9,14 @@ namespace Slider
 {
     class Stepper : public Component
     {
-        public:
-            Stepper(const int directionPin, const int stepPin);
-            virtual void Setup() override;
-            virtual void Update() override;
-            bool OnInputEvent(const Input::Event& inputEvent);
+    public:
+        Stepper(const int directionPin, const int stepPin);
+        virtual void Setup() override;
+        virtual void Update() override;
+        bool OnInputEvent(const Input::Event& inputEvent);
 
-        private:
-            AccelStepper m_Stepper;
+    private:
+        AccelStepper m_Stepper;
     };
 }
 

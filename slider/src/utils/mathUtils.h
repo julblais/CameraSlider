@@ -13,8 +13,8 @@ auto GetPreviousEnumValue(T enumValue) -> decltype(T::COUNT)
     const auto val = static_cast<char>(enumValue) - 1;
     const auto count = static_cast<char>(T::COUNT);
     if (val < 0)
-        return static_cast<T>(count-1);
-    else 
+        return static_cast<T>(count - 1);
+    else
         return static_cast<T>(val);
 }
 
@@ -25,7 +25,7 @@ auto GetNextEnumValue(T enumValue) -> decltype(T::COUNT)
     const auto count = static_cast<char>(T::COUNT);
     if (val >= count)
         return static_cast<T>(0);
-    else 
+    else
         return static_cast<T>(val);
 }
 

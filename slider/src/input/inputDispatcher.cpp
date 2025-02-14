@@ -48,12 +48,12 @@ void Process(const Input::JoystickInput& last, const Input::JoystickInput& curre
     out.joystickDirectionChanged = last.x != current.x || last.y != current.y;
 }
 
-void Input::InputDispatcher::ProcessInput(const InputData &input)
+void Input::InputDispatcher::ProcessInput(const InputData& input)
 {
     auto event = Event();
     Process(m_LastInput.dpad, input.dpad, event);
     Process(m_LastInput.joystick, input.joystick, event);
-    
+
     SendEvent(event);
 
     m_LastInput = input;

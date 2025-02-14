@@ -9,7 +9,7 @@ namespace Slider
     {
         enum class Speed : char { S_SLOW, S_MED, S_HIGH, COUNT };
         enum class Curve : char { C_LINEAR, C_QUAD, C_EXP, COUNT };
-        
+
         static constexpr auto SpeedSlow = Speed::S_SLOW;
         static constexpr auto SpeedMedium = Speed::S_MED;
         static constexpr auto SpeedHigh = Speed::S_HIGH;
@@ -23,12 +23,12 @@ namespace Slider
 
         void SetSpeed(Speed value);
         void SetCurve(Curve value);
-        
+
         static Settings& GetInstance();
 
-        private:
-            Settings();
-            Settings(const Settings&) = delete;
+    private:
+        Settings();
+        Settings(const Settings&) = delete;
 
         mutable Preferences m_Prefs;
     };

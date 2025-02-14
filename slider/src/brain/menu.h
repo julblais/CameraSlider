@@ -13,27 +13,27 @@ namespace Output
 
 using namespace Input;
 
-namespace Slider{
+namespace Slider {
 
     class Menu : public Component
     {
-        public:
-            Menu(Output::DisplayBuffer* display, int delay);
-            void Setup() override;
-            bool OnInputEvent(const Input::Event& inputEvent);
+    public:
+        Menu(Output::DisplayBuffer* display, int delay);
+        void Setup() override;
+        bool OnInputEvent(const Input::Event& inputEvent);
 
-        private:
-            enum class State { Hidden = 0, Intro = 1, Shown = 2 };
+    private:
+        enum class State { Hidden = 0, Intro = 1, Shown = 2 };
 
-            void OnSelectionLongPress(unsigned long time);
-            void OnIntroFinished(unsigned long time);
-            void OutputMenu();
-            
-            Output::DisplayBuffer* m_DisplayBuffer;
-            Utils::Timer m_ShowHideTimer;
-            Utils::Timer m_IntroTimer;
-            Utils::MenuSystem m_MenuSystem;
-            State m_State;
+        void OnSelectionLongPress(unsigned long time);
+        void OnIntroFinished(unsigned long time);
+        void OutputMenu();
+
+        Output::DisplayBuffer* m_DisplayBuffer;
+        Utils::Timer m_ShowHideTimer;
+        Utils::Timer m_IntroTimer;
+        Utils::MenuSystem m_MenuSystem;
+        State m_State;
     };
 }
 

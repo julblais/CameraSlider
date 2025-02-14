@@ -12,10 +12,10 @@
 
 using namespace Net;
 
-Esp::SendCallback s_SendCallback{};
-Esp::ReceiveCallback s_ReceiveCallback{};
+Esp::SendCallback s_SendCallback {};
+Esp::ReceiveCallback s_ReceiveCallback {};
 
-void OnReceive(const uint8_t* mac_addr, const uint8_t *data, size_t length)
+void OnReceive(const uint8_t* mac_addr, const uint8_t* data, size_t length)
 {
     LogDebug("Received message from: ", MacAddress(mac_addr));
     if (s_ReceiveCallback)
@@ -36,7 +36,7 @@ bool Esp::Init()
 
     LogDebug("Init wifi...");
     WiFi.mode(WIFI_STA);
-    
+
     LogDebug("Init espnow...");
     auto result = esp_now_init();
     if (result != ESP_OK)
@@ -68,13 +68,13 @@ MacAddress Esp::GetMacAddress()
 {
     std::array<uint8_t, 6> address;
     esp_err_t ret = esp_wifi_get_mac(WIFI_IF_STA, address.data());
-    if (ret == ESP_OK) 
+    if (ret == ESP_OK)
     {
         MacAddress mac(address);
         LogDebug("Get mac address: ", mac);
         return mac;
-    } 
-    else 
+    }
+    else
     {
         LogError("Failed to read mac address: ", esp_err_to_name(ret));
         return INVALID_ADDRESS;
@@ -83,18 +83,18 @@ MacAddress Esp::GetMacAddress()
 
 bool Esp::AddPeer(const MacAddress& address)
 {
-    esp_now_peer_info_t peerInfo { channel:0, encrypt:false };
+    esp_now_peer_info_t peerInfo { channel:0, encrypt : false };
     address.CopyTo(peerInfo.peer_addr);
 
     LogDebug("Trying to add peer: ", address);
 
     auto result = esp_now_add_peer(&peerInfo);
-    if (result != ESP_OK) 
+    if (result != ESP_OK)
     {
         LogError("Failed to add peer: ", esp_err_to_name(result));
         return false;
     }
-    else 
+    else
     {
         LogDebug("Added peer: ", address);
         return true;
@@ -106,12 +106,12 @@ bool Esp::RemovePeer(const MacAddress& address)
     LogDebug("Trying to remove peer: ", address);
 
     auto result = esp_now_del_peer(address.Data());
-    if (result != ESP_OK) 
+    if (result != ESP_OK)
     {
         LogError("Failed to remove peer: ", esp_err_to_name(result));
         return false;
     }
-    else 
+    else
     {
         LogDebug("Removed peer: ", address);
         return true;
@@ -128,15 +128,15 @@ void Esp::RegisterSendCallback(const Esp::SendCallback& callback)
     s_SendCallback = callback;
 }
 
-bool Esp::Send(const uint8_t *address, const uint8_t *data, size_t len)
+bool Esp::Send(const uint8_t* address, const uint8_t* data, size_t len)
 {
     esp_err_t result = esp_now_send(address, data, len);
-    if (result == ESP_OK) 
+    if (result == ESP_OK)
     {
         LogDebug("Message sent.");
         return true;
     }
-    else 
+    else
     {
         LogInfo("Error sending message: ", esp_err_to_name(result));
         return false;
