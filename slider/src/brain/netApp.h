@@ -1,9 +1,9 @@
 #ifndef NETAPP_H
 #define NETAPP_H
 
-#include "src/core/app/appBase.h"
 #include "appConfig.h"
-#include "src/network/address.h"
+#include "src/core/app/appBase.h"
+#include "src/core/network/address.h"
 
 namespace Net { class WifiModule; }
 

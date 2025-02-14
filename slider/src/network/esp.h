@@ -5,10 +5,8 @@
 
 #include <functional>
 
-#include "address.h"
+#include "src/core/network/address.h"
 #include "src/debug.h"
-#include "message.h"
-#include "messageHandler.h"
 
 namespace Net
 {

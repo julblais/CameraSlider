@@ -1,7 +1,7 @@
 #include "netApp.h"
 #include "appConfig.h"
 #include "src/debug.h"
-#include "src/network/address.h"
+#include "src/core/network/address.h"
 #include "src/network/wifi.h"
 
 using namespace Slider;

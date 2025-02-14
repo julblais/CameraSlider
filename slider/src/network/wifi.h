@@ -2,8 +2,8 @@
 #define WIFI_H
 
 #include "src/component/component.h"
-#include "src/network/messageHandler.h"
-#include "src/network/address.h"
+#include "src/core/network/messageHandler.h"
+#include "src/core/network/address.h"
 
 namespace Net
 {
