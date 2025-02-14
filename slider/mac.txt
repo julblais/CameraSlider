@@ -1,0 +1,5 @@
+board 1: receiver
+94:54:c5:63:0a:ec
+
+board 2: sender
+5c:01:3b:68:b1:0c

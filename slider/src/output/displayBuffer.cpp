@@ -16,11 +16,6 @@ void Output::DisplayBuffer::FillCurrentLine()
         m_Buffer[m_Cursor++] = ' ';
 }
 
-void Output::DisplayBuffer::Write(Keycode value)
-{
-    write(value);
-}
-
 size_t Output::DisplayBuffer::write(uint8_t value)
 { 
     //do not go over the line!
@@ -73,7 +68,7 @@ void Output::DisplayBuffer::PrintToDisplay() const
                 count = 0;
             }
             count++;
-            m_Display->Write(it);
+            m_Display->write(it);
         }
         std::copy(std::begin(m_Buffer), std::end(m_Buffer), std::begin(m_PreviousBuffer));
     }

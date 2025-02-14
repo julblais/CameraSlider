@@ -1,6 +1,6 @@
 #include "input.h"
 
-static const char* Input::ToString(DpadButton button)
+const char* Input::ToString(DpadButton button)
 {
     switch (button)
     {
@@ -25,7 +25,7 @@ static const char* Input::ToString(DpadButton button)
     }
 }
 
-static const char *Input::ToString(JoystickButton button)
+const char *Input::ToString(JoystickButton button)
 {
     switch (button)
     {

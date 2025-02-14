@@ -18,8 +18,6 @@ namespace Output
 
         using ConstIterator =
             std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES>::const_iterator;
-        using Iterator =
-            std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES>::iterator;
 
         public:
             DisplayBuffer();
@@ -29,7 +27,7 @@ namespace Output
             template <typename... TArgs> void Print(TArgs&&... args);
             template <typename... TArgs> void PrintLine(const int line, TArgs&&... args);
 
-            virtual void Write(Keycode value) override;
+            virtual size_t write(uint8_t value) override;
             virtual void SetCursor(const int column, const int row) override;
             virtual SymbolHandle GetSymbol(Symbol symbol) const override;
 
@@ -40,7 +38,6 @@ namespace Output
             inline ConstIterator end() const { return m_Buffer.end(); }
 
         private:
-            virtual size_t write(uint8_t value) override;
             void FillCurrentLine();
 
             unsigned int m_Cursor;

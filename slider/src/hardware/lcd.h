@@ -20,7 +20,7 @@ namespace Hardware{
             virtual void Init() override;
 
             void Clear();
-            virtual void Write(uint8_t value) override;
+            virtual size_t write(uint8_t value) override;
             void SetCursor(const int column, const int row) override;
             virtual SymbolHandle GetSymbol(Symbol symbol) const override;
             
