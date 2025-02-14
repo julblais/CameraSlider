@@ -1,4 +1,4 @@
-#include "src/app/appBase.h"
+#include "src/core/app/appBase.h"
 #include "appConfig.h"
 
 #ifdef TEST_NETWORK

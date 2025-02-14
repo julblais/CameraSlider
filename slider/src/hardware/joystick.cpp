@@ -1,5 +1,5 @@
 #include "joystick.h"
-#include "src/utils/mathUtils.h"
+#include "src/core/utils/mathUtils.h"
 
 #include <esp32-hal-gpio.h>
 

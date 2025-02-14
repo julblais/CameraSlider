@@ -1,7 +1,7 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-#include "src/utils/templateUtils.h"
+#include "src/core/utils/templateUtils.h"
 
 #define REGISTER_MESSAGE_TYPE(T, id_value) \
     template<> struct Net::MessageWrapper<T> : public MessageBase \

@@ -1,7 +1,7 @@
 #ifndef DBG_H
 #define DBG_H
 
-#include "src/utils/templateUtils.h"
+#include "src/core/utils/templateUtils.h"
 
 #include <HardwareSerial.h>
 

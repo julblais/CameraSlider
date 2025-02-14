@@ -1,7 +1,7 @@
 #ifndef APP_H
 #define APP_H
 
-#include "src/app/appBase.h"
+#include "src/core/app/appBase.h"
 #include "appConfig.h"
 #include "menu.h"
 #include "src/input/input.h"

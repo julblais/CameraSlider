@@ -2,7 +2,7 @@
 #define DISPLAY_BUFFER_H
 
 #include "display.h"
-#include "src/utils/templateUtils.h"
+#include "src/core/utils/templateUtils.h"
 
 #include <array>
 #include <Print.h>
