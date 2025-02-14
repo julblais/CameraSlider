@@ -3,6 +3,7 @@
 
 #include "src/core/component/component.h"
 #include <functional>
+#include <list>
 #include <vector>
 
 namespace Core
@@ -11,7 +12,6 @@ namespace Core
     {
     public:
         static void UpdateS(unsigned long appTimeMs);
-
 
         Timer(const char* name);
         Timer(const char* name, std::function<void(unsigned long time)> callback, unsigned long delay);
@@ -31,27 +31,24 @@ namespace Core
         std::function<void(unsigned long)> m_Callback;
     };
 
-    struct TimerObj;
-
     using Time = unsigned long;
+    struct TimerObj;
 
     class TimerComponent : public Component
     {
+        friend struct TimerObj;
+
     public:
         using TimerCallback = std::function<void(Time time)>;
 
         virtual void Setup() override;
         virtual void Update() override;
 
-        // 1- with delay, once
         TimerComponent();
-
-        TimerObj Add(const char* name, TimerCallback callback, Time delay);
-        void Remove(const TimerObj& obj);
         Time GetCurrentTime();
+        TimerObj Add(const char* name, TimerCallback callback, Time delay);
 
     private:
-        friend class TimerObj;
         struct TimerData
         {
             TimerData(const TimerCallback cb, Time delay, Time startTime)
@@ -61,21 +58,23 @@ namespace Core
             Time delay;
             Time startTime;
         };
-        void Remove(size_t id);
-        bool ProcessCallback(const Time time, const TimerData& callback);
+        using Iterator = std::list<TimerData>::iterator;
+        using Container = std::list<TimerData>;
         Time m_TimeMs;
-        std::vector<TimerData> m_Callbacks;
+        Container m_Callbacks;
     };
 
     struct TimerObj
     {
+        friend class TimerComponent;
     public:
-        TimerObj(TimerComponent* timer);
+        void Start();
+        void Stop();
         void Remove();
     private:
-        size_t m_Id;
-        TimerComponent* m_Timer;
+        TimerObj(TimerComponent::Iterator itr, TimerComponent::Container* t);
+        TimerComponent::Iterator m_Id;
+        TimerComponent::Container* m_Timer;
     };
-
 }
 #endif
