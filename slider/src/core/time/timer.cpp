@@ -7,7 +7,7 @@
 #include <functional>
 
 using namespace Core;
-
+/*
 static auto Timers = std::vector<Timer*>();
 
 void Timer::UpdateS(unsigned long appTimeMs)
@@ -77,7 +77,7 @@ void Timer::ProcessCallback(unsigned long appTimeMs)
             Stop();
         }
     }
-}
+}*/
 
 void Core::TimerComponent::Setup()
 {}
@@ -85,15 +85,16 @@ void Core::TimerComponent::Setup()
 void TimerComponent::Update()
 {
     m_TimeMs = millis();
-    for (auto cb : m_Callbacks)
+    for (auto& cb : m_Callbacks)
     {
         if (!cb.cb) return;
 
         const auto delta = cb.startTime < m_TimeMs ? m_TimeMs - cb.startTime : 0u;
         if (delta >= cb.delay)
         {
-            LogDebug("Timer \"", m_Name, "\" activated at: ", appTimeMs);
+            LogDebug("Timer \"", cb.name, "\" activated at: ", m_TimeMs);
             cb.cb(delta);
+            cb.startTime = ULONG_MAX;
         }
     }
 }
@@ -104,6 +105,10 @@ Core::TimerComponent::TimerComponent()
 
 TimerObj::TimerObj(TimerComponent::Iterator itr, TimerComponent::Container* t)
     : m_Timer(t), m_Id(itr)
+{}
+
+Core::TimerObj::TimerObj()
+    : m_Timer(nullptr), m_Id()
 {}
 
 void TimerObj::Start()
@@ -129,7 +134,7 @@ void TimerObj::Remove()
 
 TimerObj TimerComponent::Add(const char* name, TimerCallback callback, Time delay)
 {
-    auto t = m_Callbacks.emplace(m_Callbacks.cend(), callback, delay, m_TimeMs);
+    auto t = m_Callbacks.emplace(m_Callbacks.cend(), name, callback, ULONG_MAX, delay);
     return TimerObj(t, &m_Callbacks);
 }
 

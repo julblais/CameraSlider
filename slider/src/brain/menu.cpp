@@ -10,13 +10,15 @@
 
 using namespace Core;
 
-Slider::Menu::Menu(Output::DisplayBuffer* display, int delay) :
+Slider::Menu::Menu(Core::TimerComponent* timer, Output::DisplayBuffer* display, int delay) :
     m_DisplayBuffer(display),
-    m_ShowHideTimer("Selection menu", [this](unsigned long time) { OnSelectionLongPress(time); }, delay),
-    m_IntroTimer("Intro menu", [this](unsigned long time) { OnIntroFinished(time); }, MENU_INTRO_DELAY_MS),
+    m_Timer(timer),
     m_MenuSystem(),
     m_State(State::Hidden)
-{}
+{
+    m_ShowHideTimer = m_Timer->Add("Selection menu", [this](unsigned long time) { OnSelectionLongPress(time); }, delay);
+    m_IntroTimer = m_Timer->Add("Intro menu", [this](unsigned long time) { OnIntroFinished(time); }, MENU_INTRO_DELAY_MS);
+}
 
 void Slider::Menu::Setup()
 {

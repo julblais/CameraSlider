@@ -18,7 +18,7 @@ namespace Slider {
     class Menu : public Core::Component
     {
     public:
-        Menu(Output::DisplayBuffer* display, int delay);
+        Menu(Core::TimerComponent* timer, Output::DisplayBuffer* display, int delay);
         void Setup() override;
         bool OnInputEvent(const Input::Event& inputEvent);
 
@@ -30,9 +30,10 @@ namespace Slider {
         void OutputMenu();
 
         Output::DisplayBuffer* m_DisplayBuffer;
-        Core::Timer m_ShowHideTimer;
-        Core::Timer m_IntroTimer;
+        Core::TimerObj m_ShowHideTimer;
+        Core::TimerObj m_IntroTimer;
         Core::MenuSystem m_MenuSystem;
+        Core::TimerComponent* m_Timer;
         State m_State;
     };
 }

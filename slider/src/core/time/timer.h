@@ -7,7 +7,7 @@
 #include <vector>
 
 namespace Core
-{
+{/*
     class Timer
     {
     public:
@@ -30,7 +30,7 @@ namespace Core
         unsigned long m_StartTimeMs;
         std::function<void(unsigned long)> m_Callback;
     };
-
+*/
     using Time = unsigned long;
     struct TimerObj;
 
@@ -51,9 +51,10 @@ namespace Core
     private:
         struct TimerData
         {
-            TimerData(const TimerCallback cb, Time delay, Time startTime)
-                : cb(cb), delay(delay), startTime(startTime)
+            TimerData(const char* name, const TimerCallback cb, Time startTime, Time delay)
+                : name(name), cb(cb), delay(delay), startTime(startTime)
             {}
+            const char* name;
             TimerCallback cb;
             Time delay;
             Time startTime;
@@ -68,6 +69,7 @@ namespace Core
     {
         friend class TimerComponent;
     public:
+        TimerObj();
         void Start();
         void Stop();
         void Remove();
