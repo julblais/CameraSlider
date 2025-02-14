@@ -1,7 +1,7 @@
 #ifndef APP_BASE_H
 #define APP_BASE_H
 
-#include "src/component/component.h"
+#include "src/core/component/component.h"
 #include <vector>
 
 namespace Slider

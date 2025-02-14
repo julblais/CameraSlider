@@ -1,7 +1,7 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include "src/component/component.h"
+#include "src/core/component/component.h"
 #include "src/input/input.h"
 #include "src/core/time/timer.h"
 #include "src/core/menu/menuSystem.h"

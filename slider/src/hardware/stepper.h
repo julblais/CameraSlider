@@ -2,7 +2,7 @@
 #define STEPPER_H
 
 #include <AccelStepper.h>
-#include "src/component/component.h"
+#include "src/core/component/component.h"
 #include "src/input/input.h"
 
 namespace Slider

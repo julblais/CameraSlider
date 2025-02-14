@@ -1,7 +1,7 @@
 #ifndef WIFI_H
 #define WIFI_H
 
-#include "src/component/component.h"
+#include "src/core/component/component.h"
 #include "src/core/network/messageHandler.h"
 #include "src/core/network/address.h"
 
