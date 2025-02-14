@@ -8,7 +8,7 @@ MessageHandler::QueueItem::QueueItem()
     :data(0), length(0) {}
 
 MessageHandler::QueueItem::QueueItem(const uint8_t *data, size_t length)
-    : data(data), length(length) {}
+    :data(data), length(length) {}
 
 MessageHandler::QueueItem MessageHandler::QueueItem::CopyData(const uint8_t *data, size_t length)
 {

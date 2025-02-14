@@ -33,13 +33,13 @@ namespace Net
 
             struct QueueItem
             {
-                    QueueItem();
-                    QueueItem(const uint8_t* data, size_t length);
-                    static QueueItem CopyData(const uint8_t* data, size_t length);
-                    void Finish();
+                QueueItem();
+                QueueItem(const uint8_t* data, size_t length);
+                static QueueItem CopyData(const uint8_t* data, size_t length);
+                void Finish();
 
-                    const uint8_t* data;
-                    const size_t length;
+                const uint8_t* data;
+                const size_t length;
             };
 
         public:
