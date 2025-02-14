@@ -12,24 +12,24 @@ using namespace Net;
 #define BRAIN_BROADCAST_DELAY 1000
 
 /*
-                 ┌─────────┐                              ┌────────────┐                 
-                 │         │                              │            │                 
-                 │ Slider  │                              │ Controller │                 
-                 │         │                              │            │                 
-                 └─────┬───┘                              └─────┬──────┘                 
-                       │                                        │                        
+                 ┌─────────┐                              ┌────────────┐
+                 │         │                              │            │
+                 │ Slider  │                              │ Controller │
+                 │         │                              │            │
+                 └─────┬───┘                              └─────┬──────┘
+                       │                                        │
          BROADCASTING  │   ConnectionRequest                    │  WAITING_FOR_CONNECTION
-                       ├───────────────────────────────────────►│                        
-                       │                                        │                        
-                       │                    ConnectionRequest   │  SENDING_REQUEST       
-                       │◄───────────────────────────────────────┤                        
-                       │                                        │                        
-    SENDING_HANDSHAKE  │   Handshake                            │  WAITING_FOR_HANDSHAKE 
-                       ├───────────────────────────────────────►│                        
-                       │                                        │                        
-WAITING_FOR_HANDSHAKE  │                            Handshake   │  SENDING_HANDSHAKE     
-                       │◄───────────────────────────────────────┤                        
-            CONNECTED  │                                        │  CONNECTED             
+                       ├───────────────────────────────────────►│
+                       │                                        │
+                       │                    ConnectionRequest   │  SENDING_REQUEST
+                       │◄───────────────────────────────────────┤
+                       │                                        │
+    SENDING_HANDSHAKE  │   Handshake                            │  WAITING_FOR_HANDSHAKE
+                       ├───────────────────────────────────────►│
+                       │                                        │
+WAITING_FOR_HANDSHAKE  │                            Handshake   │  SENDING_HANDSHAKE
+                       │◄───────────────────────────────────────┤
+            CONNECTED  │                                        │  CONNECTED
  */
 
 //const uint8_t receiver_mac[6] = { 0x94, 0x54, 0xc5, 0x63, 0x0a, 0xec };
@@ -84,15 +84,16 @@ REGISTER_MESSAGE_TYPE(ConnectionRequest, 1);
 REGISTER_MESSAGE_TYPE(InputMessage, 2);
 REGISTER_MESSAGE_TYPE(Handshake, 3);
 
-BrainApp::BrainApp(const AppConfig &config)
-    : state(ConnectionState::BROADCASTING), isComplete(false), m_Wifi(nullptr) {}
+BrainApp::BrainApp(const AppConfig& config)
+    : state(ConnectionState::BROADCASTING), isComplete(false), m_Wifi(nullptr)
+{}
 
 void BrainApp::Setup()
 {
     LogInfo("Setup NetApp");
     pinMode(Led_Pin, OUTPUT);
     digitalWrite(Led_Pin, HIGH);
-    
+
     LogInfo("Init wifi...");
     m_Wifi = new WifiModule();
     AddComponent(m_Wifi);
@@ -115,22 +116,22 @@ void BrainApp::Setup()
     });
     m_Wifi->AddPeer(BROADCAST_ADDRESS);
 
-#ifdef IS_SIMULATOR
+    #ifdef IS_SIMULATOR
     m_Wifi->RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) {
-        MacAddress otherMac{{0x11, 0x22, 0x33, 0x44, 0x55, 0x66}}; 
+        MacAddress otherMac { {0x11, 0x22, 0x33, 0x44, 0x55, 0x66} };
         ConnectionRequest connectMsg(otherMac);
         m_Wifi->SimulateSend(msg);
-     });
-     m_Wifi->RegisterSimulateSendCallback<Handshake>([this](Handshake msg) {
-        Handshake handshake(MacAddress({0x11, 0x22, 0x33, 0x44, 0x55, 0x66}));
+    });
+    m_Wifi->RegisterSimulateSendCallback<Handshake>([this](Handshake msg) {
+        Handshake handshake(MacAddress({ 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 }));
         m_Wifi->SimulateSend(handshake);
         InputMessage inoutMsg;
         inoutMsg.x = 10;
         inoutMsg.y = 20;
         m_Wifi->SimulateSend(inoutMsg);
         delay(1000);
-     });
-#endif
+    });
+    #endif
 }
 
 void BrainApp::Update()
@@ -165,15 +166,16 @@ void BrainApp::Update()
     }
 }
 
-ControllerApp::ControllerApp(const AppConfig &config)
-    : state(ConnectionState::WAITING_FOR_CONNECTION), isComplete(false), m_Wifi(nullptr) {}
+ControllerApp::ControllerApp(const AppConfig& config)
+    : state(ConnectionState::WAITING_FOR_CONNECTION), isComplete(false), m_Wifi(nullptr)
+{}
 
 void ControllerApp::Setup()
 {
     LogInfo("Setup NetApp");
     pinMode(Led_Pin, OUTPUT);
     digitalWrite(Led_Pin, HIGH);
-    
+
     LogInfo("Init wifi...");
     m_Wifi = new WifiModule();
     AddComponent(m_Wifi);
@@ -185,23 +187,23 @@ void ControllerApp::Setup()
         state = ConnectionState::SENDING_REQUEST;
         brainMac = msg.from;
     });
-    m_Wifi->RegisterReceiveCallback<Handshake>([this](Handshake msg) { 
+    m_Wifi->RegisterReceiveCallback<Handshake>([this](Handshake msg) {
         if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
         LogInfo("Received: ", msg);
         state = SENDING_HANDSHAKE;
     });
 
-#ifdef IS_SIMULATOR
+    #ifdef IS_SIMULATOR
     m_Wifi->RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) {
-        MacAddress otherMac{{0x11, 0x22, 0x33, 0x44, 0x55, 0x66}}; 
+        MacAddress otherMac { {0x11, 0x22, 0x33, 0x44, 0x55, 0x66} };
         Handshake hand(otherMac);
         m_Wifi->SimulateSend(hand);
     });
-#endif
+    #endif
 }
 
 void ControllerApp::Update()
-{ 
+{
     UpdateComponents();
 
     if (isComplete)
@@ -213,12 +215,12 @@ void ControllerApp::Update()
     {
         LogInfo("Waiting for connection request");
         delay(CONTROLLER_CONNECTION_DELAY);
-#ifdef IS_SIMULATOR
-        //Simulate a connection from brain
-        MacAddress receiverMac{{0x11, 0x22, 0x33, 0x44, 0x55, 0x66}};
+        #ifdef IS_SIMULATOR
+                //Simulate a connection from brain
+        MacAddress receiverMac { {0x11, 0x22, 0x33, 0x44, 0x55, 0x66} };
         ConnectionRequest msg(receiverMac);
         m_Wifi->SimulateSend(msg);
-#endif
+        #endif
     }
 
     if (state == ConnectionState::SENDING_REQUEST)
