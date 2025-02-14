@@ -79,21 +79,51 @@ void Timer::ProcessCallback(unsigned long appTimeMs)
     }
 }
 
+void Core::TimerComponent::Setup()
+{}
+
 void TimerComponent::Update()
 {
     m_TimeMs = millis();
-    for (auto cb : m_Callbacks) //be careful when iterating on the vector/list/forward list
+    auto toRemoveIter = m_Callbacks.end();
+    for (auto cb : m_Callbacks)
+    {
         ProcessCallback(m_TimeMs, cb);
+    }
 }
 
 Core::TimerComponent::TimerComponent()
     :m_TimeMs(0)
 {}
 
+///better plan: just trigger the callback, but don't touch the container
+// remove it only when the Remove method is called;
+static size_t m_TimerId;
+
+TimerObj::TimerObj(TimerComponent* timer)
+    : m_Timer(timer), m_Id(m_TimerId++)
+{}
+
+void TimerObj::Remove()
+{
+    m_Timer->Remove(m_Id);
+    
+}
+
 TimerObj Core::TimerComponent::Add(const char* name, TimerCallback callback, Time delay)
 {
-    m_Callbacks.push_back(TimerData { callback, delay, m_TimeMs });
+    m_Callbacks.emplace_back(callback, delay, m_TimeMs);
     return TimerObj();
+}
+
+void Core::TimerComponent::Remove(const TimerObj& obj)
+{
+
+}
+
+Time Core::TimerComponent::GetCurrentTime()
+{
+    return m_TimeMs;
 }
 
 bool TimerComponent::ProcessCallback(const Time current, const TimerData& callback)

@@ -33,22 +33,12 @@ namespace Core
 
     struct TimerObj;
 
+    using Time = unsigned long;
 
     class TimerComponent : public Component
     {
     public:
-        using Time = unsigned long;
         using TimerCallback = std::function<void(Time time)>;
-
-    private:
-
-        struct TimerData
-        {
-            TimerCallback cb;
-            Time delay;
-            Time startTime;
-        };
-    public:
 
         virtual void Setup() override;
         virtual void Update() override;
@@ -57,9 +47,21 @@ namespace Core
         TimerComponent();
 
         TimerObj Add(const char* name, TimerCallback callback, Time delay);
+        void Remove(const TimerObj& obj);
         Time GetCurrentTime();
 
     private:
+        friend class TimerObj;
+        struct TimerData
+        {
+            TimerData(const TimerCallback cb, Time delay, Time startTime)
+                : cb(cb), delay(delay), startTime(startTime)
+            {}
+            TimerCallback cb;
+            Time delay;
+            Time startTime;
+        };
+        void Remove(size_t id);
         bool ProcessCallback(const Time time, const TimerData& callback);
         Time m_TimeMs;
         std::vector<TimerData> m_Callbacks;
@@ -68,9 +70,10 @@ namespace Core
     struct TimerObj
     {
     public:
+        TimerObj(TimerComponent* timer);
         void Remove();
     private:
-        unsigned int id;
+        size_t m_Id;
         TimerComponent* m_Timer;
     };
 
