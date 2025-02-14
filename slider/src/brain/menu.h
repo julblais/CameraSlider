@@ -3,8 +3,8 @@
 
 #include "src/component/component.h"
 #include "src/input/input.h"
-#include "src/utils/timer.h"
-#include "src/utils/menuSystem.h"
+#include "src/core/time/timer.h"
+#include "src/core/menu/menuSystem.h"
 
 namespace Output
 {
