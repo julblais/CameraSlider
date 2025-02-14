@@ -4,7 +4,7 @@
 #include "src/core/component/component.h"
 #include <vector>
 
-namespace Slider
+namespace Core
 {
     class AppBase
     {

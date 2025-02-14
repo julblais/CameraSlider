@@ -11,6 +11,7 @@
 #include <esp_now.h>
 
 using namespace Net;
+using namespace Core;
 
 Esp::SendCallback s_SendCallback {};
 Esp::ReceiveCallback s_ReceiveCallback {};

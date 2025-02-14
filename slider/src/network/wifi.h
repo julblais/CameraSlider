@@ -5,9 +5,11 @@
 #include "src/core/network/messageHandler.h"
 #include "src/core/network/address.h"
 
+using namespace Core;
+
 namespace Net
 {
-    class WifiModule : public Slider::Component
+    class WifiModule : public Component
     {
     public:
         virtual void Setup() override;

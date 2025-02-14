@@ -7,7 +7,7 @@
 
 namespace Slider
 {
-    class Stepper : public Component
+    class Stepper : public Core::Component
     {
     public:
         Stepper(const int directionPin, const int stepPin);

@@ -3,16 +3,19 @@
 
 #include <type_traits>
 
-//use this weird thing to avoid undefined order of variadic template arguments
-struct PassParamPack { template<typename ...T> PassParamPack(T...) {} };
+namespace Core
+{
+    //use this weird thing to avoid undefined order of variadic template arguments
+    struct PassParamPack { template<typename ...T> PassParamPack(T...) {} };
 
-//check if is type is complete (specialized)
-namespace {
-    template <class T, std::size_t = sizeof(T)>
-    std::true_type IsTypeCompleteImpl(T*);
-    std::false_type IsTypeCompleteImpl(...);
+    //check if is type is complete (specialized)
+    namespace {
+        template <class T, std::size_t = sizeof(T)>
+        std::true_type IsTypeCompleteImpl(T*);
+        std::false_type IsTypeCompleteImpl(...);
+    }
+    template <class T>
+    using IsTypeComplete = decltype(IsTypeCompleteImpl(std::declval<T*>()));
 }
-template <class T>
-using IsTypeComplete = decltype(::IsTypeCompleteImpl(std::declval<T*>()));
 
 #endif

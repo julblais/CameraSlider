@@ -8,6 +8,8 @@
 #define MENU_INTRO_DELAY_MS 1500
 #define MENU_INTRO_MSG "   -- Menu --"
 
+using namespace Core;
+
 Slider::Menu::Menu(Output::DisplayBuffer* display, int delay) :
     m_DisplayBuffer(display),
     m_ShowHideTimer("Selection menu", [this](unsigned long time) { OnSelectionLongPress(time); }, delay),

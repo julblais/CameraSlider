@@ -63,7 +63,7 @@ void Slider::App::Setup()
 void Slider::App::Update()
 {
     unsigned long appTimeMs = millis();
-    Utils::Timer::Update(appTimeMs);
+    Core::Timer::Update(appTimeMs);
 
     auto input = InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
     /*-> process received messages here <- */

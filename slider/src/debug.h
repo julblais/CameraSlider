@@ -46,7 +46,7 @@ namespace Debug
         template <typename... TArgs>
         void Log(TArgs&&... args)
         {
-            PassParamPack { (Serial.print(args), 1)... };
+            Core::PassParamPack { (Serial.print(args), 1)... };
         }
 
         ~Logger()

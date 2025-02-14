@@ -1,22 +1,24 @@
 #include "menuSystem.h"
 #include "src/debug.h"
 
-Utils::MenuSystem::MenuSystem() :
+using namespace Core;
+
+MenuSystem::MenuSystem() :
     m_Items(),
     m_Index(0)
 {}
 
-void Utils::MenuSystem::AddCommand(Utils::MenuCommand* command)
+void MenuSystem::AddCommand(MenuCommand* command)
 {
     m_Items.emplace_back(command);
 }
 
-void Utils::MenuSystem::Reset()
+void MenuSystem::Reset()
 {
     m_Index = 0;
 }
 
-void Utils::MenuSystem::Up()
+void MenuSystem::Up()
 {
     auto newIdx = m_Index - 1;
     if (newIdx < 0) //wrap
@@ -25,7 +27,7 @@ void Utils::MenuSystem::Up()
         m_Index = newIdx;
 }
 
-void Utils::MenuSystem::Down()
+void MenuSystem::Down()
 {
     auto newIdx = m_Index + 1;
     if (newIdx >= m_Items.size()) //wrap
@@ -34,28 +36,28 @@ void Utils::MenuSystem::Down()
         m_Index = newIdx;
 }
 
-void Utils::MenuSystem::Left()
+void MenuSystem::Left()
 {
     m_Items[m_Index]->Invoke(MenuCommand::ButtonLeft);
 }
 
-void Utils::MenuSystem::Right()
+void MenuSystem::Right()
 {
     m_Items[m_Index]->Invoke(MenuCommand::ButtonRight);
 }
 
-void Utils::MenuSystem::Select()
+void MenuSystem::Select()
 {
     m_Items[m_Index]->Invoke(MenuCommand::ButtonSelect);
 }
 
-Utils::MenuOutput Utils::MenuSystem::GetOutput() const
+MenuOutput MenuSystem::GetOutput() const
 {
     auto command = m_Items[m_Index].get();
-    return Utils::MenuOutput(command->GetTitle(), command->GetDesc());
+    return MenuOutput(command->GetTitle(), command->GetDesc());
 }
 
-Utils::MenuOutput::MenuOutput(const char* title, const char* desc) :
+MenuOutput::MenuOutput(const char* title, const char* desc) :
     title(title),
     desc(desc)
 {}

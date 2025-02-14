@@ -18,7 +18,7 @@ namespace Slider
     using namespace Input;
     using namespace Output;
 
-    class App : public AppBase
+    class App : public Core::AppBase
     {
     public:
         App(const AppConfig& config);

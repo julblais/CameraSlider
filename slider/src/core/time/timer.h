@@ -3,7 +3,7 @@
 
 #include <functional>
 
-namespace Utils
+namespace Core
 {
     class Timer
     {

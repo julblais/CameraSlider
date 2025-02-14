@@ -9,7 +9,7 @@
 #include <memory>
 #include <utility>
 
-namespace Net
+namespace Core
 {
     class MessageHandler
     {

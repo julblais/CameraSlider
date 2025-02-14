@@ -5,7 +5,7 @@
 #include <functional>
 #include <algorithm>
 
-namespace Utils
+namespace Core
 {
     template <typename... TArgs>
     class EventSource

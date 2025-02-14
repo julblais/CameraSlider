@@ -2,6 +2,8 @@
 #include "settings.h"
 #include "src/core/utils/mathUtils.h"
 
+using namespace Core;
+
 const char* Slider::MaxSpeedCommand::GetTitle()
 {
     return "Vitesse max.";
@@ -27,7 +29,7 @@ const char* Slider::MaxSpeedCommand::GetDesc()
     };
 }
 
-void Slider::MaxSpeedCommand::Invoke(Utils::MenuCommandButton command)
+void Slider::MaxSpeedCommand::Invoke(MenuCommandButton command)
 {
     const auto speed = Settings::GetInstance().GetSpeed();
     if (command == MenuCommand::ButtonLeft)
@@ -51,7 +53,7 @@ const char* Slider::SpeedCurveCommand::GetDesc()
     };
 }
 
-void Slider::SpeedCurveCommand::Invoke(Utils::MenuCommandButton command)
+void Slider::SpeedCurveCommand::Invoke(MenuCommandButton command)
 {
     const auto curve = Settings::GetInstance().GetCurve();
     if (command == MenuCommand::ButtonLeft)

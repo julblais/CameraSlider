@@ -5,7 +5,7 @@
 #include <functional>
 
 //todo change namespace to make it more generic (like App, Engine, etc.)
-namespace Slider
+namespace Core
 {
     class Component
     {

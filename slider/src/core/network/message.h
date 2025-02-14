@@ -4,15 +4,15 @@
 #include "src/core/utils/templateUtils.h"
 
 #define REGISTER_MESSAGE_TYPE(T, id_value) \
-    template<> struct Net::MessageWrapper<T> : public MessageBase \
+    template<> struct Core::MessageWrapper<T> : public MessageBase \
     { \
         static constexpr unsigned int typeId = id_value; \
         T data; \
         MessageWrapper(int id, T data): MessageBase(id), data(data){}\
     }; \
-    constexpr unsigned int Net::MessageWrapper<T>::typeId; 
+    constexpr unsigned int Core::MessageWrapper<T>::typeId; 
 
-namespace Net
+namespace Core
 {
     struct MessageBase
     {

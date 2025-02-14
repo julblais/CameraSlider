@@ -40,7 +40,7 @@ static AppConfig CreateConfig()
     return conf;
 }
 
-static auto app = AppCreator<AppConfig>::Create(CreateConfig());
+static auto app = Core::AppCreator<AppConfig>::Create(CreateConfig());
 
 void setup()
 {

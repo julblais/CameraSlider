@@ -13,14 +13,14 @@ namespace Net
     class Esp
     {
     public:
-        using SendCallback = std::function<void(const MacAddress&, bool)>;
+        using SendCallback = std::function<void(const Core::MacAddress&, bool)>;
         using ReceiveCallback = std::function<void(const uint8_t*, size_t)>;
 
         static bool Init();
 
-        static MacAddress GetMacAddress();
-        static bool AddPeer(const MacAddress& address);
-        static bool RemovePeer(const MacAddress& address);
+        static Core::MacAddress GetMacAddress();
+        static bool AddPeer(const Core::MacAddress& address);
+        static bool RemovePeer(const Core::MacAddress& address);
 
         static void RegisterReceiveCb(const ReceiveCallback& callback);
         static void RegisterSendCallback(const SendCallback& callback);

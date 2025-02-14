@@ -7,6 +7,7 @@
 #include "app.h"
 #endif
 
+using namespace Core;
 using namespace Slider;
 
 template<>

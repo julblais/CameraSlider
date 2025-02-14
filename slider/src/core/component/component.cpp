@@ -1,3 +1,3 @@
 #include "component.h"
 
-using namespace Slider;
+using namespace Core;

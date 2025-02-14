@@ -4,9 +4,11 @@
 #include "src/core/menu/menuSystem.h"
 #include "settings.h"
 
+using namespace Core;
+
 namespace Slider
 {
-    class MaxSpeedCommand : public Utils::MenuCommand
+    class MaxSpeedCommand : public MenuCommand
     {
     public:
         MaxSpeedCommand() = default;
@@ -14,10 +16,10 @@ namespace Slider
 
         virtual const char* GetTitle() override;
         virtual const char* GetDesc() override;
-        virtual void Invoke(Utils::MenuCommandButton command) override;
+        virtual void Invoke(MenuCommandButton command) override;
     };
 
-    class SpeedCurveCommand : public Utils::MenuCommand
+    class SpeedCurveCommand : public MenuCommand
     {
     public:
         SpeedCurveCommand() = default;
@@ -25,7 +27,7 @@ namespace Slider
 
         virtual const char* GetTitle() override;
         virtual const char* GetDesc() override;
-        virtual void Invoke(Utils::MenuCommandButton command) override;
+        virtual void Invoke(MenuCommandButton command) override;
     };
 }
 
