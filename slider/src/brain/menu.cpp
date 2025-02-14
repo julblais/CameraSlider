@@ -10,33 +10,33 @@
 
 Slider::Menu::Menu(Output::DisplayBuffer* display, int delay) :
     m_DisplayBuffer(display),
-    m_ShowHideTimer("Selection menu", [this](unsigned long time){ OnSelectionLongPress(time); }, delay),
-    m_IntroTimer("Intro menu", [this](unsigned long time){ OnIntroFinished(time); }, MENU_INTRO_DELAY_MS),
+    m_ShowHideTimer("Selection menu", [this](unsigned long time) { OnSelectionLongPress(time); }, delay),
+    m_IntroTimer("Intro menu", [this](unsigned long time) { OnIntroFinished(time); }, MENU_INTRO_DELAY_MS),
     m_MenuSystem(),
     m_State(State::Hidden)
 {}
 
 void Slider::Menu::Setup()
-{    
+{
     m_MenuSystem.AddCommand(new MaxSpeedCommand());
     m_MenuSystem.AddCommand(new SpeedCurveCommand());
 }
 
-bool Slider::Menu::OnInputEvent(const Input::Event &inputEvent)
+bool Slider::Menu::OnInputEvent(const Input::Event& inputEvent)
 {
     if (inputEvent.dpadButtonState == Input::ButtonReleased)
     {
         m_ShowHideTimer.Stop();
         return false;
     }
-    
+
     if (inputEvent.dpadButtonState == Input::ButtonPressed)
     {
         if (inputEvent.button == Input::DpadSelect)
             m_ShowHideTimer.Start();
         if (m_State == State::Shown)
         {
-            switch(inputEvent.button)
+            switch (inputEvent.button)
             {
                 case Input::DpadLeft:
                     m_MenuSystem.Left();
@@ -58,7 +58,7 @@ bool Slider::Menu::OnInputEvent(const Input::Event &inputEvent)
             OutputMenu();
         }
     }
-    
+
     return m_State != State::Hidden;
 }
 
@@ -71,7 +71,8 @@ void Slider::Menu::OnSelectionLongPress(unsigned long time)
         m_DisplayBuffer->Clear();
         m_DisplayBuffer->Print(MENU_INTRO_MSG);
     }
-    else { //quit menu
+    else
+    { //quit menu
         m_State = State::Hidden;
         m_IntroTimer.Stop();
         m_DisplayBuffer->Clear();

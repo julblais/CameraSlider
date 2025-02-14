@@ -10,7 +10,7 @@ static auto Timers = std::vector<Utils::Timer*>();
 
 void Utils::Timer::Update(unsigned long appTimeMs)
 {
-    for(auto timer : Timers)
+    for (auto timer : Timers)
         timer->ProcessCallback(appTimeMs);
 }
 
@@ -31,7 +31,7 @@ Utils::Timer::Timer(
     m_Delay = delay;
 }
 
-Utils::Timer::~Timer() 
+Utils::Timer::~Timer()
 {
     auto position = std::find(Timers.begin(), Timers.end(), this);
     if (position != Timers.end())

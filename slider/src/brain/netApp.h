@@ -19,30 +19,30 @@ enum ConnectionState
 
 class BrainApp : public Slider::AppBase
 {
-    public:
-        BrainApp(const Slider::AppConfig &config);
-        virtual void Setup() override;
-        virtual void Update() override;
+public:
+    BrainApp(const Slider::AppConfig& config);
+    virtual void Setup() override;
+    virtual void Update() override;
 
-    private:
-        Net::WifiModule* m_Wifi;
-        ConnectionState state;
-        bool isComplete;
-        Net::MacAddress controllerMac;
+private:
+    Net::WifiModule* m_Wifi;
+    ConnectionState state;
+    bool isComplete;
+    Net::MacAddress controllerMac;
 };
 
 class ControllerApp : public Slider::AppBase
 {
-    public:
-        ControllerApp(const Slider::AppConfig &config);
-        virtual void Setup() override;
-        virtual void Update() override;
+public:
+    ControllerApp(const Slider::AppConfig& config);
+    virtual void Setup() override;
+    virtual void Update() override;
 
-    private:
-        Net::WifiModule* m_Wifi;
-        ConnectionState state;
-        bool isComplete;
-        Net::MacAddress brainMac;
+private:
+    Net::WifiModule* m_Wifi;
+    ConnectionState state;
+    bool isComplete;
+    Net::MacAddress brainMac;
 };
 
 #endif

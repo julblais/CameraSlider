@@ -20,9 +20,9 @@ namespace Net
         MessageBase(const int id) : id(id) {}
     };
 
-    template<class T> 
+    template<class T>
     struct MessageWrapper : public MessageBase
-    { 
+    {
         static_assert(IsTypeComplete<MessageWrapper<T>>::value, "You need to call REGISTER_TYPE_ID.");
     };
 }

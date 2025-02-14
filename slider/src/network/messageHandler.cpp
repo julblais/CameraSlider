@@ -5,12 +5,14 @@
 using namespace Net;
 
 MessageHandler::QueueItem::QueueItem()
-    :data(0), length(0) {}
+    :data(0), length(0)
+{}
 
-MessageHandler::QueueItem::QueueItem(const uint8_t *data, size_t length)
-    :data(data), length(length) {}
+MessageHandler::QueueItem::QueueItem(const uint8_t* data, size_t length)
+    :data(data), length(length)
+{}
 
-MessageHandler::QueueItem MessageHandler::QueueItem::CopyData(const uint8_t *data, size_t length)
+MessageHandler::QueueItem MessageHandler::QueueItem::CopyData(const uint8_t* data, size_t length)
 {
     auto dataCopy = new uint8_t[length];
     std::copy(data, data + length, dataCopy);
@@ -33,7 +35,7 @@ void MessageHandler::ProcessMessages() const
     if (xQueueReceive(m_Queue, &item, 0))
     {
         auto message = reinterpret_cast<const MessageBase*>(item.data);
-        for(const auto& selector : m_Selectors)
+        for (const auto& selector : m_Selectors)
         {
             if (selector.first == message->id)
             {
@@ -46,7 +48,7 @@ void MessageHandler::ProcessMessages() const
     }
 }
 
-void MessageHandler::Invoke(const uint8_t *data, size_t length) const
+void MessageHandler::Invoke(const uint8_t* data, size_t length) const
 {
     //copy data in dynamic array
     QueueItem item = QueueItem::CopyData(data, length);

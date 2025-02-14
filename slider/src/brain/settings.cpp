@@ -5,13 +5,13 @@
 constexpr auto SPEED_KEY = "speed";
 constexpr auto CURVE_KEY = "curve";
 
-Slider::Settings::Settings():
+Slider::Settings::Settings() :
     m_Prefs()
 {
     m_Prefs.begin("settings");
 }
 
-Slider::Settings::Speed Slider::Settings::GetSpeed() const 
+Slider::Settings::Speed Slider::Settings::GetSpeed() const
 {
     static constexpr auto s_default = static_cast<char>(SpeedMedium);
     return static_cast<Speed>(m_Prefs.getChar(SPEED_KEY, s_default));

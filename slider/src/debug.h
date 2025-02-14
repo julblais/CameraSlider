@@ -41,15 +41,15 @@
 
 namespace Debug
 {
-    struct Logger 
+    struct Logger
     {
         template <typename... TArgs>
         void Log(TArgs&&... args)
         {
-            PassParamPack{(Serial.print(args), 1)...};
+            PassParamPack { (Serial.print(args), 1)... };
         }
 
-        ~Logger() 
+        ~Logger()
         {
             Serial.println();
         }

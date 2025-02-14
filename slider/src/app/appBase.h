@@ -8,20 +8,20 @@ namespace Slider
 {
     class AppBase
     {
-        public:
-            virtual void Setup() = 0;
-            virtual void Update() = 0;
+    public:
+        virtual void Setup() = 0;
+        virtual void Update() = 0;
 
-            template <class TComponent>
-            void AddComponent(TComponent* component);
-            template <class TComponent, typename... TArgs>
-            TComponent* AddComponent(TArgs&&... args);
+        template <class TComponent>
+        void AddComponent(TComponent* component);
+        template <class TComponent, typename... TArgs>
+        TComponent* AddComponent(TArgs&&... args);
 
-            void SetupComponents();
-            void UpdateComponents();
+        void SetupComponents();
+        void UpdateComponents();
 
-        private:
-            std::vector<std::unique_ptr<Component>> m_Components;
+    private:
+        std::vector<std::unique_ptr<Component>> m_Components;
     };
 
     template<class TConfig>
@@ -29,7 +29,7 @@ namespace Slider
     {
         static std::unique_ptr<AppBase> Create(const TConfig& config);
     };
-    
+
     template <class TComponent>
     void AppBase::AddComponent(TComponent* component)
     {

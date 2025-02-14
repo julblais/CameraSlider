@@ -8,29 +8,29 @@
 
 using namespace Output;
 
-namespace Hardware{
+namespace Hardware {
 
     class LCD : public Display
     {
-        public:
-            constexpr static int NUM_COLS = 16;
-            constexpr static int NUM_ROWS = 2;
+    public:
+        constexpr static int NUM_COLS = 16;
+        constexpr static int NUM_ROWS = 2;
 
-            LCD(const uint8_t address);
-            virtual void Init() override;
+        LCD(const uint8_t address);
+        virtual void Init() override;
 
-            void Clear();
-            virtual size_t write(uint8_t value) override;
-            void SetCursor(const int column, const int row) override;
-            virtual SymbolHandle GetSymbol(Symbol symbol) const override;
-            
-        private:
-            void CreateSymbol(const int id, const uint8_t* charmap);
+        void Clear();
+        virtual size_t write(uint8_t value) override;
+        void SetCursor(const int column, const int row) override;
+        virtual SymbolHandle GetSymbol(Symbol symbol) const override;
 
-            LiquidCrystal_I2C chip;
-            Keycode m_DoubleLeftRightArrows;
-            Keycode m_DoubleUpDownArrows;
-  };
+    private:
+        void CreateSymbol(const int id, const uint8_t* charmap);
+
+        LiquidCrystal_I2C chip;
+        Keycode m_DoubleLeftRightArrows;
+        Keycode m_DoubleUpDownArrows;
+    };
 }
 
 #endif

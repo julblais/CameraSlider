@@ -12,21 +12,21 @@ namespace Utils
     {
         using TListener = std::function<bool(TArgs...)>;
 
-        public:
-            EventSource(): m_Listeners() {}
-            void AddListener(TListener listener);
+    public:
+        EventSource() : m_Listeners() {}
+        void AddListener(TListener listener);
 
-            // AddListener for classes that have OnInputEvent method
-            template <typename C>
-            auto AddListener(C listener)-> decltype(listener.OnInputEvent(std::declval<TArgs...>()), void());
-            template <typename C>
-            auto AddListener(C* listener)-> decltype(listener->OnInputEvent(std::declval<TArgs...>()), void());
+        // AddListener for classes that have OnInputEvent method
+        template <typename C>
+        auto AddListener(C listener) -> decltype(listener.OnInputEvent(std::declval<TArgs...>()), void());
+        template <typename C>
+        auto AddListener(C* listener) -> decltype(listener->OnInputEvent(std::declval<TArgs...>()), void());
 
-        protected:
-            void SendEvent(TArgs&&... args) const;
+    protected:
+        void SendEvent(TArgs&&... args) const;
 
-        private:
-            std::vector<TListener> m_Listeners;
+    private:
+        std::vector<TListener> m_Listeners;
     };
 
     template <typename... TArgs>
@@ -37,7 +37,7 @@ namespace Utils
 
     template <typename... TArgs>
     template <typename C>
-    inline auto EventSource<TArgs...>::AddListener(C listener) 
+    inline auto EventSource<TArgs...>::AddListener(C listener)
         -> decltype(listener.OnInputEvent(std::declval<TArgs...>()), void())
     {
         m_Listeners.push_back([listener](TArgs... args) { return listener.OnInputEvent(args...); });
@@ -45,12 +45,12 @@ namespace Utils
 
     template <typename... TArgs>
     template <typename C>
-    inline auto EventSource<TArgs...>::AddListener(C* listener) 
+    inline auto EventSource<TArgs...>::AddListener(C* listener)
         -> decltype(listener->OnInputEvent(std::declval<TArgs...>()), void())
     {
         m_Listeners.push_back([listener](TArgs... args) { return listener->OnInputEvent(args...); });
     }
-    
+
     template <typename... TArgs>
     inline void EventSource<TArgs...>::SendEvent(TArgs&&... args) const
     {

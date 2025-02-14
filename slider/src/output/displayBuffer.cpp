@@ -1,7 +1,7 @@
 #include "displayBuffer.h"
 #include "src/output/display.h"
 
-Output::DisplayBuffer::DisplayBuffer():
+Output::DisplayBuffer::DisplayBuffer() :
     m_Display(nullptr)
 {
     m_Buffer.fill(' ');
@@ -17,7 +17,7 @@ void Output::DisplayBuffer::FillCurrentLine()
 }
 
 size_t Output::DisplayBuffer::write(uint8_t value)
-{ 
+{
     //do not go over the line!
     const auto maxCursor = ((m_Cursor / LCD_LINE_LENGTH) + 1) * LCD_LINE_LENGTH;
     if (m_Cursor < maxCursor)
@@ -25,7 +25,7 @@ size_t Output::DisplayBuffer::write(uint8_t value)
     return 1;
 }
 
-void Output::DisplayBuffer::Init(Display *display)
+void Output::DisplayBuffer::Init(Display* display)
 {
     m_Display = display;
 }

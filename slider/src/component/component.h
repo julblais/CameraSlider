@@ -9,9 +9,9 @@ namespace Slider
 {
     class Component
     {
-        public:
-            virtual void Setup() {};
-            virtual void Update() {};
+    public:
+        virtual void Setup() {};
+        virtual void Update() {};
     };
 }
 
