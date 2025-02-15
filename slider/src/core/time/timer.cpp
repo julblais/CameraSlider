@@ -1,3 +1,5 @@
+#ifdef USE_CUSTOM_TIMER
+
 #include "timer.h"
 #include "src/debug.h"
 
@@ -89,3 +91,5 @@ Time TimeManager::GetCurrentTime() const
 TimeManager::TimerData::TimerData(const char* name, Timer::Id id, const Timer::Callback& callback)
     : name(name), id(id), cb(callback), triggerTime(ULONG_MAX)
 {}
+
+#endif

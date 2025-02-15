@@ -1,6 +1,8 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+#ifdef USE_CUSTOM_TIMER
+
 #include "src/core/component/component.h"
 #include <functional>
 #include <vector>
@@ -59,4 +61,6 @@ namespace Core
     };
 
 }
+#endif
+
 #endif
