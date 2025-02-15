@@ -3,13 +3,12 @@
 
 #include "src/core/component/component.h"
 #include <functional>
-#include <list>
 #include <vector>
 
 namespace Core
 {
     using Time = unsigned long;
-    
+
     struct TimerObj;
 
     class TimerComponent : public Component
@@ -24,37 +23,40 @@ namespace Core
 
         TimerComponent();
         Time GetCurrentTime();
-        TimerObj Add(const char* name, TimerCallback callback, Time delay);
 
     private:
         struct TimerData
         {
-            TimerData(const char* name, const TimerCallback cb, Time startTime, Time delay)
-                : name(name), cb(cb), delay(delay), startTime(startTime)
-            {}
+            TimerData(const char* name, unsigned int id);
             const char* name;
+            unsigned int id;
             TimerCallback cb;
-            Time delay;
-            Time startTime;
+            Time triggerTime;
         };
-        using Iterator = std::list<TimerData>::iterator;
-        using Container = std::list<TimerData>;
+        void Add(const char* name, unsigned int id);
+        void Start(unsigned int id, Time delay);
+        void Stop(unsigned int id);
+        void Remove(unsigned int id);
+        void SetCallback(unsigned int id, const TimerComponent::TimerCallback& callback);
+        
+        std::vector<TimerData>::iterator Find(unsigned int id);
         Time m_TimeMs;
-        Container m_Callbacks;
+        std::vector<TimerData> m_Timers;
     };
 
     struct TimerObj
     {
         friend class TimerComponent;
     public:
-        TimerObj();
-        void Start();
+        TimerObj(const char* name, TimerComponent* timer);
+        ~TimerObj();
+        void Start(Time delay);
         void Stop();
         void Remove();
+        void SetCallback(const TimerComponent::TimerCallback& callback);
     private:
-        TimerObj(TimerComponent::Iterator itr, TimerComponent::Container* t);
-        TimerComponent::Iterator m_Id;
-        TimerComponent::Container* m_Timer;
+        const unsigned int m_Id;
+        TimerComponent* const m_Timer;
     };
 }
 #endif

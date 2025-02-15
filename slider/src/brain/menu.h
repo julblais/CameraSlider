@@ -34,6 +34,7 @@ namespace Slider {
         Core::TimerObj m_IntroTimer;
         Core::MenuSystem m_MenuSystem;
         Core::TimerComponent* m_Timer;
+        const int m_Delay;
         State m_State;
     };
 }
