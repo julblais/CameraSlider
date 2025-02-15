@@ -57,7 +57,7 @@ void TimeManager::Update()
     {
         if (currentTime >= timer.triggerTime)
         {
-            LogInfo("Timer \"", timer.name, "\" activated at: ", m_TimeMs);
+            LogInfo("Timer \"", timer.name, "\" activated at: ", currentTime);
             if (timer.cb)
                 timer.cb(currentTime);
             timer.triggerTime = ULONG_MAX;
