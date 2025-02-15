@@ -10,8 +10,21 @@ using namespace Core;
 
 static unsigned int m_IdGenerator;
 
-TimerObj::TimerObj(const char* name, TimerComponent* timer)
-    : m_Timer(timer), m_Id(++m_IdGenerator)
+TimerManager::TimerId::TimerId()
+    : id(++m_IdGenerator)
+{}
+
+bool TimerManager::TimerId::operator==(const TimerId& other) const
+{
+    return other.id == id;
+}
+
+TimerManager::TimerData::TimerData(const char* name, TimerManager::TimerId id)
+    : name(name), id(id), cb(), triggerTime(ULONG_MAX)
+{}
+
+TimerObj::TimerObj(const char* name, TimerManager* timer)
+    : m_Timer(timer), m_Id()
 {
     m_Timer->Add(name, m_Id);
 }
@@ -36,21 +49,21 @@ void TimerObj::Remove()
     m_Timer->Remove(m_Id);
 }
 
-void TimerObj::SetCallback(const TimerComponent::TimerCallback& callback)
+void TimerObj::SetCallback(const TimerManager::TimerCallback& callback)
 {
     m_Timer->SetCallback(m_Id, callback);
 }
 
-TimerComponent::TimerComponent()
+TimerManager::TimerManager()
     :m_TimeMs(0), m_Timers()
 {
     m_Timers.reserve(10);
 }
 
-void TimerComponent::Setup()
+void TimerManager::Setup()
 {}
 
-void TimerComponent::Update()
+void TimerManager::Update()
 {
     auto currentTime = millis();
     m_TimeMs = currentTime;
@@ -66,53 +79,48 @@ void TimerComponent::Update()
     }
 }
 
-void TimerComponent::Add(const char* name, unsigned int id)
+void TimerManager::Add(const char* name, TimerId id)
 {
     LogDebug("Adding timer: ", name);
     m_Timers.emplace_back(name, id);
 }
 
-void TimerComponent::Start(unsigned int id, Time delay)
+void TimerManager::Start(TimerId id, Time delay)
 {
     auto itr = Find(id);
     LogDebug("Starting timer: ", itr->name);
     itr->triggerTime = millis() + delay;
 }
 
-void TimerComponent::Stop(unsigned int id)
+void TimerManager::Stop(TimerId id)
 {
     auto itr = Find(id);
     LogDebug("Stopping timer: ", itr->name);
     itr->triggerTime = ULONG_MAX;
 }
 
-void TimerComponent::Remove(unsigned int id)
+void TimerManager::Remove(TimerId id)
 {
     auto itr = Find(id);
     LogDebug("Removing timer: ", itr->name);
     m_Timers.erase(itr);
 }
 
-void TimerComponent::SetCallback(unsigned int id, const TimerComponent::TimerCallback& callback)
+void TimerManager::SetCallback(TimerId id, const TimerManager::TimerCallback& callback)
 {
     auto itr = Find(id);
     itr->cb = callback;
 }
 
-std::vector<TimerComponent::TimerData>::iterator TimerComponent::Find(unsigned int id)
+std::vector<TimerManager::TimerData>::iterator TimerManager::Find(TimerId timerId)
 {
     auto itr = std::find_if(m_Timers.begin(), m_Timers.end(),
-        [id](const TimerData& data) { return data.id == id; });
+        [timerId](const TimerData& data) { return data.id == timerId; });
     assert(itr != m_Timers.end());
     return itr;
 }
 
-Time TimerComponent::GetCurrentTime()
+Time TimerManager::GetCurrentTime()
 {
     return m_TimeMs;
 }
-
-TimerComponent::TimerData::TimerData(const char* name, unsigned int id)
-    : name(name), id(id), cb(), triggerTime(ULONG_MAX)
-{}
-

@@ -10,7 +10,7 @@
 
 using namespace Core;
 
-Slider::Menu::Menu(Core::TimerComponent* timer, Output::DisplayBuffer* display, int delay) :
+Slider::Menu::Menu(Core::TimerManager* timer, Output::DisplayBuffer* display, int delay) :
     m_Delay(delay),
     m_DisplayBuffer(display),
     m_Timer(timer),
