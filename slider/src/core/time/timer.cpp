@@ -1,6 +1,57 @@
+#include "timer.h"
+#include "debug.h"
+
+#ifdef ESP_32
+
+
+using namespace Core;
+
+void timer_callback(void* callback)
+{
+    auto timerCallback = reinterpret_cast<Timer::Callback*>(callback);
+    (*timerCallback)();
+}
+
+Timer Timer::Create(const char* name, const Callback& callback)
+{
+    Timer timer;
+    timer.m_Callback = std::unique_ptr<Callback>(new Callback(callback));
+
+    esp_timer_create_args_t args;
+    args.name = name;
+    args.callback = timer_callback;
+    args.arg = timer.m_Callback.get();
+
+    auto result = esp_timer_create(&args, &timer.m_Handle);
+    if (result != ESP_OK)
+    {
+        LogDebug("Cannot create timer: ", name, ", ", esp_err_to_name(result));
+        return Timer();
+    }
+    return timer;
+}
+
+void Core::Timer::Start(Time delayMs)
+{
+    esp_timer_start_once(m_Handle, delayMs * 1000);
+}
+
+void Core::Timer::Stop()
+{
+    esp_timer_stop(m_Handle);
+}
+
+void Core::Timer::Restart(Time delay)
+{
+    Stop();
+    esp_timer_start_once(m_Handle, delay);
+}
+
+
+#endif
+
 #ifdef USE_CUSTOM_TIMER
 
-#include "timer.h"
 #include "src/debug.h"
 
 #include <esp32-hal-timer.h>

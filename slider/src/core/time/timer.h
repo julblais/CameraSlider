@@ -1,6 +1,41 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+#ifdef ESP_32
+
+#include "esp_timer.h"
+#include <functional>
+#include <memory>
+
+namespace Core
+{
+    using Time = unsigned long;
+
+
+    class Timer
+    {
+    public:
+        using Callback = std::function<void(void)>;
+        
+        Timer() = default;
+        Timer(const Timer& timer) = delete;
+        Timer& operator=(const Timer& timer) = delete;
+        Timer(Timer&& timer) = default;
+        Timer& operator=(Timer&& timer) = default;
+        ~Timer() = default;
+
+        static Timer Create(const char* name, const Callback& callback);
+        void Start(Time delayMs);
+        void Stop();
+        void Restart(Time delayMs);
+    private:
+        esp_timer_handle_t m_Handle;
+        std::unique_ptr<Callback> m_Callback;
+    };
+}
+
+#endif
+
 #ifdef USE_CUSTOM_TIMER
 
 #include "src/core/component/component.h"
