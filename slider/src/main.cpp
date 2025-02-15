@@ -2,6 +2,7 @@
 #include "src/brain/appConfig.h"
 #include "debug.h"
 #include <memory>
+#include "src/core/perf/perf.h"
 
 using namespace Slider;
 
@@ -41,6 +42,7 @@ static AppConfig CreateConfig()
 }
 
 static auto app = Core::AppCreator<AppConfig>::Create(CreateConfig());
+static Performance::MeasureTime measure;
 
 void setup()
 {
@@ -53,9 +55,17 @@ void setup()
 
 void loop()
 {
-    app->Update();
+    {
+        auto sample = measure.CreateSample();
+        app->Update();
+    }
+
+    if (measure.GetSampleCount() > 200)
+    {
+        LogInfo("Average: ", measure.GetMillisecondsAverage());
+    }
 
     #ifdef IS_SIMULATOR //somehow this makes the timing more accurate...
-    delay(10);
+    //delay(10);
     #endif
 }
