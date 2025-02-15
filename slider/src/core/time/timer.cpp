@@ -23,33 +23,33 @@ TimerManager::TimerData::TimerData(const char* name, TimerManager::TimerId id)
     : name(name), id(id), cb(), triggerTime(ULONG_MAX)
 {}
 
-TimerObj::TimerObj(const char* name, TimerManager* timer)
+Timer::Timer(const char* name, TimerManager* timer)
     : m_Timer(timer), m_Id()
 {
     m_Timer->Add(name, m_Id);
 }
 
-TimerObj::~TimerObj()
+Timer::~Timer()
 {
     m_Timer->Remove(m_Id);
 }
 
-void TimerObj::Start(Time delay)
+void Timer::Start(Time delay)
 {
     m_Timer->Start(m_Id, delay);
 }
 
-void TimerObj::Stop()
+void Timer::Stop()
 {
     m_Timer->Stop(m_Id);
 }
 
-void TimerObj::Remove()
+void Timer::Remove()
 {
     m_Timer->Remove(m_Id);
 }
 
-void TimerObj::SetCallback(const TimerManager::TimerCallback& callback)
+void Timer::SetCallback(const TimerManager::TimerCallback& callback)
 {
     m_Timer->SetCallback(m_Id, callback);
 }

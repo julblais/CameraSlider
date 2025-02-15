@@ -9,11 +9,11 @@ namespace Core
 {
     using Time = unsigned long;
 
-    struct TimerObj;
+    struct Timer;
 
     class TimerManager : public Component
     {
-        friend struct TimerObj;
+        friend struct Timer;
 
     public:
         using TimerCallback = std::function<void(Time time)>;
@@ -45,18 +45,18 @@ namespace Core
         void Stop(TimerId id);
         void Remove(TimerId id);
         void SetCallback(TimerId id, const TimerManager::TimerCallback& callback);
-        
+
         std::vector<TimerData>::iterator Find(TimerId id);
         Time m_TimeMs;
         std::vector<TimerData> m_Timers;
     };
 
-    struct TimerObj
+    struct Timer
     {
         friend class TimerManager;
     public:
-        TimerObj(const char* name, TimerManager* timer);
-        ~TimerObj();
+        Timer(const char* name, TimerManager* timer);
+        ~Timer();
         void Start(Time delay);
         void Stop();
         void Remove();

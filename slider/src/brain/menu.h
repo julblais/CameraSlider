@@ -30,8 +30,8 @@ namespace Slider {
         void OutputMenu();
 
         Output::DisplayBuffer* m_DisplayBuffer;
-        Core::TimerObj m_ShowHideTimer;
-        Core::TimerObj m_IntroTimer;
+        Core::Timer m_ShowHideTimer;
+        Core::Timer m_IntroTimer;
         Core::MenuSystem m_MenuSystem;
         Core::TimerManager* m_Timer;
         const int m_Delay;
