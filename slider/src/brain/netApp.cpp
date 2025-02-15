@@ -88,7 +88,6 @@ BrainApp::BrainApp(const AppConfig& config)
     : state(ConnectionState::BROADCASTING), 
     isComplete(false), 
     m_Wifi(nullptr),
-    m_TimeManager(AddComponent<TimeManager>()),
     m_Timeout()
 {}
 
@@ -97,9 +96,6 @@ void BrainApp::Setup()
     LogInfo("Setup NetApp");
     pinMode(Led_Pin, OUTPUT);
     digitalWrite(Led_Pin, HIGH);
-
-    m_TimeManager = AddComponent<TimeManager>();
-    //m_Timeout = m_TimeManager->Create("Timeout", cb);
 
     LogInfo("Init wifi...");
     m_Wifi = new WifiModule();

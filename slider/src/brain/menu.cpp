@@ -10,19 +10,18 @@
 
 using namespace Core;
 
-Slider::Menu::Menu(Core::TimeManager* timer, Output::DisplayBuffer* display, int delay) :
+Slider::Menu::Menu(Output::DisplayBuffer* display, int delay) :
     m_Delay(delay),
     m_DisplayBuffer(display),
-    m_Time(timer),
     m_ShowHideTimer(),
     m_IntroTimer(),
     m_MenuSystem(),
     m_State(State::Hidden)
 {
-    m_ShowHideTimer = timer->Create("Selection menu", [this](unsigned long time) {
-        OnSelectionLongPress(time); });
-    m_IntroTimer = timer->Create("Intro menu", [this](unsigned long time) {
-        OnIntroFinished(time); });
+    m_ShowHideTimer = Timer::Create("Selection menu", [this]() {
+        OnSelectionLongPress(); });
+    m_IntroTimer = Timer::Create("Intro menu", [this]() {
+        OnIntroFinished(); });
 }
 
 void Slider::Menu::Setup()
@@ -71,7 +70,7 @@ bool Slider::Menu::OnInputEvent(const Input::Event& inputEvent)
     return m_State != State::Hidden;
 }
 
-void Slider::Menu::OnSelectionLongPress(unsigned long time)
+void Slider::Menu::OnSelectionLongPress()
 {
     if (m_State == State::Hidden) //show intro
     {
@@ -88,7 +87,7 @@ void Slider::Menu::OnSelectionLongPress(unsigned long time)
     }
 }
 
-void Slider::Menu::OnIntroFinished(unsigned long time)
+void Slider::Menu::OnIntroFinished()
 {
     //show menu
     m_State = State::Shown;
