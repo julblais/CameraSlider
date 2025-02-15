@@ -10,35 +10,17 @@ using namespace Core;
 
 static unsigned int m_IdGenerator;
 
-Timer::Id::Id()
-    : id(++m_IdGenerator)
-{}
-
-Timer::Id::Id(unsigned int id)
-    : id(id)
-{}
-
-bool Timer::Id::operator==(const Timer::Id& other) const
-{
-    return other.id == id;
-}
-
 Timer::Timer()
     : m_Timer(nullptr), m_Id(0)
 {}
 
 Timer::Timer(const char* name, TimeManager* timer)
-    : m_Timer(timer), m_Id()
+    : m_Timer(timer), m_Id(++m_IdGenerator)
 {}
 
-void Timer::Start(Time delay) { m_Timer->Start(m_Id, delay); }
-void Timer::Stop() { m_Timer->Stop(m_Id); }
-void Timer::Remove() { m_Timer->Remove(m_Id); }
-
-void Timer::SetCallback(const Timer::Callback& callback)
-{
-    m_Timer->SetCallback(m_Id, callback);
-}
+void Timer::Start(Time delay) const { m_Timer->Start(m_Id, delay); }
+void Timer::Stop() const { m_Timer->Stop(m_Id); }
+void Timer::Remove() const { m_Timer->Remove(m_Id); }
 
 TimeManager::TimeManager()
     :m_TimeMs(0), m_Timers()
@@ -91,12 +73,6 @@ void TimeManager::Remove(Timer::Id id)
     m_Timers.erase(itr);
 }
 
-void TimeManager::SetCallback(Timer::Id id, const Timer::Callback& callback)
-{
-    auto itr = Find(id);
-    itr->cb = callback;
-}
-
 std::vector<TimeManager::TimerData>::iterator TimeManager::Find(Timer::Id timerId)
 {
     auto itr = std::find_if(m_Timers.begin(), m_Timers.end(),
@@ -105,7 +81,7 @@ std::vector<TimeManager::TimerData>::iterator TimeManager::Find(Timer::Id timerI
     return itr;
 }
 
-Time TimeManager::GetCurrentTime()
+Time TimeManager::GetCurrentTime() const
 {
     return m_TimeMs;
 }

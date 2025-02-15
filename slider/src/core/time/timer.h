@@ -13,26 +13,19 @@ namespace Core
 
     struct Timer
     {
+    public:
         using Callback = std::function<void(Time time)>;
 
-    public:
         Timer();
-        void Start(Time delay);
-        void Stop();
-        void Remove();
-        void SetCallback(const Callback& callback);
+        void Start(Time delay) const;
+        void Stop() const;
+        void Remove() const;
 
     private:
-        struct Id
-        {
-            Id();
-            Id(unsigned int id);
-            bool operator==(const Id& other) const;
-            unsigned int id;
-        };
+        using Id = unsigned int;
 
         Timer(const char* name, TimeManager* timer);
-        Id m_Id;
+        Timer::Id m_Id;
         TimeManager* m_Timer;
         friend class TimeManager;
     };
@@ -43,7 +36,7 @@ namespace Core
         TimeManager();
         Timer Create(const char* name, const Timer::Callback& callback);
         virtual void Update() override;
-        Time GetCurrentTime();
+        Time GetCurrentTime() const;
 
     private:
         struct TimerData
@@ -58,9 +51,8 @@ namespace Core
         void Start(Timer::Id id, Time delay);
         void Stop(Timer::Id id);
         void Remove(Timer::Id id);
-        void SetCallback(Timer::Id id, const Timer::Callback& callback);
-
         std::vector<TimerData>::iterator Find(Timer::Id id);
+
         Time m_TimeMs;
         std::vector<TimerData> m_Timers;
         friend struct Timer;
