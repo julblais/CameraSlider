@@ -10,12 +10,12 @@
 
 using namespace Core;
 
-Slider::Menu::Menu(Core::TimerManager* timer, Output::DisplayBuffer* display, int delay) :
+Slider::Menu::Menu(Core::TimeManager* time, Output::DisplayBuffer* display, int delay) :
     m_Delay(delay),
     m_DisplayBuffer(display),
-    m_Timer(timer),
-    m_ShowHideTimer("Selection menu", timer),
-    m_IntroTimer("Intro menu", timer),
+    m_Time(time),
+    m_ShowHideTimer("Selection menu", time),
+    m_IntroTimer("Intro menu", time),
     m_MenuSystem(),
     m_State(State::Hidden)
 {
