@@ -41,7 +41,7 @@ namespace Core
     private:
         struct TimerData
         {
-            TimerData(const char* name, Timer::Id id);
+            TimerData(const char* name, Timer::Id id, const Timer::Callback& callback);
             const char* name;
             Timer::Id id;
             Timer::Callback cb;

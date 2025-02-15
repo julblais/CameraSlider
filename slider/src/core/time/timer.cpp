@@ -32,7 +32,7 @@ Timer TimeManager::Create(const char* name, const Timer::Callback& callback)
 {
     LogDebug("Creating timer: ", name);
     auto timer = Timer(name, this);
-    m_Timers.emplace_back(name, timer.m_Id);
+    m_Timers.emplace_back(name, timer.m_Id, callback);
     return timer;
 }
 
@@ -86,6 +86,6 @@ Time TimeManager::GetCurrentTime() const
     return m_TimeMs;
 }
 
-TimeManager::TimerData::TimerData(const char* name, Timer::Id id)
-    : name(name), id(id), cb(), triggerTime(ULONG_MAX)
+TimeManager::TimerData::TimerData(const char* name, Timer::Id id, const Timer::Callback& callback)
+    : name(name), id(id), cb(callback), triggerTime(ULONG_MAX)
 {}
