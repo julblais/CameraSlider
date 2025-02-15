@@ -26,7 +26,8 @@ Slider::App::App(const AppConfig& config) :
 void Slider::App::Setup()
 {
     m_Display = std::unique_ptr<Display>(new Hardware::LCD(m_Config.LcdAddress));
-    auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
+    auto timer = AddComponent<TimeManager>();
+    auto menu = AddComponent<Menu>(timer, &m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
 
     auto dpad = new Hardware::Dpad(
@@ -62,9 +63,6 @@ void Slider::App::Setup()
 
 void Slider::App::Update()
 {
-    unsigned long appTimeMs = millis();
-    Core::Timer::Update(appTimeMs);
-
     auto input = InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
     /*-> process received messages here <- */
     m_InputDispatcher.ProcessInput(input);

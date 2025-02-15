@@ -8,73 +8,105 @@
 
 using namespace Core;
 
-static auto Timers = std::vector<Timer*>();
+static unsigned int m_IdGenerator;
 
-void Timer::Update(unsigned long appTimeMs)
+Timer::Id::Id()
+    : id(++m_IdGenerator)
+{}
+
+bool Timer::Id::operator==(const Timer::Id& other) const
 {
-    for (auto timer : Timers)
-        timer->ProcessCallback(appTimeMs);
+    return other.id == id;
 }
 
-Timer::Timer(const char* name) :
-    m_Name(name),
-    m_Delay(0),
-    m_Callback(),
-    m_StartTimeMs(0)
+Timer::Timer(const char* name, TimeManager* timer)
+    : m_Timer(timer), m_Id()
 {
-    Timers.push_back(this);
-}
-
-Timer::Timer(
-    const char* name, std::function<void(unsigned long time)> callback, unsigned long delay) :
-    Timer(name)
-{
-    m_Callback = callback;
-    m_Delay = delay;
+    m_Timer->Add(name, m_Id);
 }
 
 Timer::~Timer()
 {
-    auto position = std::find(Timers.begin(), Timers.end(), this);
-    if (position != Timers.end())
-        Timers.erase(position);
+    m_Timer->Remove(m_Id);
 }
 
-void Timer::Start()
+void Timer::Start(Time delay) { m_Timer->Start(m_Id, delay); }
+void Timer::Stop() { m_Timer->Stop(m_Id); }
+void Timer::Remove() { m_Timer->Remove(m_Id); }
+
+void Timer::SetCallback(const Timer::Callback& callback)
 {
-    m_StartTimeMs = millis();
-    LogInfo("Timer \"", m_Name, "\" started at: ", m_StartTimeMs);
+    m_Timer->SetCallback(m_Id, callback);
 }
 
-void Timer::Stop()
+TimeManager::TimeManager()
+    :m_TimeMs(0), m_Timers()
 {
-    if (m_StartTimeMs != 0)
+    m_Timers.reserve(10);
+}
+
+TimeManager::TimerData::TimerData(const char* name, Timer::Id id)
+    : name(name), id(id), cb(), triggerTime(ULONG_MAX)
+{}
+
+void TimeManager::Update()
+{
+    auto currentTime = millis();
+    m_TimeMs = currentTime;
+    for (auto& timer : m_Timers)
     {
-        LogInfo("Timer \"", m_Name, "\" stopped");
-        m_StartTimeMs = 0;
-    }
-}
-
-void Timer::Trigger()
-{
-    ProcessCallback(ULONG_MAX);
-}
-
-unsigned int Timer::Delta() const
-{
-    return m_StartTimeMs != 0 ? millis() - m_StartTimeMs : 0;
-}
-
-void Timer::ProcessCallback(unsigned long appTimeMs)
-{
-    if (m_StartTimeMs != 0 && m_Callback)
-    {
-        const auto delta = m_StartTimeMs < appTimeMs ? appTimeMs - m_StartTimeMs : 0u;
-        if (delta >= m_Delay)
+        if (currentTime >= timer.triggerTime)
         {
-            LogInfo("Timer \"", m_Name, "\" activated at: ", appTimeMs);
-            m_Callback(delta);
-            Stop();
+            LogInfo("Timer \"", timer.name, "\" activated at: ", currentTime);
+            if (timer.cb)
+                timer.cb(currentTime);
+            timer.triggerTime = ULONG_MAX;
         }
     }
+}
+
+void TimeManager::Add(const char* name, Timer::Id id)
+{
+    LogDebug("Adding timer: ", name);
+    m_Timers.emplace_back(name, id);
+}
+
+void TimeManager::Start(Timer::Id id, Time delay)
+{
+    auto itr = Find(id);
+    LogDebug("Starting timer: ", itr->name);
+    itr->triggerTime = millis() + delay;
+}
+
+void TimeManager::Stop(Timer::Id id)
+{
+    auto itr = Find(id);
+    LogDebug("Stopping timer: ", itr->name);
+    itr->triggerTime = ULONG_MAX;
+}
+
+void TimeManager::Remove(Timer::Id id)
+{
+    auto itr = Find(id);
+    LogDebug("Removing timer: ", itr->name);
+    m_Timers.erase(itr);
+}
+
+void TimeManager::SetCallback(Timer::Id id, const Timer::Callback& callback)
+{
+    auto itr = Find(id);
+    itr->cb = callback;
+}
+
+std::vector<TimeManager::TimerData>::iterator TimeManager::Find(Timer::Id timerId)
+{
+    auto itr = std::find_if(m_Timers.begin(), m_Timers.end(),
+        [timerId](const TimerData& data) { return data.id == timerId; });
+    assert(itr != m_Timers.end());
+    return itr;
+}
+
+Time TimeManager::GetCurrentTime()
+{
+    return m_TimeMs;
 }

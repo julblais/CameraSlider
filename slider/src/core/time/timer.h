@@ -1,31 +1,68 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+#include "src/core/component/component.h"
 #include <functional>
+#include <vector>
 
 namespace Core
 {
-    class Timer
+    using Time = unsigned long;
+
+    class TimeManager;
+
+    struct Timer
     {
+        using Callback = std::function<void(Time time)>;
+
     public:
-        static void Update(unsigned long appTimeMs);
-
-        Timer(const char* name);
-        Timer(const char* name, std::function<void(unsigned long time)> callback, unsigned long delay);
+        Timer(const char* name, TimeManager* timer);
         ~Timer();
-
-        void Start();
+        void Start(Time delay);
         void Stop();
-        void Trigger();
-        unsigned int Delta() const;
+        void Remove();
+        void SetCallback(const Callback& callback);
 
     private:
-        void ProcessCallback(unsigned long appTimeMs);
+        struct Id
+        {
+            Id();
+            bool operator==(const Id& other) const;
+            unsigned int id;
+        };
 
-        const char* const m_Name;
-        unsigned long m_Delay;
-        unsigned long m_StartTimeMs;
-        std::function<void(unsigned long)> m_Callback;
+        const Id m_Id;
+        TimeManager* const m_Timer;
+        friend class TimeManager;
+    };
+
+    class TimeManager : public Component
+    {
+    public:
+        TimeManager();
+        virtual void Update() override;
+        Time GetCurrentTime();
+
+    private:
+        struct TimerData
+        {
+            TimerData(const char* name, Timer::Id id);
+            const char* name;
+            Timer::Id id;
+            Timer::Callback cb;
+            Time triggerTime;
+        };
+
+        void Add(const char* name, Timer::Id id);
+        void Start(Timer::Id id, Time delay);
+        void Stop(Timer::Id id);
+        void Remove(Timer::Id id);
+        void SetCallback(Timer::Id id, const Timer::Callback& callback);
+
+        std::vector<TimerData>::iterator Find(Timer::Id id);
+        Time m_TimeMs;
+        std::vector<TimerData> m_Timers;
+        friend struct Timer;
     };
 
 }

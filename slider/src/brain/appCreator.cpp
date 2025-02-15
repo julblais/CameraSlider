@@ -1,6 +1,8 @@
 #include "src/core/app/appBase.h"
 #include "appConfig.h"
 
+#undef TEST_NETWORK
+
 #ifdef TEST_NETWORK
 #include "src/brain/netApp.h"
 #else

@@ -10,13 +10,18 @@
 
 using namespace Core;
 
-Slider::Menu::Menu(Output::DisplayBuffer* display, int delay) :
+Slider::Menu::Menu(Core::TimeManager* time, Output::DisplayBuffer* display, int delay) :
+    m_Delay(delay),
     m_DisplayBuffer(display),
-    m_ShowHideTimer("Selection menu", [this](unsigned long time) { OnSelectionLongPress(time); }, delay),
-    m_IntroTimer("Intro menu", [this](unsigned long time) { OnIntroFinished(time); }, MENU_INTRO_DELAY_MS),
+    m_Time(time),
+    m_ShowHideTimer("Selection menu", time),
+    m_IntroTimer("Intro menu", time),
     m_MenuSystem(),
     m_State(State::Hidden)
-{}
+{
+    m_ShowHideTimer.SetCallback([this](unsigned long time) { OnSelectionLongPress(time); });
+    m_IntroTimer.SetCallback([this](unsigned long time) { OnIntroFinished(time); });
+}
 
 void Slider::Menu::Setup()
 {
@@ -35,7 +40,7 @@ bool Slider::Menu::OnInputEvent(const Input::Event& inputEvent)
     if (inputEvent.dpadButtonState == Input::ButtonPressed)
     {
         if (inputEvent.button == Input::DpadSelect)
-            m_ShowHideTimer.Start();
+            m_ShowHideTimer.Start(m_Delay);
         if (m_State == State::Shown)
         {
             switch (inputEvent.button)
@@ -69,7 +74,7 @@ void Slider::Menu::OnSelectionLongPress(unsigned long time)
     if (m_State == State::Hidden) //show intro
     {
         m_State = State::Intro;
-        m_IntroTimer.Start();
+        m_IntroTimer.Start(MENU_INTRO_DELAY_MS);
         m_DisplayBuffer->Clear();
         m_DisplayBuffer->Print(MENU_INTRO_MSG);
     }
