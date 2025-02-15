@@ -9,61 +9,61 @@ namespace Core
 {
     using Time = unsigned long;
 
-    struct Timer;
-
-    class TimerManager : public Component
-    {
-        friend struct Timer;
-
-    public:
-        using TimerCallback = std::function<void(Time time)>;
-
-        virtual void Setup() override;
-        virtual void Update() override;
-
-        TimerManager();
-        Time GetCurrentTime();
-
-    private:
-        struct TimerId
-        {
-            TimerId();
-            bool operator==(const TimerId& other) const;
-            unsigned int id;
-        };
-
-        struct TimerData
-        {
-            TimerData(const char* name, TimerId id);
-            const char* name;
-            TimerId id;
-            TimerCallback cb;
-            Time triggerTime;
-        };
-        void Add(const char* name, TimerId id);
-        void Start(TimerId id, Time delay);
-        void Stop(TimerId id);
-        void Remove(TimerId id);
-        void SetCallback(TimerId id, const TimerManager::TimerCallback& callback);
-
-        std::vector<TimerData>::iterator Find(TimerId id);
-        Time m_TimeMs;
-        std::vector<TimerData> m_Timers;
-    };
+    class TimeManager;
 
     struct Timer
     {
-        friend class TimerManager;
+        using Callback = std::function<void(Time time)>;
+
     public:
-        Timer(const char* name, TimerManager* timer);
+        Timer(const char* name, TimeManager* timer);
         ~Timer();
         void Start(Time delay);
         void Stop();
         void Remove();
-        void SetCallback(const TimerManager::TimerCallback& callback);
+        void SetCallback(const Callback& callback);
+
     private:
-        const TimerManager::TimerId m_Id;
-        TimerManager* const m_Timer;
+        struct Id
+        {
+            Id();
+            bool operator==(const Id& other) const;
+            unsigned int id;
+        };
+
+        const Id m_Id;
+        TimeManager* const m_Timer;
+        friend class TimeManager;
     };
+
+    class TimeManager : public Component
+    {
+    public:
+        TimeManager();
+        virtual void Update() override;
+        Time GetCurrentTime();
+
+    private:
+        struct TimerData
+        {
+            TimerData(const char* name, Timer::Id id);
+            const char* name;
+            Timer::Id id;
+            Timer::Callback cb;
+            Time triggerTime;
+        };
+
+        void Add(const char* name, Timer::Id id);
+        void Start(Timer::Id id, Time delay);
+        void Stop(Timer::Id id);
+        void Remove(Timer::Id id);
+        void SetCallback(Timer::Id id, const Timer::Callback& callback);
+
+        std::vector<TimerData>::iterator Find(Timer::Id id);
+        Time m_TimeMs;
+        std::vector<TimerData> m_Timers;
+        friend struct Timer;
+    };
+
 }
 #endif
