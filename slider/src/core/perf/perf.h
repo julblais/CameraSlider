@@ -7,6 +7,28 @@
 
 namespace Performance
 {
+    struct Measure
+    {
+        
+    };
+
+    template <typename TMeasure, typename TValue>
+    class Sampler
+    {
+    public:
+        Sampler();
+
+        TSample Create();
+        void AddSample(const TSample& sample);
+        void Reset();
+        TValue GetAverage();
+        unsigned int GetSampleCount();
+
+    private:
+        unsigned int m_Count;
+        TValue m_Value;
+    };
+
     class MeasureTime
     {
         struct TimeSample
