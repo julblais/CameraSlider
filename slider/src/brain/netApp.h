@@ -2,6 +2,7 @@
 #define NETAPP_H
 
 #include "appConfig.h"
+#include "src/core/time/timer.h"
 #include "src/core/app/appBase.h"
 #include "src/core/network/address.h"
 
@@ -26,9 +27,12 @@ public:
 
 private:
     Net::WifiModule* m_Wifi;
+    TimeManager* m_TimeManager;
     ConnectionState state;
     bool isComplete;
     Core::MacAddress controllerMac;
+    Core::Timer m_Timeout;
+
 };
 
 class ControllerApp : public Core::AppBase
@@ -40,9 +44,11 @@ public:
 
 private:
     Net::WifiModule* m_Wifi;
+    TimeManager* m_TimeManager;
     ConnectionState state;
     bool isComplete;
     Core::MacAddress brainMac;
+    Core::Timer m_Timeout;
 };
 
 #endif

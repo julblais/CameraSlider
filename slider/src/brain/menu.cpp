@@ -10,17 +10,19 @@
 
 using namespace Core;
 
-Slider::Menu::Menu(Core::TimeManager* time, Output::DisplayBuffer* display, int delay) :
+Slider::Menu::Menu(Core::TimeManager* timer, Output::DisplayBuffer* display, int delay) :
     m_Delay(delay),
     m_DisplayBuffer(display),
-    m_Time(time),
-    m_ShowHideTimer("Selection menu", time),
-    m_IntroTimer("Intro menu", time),
+    m_Time(timer),
+    m_ShowHideTimer(),
+    m_IntroTimer(),
     m_MenuSystem(),
     m_State(State::Hidden)
 {
-    m_ShowHideTimer.SetCallback([this](unsigned long time) { OnSelectionLongPress(time); });
-    m_IntroTimer.SetCallback([this](unsigned long time) { OnIntroFinished(time); });
+    m_ShowHideTimer = timer->Create("Selection menu", [this](unsigned long time) {
+        OnSelectionLongPress(time); });
+    m_IntroTimer = timer->Create("Intro menu", [this](unsigned long time) {
+        OnIntroFinished(time); });
 }
 
 void Slider::Menu::Setup()
