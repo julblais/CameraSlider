@@ -51,7 +51,7 @@ void Hardware::LCD::Init()
 
 void Hardware::LCD::CreateSymbol(const int id, const uint8_t* charmap)
 {
-    LogInfo("Creating custom character with id: ", id);
+    LogDebug("Creating custom character with id: ", id);
     chip.createChar(id, const_cast<uint8_t*>(charmap));
 }
 

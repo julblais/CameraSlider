@@ -50,13 +50,10 @@ void Slider::App::Setup()
         return OnInputEvent(m_DisplayBuffer, event);
     });
 
-
-    LogInfo("Setup components...");
     SetupComponents();
     m_Display->Init();
     m_DisplayBuffer.Init(m_Display.get());
     m_Dpad->Init();
-    LogInfo("Components setup complete.");
 
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
 }
