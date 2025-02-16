@@ -4,6 +4,7 @@
 #ifdef ESP_32
 
 #include "esp_timer.h"
+#include "src/core/component/component.h"
 #include <functional>
 #include <memory>
 
@@ -11,13 +12,18 @@ namespace Core
 {
     using Time = unsigned long;
 
+    class TimerComponent : public Component
+    {
+        virtual void Setup() override;
+        virtual void Update() override;
+    };
 
     class Timer
     {
     public:
         using Callback = std::function<void(void)>;
-        
-        Timer() = default;
+
+        Timer();
         Timer(const Timer& timer) = delete;
         Timer& operator=(const Timer& timer) = delete;
         Timer(Timer&& timer);
@@ -36,6 +42,7 @@ namespace Core
             const Callback callback;
         };
         static void timer_callback(void* callback);
+        friend class TimerComponent;
 
         esp_timer* m_Handle;
         std::unique_ptr<UserData> m_UserData;

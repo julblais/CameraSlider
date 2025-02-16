@@ -1,26 +1,41 @@
 #include "timer.h"
 #include "debug.h"
+#include <freertos/FreeRTOS.h>
+#include <freertos/queue.h>
 
 #ifdef ESP_32
 
-
 using namespace Core;
 
+const int QUEUE_LENGTH = 10;
+QueueHandle_t s_Queue;
 
-///check on which thread the callbacks are executed........
-//will probably need a timer component to update on the main thread.
+void TimerComponent::Setup()
+{
+    s_Queue = xQueueCreate(QUEUE_LENGTH, sizeof(Timer::UserData));
+}
+
+void TimerComponent::Update()
+{
+    Timer::UserData* userData;
+    if (xQueueReceive(s_Queue, &userData, 0))
+        userData->callback();
+}
 
 Timer::UserData::UserData(const char* name, const Callback& callback)
     : name(name), callback(callback)
 {}
 
-void Timer::timer_callback(void* userdata)
+void Timer::timer_callback(void* userData)
 {
-    auto data = reinterpret_cast<UserData*>(userdata);
-    data->callback();
+    xQueueSend(s_Queue, &userData, 0);
 }
 
-Core::Timer::Timer(Timer&& timer)
+Timer::Timer()
+    :m_Handle(nullptr), m_UserData(nullptr)
+{}
+
+Timer::Timer(Timer&& timer)
 {
     m_Handle = timer.m_Handle;
     m_UserData = std::move(timer.m_UserData);
@@ -28,7 +43,7 @@ Core::Timer::Timer(Timer&& timer)
     timer.m_UserData = nullptr;
 }
 
-Timer& Core::Timer::operator=(Timer&& timer)
+Timer& Timer::operator=(Timer&& timer)
 {
     m_Handle = timer.m_Handle;
     m_UserData = std::move(timer.m_UserData);
@@ -52,30 +67,30 @@ Timer Timer::Create(const char* name, const Callback& callback)
     args.name = name;
     args.callback = timer_callback;
     args.arg = timer.m_UserData.get();
+    args.dispatch_method = esp_timer_dispatch_t::ESP_TIMER_TASK;
     esp_timer* handle;
 
     auto result = esp_timer_create(&args, &handle);
     if (result != ESP_OK)
     {
-        LogDebug("Cannot create timer: ", name, ", ", esp_err_to_name(result));
+        LogError("Cannot create timer: ", name, ", ", esp_err_to_name(result));
         return Timer();
     }
     timer.m_Handle = handle;
-   // esp_timer_start_once(timer.m_Handle, 1000);
     return timer;
 }
 
-void Core::Timer::Start(Time delayMs)
+void Timer::Start(Time delayMs)
 {
     esp_timer_start_once(m_Handle, delayMs * 1000);
 }
 
-void Core::Timer::Stop()
+void Timer::Stop()
 {
     esp_timer_stop(m_Handle);
 }
 
-void Core::Timer::Restart(Time delay)
+void Timer::Restart(Time delay)
 {
     Stop();
     esp_timer_start_once(m_Handle, delay);
