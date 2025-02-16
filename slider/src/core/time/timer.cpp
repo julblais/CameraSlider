@@ -19,20 +19,31 @@ void TimerComponent::Update()
 {
     Timer::UserData* userData;
     if (xQueueReceive(s_Queue, &userData, 0))
-        userData->callback();
+        userData->Invoke();
 }
 
 Timer::UserData::UserData(const char* name, const Callback& callback)
-    : name(name), callback(callback)
+    : m_Name(name), m_Callback(callback)
 {}
 
-void Timer::timer_callback(void* userData)
+void Timer::UserData::Invoke()
+{
+    LogInfo("Timer \"", m_Name, "\" activated");
+    LogDebug(" at ", esp_timer_get_time() / 1000, "ms");
+    m_Callback();
+}
+
+void Timer::OnTimerTriggered(void* userData)
 {
     xQueueSend(s_Queue, &userData, 0);
 }
 
 Timer::Timer()
     :m_Handle(nullptr), m_UserData(nullptr)
+{}
+
+Timer::Timer(const esp_timer_handle_t& handle, std::unique_ptr<UserData>&& userData)
+    : m_Handle(handle), m_UserData(std::move(userData))
 {}
 
 Timer::Timer(Timer&& timer)
@@ -60,13 +71,12 @@ Timer::~Timer()
 
 Timer Timer::Create(const char* name, const Callback& callback)
 {
-    Timer timer;
-    timer.m_UserData = std::unique_ptr<UserData>(new UserData(name, callback));
+    auto userData = std::unique_ptr<UserData>(new UserData(name, callback));
 
     esp_timer_create_args_t args;
     args.name = name;
-    args.callback = timer_callback;
-    args.arg = timer.m_UserData.get();
+    args.callback = OnTimerTriggered;
+    args.arg = userData.get();
     args.dispatch_method = esp_timer_dispatch_t::ESP_TIMER_TASK;
     esp_timer* handle;
 
@@ -76,8 +86,7 @@ Timer Timer::Create(const char* name, const Callback& callback)
         LogError("Cannot create timer: ", name, ", ", esp_err_to_name(result));
         return Timer();
     }
-    timer.m_Handle = handle;
-    return timer;
+    return Timer(handle, std::move(userData));
 }
 
 void Timer::Start(Time delayMs)
@@ -95,7 +104,6 @@ void Timer::Restart(Time delay)
     Stop();
     esp_timer_start_once(m_Handle, delay);
 }
-
 
 #endif
 

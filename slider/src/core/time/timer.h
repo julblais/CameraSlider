@@ -34,17 +34,23 @@ namespace Core
         void Start(Time delayMs);
         void Stop();
         void Restart(Time delayMs);
+
     private:
         struct UserData
         {
+        public:
             UserData(const char* name, const Callback& callback);
-            const char* name;
-            const Callback callback;
+            void Invoke();
+        private:
+            const char* m_Name;
+            const Callback m_Callback;
         };
-        static void timer_callback(void* callback);
+
+        Timer(const esp_timer_handle_t& handle, std::unique_ptr<UserData>&& userData);
+        static void OnTimerTriggered(void* callback);
         friend class TimerComponent;
 
-        esp_timer* m_Handle;
+        esp_timer_handle_t m_Handle;
         std::unique_ptr<UserData> m_UserData;
     };
 }
