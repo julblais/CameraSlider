@@ -35,15 +35,11 @@ namespace Performance
         TValue m_Max;
         TValue m_Min;
     };
-
-    struct CpuUsageTag
-    {
-        static constexpr const char* Name { "CpuTime" };
-    };
-
     struct CpuUsage
     {
     public:
+        struct Tag { static constexpr const char* Name { "Cpu usage" }; };
+
         void Start();
         uint8_t GetValue() const;
         const char* GetUnit() const;
@@ -51,17 +47,14 @@ namespace Performance
 
     };
 
-    template class Sampler<CpuUsageTag, CpuUsage, uint8_t>;
-    class CpuUsageSampler : public Sampler<CpuUsageTag, CpuUsage, uint8_t> {};
-
-    struct CpuTimeTag
-    {
-        static constexpr const char* Name { "Cpu time" };
-    };
+    template class Sampler<CpuUsage::Tag, CpuUsage, uint8_t>;
+    class CpuUsageSampler : public Sampler<CpuUsage::Tag, CpuUsage, uint8_t> {};
 
     struct CpuTime
     {
     public:
+        struct Tag { static constexpr const char* Name { "Cpu time" }; };
+
         void Start();
         uint64_t GetValue() const;
         const char* GetUnit() const;
@@ -69,8 +62,8 @@ namespace Performance
         uint64_t m_StartMicroseconds;
     };
 
-    template class Sampler<CpuTimeTag, CpuTime, uint64_t>;
-    class CpuTimeSampler : public Sampler<CpuTimeTag, CpuTime, uint64_t> {};
+    template class Sampler<CpuTime::Tag, CpuTime, uint64_t>;
+    class CpuTimeSampler : public Sampler<CpuTime::Tag, CpuTime, uint64_t> {};
 
 
 //adapted from: https://github.com/Carbon225/esp32-perfmon
