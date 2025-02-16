@@ -17,13 +17,14 @@ size_t Performance::Sampler<TTag, TSample, TValue>::printTo(Print& p) const
 }
 
 template<typename TTag, typename TSample, typename TValue>
-void Sampler<TTag, TSample, TValue>::AddSample(const TSample& sample)
+void Sampler<TTag, TSample, TValue>::EndSample()
 {
+    auto val = m_Sample.GetValue();
     m_Count++;
-    auto val = sample.GetValue();
     m_Sum += val;
     m_Max = std::max(m_Max, val);
     m_Min = std::min(m_Min, val);
+    m_Sample = TSample();
 }
 
 template<typename TTag, typename TSample, typename TValue>
@@ -48,7 +49,7 @@ unsigned int Sampler<TTag, TSample, TValue>::GetSampleCount()
 
 
 
-CpuTime::CpuTime()
+void CpuTime::Start()
 {
     m_StartMicroseconds = esp_timer_get_time();
 }
@@ -63,7 +64,7 @@ const char* CpuTime::GetUnit() const
     return "ms";
 }
 
-CpuUsage::CpuUsage()
+void CpuUsage::Start()
 {
 
 }

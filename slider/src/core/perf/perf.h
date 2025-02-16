@@ -11,6 +11,8 @@ namespace Performance
     template <typename TTag, typename TSample, typename TValue>
     class Sampler : public Printable
     {
+        static_assert(std::is_default_constructible<TSample>::value, "Type should have empty ctor");
+        using HasStart = decltype(std::declval<TSample>().Start());
         using HasValue = decltype(std::declval<const TSample>().GetValue());
         static_assert(std::is_same<HasValue, TValue>::value, "Incorrect return type from GetValue");
         using HasUnit = decltype(std::declval<const TSample>().GetUnit());
@@ -20,12 +22,14 @@ namespace Performance
         virtual ~Sampler() override = default;
         virtual size_t printTo(Print& p) const override;
 
-        void AddSample(const TSample& sample);
+        inline void StartSample() { m_Sample.Start(); }
+        void EndSample();
         void Reset();
         TValue GetAverage();
         unsigned int GetSampleCount();
 
     private:
+        TSample m_Sample;
         unsigned int m_Count;
         TValue m_Sum;
         TValue m_Max;
@@ -40,7 +44,7 @@ namespace Performance
     struct CpuUsage
     {
     public:
-        CpuUsage();
+        void Start();
         uint8_t GetValue() const;
         const char* GetUnit() const;
     private:
@@ -58,7 +62,7 @@ namespace Performance
     struct CpuTime
     {
     public:
-        CpuTime();
+        void Start();
         uint64_t GetValue() const;
         const char* GetUnit() const;
     private:
