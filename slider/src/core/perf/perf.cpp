@@ -1,10 +1,11 @@
 #include "perf.h"
 
-#ifdef ESP_32
+#ifdef ARDUINO_ARCH_ESP32 
 #include "esp_timer.h"
 #endif
 
 using namespace Performance;
+
 
 MeasureTime::TimeSample::TimeSample(uint64_t* value, unsigned int* count)
     :m_Start(esp_timer_get_time()), m_Value(value), m_Count(count)
@@ -52,4 +53,19 @@ float MeasureTime::GetMillisecondsAverage()
 unsigned int Performance::MeasureTime::GetSampleCount()
 {
     return m_Count;
+}
+
+Performance::TimeSample2::TimeSample2()
+{
+    m_StartMicroseconds = esp_timer_get_time();
+}
+
+int Performance::TimeSample2::GetValue()
+{
+    return (esp_timer_get_time() - m_StartMicroseconds) / 1000;
+}
+
+const char* Performance::TimeSample2::GetUnit()
+{
+    return "ms";
 }
