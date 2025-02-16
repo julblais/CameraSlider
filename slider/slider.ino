@@ -1,3 +1,4 @@
+#define ESP_32 TRUE;
 
 #define C_DpadUpPin             25;
 #define C_DpadDownPin           26;
