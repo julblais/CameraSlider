@@ -4,19 +4,13 @@
 #include "esp_log.h"
 #include "Print.h"
 #include <utility>
-#include <type_traits>   
+#include <type_traits>
 
 namespace Performance
 {
-    struct TestSample
-    {
-        int GetValue();
-        const char* GetUnit();
-    };
+    struct Tag { const char* text; };
 
-    struct TextTag { const char *text; };
-
-    template <const TextTag& tag, typename TSample, typename TValue>
+    template </*const Tag& tag,*/ typename TSample, typename TValue>
     class Sampler
     {
         using HasValue = decltype(std::declval<TSample>().GetValue());
@@ -31,7 +25,7 @@ namespace Performance
         void Reset();
         TValue GetAverage();
         unsigned int GetSampleCount();
-        void Print(Print& printer);
+        void PrintTo(Print& printer);
 
     private:
         unsigned int m_Count;
@@ -40,20 +34,45 @@ namespace Performance
         TValue m_Min;
     };
 
-
-    struct TimeSample2
+    struct CpuUsage
     {
     public:
-        TimeSample2();
-        int GetValue();
+        CpuUsage();
+        uint8_t GetValue();
+        const char* GetUnit();
+    private:
+
+    };
+
+    struct CpuTime
+    {
+    public:
+        CpuTime();
+        uint64_t GetValue();
         const char* GetUnit();
     private:
         uint64_t m_StartMicroseconds;
     };
- 
+
+    //static constexpr Tag CpuUsageTag = { "Cpu usage" };
+   // using CpuUsageSampler = Sampler</*CpuUsageTag,*/ CpuUsage, uint8_t>;
+
+    //static constexpr Tag CpuTimeTag = { "Cpu time" };
+    //using CpuTimeSampler = Sampler<CpuTimeTag, CpuTime, uint64_t>;
+    //template<>        // specialization (declared, not defined)
+    template class Sampler</*CpuTimeTag,*/ CpuTime, uint64_t>;
+
+    class CpuTimeSampler : public Sampler</*CpuTimeTag,*/ CpuTime, uint64_t>{};
 
 
-   //////////////////////////////
+
+
+
+
+
+
+
+
 
     class MeasureTime
     {
@@ -82,14 +101,6 @@ namespace Performance
         unsigned int m_Count;
         uint64_t m_Value;
     };
-
-
-    static constexpr TextTag TestTag = { "Test" };
-    using TestTimeSampler = Sampler<TestTag, TestSample, int>;
-
-    
-    static constexpr TextTag TestTime = { "TestTime" };
-    using TestTimeSample = Sampler<TestTime, TimeSample2, int>;
 }
 
 

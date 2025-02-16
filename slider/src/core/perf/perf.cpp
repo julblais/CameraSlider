@@ -6,6 +6,81 @@
 
 using namespace Performance;
 
+template</*const Tag& tag,*/ typename TSample, typename TValue>
+Sampler< TSample, TValue>::Sampler()
+{}
+
+template</*const Tag& tag,*/ typename TSample, typename TValue>
+void Sampler< TSample, TValue>::AddSample(const TSample& sample)
+{}
+
+template</*const Tag& tag,*/ typename TSample, typename TValue>
+void Sampler< TSample, TValue>::Reset()
+{}
+
+template</*const Tag& tag,*/ typename TSample, typename TValue>
+TValue Sampler<TSample, TValue>::GetAverage()
+{
+    return TValue();
+}
+
+template</*const Tag& tag,*/ typename TSample, typename TValue>
+unsigned int Sampler<TSample, TValue>::GetSampleCount()
+{
+    return 0;
+}
+
+template</*const Tag& tag,*/ typename TSample, typename TValue>
+void Sampler<TSample, TValue>::PrintTo(Print& printer)
+{}
+
+
+
+/*
+template<const Tag& tag, typename TSample, typename TValue>
+Sampler<tag, TSample, TValue>::Sampler()
+{}
+
+template<const Tag& tag, typename TSample, typename TValue>
+void Sampler<tag, TSample, TValue>::AddSample(const TSample& sample)
+{}
+
+template<const Tag& tag, typename TSample, typename TValue>
+void Sampler<tag, TSample, TValue>::Reset()
+{}
+
+template<const Tag& tag, typename TSample, typename TValue>
+TValue Sampler<tag, TSample, TValue>::GetAverage()
+{
+    return TValue();
+}
+
+template<const Tag& tag, typename TSample, typename TValue>
+unsigned int Sampler<tag, TSample, TValue>::GetSampleCount()
+{
+    return 0;
+}
+
+template<const Tag& tag, typename TSample, typename TValue>
+void Sampler<tag, TSample, TValue>::PrintTo(Print& printer)
+{}
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 MeasureTime::TimeSample::TimeSample(uint64_t* value, unsigned int* count)
     :m_Start(esp_timer_get_time()), m_Value(value), m_Count(count)
@@ -55,17 +130,17 @@ unsigned int Performance::MeasureTime::GetSampleCount()
     return m_Count;
 }
 
-Performance::TimeSample2::TimeSample2()
+CpuTime::CpuTime()
 {
     m_StartMicroseconds = esp_timer_get_time();
 }
 
-int Performance::TimeSample2::GetValue()
+uint64_t CpuTime::GetValue()
 {
     return (esp_timer_get_time() - m_StartMicroseconds) / 1000;
 }
 
-const char* Performance::TimeSample2::GetUnit()
+const char* CpuTime::GetUnit()
 {
     return "ms";
 }

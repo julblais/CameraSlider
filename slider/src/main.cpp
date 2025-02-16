@@ -43,6 +43,7 @@ static AppConfig CreateConfig()
 
 static auto app = Core::AppCreator<AppConfig>::Create(CreateConfig());
 static Performance::MeasureTime measure;
+static Performance::CpuTimeSampler timeSampler;
 
 void setup()
 {
