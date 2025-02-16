@@ -44,6 +44,7 @@ static AppConfig CreateConfig()
 static auto app = Core::AppCreator<AppConfig>::Create(CreateConfig());
 static Performance::MeasureTime measure;
 static Performance::CpuTimeSampler timeSampler;
+static Performance::CpuUsageSampler cpuSampler;
 
 void setup()
 {
@@ -64,6 +65,7 @@ void loop()
     if (measure.GetSampleCount() > 200)
     {
         LogInfo("Average: ", measure.GetMillisecondsAverage());
+        LogInfo(timeSampler);
     }
 
     #ifdef IS_SIMULATOR //somehow this makes the timing more accurate...

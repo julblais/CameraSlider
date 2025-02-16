@@ -6,68 +6,41 @@
 
 using namespace Performance;
 
-template</*const Tag& tag,*/ typename TSample, typename TValue>
-Sampler< TSample, TValue>::Sampler()
+template<typename TTag, typename TSample, typename TValue>
+Sampler<TTag, TSample, TValue>::Sampler()
 {}
 
-template</*const Tag& tag,*/ typename TSample, typename TValue>
-void Sampler< TSample, TValue>::AddSample(const TSample& sample)
+template<typename TTag, typename TSample, typename TValue>
+Performance::Sampler<TTag, TSample, TValue>::~Sampler()
 {}
 
-template</*const Tag& tag,*/ typename TSample, typename TValue>
-void Sampler< TSample, TValue>::Reset()
+template<typename TTag, typename TSample, typename TValue>
+size_t Performance::Sampler<TTag, TSample, TValue>::printTo(Print& p) const
+{
+    auto size = p.print(TTag::Name);
+    size += p.println("Toot");
+    return size;
+}
+
+template<typename TTag, typename TSample, typename TValue>
+void Sampler<TTag, TSample, TValue>::AddSample(const TSample& sample)
 {}
 
-template</*const Tag& tag,*/ typename TSample, typename TValue>
-TValue Sampler<TSample, TValue>::GetAverage()
+template<typename TTag, typename TSample, typename TValue>
+void Sampler<TTag, TSample, TValue>::Reset()
+{}
+
+template<typename TTag, typename TSample, typename TValue>
+TValue Sampler<TTag, TSample, TValue>::GetAverage()
 {
     return TValue();
 }
 
-template</*const Tag& tag,*/ typename TSample, typename TValue>
-unsigned int Sampler<TSample, TValue>::GetSampleCount()
+template<typename TTag, typename TSample, typename TValue>
+unsigned int Sampler<TTag, TSample, TValue>::GetSampleCount()
 {
     return 0;
 }
-
-template</*const Tag& tag,*/ typename TSample, typename TValue>
-void Sampler<TSample, TValue>::PrintTo(Print& printer)
-{}
-
-
-
-/*
-template<const Tag& tag, typename TSample, typename TValue>
-Sampler<tag, TSample, TValue>::Sampler()
-{}
-
-template<const Tag& tag, typename TSample, typename TValue>
-void Sampler<tag, TSample, TValue>::AddSample(const TSample& sample)
-{}
-
-template<const Tag& tag, typename TSample, typename TValue>
-void Sampler<tag, TSample, TValue>::Reset()
-{}
-
-template<const Tag& tag, typename TSample, typename TValue>
-TValue Sampler<tag, TSample, TValue>::GetAverage()
-{
-    return TValue();
-}
-
-template<const Tag& tag, typename TSample, typename TValue>
-unsigned int Sampler<tag, TSample, TValue>::GetSampleCount()
-{
-    return 0;
-}
-
-template<const Tag& tag, typename TSample, typename TValue>
-void Sampler<tag, TSample, TValue>::PrintTo(Print& printer)
-{}
-
-*/
-
-
 
 
 
@@ -143,4 +116,17 @@ uint64_t CpuTime::GetValue()
 const char* CpuTime::GetUnit()
 {
     return "ms";
+}
+
+Performance::CpuUsage::CpuUsage()
+{}
+
+uint8_t Performance::CpuUsage::GetValue()
+{
+    return 0;
+}
+
+const char* Performance::CpuUsage::GetUnit()
+{
+    return nullptr;
 }

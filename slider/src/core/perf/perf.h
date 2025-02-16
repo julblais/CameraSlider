@@ -8,10 +8,8 @@
 
 namespace Performance
 {
-    struct Tag { const char* text; };
-
-    template </*const Tag& tag,*/ typename TSample, typename TValue>
-    class Sampler
+    template <typename TTag, typename TSample, typename TValue>
+    class Sampler : public Printable
     {
         using HasValue = decltype(std::declval<TSample>().GetValue());
         using HasUnit = decltype(std::declval<TSample>().GetUnit());
@@ -20,18 +18,24 @@ namespace Performance
 
     public:
         Sampler();
+        virtual ~Sampler() override;
+        virtual size_t printTo(Print& p) const override;
 
         void AddSample(const TSample& sample);
         void Reset();
         TValue GetAverage();
         unsigned int GetSampleCount();
-        void PrintTo(Print& printer);
 
     private:
         unsigned int m_Count;
         TValue m_Sum;
         TValue m_Max;
         TValue m_Min;
+    };
+
+    struct CpuUsageTag
+    {
+        static constexpr const char* Name { "CpuTime" };
     };
 
     struct CpuUsage
@@ -44,6 +48,14 @@ namespace Performance
 
     };
 
+    template class Sampler<CpuUsageTag, CpuUsage, uint8_t>;
+    class CpuUsageSampler : public Sampler<CpuUsageTag, CpuUsage, uint8_t> {};
+
+    struct CpuTimeTag
+    {
+        static constexpr const char* Name { "Cpu time" };
+    };
+
     struct CpuTime
     {
     public:
@@ -54,15 +66,8 @@ namespace Performance
         uint64_t m_StartMicroseconds;
     };
 
-    //static constexpr Tag CpuUsageTag = { "Cpu usage" };
-   // using CpuUsageSampler = Sampler</*CpuUsageTag,*/ CpuUsage, uint8_t>;
-
-    //static constexpr Tag CpuTimeTag = { "Cpu time" };
-    //using CpuTimeSampler = Sampler<CpuTimeTag, CpuTime, uint64_t>;
-    //template<>        // specialization (declared, not defined)
-    template class Sampler</*CpuTimeTag,*/ CpuTime, uint64_t>;
-
-    class CpuTimeSampler : public Sampler</*CpuTimeTag,*/ CpuTime, uint64_t>{};
+    template class Sampler<CpuTimeTag, CpuTime, uint64_t>;
+    class CpuTimeSampler : public Sampler<CpuTimeTag, CpuTime, uint64_t> {};
 
 
 
