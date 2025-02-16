@@ -20,17 +20,25 @@ namespace Core
         Timer() = default;
         Timer(const Timer& timer) = delete;
         Timer& operator=(const Timer& timer) = delete;
-        Timer(Timer&& timer) = default;
-        Timer& operator=(Timer&& timer) = default;
-        ~Timer() = default;
+        Timer(Timer&& timer);
+        Timer& operator=(Timer&& timer);
+        ~Timer();
 
         static Timer Create(const char* name, const Callback& callback);
         void Start(Time delayMs);
         void Stop();
         void Restart(Time delayMs);
     private:
-        esp_timer_handle_t m_Handle;
-        std::unique_ptr<Callback> m_Callback;
+        struct UserData
+        {
+            UserData(const char* name, const Callback& callback);
+            const char* name;
+            const Callback callback;
+        };
+        static void timer_callback(void* callback);
+
+        esp_timer* m_Handle;
+        std::unique_ptr<UserData> m_UserData;
     };
 }
 

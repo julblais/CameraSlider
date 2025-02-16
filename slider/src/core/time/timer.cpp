@@ -6,28 +6,62 @@
 
 using namespace Core;
 
-void timer_callback(void* callback)
+
+///check on which thread the callbacks are executed........
+//will probably need a timer component to update on the main thread.
+
+Timer::UserData::UserData(const char* name, const Callback& callback)
+    : name(name), callback(callback)
+{}
+
+void Timer::timer_callback(void* userdata)
 {
-    auto timerCallback = reinterpret_cast<Timer::Callback*>(callback);
-    (*timerCallback)();
+    auto data = reinterpret_cast<UserData*>(userdata);
+    data->callback();
+}
+
+Core::Timer::Timer(Timer&& timer)
+{
+    m_Handle = timer.m_Handle;
+    m_UserData = std::move(timer.m_UserData);
+    timer.m_Handle = nullptr;
+    timer.m_UserData = nullptr;
+}
+
+Timer& Core::Timer::operator=(Timer&& timer)
+{
+    m_Handle = timer.m_Handle;
+    m_UserData = std::move(timer.m_UserData);
+    timer.m_Handle = nullptr;
+    timer.m_UserData = nullptr;
+    return *this;
+}
+
+Timer::~Timer()
+{
+    if (m_Handle)
+        esp_timer_delete(m_Handle);
 }
 
 Timer Timer::Create(const char* name, const Callback& callback)
 {
     Timer timer;
-    timer.m_Callback = std::unique_ptr<Callback>(new Callback(callback));
+    timer.m_UserData = std::unique_ptr<UserData>(new UserData(name, callback));
 
     esp_timer_create_args_t args;
     args.name = name;
     args.callback = timer_callback;
-    args.arg = timer.m_Callback.get();
+    args.arg = timer.m_UserData.get();
+    esp_timer* handle;
 
-    auto result = esp_timer_create(&args, &timer.m_Handle);
+    auto result = esp_timer_create(&args, &handle);
     if (result != ESP_OK)
     {
         LogDebug("Cannot create timer: ", name, ", ", esp_err_to_name(result));
         return Timer();
     }
+    timer.m_Handle = handle;
+   // esp_timer_start_once(timer.m_Handle, 1000);
     return timer;
 }
 
