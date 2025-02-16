@@ -55,13 +55,9 @@
 			"cinttypes": "cpp",
 			"typeinfo": "cpp",
 			"set": "cpp",
-			"charconv": "cpp",
-			"chrono": "cpp",
+			"*.tpp": "cpp",
 			"forward_list": "cpp",
-			"list": "cpp",
-			"ratio": "cpp",
-			"thread": "cpp",
-			"any": "cpp"
+			"list": "cpp"
 		}
 	}
 }

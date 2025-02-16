@@ -18,22 +18,21 @@ namespace Slider {
     class Menu : public Core::Component
     {
     public:
-        Menu(Core::TimeManager* time, Output::DisplayBuffer* display, int delay);
+        Menu(Output::DisplayBuffer* display, int delay);
         void Setup() override;
         bool OnInputEvent(const Input::Event& inputEvent);
 
     private:
         enum class State { Hidden = 0, Intro = 1, Shown = 2 };
 
-        void OnSelectionLongPress(unsigned long time);
-        void OnIntroFinished(unsigned long time);
+        void OnSelectionLongPress();
+        void OnIntroFinished();
         void OutputMenu();
 
         Output::DisplayBuffer* m_DisplayBuffer;
         Core::Timer m_ShowHideTimer;
         Core::Timer m_IntroTimer;
         Core::MenuSystem m_MenuSystem;
-        Core::TimeManager* m_Time;
         const int m_Delay;
         State m_State;
     };

@@ -27,7 +27,6 @@ public:
 
 private:
     Net::WifiModule* m_Wifi;
-    TimeManager* m_TimeManager;
     ConnectionState state;
     bool isComplete;
     Core::MacAddress controllerMac;
@@ -44,7 +43,6 @@ public:
 
 private:
     Net::WifiModule* m_Wifi;
-    TimeManager* m_TimeManager;
     ConnectionState state;
     bool isComplete;
     Core::MacAddress brainMac;

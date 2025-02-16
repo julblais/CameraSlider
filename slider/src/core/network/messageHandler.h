@@ -8,6 +8,8 @@
 #include <functional>
 #include <memory>
 #include <utility>
+#include <freertos/FreeRTOS.h>
+#include <freertos/queue.h>
 
 namespace Core
 {

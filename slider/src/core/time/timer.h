@@ -1,6 +1,62 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+#ifdef ARDUINO_ARCH_ESP32 
+
+#include "esp_timer.h"
+#include "src/core/component/component.h"
+#include <functional>
+#include <memory>
+
+namespace Core
+{
+    using Time = unsigned long;
+
+    class TimerComponent : public Component
+    {
+        virtual void Setup() override;
+        virtual void Update() override;
+    };
+
+    class Timer
+    {
+    public:
+        using Callback = std::function<void(void)>;
+
+        Timer();
+        Timer(const Timer& timer) = delete;
+        Timer& operator=(const Timer& timer) = delete;
+        Timer(Timer&& timer);
+        Timer& operator=(Timer&& timer);
+        ~Timer();
+
+        static Timer Create(const char* name, const Callback& callback);
+        void Start(Time delayMs);
+        void Stop();
+        void Restart(Time delayMs);
+
+    private:
+        struct UserData
+        {
+        public:
+            UserData(const char* name, const Callback& callback);
+            void Invoke();
+        private:
+            const char* m_Name;
+            const Callback m_Callback;
+        };
+
+        Timer(const esp_timer_handle_t& handle, std::unique_ptr<UserData>&& userData);
+        static void OnTimerTriggered(void* callback);
+        friend class TimerComponent;
+
+        esp_timer_handle_t m_Handle;
+        std::unique_ptr<UserData> m_UserData;
+    };
+}
+
+#elif
+
 #include "src/core/component/component.h"
 #include <functional>
 #include <vector>
@@ -9,7 +65,7 @@ namespace Core
 {
     using Time = unsigned long;
 
-    class TimeManager;
+    class TimerComponent;
 
     struct Timer
     {
@@ -24,16 +80,16 @@ namespace Core
     private:
         using Id = unsigned int;
 
-        Timer(const char* name, TimeManager* timer);
+        Timer(const char* name, TimerComponent* timer);
         Timer::Id m_Id;
-        TimeManager* m_Timer;
-        friend class TimeManager;
+        TimerComponent* m_Timer;
+        friend class TimerComponent;
     };
 
-    class TimeManager : public Component
+    class TimerComponent : public Component
     {
     public:
-        TimeManager();
+        TimerComponent();
         Timer Create(const char* name, const Timer::Callback& callback);
         virtual void Update() override;
         Time GetCurrentTime() const;
@@ -59,4 +115,6 @@ namespace Core
     };
 
 }
+#endif
+
 #endif
