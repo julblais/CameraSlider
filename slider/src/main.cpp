@@ -42,7 +42,6 @@ static AppConfig CreateConfig()
 }
 
 static auto app = Core::AppCreator<AppConfig>::Create(CreateConfig());
-static Performance::MeasureTime measure;
 static Performance::CpuTimeSampler timeSampler;
 static Performance::CpuUsageSampler cpuSampler;
 
@@ -57,14 +56,11 @@ void setup()
 
 void loop()
 {
-    {
-        auto sample = measure.CreateSample();
-        app->Update();
-    }
+    //auto 
+    app->Update();
 
-    if (measure.GetSampleCount() > 200)
+    if (timeSampler.GetSampleCount() > 200)
     {
-        LogInfo("Average: ", measure.GetMillisecondsAverage());
         LogInfo(timeSampler);
     }
 

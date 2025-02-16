@@ -11,14 +11,13 @@ namespace Performance
     template <typename TTag, typename TSample, typename TValue>
     class Sampler : public Printable
     {
-        using HasValue = decltype(std::declval<TSample>().GetValue());
-        using HasUnit = decltype(std::declval<TSample>().GetUnit());
+        using HasValue = decltype(std::declval<const TSample>().GetValue());
         static_assert(std::is_same<HasValue, TValue>::value, "Incorrect return type from GetValue");
+        using HasUnit = decltype(std::declval<const TSample>().GetUnit());
         static_assert(std::is_same<HasUnit, const char*>::value, "Incorrect return type from GetUnit");
 
     public:
-        Sampler();
-        virtual ~Sampler() override;
+        virtual ~Sampler() override = default;
         virtual size_t printTo(Print& p) const override;
 
         void AddSample(const TSample& sample);
@@ -42,8 +41,8 @@ namespace Performance
     {
     public:
         CpuUsage();
-        uint8_t GetValue();
-        const char* GetUnit();
+        uint8_t GetValue() const;
+        const char* GetUnit() const;
     private:
 
     };
@@ -60,8 +59,8 @@ namespace Performance
     {
     public:
         CpuTime();
-        uint64_t GetValue();
-        const char* GetUnit();
+        uint64_t GetValue() const;
+        const char* GetUnit() const;
     private:
         uint64_t m_StartMicroseconds;
     };
@@ -70,47 +69,8 @@ namespace Performance
     class CpuTimeSampler : public Sampler<CpuTimeTag, CpuTime, uint64_t> {};
 
 
-
-
-
-
-
-
-
-
-
-    class MeasureTime
-    {
-        struct TimeSample
-        {
-            friend class MeasureTime;
-            ~TimeSample();
-        private:
-            TimeSample(uint64_t* value, unsigned int* count);
-            uint64_t* m_Value;
-            unsigned int* m_Count;
-            uint64_t m_Start;
-        };
-
-    public:
-        MeasureTime();
-
-        TimeSample CreateSample();
-        void AddSample(uint64_t value);
-        void Reset();
-        uint64_t GetMicrosecondsAverage();
-        float GetMillisecondsAverage();
-        unsigned int GetSampleCount();
-
-    private:
-        unsigned int m_Count;
-        uint64_t m_Value;
-    };
-}
-
-
 //adapted from: https://github.com/Carbon225/esp32-perfmon
-
+}
 
 
 #endif

@@ -4,15 +4,9 @@
 #include "esp_timer.h"
 #endif
 
+#include <algorithm>
+
 using namespace Performance;
-
-template<typename TTag, typename TSample, typename TValue>
-Sampler<TTag, TSample, TValue>::Sampler()
-{}
-
-template<typename TTag, typename TSample, typename TValue>
-Performance::Sampler<TTag, TSample, TValue>::~Sampler()
-{}
 
 template<typename TTag, typename TSample, typename TValue>
 size_t Performance::Sampler<TTag, TSample, TValue>::printTo(Print& p) const
@@ -24,109 +18,62 @@ size_t Performance::Sampler<TTag, TSample, TValue>::printTo(Print& p) const
 
 template<typename TTag, typename TSample, typename TValue>
 void Sampler<TTag, TSample, TValue>::AddSample(const TSample& sample)
-{}
+{
+    m_Count++;
+    auto val = sample.GetValue();
+    m_Sum += val;
+    m_Max = std::max(m_Max, val);
+    m_Min = std::min(m_Min, val);
+}
 
 template<typename TTag, typename TSample, typename TValue>
 void Sampler<TTag, TSample, TValue>::Reset()
-{}
+{
+    m_Count = {};
+    m_Max = {};
+    m_Min = {};
+}
 
 template<typename TTag, typename TSample, typename TValue>
 TValue Sampler<TTag, TSample, TValue>::GetAverage()
 {
-    return TValue();
+    return m_Sum / m_Count;
 }
 
 template<typename TTag, typename TSample, typename TValue>
 unsigned int Sampler<TTag, TSample, TValue>::GetSampleCount()
 {
-    return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-MeasureTime::TimeSample::TimeSample(uint64_t* value, unsigned int* count)
-    :m_Start(esp_timer_get_time()), m_Value(value), m_Count(count)
-{}
-
-MeasureTime::TimeSample::~TimeSample()
-{
-    auto end = esp_timer_get_time();
-    (*m_Value) += end - m_Start;
-    (*m_Count)++;
-}
-
-MeasureTime::MeasureTime()
-    : m_Count(0), m_Value(0)
-{}
-
-MeasureTime::TimeSample MeasureTime::CreateSample()
-{
-    return TimeSample(&m_Value, &m_Count);
-}
-
-void MeasureTime::AddSample(uint64_t value)
-{
-    m_Count++;
-    m_Value += value;
-}
-
-void MeasureTime::Reset()
-{
-    m_Count = 0;
-    m_Value = 0;
-}
-
-uint64_t MeasureTime::GetMicrosecondsAverage()
-{
-    return m_Value / m_Count / 1000;
-}
-
-float MeasureTime::GetMillisecondsAverage()
-{
-    const float div = 1000.0f;
-    return (float)m_Value / (float)m_Count / div;
-}
-
-unsigned int Performance::MeasureTime::GetSampleCount()
-{
     return m_Count;
 }
+
+
 
 CpuTime::CpuTime()
 {
     m_StartMicroseconds = esp_timer_get_time();
 }
 
-uint64_t CpuTime::GetValue()
+uint64_t CpuTime::GetValue() const
 {
     return (esp_timer_get_time() - m_StartMicroseconds) / 1000;
 }
 
-const char* CpuTime::GetUnit()
+const char* CpuTime::GetUnit() const
 {
     return "ms";
 }
 
-Performance::CpuUsage::CpuUsage()
-{}
+CpuUsage::CpuUsage()
+{
 
-uint8_t Performance::CpuUsage::GetValue()
+}
+
+uint8_t Performance::CpuUsage::GetValue() const
 {
     return 0;
 }
 
-const char* Performance::CpuUsage::GetUnit()
+const char* Performance::CpuUsage::GetUnit() const
 {
-    return nullptr;
+    return "%";
 }
