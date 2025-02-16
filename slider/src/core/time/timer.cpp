@@ -3,7 +3,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 
-#ifdef ESP_32
+#ifdef ARDUINO_ARCH_ESP32 
 
 using namespace Core;
 
@@ -105,9 +105,7 @@ void Timer::Restart(Time delay)
     esp_timer_start_once(m_Handle, delay);
 }
 
-#endif
-
-#ifdef USE_CUSTOM_TIMER
+#elif
 
 #include "src/debug.h"
 
@@ -132,13 +130,13 @@ void Timer::Start(Time delay) const { m_Timer->Start(m_Id, delay); }
 void Timer::Stop() const { m_Timer->Stop(m_Id); }
 void Timer::Remove() const { m_Timer->Remove(m_Id); }
 
-TimeManager::TimeManager()
+TimerComponent::TimerComponent()
     :m_TimeMs(0), m_Timers()
 {
     m_Timers.reserve(10);
 }
 
-Timer TimeManager::Create(const char* name, const Timer::Callback& callback)
+Timer TimerComponent::Create(const char* name, const Timer::Callback& callback)
 {
     LogDebug("Creating timer: ", name);
     auto timer = Timer(name, this);
@@ -146,7 +144,7 @@ Timer TimeManager::Create(const char* name, const Timer::Callback& callback)
     return timer;
 }
 
-void TimeManager::Update()
+void TimerComponent::Update()
 {
     auto currentTime = millis();
     m_TimeMs = currentTime;
@@ -162,28 +160,28 @@ void TimeManager::Update()
     }
 }
 
-void TimeManager::Start(Timer::Id id, Time delay)
+void TimerComponent::Start(Timer::Id id, Time delay)
 {
     auto itr = Find(id);
     LogDebug("Starting timer: ", itr->name);
     itr->triggerTime = millis() + delay;
 }
 
-void TimeManager::Stop(Timer::Id id)
+void TimerComponent::Stop(Timer::Id id)
 {
     auto itr = Find(id);
     LogDebug("Stopping timer: ", itr->name);
     itr->triggerTime = ULONG_MAX;
 }
 
-void TimeManager::Remove(Timer::Id id)
+void TimerComponent::Remove(Timer::Id id)
 {
     auto itr = Find(id);
     LogDebug("Removing timer: ", itr->name);
     m_Timers.erase(itr);
 }
 
-std::vector<TimeManager::TimerData>::iterator TimeManager::Find(Timer::Id timerId)
+std::vector<TimerComponent::TimerData>::iterator TimerComponent::Find(Timer::Id timerId)
 {
     auto itr = std::find_if(m_Timers.begin(), m_Timers.end(),
         [timerId](const TimerData& data) { return data.id == timerId; });
@@ -191,12 +189,12 @@ std::vector<TimeManager::TimerData>::iterator TimeManager::Find(Timer::Id timerI
     return itr;
 }
 
-Time TimeManager::GetCurrentTime() const
+Time TimerComponent::GetCurrentTime() const
 {
     return m_TimeMs;
 }
 
-TimeManager::TimerData::TimerData(const char* name, Timer::Id id, const Timer::Callback& callback)
+TimerComponent::TimerData::TimerData(const char* name, Timer::Id id, const Timer::Callback& callback)
     : name(name), id(id), cb(callback), triggerTime(ULONG_MAX)
 {}
 

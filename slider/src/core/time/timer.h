@@ -1,7 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#ifdef ESP_32
+#ifdef ARDUINO_ARCH_ESP32 
 
 #include "esp_timer.h"
 #include "src/core/component/component.h"
@@ -55,9 +55,7 @@ namespace Core
     };
 }
 
-#endif
-
-#ifdef USE_CUSTOM_TIMER
+#elif
 
 #include "src/core/component/component.h"
 #include <functional>
@@ -67,7 +65,7 @@ namespace Core
 {
     using Time = unsigned long;
 
-    class TimeManager;
+    class TimerComponent;
 
     struct Timer
     {
@@ -82,16 +80,16 @@ namespace Core
     private:
         using Id = unsigned int;
 
-        Timer(const char* name, TimeManager* timer);
+        Timer(const char* name, TimerComponent* timer);
         Timer::Id m_Id;
-        TimeManager* m_Timer;
-        friend class TimeManager;
+        TimerComponent* m_Timer;
+        friend class TimerComponent;
     };
 
-    class TimeManager : public Component
+    class TimerComponent : public Component
     {
     public:
-        TimeManager();
+        TimerComponent();
         Timer Create(const char* name, const Timer::Callback& callback);
         virtual void Update() override;
         Time GetCurrentTime() const;

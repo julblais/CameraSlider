@@ -55,7 +55,9 @@
 			"cinttypes": "cpp",
 			"typeinfo": "cpp",
 			"set": "cpp",
-			"*.tpp": "cpp"
+			"*.tpp": "cpp",
+			"forward_list": "cpp",
+			"list": "cpp"
 		}
 	}
 }
