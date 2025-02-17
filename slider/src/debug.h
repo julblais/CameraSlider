@@ -39,6 +39,12 @@
 #define LogDebug(...) ;
 #endif
 
+#ifdef DEBUG_PERF
+#define LogPerf(...) Debug::Logger().Log(__VA_ARGS__)
+#else
+#define LogDebug(...) ;
+#endif
+
 namespace Debug
 {
     struct Logger

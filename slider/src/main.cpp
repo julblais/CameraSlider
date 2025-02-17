@@ -42,8 +42,8 @@ static AppConfig CreateConfig()
 }
 
 static auto app = Core::AppCreator<AppConfig>::Create(CreateConfig());
-static Performance::CpuTimeSampler timeSampler;
-static Performance::CpuUsageSampler cpuSampler;
+static Performance::CpuTimeSampler timeSampler(2u, 200u);
+static Performance::CpuUsageSampler cpuSampler(2u, 200u);
 
 void setup()
 {
@@ -57,14 +57,11 @@ void setup()
 void loop()
 {
     //auto 
+    timeSampler.Start();
     app->Update();
-
-    if (timeSampler.GetSampleCount() > 200)
-    {
-        LogInfo(timeSampler);
-    }
+    timeSampler.End();
 
     #ifdef IS_SIMULATOR //somehow this makes the timing more accurate...
-    //delay(10);
+    delay(10);
     #endif
 }
