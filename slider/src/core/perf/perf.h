@@ -46,39 +46,9 @@ namespace Performance
         const unsigned int m_SkipCount;
         const unsigned int m_LogFreqCount;
     };
-
-    struct CpuUsage
-    {
-    public:
-        struct Tag { static constexpr const char* Name { "Cpu usage" }; };
-        static constexpr const char* Unit { "%" }; 
-        void Start();
-        uint8_t GetValue() const;
-    private:
-
-    };
-
-    template class Sampler<CpuUsage::Tag, CpuUsage, uint8_t>;
-    using CpuUsageSampler = Sampler<CpuUsage::Tag, CpuUsage, uint8_t>;
-
-    struct CpuTime
-    {
-    public:
-        struct Tag { static constexpr const char* Name { "Cpu time" }; };
-        static constexpr const char* Unit { "us" }; 
-
-        void Start();
-        uint64_t GetValue() const;
-    private:
-        uint64_t m_StartMicroseconds;
-    };
-
-    template class Sampler<CpuTime::Tag, CpuTime, uint64_t>;
-    using CpuTimeSampler = Sampler<CpuTime::Tag, CpuTime, uint64_t>;
-
-
-//adapted from: https://github.com/Carbon225/esp32-perfmon
 }
+
+#include "perf.tpp"
 
 #endif
 #endif

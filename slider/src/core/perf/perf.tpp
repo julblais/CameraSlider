@@ -1,10 +1,6 @@
 #include "perf.h"
 #include "src/debug.h"
 
-#ifdef ARDUINO_ARCH_ESP32 
-#include "esp_timer.h"
-#endif
-
 #include <algorithm>
 
 using namespace Performance;
@@ -77,24 +73,4 @@ template<typename TTag, typename TSample, typename TValue>
 unsigned int Sampler<TTag, TSample, TValue>::GetSampleCount()
 {
     return m_Data.count;
-}
-
-
-
-void CpuTime::Start()
-{
-    m_StartMicroseconds = esp_timer_get_time();
-}
-
-uint64_t CpuTime::GetValue() const
-{
-    return (esp_timer_get_time() - m_StartMicroseconds);
-}
-
-void CpuUsage::Start()
-{}
-
-uint8_t CpuUsage::GetValue() const
-{
-    return 0;
 }

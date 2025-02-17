@@ -19,7 +19,7 @@
 #include "src/brain/appConfig.h"
 #include "debug.h"
 #include <memory>
-#include "src/core/perf/perf.h"
+#include "src/core/perf/cpuTime.h"
 
 using namespace Slider;
 
@@ -42,8 +42,7 @@ static AppConfig CreateConfig()
 }
 
 static auto app = Core::AppCreator<AppConfig>::Create(CreateConfig());
-//static Performance::CpuTimeSampler sampler(2u, 200u);
-static Performance::CpuUsageSampler sampler(2u, 50u);
+static Performance::CpuTimeSampler sampler(2u, 200u);
 
 void setup()
 {
@@ -56,7 +55,6 @@ void setup()
 
 void loop()
 {
-    //auto 
     sampler.Start();
     app->Update();
     sampler.End();
