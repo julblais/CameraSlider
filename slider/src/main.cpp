@@ -1,11 +1,3 @@
-#include "src/core/app/appBase.h"
-#include "src/brain/appConfig.h"
-#include "debug.h"
-#include <memory>
-#include "src/core/perf/perf.h"
-
-using namespace Slider;
-
 #ifdef IS_SIMULATOR
 #define C_DpadUpPin             23
 #define C_DpadDownPin           14
@@ -22,6 +14,14 @@ using namespace Slider;
 #else
 #include "slider.ino"
 #endif
+
+#include "src/core/app/appBase.h"
+#include "src/brain/appConfig.h"
+#include "debug.h"
+#include <memory>
+#include "src/core/perf/perf.h"
+
+using namespace Slider;
 
 static AppConfig CreateConfig()
 {
@@ -42,8 +42,8 @@ static AppConfig CreateConfig()
 }
 
 static auto app = Core::AppCreator<AppConfig>::Create(CreateConfig());
-static Performance::CpuTimeSampler timeSampler(2u, 200u);
-static Performance::CpuUsageSampler cpuSampler(2u, 200u);
+//static Performance::CpuTimeSampler sampler(2u, 200u);
+static Performance::CpuUsageSampler sampler(2u, 50u);
 
 void setup()
 {
@@ -57,9 +57,10 @@ void setup()
 void loop()
 {
     //auto 
-    timeSampler.Start();
+    sampler.Start();
     app->Update();
-    timeSampler.End();
+    sampler.End();
+
 
     #ifdef IS_SIMULATOR //somehow this makes the timing more accurate...
     delay(10);
