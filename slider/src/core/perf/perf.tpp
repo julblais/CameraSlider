@@ -6,12 +6,8 @@
 using namespace Performance;
 
 template<typename TTag, typename TSample, typename TValue>
-Sampler<TTag, TSample, TValue>::Sampler(
-    const unsigned int skip, const unsigned int logFrequency)
-    : m_Sample(),
-    m_Data(),
-    m_SkipCount(skip),
-    m_LogFreqCount(logFrequency)
+Sampler<TTag, TSample, TValue>::Sampler(const unsigned int logFrequency)
+    : m_Sample(), m_Data(), m_LogFreqCount(logFrequency)
 {}
 
 template<typename TTag, typename TSample, typename TValue>
@@ -32,12 +28,6 @@ template<typename TTag, typename TSample, typename TValue>
 void Sampler<TTag, TSample, TValue>::End()
 {
     auto val = m_Sample.GetValue();
-    if (m_Data.skip++ < m_SkipCount)
-    {
-        m_Sample = TSample();
-        return;
-    }
-
     m_Data.count++;
     m_Data.last = val;
     m_Data.sum += val;

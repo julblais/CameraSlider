@@ -1,8 +1,6 @@
 #ifndef PERF_H
 #define PERF_H
 
-#ifdef DEBUG_PERF
-
 #include "esp_log.h"
 #include "Print.h"
 #include <utility>
@@ -21,7 +19,7 @@ namespace Performance
         static_assert(std::is_same<HasValue, TValue>::value, "Incorrect return type from GetValue");
 
     public:
-        Sampler(const unsigned int skipCount, const unsigned int logFrequency);
+        Sampler(const unsigned int logFrequency);
         virtual ~Sampler() override = default;
         virtual size_t printTo(Print& p) const override;
 
@@ -38,17 +36,14 @@ namespace Performance
             TValue min;
             TValue last;
             unsigned int freq;
-            unsigned int skip;
             unsigned int count;
         };
         TSample m_Sample;
         Data m_Data;
-        const unsigned int m_SkipCount;
         const unsigned int m_LogFreqCount;
     };
 }
 
 #include "perf.tpp"
 
-#endif
 #endif
