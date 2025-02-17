@@ -1,7 +1,6 @@
 #include "app.h"
 #include "src/hardware/lcd.h"
-#include "src/hardware/dpad.h"
-#include "src/hardware/joystick.h"
+#include "src/hardware/inputReader2.h"
 
 #include <esp32-hal-timer.h>
 
@@ -30,19 +29,13 @@ void Slider::App::Setup()
     auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
 
-    auto dpad = new Hardware::Dpad(
-        m_Config.DpadUpPin,
-        m_Config.DpadDownPin,
-        m_Config.DpadLeftPin,
-        m_Config.DpadRightPin,
-        m_Config.DpadSelectionPin);
+    Hardware::InputPins pins;
+    pins.dpadUp = m_Config.DpadUpPin;
+    pins.dpadDown = m_Config.DpadDownPin;
+    pins.dpadLeft = m_Config.DpadLeftPin;
+    pins.dpadRight = m_Config.DpadRightPin;
 
-    m_Dpad = std::unique_ptr<IDpadReader>(dpad);
-
-    m_Joystick = std::unique_ptr<IJoystickReader>(new Hardware::Joystick(
-        m_Config.JoystickXPin,
-        m_Config.JoystickYPin,
-        m_Config.JoystickCenterPin));
+    m_InputReader = std::unique_ptr<Hardware::InputReader>(new Hardware::InputReader(pins));
 
     m_InputDispatcher.AddListener(menu);
     m_InputDispatcher.AddListener(stepper);
@@ -53,7 +46,7 @@ void Slider::App::Setup()
     SetupComponents();
     m_Display->Init();
     m_DisplayBuffer.Init(m_Display.get());
-    m_Dpad->Init();
+    m_InputReader->Setup();
 
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
 }

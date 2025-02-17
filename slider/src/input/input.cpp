@@ -55,3 +55,9 @@ bool Input::Event::HasJoystickChange() const
 {
     return joystickButton != JoystickNone || joystickDirectionChanged;
 }
+
+Input::InputData2::InputData2(
+    const DpadButton button, const JoystickButton joystickButton, 
+    const float x, const float y)
+    : button(button), joystickButton(joystickButton), x(x), y(y)
+{}

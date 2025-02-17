@@ -99,10 +99,11 @@ namespace Input
 
     struct InputData2
     {
-        DpadButton button;
-        float x;
-        float y;
-        JoystickButton joystickButton;
+        InputData2(const DpadButton button, const JoystickButton joystickButton, const float x, const float y);
+        const DpadButton button;
+        const float x;
+        const float y;
+        const JoystickButton joystickButton;
 
         inline bool IsDown() const { return button == DpadDown; }
         inline bool IsUp() const { return button == DpadUp; }

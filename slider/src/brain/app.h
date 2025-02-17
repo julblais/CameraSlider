@@ -28,8 +28,7 @@ namespace Slider
     private:
         AppConfig m_Config;
         std::unique_ptr<Display> m_Display;
-        std::unique_ptr<IDpadReader> m_Dpad;
-        std::unique_ptr<IJoystickReader> m_Joystick;
+        std::unique_ptr<IInputReader<InputData2>> m_InputReader;
         DisplayBuffer m_DisplayBuffer;
         InputDispatcher m_InputDispatcher;
     };

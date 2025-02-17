@@ -1,5 +1,6 @@
 #include "dpad.h"
 #include "src/debug.h"
+#include "src/core/utils/mathUtils.h"
 
 using namespace Hardware;
 
@@ -42,10 +43,4 @@ Input::DpadInput Dpad::ReadInput()
 
     Input::DpadInput result = { .button = input };
     return result;
-}
-
-InputReader::InputReader(const Pins& pins)
-    : m_Pins(pins)
-{
-
 }
