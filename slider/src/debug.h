@@ -39,6 +39,16 @@
 #define LogDebug(...) ;
 #endif
 
+#ifdef DEBUG_PERF
+#define LogPerf(...) Debug::Logger().Log(__VA_ARGS__)
+#define SAMPLER_START(sampler) sampler.Start();
+#define SAMPLER_END(sampler) sampler.End();
+#else
+#define LogPerf(...) ;
+#define SAMPLER_START(sampler) ;
+#define SAMPLER_END(sampler) ;
+#endif
+
 namespace Debug
 {
     struct Logger
