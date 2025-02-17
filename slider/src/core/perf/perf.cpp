@@ -13,51 +13,47 @@ template<typename TTag, typename TSample, typename TValue>
 Sampler<TTag, TSample, TValue>::Sampler(
     const unsigned int skip, const unsigned int logFrequency)
     : m_Sample(),
-    m_Count(0),
-    m_Skip(0),
+    m_Data(),
     m_SkipCount(skip),
-    m_Freq(0),
-    m_LogFreqCount(logFrequency),
-    m_Sum(), m_Max(), m_Min(), m_Last()
+    m_LogFreqCount(logFrequency)
 {}
 
 template<typename TTag, typename TSample, typename TValue>
 size_t Sampler<TTag, TSample, TValue>::printTo(Print& p) const
 {
     auto size = p.printf("%s(%s)\tcurrent ", TTag::Name, TSample::Unit);
-    size += p.print(m_Last);
+    size += p.print(m_Data.last);
     size += p.print("\tmean ");
     size += p.print(GetAverage());
     size += p.print("\tmax ");
-    size += p.print(m_Max);
+    size += p.print(m_Data.max);
     size += p.print("\tmin ");
-    size += p.print(m_Min);
+    size += p.print(m_Data.min);
     return size;
 }
 
 template<typename TTag, typename TSample, typename TValue>
 void Sampler<TTag, TSample, TValue>::End()
 {
-    if (m_Skip++ < m_SkipCount)
+    auto val = m_Sample.GetValue();
+    if (m_Data.skip++ < m_SkipCount)
     {
         m_Sample = TSample();
         return;
     }
 
-    auto val = m_Sample.GetValue();
-    m_Count++;
-    m_Last = val;
-    m_Sum += val;
-    m_Max = std::max(m_Max, val);
-    if (m_Count == 1)
-        m_Min = val;
+    m_Data.count++;
+    m_Data.last = val;
+    m_Data.sum += val;
+    m_Data.max = std::max(m_Data.max, val);
+    if (m_Data.count == 1)
+        m_Data.min = val;
     else
-        m_Min = std::min(m_Min, val);
+        m_Data.min = std::min(m_Data.min, val);
     m_Sample = TSample();
 
-    if (m_Freq++ >= m_LogFreqCount)
+    if (m_Data.freq++ >= m_LogFreqCount)
     {
-        m_Freq = 0;
         LogPerf(*this);
         Reset();
     }
@@ -66,27 +62,21 @@ void Sampler<TTag, TSample, TValue>::End()
 template<typename TTag, typename TSample, typename TValue>
 void Sampler<TTag, TSample, TValue>::Reset()
 {
-    m_Count = {};
-    m_Max = {};
-    m_Min = {};
-    m_Last = {};
-    m_Sum = {};
-    m_Skip = 0;
-    m_Freq = 0;
+    m_Data = {};
 }
 
 template<typename TTag, typename TSample, typename TValue>
 TValue Sampler<TTag, TSample, TValue>::GetAverage() const
 {
-    if (m_Count == 0)
+    if (m_Data.count == 0)
         return 0;
-    return m_Sum / m_Count;
+    return m_Data.sum / m_Data.count;
 }
 
 template<typename TTag, typename TSample, typename TValue>
 unsigned int Sampler<TTag, TSample, TValue>::GetSampleCount()
 {
-    return m_Count;
+    return m_Data.count;
 }
 
 

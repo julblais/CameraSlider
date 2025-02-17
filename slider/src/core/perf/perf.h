@@ -32,15 +32,18 @@ namespace Performance
         unsigned int GetSampleCount();
 
     private:
+        struct Data {
+            TValue sum;
+            TValue max;
+            TValue min;
+            TValue last;
+            unsigned int freq;
+            unsigned int skip;
+            unsigned int count;
+        };
         TSample m_Sample;
-        unsigned int m_Count;
-        TValue m_Sum;
-        TValue m_Max;
-        TValue m_Min;
-        TValue m_Last;
-        unsigned int m_Skip;
+        Data m_Data;
         const unsigned int m_SkipCount;
-        unsigned int m_Freq;
         const unsigned int m_LogFreqCount;
     };
 
