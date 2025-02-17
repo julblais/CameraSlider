@@ -5,6 +5,15 @@
 
 namespace Input
 {
+    template<typename TInput>
+    class IInputReader
+    {
+    public:
+        virtual ~IInputReader() = default;
+        virtual void Setup() {}
+        virtual TInput ReadInput() = 0;
+    };
+
     class IDpadReader
     {
     public:

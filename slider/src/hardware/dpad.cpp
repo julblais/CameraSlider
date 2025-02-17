@@ -1,7 +1,9 @@
 #include "dpad.h"
 #include "src/debug.h"
 
-Hardware::Dpad::Dpad(int upPin, int downPin, int leftPin, int rightPin, int selectionPin) :
+using namespace Hardware;
+
+Dpad::Dpad(int upPin, int downPin, int leftPin, int rightPin, int selectionPin) :
     m_UpPin(upPin),
     m_DownPin(downPin),
     m_LeftPin(leftPin),
@@ -9,7 +11,7 @@ Hardware::Dpad::Dpad(int upPin, int downPin, int leftPin, int rightPin, int sele
     m_SelectionPin(selectionPin)
 {}
 
-void Hardware::Dpad::Init()
+void Dpad::Init()
 {
     pinMode(m_UpPin, INPUT_PULLUP);
     pinMode(m_DownPin, INPUT_PULLUP);
@@ -18,7 +20,7 @@ void Hardware::Dpad::Init()
     pinMode(m_SelectionPin, INPUT_PULLUP);
 }
 
-Input::DpadInput Hardware::Dpad::ReadInput()
+Input::DpadInput Dpad::ReadInput()
 {
     auto up = digitalRead(m_UpPin) == LOW;
     auto down = digitalRead(m_DownPin) == LOW;
@@ -40,4 +42,10 @@ Input::DpadInput Hardware::Dpad::ReadInput()
 
     Input::DpadInput result = { .button = input };
     return result;
+}
+
+InputReader::InputReader(const Pins& pins)
+    : m_Pins(pins)
+{
+
 }

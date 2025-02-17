@@ -94,6 +94,24 @@ namespace Input
         InputData() : dpad { DpadNone }, joystick { 0, 0, JoystickNone } {}
         InputData(DpadInput dpad, JoystickInput joystick) : dpad(dpad), joystick(joystick) {}
     };
+
+
+
+    struct InputData2
+    {
+        DpadButton button;
+        float x;
+        float y;
+        JoystickButton joystickButton;
+
+        inline bool IsDown() const { return button == DpadDown; }
+        inline bool IsUp() const { return button == DpadUp; }
+        inline bool IsLeft() const { return button == DpadLeft; }
+        inline bool IsRight() const { return button == DpadRight; }
+        inline bool IsSelect() const { return button == DpadSelect; }
+        inline bool IsDefault() const { return button == DpadNone; }
+        inline bool IsCenterButton() const { return joystickButton == JoystickCenter; }
+    };
 }
 
 #endif
