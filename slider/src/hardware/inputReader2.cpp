@@ -23,7 +23,7 @@ void InputReader::Setup()
     pinMode(m_Pins.joystickCenter, INPUT_PULLUP);
 }
 
-InputData2 Hardware::InputReader::ReadInput()
+Input::InputData2 Hardware::InputReader::ReadInput()
 {
     auto up = digitalRead(m_Pins.dpadUp) == LOW;
     auto down = digitalRead(m_Pins.dpadDown) == LOW;
@@ -50,5 +50,5 @@ InputData2 Hardware::InputReader::ReadInput()
     auto y = Core::Remap((float)v, 0.0f, (float)JOYSTICK_RANGE_Y, -1.0f, 1.0f);
     auto joystickButton = joystickSelection ? Input::JoystickCenter : Input::JoystickNone;
 
-    return InputData2(dpadButton, joystickButton, x, y);
+    return Input::InputData2(dpadButton, joystickButton, x, y);
 }

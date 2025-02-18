@@ -4,8 +4,6 @@
 #include "src/input/input.h"
 #include "src/input/inputReader.h"
 
-using namespace Input;
-
 namespace Hardware
 {
     struct InputPins
@@ -14,14 +12,14 @@ namespace Hardware
         int joystickHorizontal; int joystickVertical; int joystickCenter;
     };
 
-    class InputReader : public IInputReader<InputData2>
+    class InputReader : public Input::InputReader
     {
     public:
 
         InputReader(const InputPins& pins);
         virtual ~InputReader() override = default;
         virtual void Setup() override;
-        virtual InputData2 ReadInput() override;
+        virtual Input::InputData2 ReadInput() override;
 
     private:
         const InputPins m_Pins;

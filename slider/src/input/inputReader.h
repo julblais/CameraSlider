@@ -5,13 +5,12 @@
 
 namespace Input
 {
-    template<typename TInput>
-    class IInputReader
+    class InputReader
     {
     public:
-        virtual ~IInputReader() = default;
+        virtual ~InputReader() = default;
         virtual void Setup() {}
-        virtual TInput ReadInput() = 0;
+        virtual InputData2 ReadInput() = 0;
     };
 }
 
