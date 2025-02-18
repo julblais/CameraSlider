@@ -1,29 +1,31 @@
 #ifndef INPUT_H
 #define INPUT_H
 
+#include "Print.h"
+
 namespace Input
 {
-    enum class DpadButton : char
+    enum class DpadButton 
     {
-        None = 0,
-        Select = 1,
-        Up = 2,
-        Down = 4,
-        Left = 8,
-        Right = 16
+        None,
+        Select,
+        Up,
+        Down,
+        Left,
+        Right
     };
 
-    enum class JoystickButton : char
+    enum class JoystickButton
     {
-        None = 0,
-        Center = 1
+        None,
+        Center
     };
 
-    enum class ButtonState : char
+    enum class ButtonState
     {
-        None = 0,
-        Released = 1,
-        Pressed = 2
+        None,
+        Released,
+        Pressed
     };
 
     constexpr auto DpadNone = DpadButton::None;
@@ -41,8 +43,16 @@ namespace Input
     static const char* ToString(DpadButton button);
     static const char* ToString(JoystickButton button);
 
-    struct Event
+    struct Event : public Printable
     {
+        virtual size_t printTo(Print& p) const
+        {
+            auto size = p.printf("Event: button %i, buttonstate %i, Joystick %i state %i x %f, y%f",
+                button, dpadButtonState, joystickButton, joystickButtonState, joystickX, joystickY);
+            return size;
+        };
+        ///////add comparer!!!!!!!!!!!!!!
+
         DpadButton button;
         ButtonState dpadButtonState;
 
@@ -56,61 +66,32 @@ namespace Input
         bool HadDpadChange() const;
         bool HasJoystickChange() const;
 
-        inline bool IsButtonPressed() const { return dpadButtonState == ButtonPressed; }
+        inline bool DpadActive() const { return button != DpadNone; }
+        inline bool IsJoystickCenter() const { return joystickButton == JoystickCenter; }
+        inline bool IsDpadButtonPressed() const { return dpadButtonState == ButtonPressed; }
         inline bool IsJoystickPressed() const { return joystickButtonState == ButtonPressed; }
         inline bool IsDown() const { return button == DpadDown; }
         inline bool IsUp() const { return button == DpadUp; }
         inline bool IsLeft() const { return button == DpadLeft; }
         inline bool IsRight() const { return button == DpadRight; }
         inline bool IsSelect() const { return button == DpadSelect; }
-        inline bool IsDefault() const { return button == DpadNone; }
-        inline bool IsCenter() const { return joystickButton == JoystickCenter; }
     };
-
-    struct DpadInput
-    {
-        DpadButton button;
-        inline bool IsDown() const { return button == DpadDown; }
-        inline bool IsUp() const { return button == DpadUp; }
-        inline bool IsLeft() const { return button == DpadLeft; }
-        inline bool IsRight() const { return button == DpadRight; }
-        inline bool IsSelect() const { return button == DpadSelect; }
-        inline bool IsDefault() const { return button == DpadNone; }
-    };
-
-    struct JoystickInput
-    {
-        float x;
-        float y;
-        JoystickButton button;
-        inline bool IsCenterButton() const { return button == JoystickCenter; }
-    };
-
-    struct InputData
-    {
-        DpadInput dpad;
-        JoystickInput joystick;
-
-        InputData() : dpad { DpadNone }, joystick { 0, 0, JoystickNone } {}
-        InputData(DpadInput dpad, JoystickInput joystick) : dpad(dpad), joystick(joystick) {}
-    };
-
-
 
     struct InputData2
     {
-        InputData2(const DpadButton button, const JoystickButton joystickButton, const float x, const float y);
-        const DpadButton button;
-        const float x;
-        const float y;
-        const JoystickButton joystickButton;
+        InputData2() = default;
+        InputData2(DpadButton button, JoystickButton joystickButton, float x, float y);
+        DpadButton button;
+        float x;
+        float y;
+        JoystickButton joystickButton;
 
+        inline bool DpadActive() const { return button != DpadNone; }
         inline bool IsDown() const { return button == DpadDown; }
         inline bool IsUp() const { return button == DpadUp; }
         inline bool IsLeft() const { return button == DpadLeft; }
         inline bool IsRight() const { return button == DpadRight; }
         inline bool IsSelect() const { return button == DpadSelect; }
-        inline bool IsDefault() const { return button == DpadNone; }
         inline bool IsCenterButton() const { return joystickButton == JoystickCenter; }
     };
 }
