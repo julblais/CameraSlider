@@ -8,60 +8,53 @@
 
 namespace Input
 {
-    enum class ButtonState
+    enum class ButtonChange
     {
         None,
         Released,
         Pressed
     };
 
-    constexpr auto ButtonNone = ButtonState::None;
-    constexpr auto ButtonPressed = ButtonState::Pressed;
-    constexpr auto ButtonReleased = ButtonState::Released;
+    constexpr auto ButtonNone = ButtonChange::None;
+    constexpr auto ButtonPressed = ButtonChange::Pressed;
+    constexpr auto ButtonReleased = ButtonChange::Released;
 
-    using namespace Core::Enums;
     enum class DpadEvent
     {
-        None = 0,
-        Up = 1 << 0,
-        Down = 1 << 1,
-        Left = 1 << 2,
-        Right = 1 << 3,
-        Select = 1 << 4,
-        Any = Up | Down | Left | Right | Select,
+        None,
+        Up,
+        Down,
+        Left,
+        Right,
+        Select,
     };
 
     enum class StickEvent
     {
-        None = 0,
-        Center = 1 << 0,
-        MoveX = 1 << 1,
-        MoveY = 1 << 2,
-        Move = MoveX | MoveY,
-        Any = Center | Move
+        None,
+        Center
     };
 
+    constexpr auto DpadNone = DpadEvent::None;
     constexpr auto DpadUp = DpadEvent::Up;
     constexpr auto DpadDown = DpadEvent::Down;
     constexpr auto DpadLeft = DpadEvent::Left;
     constexpr auto DpadRight = DpadEvent::Right;
     constexpr auto DpadSelect = DpadEvent::Select;
-    constexpr auto StickMoveX = StickEvent::MoveX;
-    constexpr auto StickMoveY = StickEvent::MoveY;
-    constexpr auto StickMove = StickEvent::Move;
+    constexpr auto StickNone = StickEvent::None;
     constexpr auto StickCenter = StickEvent::Center;
-    constexpr auto DpadAny = DpadEvent::Any;
-    constexpr auto StickAny = StickEvent::Any;
 
-    static const char* ToString(ButtonState button);
+    static const char* ToString(ButtonChange button);
+    static const char* ToString(DpadEvent button);
+    static const char* ToString(StickEvent button);
 
     struct EventDiff
     {
         DpadEvent dpad;
-        ButtonState dpadState;
+        ButtonChange dpadState;
         StickEvent stick;
-        ButtonState joystickState;
-        bool joystickDirectionChanged;
+        ButtonChange joystickState;
+        bool joystickMoved;
     };
 
     struct Event
@@ -77,20 +70,23 @@ namespace Input
 
         inline DpadEvent GetDpadEvent() const { return dpadEvent; }
         inline StickEvent GetStickEvent() const { return stickEvent; }
-        inline bool Is(DpadEvent evt) { return HasValue(dpadEvent, evt); }
-        inline bool Is(StickEvent evt) { return HasValue(stickEvent, evt); }
-        inline bool IsDpadUp() const { return HasValue(dpadEvent, DpadUp); }
-        inline bool IsDpadDown() const { return HasValue(dpadEvent, DpadDown); }
-        inline bool IsDpadLeft() const { return HasValue(dpadEvent, DpadLeft); }
-        inline bool IsDpadRight() const { return HasValue(dpadEvent, DpadRight); }
-        inline bool IsDpadSelect() const { return HasValue(dpadEvent, DpadSelect); }
-        inline bool IsStickCenter() const { return HasValue(stickEvent, StickCenter); }
+        inline bool Is(DpadEvent evt) { return evt == dpadEvent; }
+        inline bool Is(StickEvent evt) { return evt == stickEvent; }
+        inline bool IsDpadUp() const { return dpadEvent == DpadUp; }
+        inline bool IsDpadDown() const { return dpadEvent == DpadDown; }
+        inline bool IsDpadLeft() const { return dpadEvent == DpadLeft; }
+        inline bool IsDpadRight() const { return dpadEvent == DpadRight; }
+        inline bool IsDpadSelect() const { return dpadEvent == DpadSelect; }
+        inline bool IsStickCenter() const { return stickEvent == StickCenter; }
 
         inline float GetStickX() const { return joystickX; }
         inline float GetStickY() const { return joystickY; }
+        inline bool HasStickMoved() const { return diff.joystickMoved; }
 
-        inline ButtonState GetChangeState(DpadEvent evt) const { return HasValue(diff.dpad, evt) ? diff.dpadState : ButtonNone; }
-        inline ButtonState GetChangeState(StickEvent evt) const { return HasValue(diff.stick, evt) ? diff.joystickState : ButtonNone; }
+        inline ButtonChange GetDpadChange() const { return diff.dpadState; }
+        inline ButtonChange GetStickChange() const { return diff.joystickState; }
+        inline ButtonChange GetChange(DpadEvent evt) const { return dpadEvent == evt ? diff.dpadState : ButtonNone; }
+        inline ButtonChange GetChange(StickEvent evt) const { return stickEvent == evt ? diff.joystickState : ButtonNone; }
 
         static const char* ToString(const Event& event);
 

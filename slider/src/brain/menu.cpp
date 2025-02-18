@@ -30,21 +30,23 @@ void Slider::Menu::Setup()
     m_MenuSystem.AddCommand(new SpeedCurveCommand());
 }
 
-bool Slider::Menu::OnInputEvent(const Input::Event& inputEvent)
+bool Slider::Menu::OnInputEvent(const Input::Event& evt)
 {
-    if (inputEvent == Input::ButtonReleased)
+    auto dpadChange = evt.GetDpadChange();
+    if (dpadChange == Input::ButtonReleased)
     {
         m_ShowHideTimer.Stop();
         return false;
     }
 
-    if (inputEvent.dpadButtonState == Input::ButtonPressed)
+    if (dpadChange == Input::ButtonPressed)
     {
-        if (inputEvent.button == Input::DpadSelect)
+        auto dpadBtn = evt.GetDpadEvent();
+        if (dpadBtn == Input::DpadSelect)
             m_ShowHideTimer.Start(m_Delay);
         if (m_State == State::Shown)
         {
-            switch (inputEvent.button)
+            switch (dpadBtn)
             {
                 case Input::DpadLeft:
                     m_MenuSystem.Left();

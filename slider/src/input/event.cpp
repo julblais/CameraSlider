@@ -3,7 +3,7 @@
 
 using namespace Input;
 
-const char* Input::ToString(ButtonState button)
+const char* Input::ToString(ButtonChange button)
 {
     switch (button)
     {
@@ -22,10 +22,54 @@ const char* Input::ToString(ButtonState button)
     }
 }
 
+const char* Input::ToString(DpadEvent button)
+{
+    switch (button)
+    {
+        case DpadUp:
+            return "Up";
+            break;
+        case DpadDown:
+            return "Down";
+            break;
+        case DpadLeft:
+            return "Left";
+            break;
+        case DpadRight:
+            return "Right";
+            break;
+        case DpadSelect:
+            return "Select";
+            break;
+        case DpadNone:
+            return "None";
+            break;
+        default:
+            return "Unknown";
+            break;
+    }
+}
+
+const char* Input::ToString(StickEvent button)
+{
+    switch (button)
+    {
+        case StickCenter:
+            return "Center";
+            break;
+        case StickNone:
+            return "None";
+            break;
+        default:
+            return "Unknown";
+            break;
+    }
+}
+
 EventDiff CreateDiff(const Event& previous, const InputData& input)
 {
     EventDiff diff;
-    ButtonState dpadState = ButtonNone;
+    ButtonChange dpadState = ButtonNone;
     if (last.IsDown() && !current.IsDown() ||
         last.IsUp() && !current.IsUp() ||
         last.IsLeft() && !current.IsLeft() ||
@@ -39,7 +83,7 @@ EventDiff CreateDiff(const Event& previous, const InputData& input)
         !last.IsSelect() && current.IsSelect())
         dpadState = ButtonPressed;
 
-    ButtonState joystickState = ButtonNone;
+    ButtonChange joystickState = ButtonNone;
     if (last.IsCenterButton() && !current.IsCenterButton())
         joystickState = ButtonReleased;
     else if (!last.IsCenterButton() && current.IsCenterButton())
@@ -81,7 +125,7 @@ bool Event::HadDpadChange() const
 
 bool Event::HasJoystickChange() const
 {
-    return diff.joystickState != ButtonNone || diff.joystickDirectionChanged;
+    return diff.joystickState != ButtonNone || diff.joystickMoved;
 }
 
 InputData Merge(const InputData& input, InputData& destination)
@@ -118,13 +162,13 @@ void DebugPrint(const Event& lastEvent, const Event& event)
     LogDebug("Event:");
     if (event.HadDpadChange())
     {
-        LogDebug("\tdpad\t", Input::ToString(event.button),
-            "\t", Input::ToString(event.dpadButtonState));
+        LogDebug("\tdpad\t", Input::ToString(event.GetDpadChange()),
+            "\t", Input::ToString(event.GetDpadChange()));
     }
     if (event.HasJoystickChange())
     {
-        LogDebug("\tjoystick\t", Input::ToString(event.joystickButton),
-            "\t", Input::ToString(event.joystickButtonState), "\t", event.joystickX, "\t", event.joystickY);
+        LogDebug("\tjoystick\t", Input::ToString(event.GetStickChange()),
+            "\t", Input::ToString(event.GetStickChange()), "\t", event.GetStickX(), "\t", event.GetStickY());
     }
 };
 #elif
