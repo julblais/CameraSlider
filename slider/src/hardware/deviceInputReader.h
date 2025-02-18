@@ -1,8 +1,10 @@
-#ifndef INPUTREADER2_H
-#define INPUTREADER2_H
+#ifndef DEVICEINPUTREADER_H
+#define DEVICEINPUTREADER_H
 
 #include "src/input/input.h"
 #include "src/input/inputReader.h"
+
+using namespace Input;
 
 namespace Hardware
 {
@@ -12,14 +14,14 @@ namespace Hardware
         int joystickHorizontal; int joystickVertical; int joystickCenter;
     };
 
-    class InputReader : public Input::InputReader
+    class DeviceInputReader : public Input::InputReader
     {
     public:
 
-        InputReader(const InputPins& pins);
-        virtual ~InputReader() override = default;
+        DeviceInputReader(const InputPins& pins);
+        virtual ~DeviceInputReader() override = default;
         virtual void Setup() override;
-        virtual Input::InputData2 ReadInput() override;
+        virtual InputData2 ReadInput() override;
 
     private:
         const InputPins m_Pins;

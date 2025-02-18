@@ -1,6 +1,6 @@
 #include "app.h"
 #include "src/hardware/lcd.h"
-#include "src/hardware/inputReader2.h"
+#include "src/hardware/deviceInputReader.h"
 
 #include <esp32-hal-timer.h>
 
@@ -39,7 +39,7 @@ void Slider::App::Setup()
     pins.joystickHorizontal = m_Config.JoystickXPin;
     pins.joystickVertical = m_Config.JoystickYPin;
 
-    m_InputReader = std::unique_ptr<Hardware::InputReader>(new Hardware::InputReader(pins));
+    m_InputReader = std::unique_ptr<Input::InputReader>(new Hardware::DeviceInputReader(pins));
 
     m_InputDispatcher.AddListener(menu);
     m_InputDispatcher.AddListener(stepper);

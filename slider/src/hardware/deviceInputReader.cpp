@@ -1,4 +1,4 @@
-#include "inputReader2.h"
+#include "deviceInputReader.h"
 #include "src/debug.h"
 #include "src/core/utils/mathUtils.h"
 
@@ -7,11 +7,11 @@ using namespace Hardware;
 constexpr auto JOYSTICK_RANGE_X = 4096;
 constexpr auto JOYSTICK_RANGE_Y = 4096;
 
-InputReader::InputReader(const InputPins& pins)
+DeviceInputReader::DeviceInputReader(const InputPins& pins)
     : m_Pins(pins)
 {}
 
-void InputReader::Setup()
+void DeviceInputReader::Setup()
 {
     pinMode(m_Pins.dpadUp, INPUT_PULLUP);
     pinMode(m_Pins.dpadDown, INPUT_PULLUP);
@@ -23,7 +23,7 @@ void InputReader::Setup()
     pinMode(m_Pins.joystickCenter, INPUT_PULLUP);
 }
 
-Input::InputData2 Hardware::InputReader::ReadInput()
+Input::InputData2 DeviceInputReader::ReadInput()
 {
     auto up = digitalRead(m_Pins.dpadUp) == LOW;
     auto down = digitalRead(m_Pins.dpadDown) == LOW;
