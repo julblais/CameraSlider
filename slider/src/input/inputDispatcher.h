@@ -10,9 +10,13 @@ namespace Input
     class InputDispatcher : public Core::EventSource<const Event&>
     {
     public:
-        void ProcessInput(const InputData& input);
+        InputDispatcher() = default;
+        void ProcessInput(const InputData2& input);
+        void Dispatch();
     private:
-        InputData m_LastInput;
+        InputData2 m_Input;
+        InputData2 m_Last;
+        bool m_ShouldAggregate;
     };
 }
 

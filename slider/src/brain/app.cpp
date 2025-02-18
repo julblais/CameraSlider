@@ -11,7 +11,7 @@ static bool OnInputEvent(DisplayBuffer& display, const Event& event)
 {
     if (event.HasJoystickChange())
     {
-        display.PrintLine(0, "Joystick ", event.IsJoystickPressed() ? "pressed" : "");
+        display.PrintLine(0, "Joystick ", event.IsJoystickCenter() ? "pressed" : "");
         display.PrintLine(1, "X: ", event.joystickX, " Y: ", event.joystickY);
     }
 
@@ -34,6 +34,10 @@ void Slider::App::Setup()
     pins.dpadDown = m_Config.DpadDownPin;
     pins.dpadLeft = m_Config.DpadLeftPin;
     pins.dpadRight = m_Config.DpadRightPin;
+    pins.dpadSelection = m_Config.DpadSelectionPin;
+    pins.joystickCenter = m_Config.JoystickCenterPin;
+    pins.joystickHorizontal = m_Config.JoystickXPin;
+    pins.joystickVertical = m_Config.JoystickYPin;
 
     m_InputReader = std::unique_ptr<Hardware::InputReader>(new Hardware::InputReader(pins));
 
@@ -53,9 +57,10 @@ void Slider::App::Setup()
 
 void Slider::App::Update()
 {
-    auto input = InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
-    /*-> process received messages here <- */
+    auto input = m_InputReader->ReadInput();
     m_InputDispatcher.ProcessInput(input);
+    /*-> ProcessInput(message_from_controller) */
+    m_InputDispatcher.Dispatch();
 
     //update all systems
     UpdateComponents();

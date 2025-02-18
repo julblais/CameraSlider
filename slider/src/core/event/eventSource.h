@@ -13,7 +13,7 @@ namespace Core
         using TListener = std::function<bool(TArgs...)>;
 
     public:
-        EventSource() : m_Listeners() {}
+        EventSource() = default;
         void AddListener(TListener listener);
 
         // AddListener for classes that have OnInputEvent method

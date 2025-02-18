@@ -1,60 +1,70 @@
 #include "inputDispatcher.h"
+#include "src/debug.h"
 
-void SetButtonState(Input::DpadButton button, Input::ButtonState state, Input::Event& out)
-{
-    out.button = button;
-    out.dpadButtonState = state;
-}
+using namespace Input;
 
-void SetButtonState(Input::JoystickButton button, Input::ButtonState state, Input::Event& out)
+Event Process(const InputData2& last, const InputData2& current)
 {
-    out.joystickButton = button;
-    out.joystickButtonState = state;
-}
+    Event event;
+    if (last.IsDown() && !current.IsDown() ||
+        last.IsUp() && !current.IsUp() ||
+        last.IsLeft() && !current.IsLeft() ||
+        last.IsRight() && !current.IsRight() ||
+        last.IsSelect() && !current.IsSelect())
+        event.dpadButtonState = ButtonReleased;
+    else if (!last.IsDown() && current.IsDown() ||
+        !last.IsUp() && current.IsUp() ||
+        !last.IsLeft() && current.IsLeft() ||
+        !last.IsRight() && current.IsRight() ||
+        !last.IsSelect() && current.IsSelect())
+        event.dpadButtonState = ButtonPressed;
+    else
+        event.dpadButtonState = ButtonNone;
 
-void Process(const Input::DpadInput& last, const Input::DpadInput& current, Input::Event& out)
-{
-    if (last.IsDown() && !current.IsDown())
-        SetButtonState(Input::DpadDown, Input::ButtonReleased, out);
-    else if (last.IsUp() && !current.IsUp())
-        SetButtonState(Input::DpadUp, Input::ButtonReleased, out);
-    else if (last.IsLeft() && !current.IsLeft())
-        SetButtonState(Input::DpadLeft, Input::ButtonReleased, out);
-    else if (last.IsRight() && !current.IsRight())
-        SetButtonState(Input::DpadRight, Input::ButtonReleased, out);
-    else if (last.IsSelect() && !current.IsSelect())
-        SetButtonState(Input::DpadSelect, Input::ButtonReleased, out);
-    else if (!last.IsDown() && current.IsDown())
-        SetButtonState(Input::DpadDown, Input::ButtonPressed, out);
-    else if (!last.IsUp() && current.IsUp())
-        SetButtonState(Input::DpadUp, Input::ButtonPressed, out);
-    else if (!last.IsLeft() && current.IsLeft())
-        SetButtonState(Input::DpadLeft, Input::ButtonPressed, out);
-    else if (!last.IsRight() && current.IsRight())
-        SetButtonState(Input::DpadRight, Input::ButtonPressed, out);
-    else if (!last.IsSelect() && current.IsSelect())
-        SetButtonState(Input::DpadSelect, Input::ButtonPressed, out);
-}
-
-void Process(const Input::JoystickInput& last, const Input::JoystickInput& current, Input::Event& out)
-{
     if (last.IsCenterButton() && !current.IsCenterButton())
-        SetButtonState(Input::JoystickCenter, Input::ButtonReleased, out);
+        event.joystickButtonState = ButtonReleased;
     else if (!last.IsCenterButton() && current.IsCenterButton())
-        SetButtonState(Input::JoystickCenter, Input::ButtonPressed, out);
+        event.joystickButtonState = ButtonPressed;
+    else
+        event.dpadButtonState = ButtonNone;
 
-    out.joystickX = current.x;
-    out.joystickY = current.y;
-    out.joystickDirectionChanged = last.x != current.x || last.y != current.y;
+    event.button = current.button;
+    event.joystickX = current.x;
+    event.joystickY = current.y;
+    event.joystickDirectionChanged = last.x != current.x || last.y != current.y;
+    event.joystickButton = current.joystickButton;
+
+    return event;
 }
 
-void Input::InputDispatcher::ProcessInput(const InputData& input)
+void InputDispatcher::ProcessInput(const InputData2& input)
 {
-    auto event = Event();
-    Process(m_LastInput.dpad, input.dpad, event);
-    Process(m_LastInput.joystick, input.joystick, event);
+    if (!m_ShouldAggregate)
+    {
+        m_Input = input;
+        m_ShouldAggregate = true;
+    }
+    else
+    {   //last input wins
+        if (input.DpadActive())
+            m_Input.button = input.button;
+        if (input.IsCenterButton())
+            m_Input.joystickButton = input.joystickButton;
+        if (input.x != 0 || input.y != 0)
+        {
+            m_Input.x = input.x;
+            m_Input.y = input.y;
+        }
+    }
+}
 
+void InputDispatcher::Dispatch()
+{
+    auto event = Process(m_Last, m_Input);
     SendEvent(event);
-
-    m_LastInput = input;
+    m_ShouldAggregate = false;
+    m_Last = m_Input;
+    m_Input = InputData2();
+    if (event.HasChange())
+        LogInfo(event);
 }
