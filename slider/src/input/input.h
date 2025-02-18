@@ -42,23 +42,25 @@ namespace Input
 
     static const char* ToString(DpadButton button);
     static const char* ToString(JoystickButton button);
+    static const char* ToString(ButtonState button);
 
     struct InputData
     {
         InputData() = default;
         InputData(DpadButton button, JoystickButton joystickButton, float x, float y);
-        DpadButton button;
+
+        inline bool DpadActive() const { return dpadButton != DpadNone; }
+        inline bool IsDown() const { return dpadButton == DpadDown; }
+        inline bool IsUp() const { return dpadButton == DpadUp; }
+        inline bool IsLeft() const { return dpadButton == DpadLeft; }
+        inline bool IsRight() const { return dpadButton == DpadRight; }
+        inline bool IsSelect() const { return dpadButton == DpadSelect; }
+        inline bool IsCenterButton() const { return joystickButton == JoystickCenter; }
+
+        DpadButton dpadButton;
+        JoystickButton joystickButton;
         float x;
         float y;
-        JoystickButton joystickButton;
-
-        inline bool DpadActive() const { return button != DpadNone; }
-        inline bool IsDown() const { return button == DpadDown; }
-        inline bool IsUp() const { return button == DpadUp; }
-        inline bool IsLeft() const { return button == DpadLeft; }
-        inline bool IsRight() const { return button == DpadRight; }
-        inline bool IsSelect() const { return button == DpadSelect; }
-        inline bool IsCenterButton() const { return joystickButton == JoystickCenter; }
     };
 
     class InputReader

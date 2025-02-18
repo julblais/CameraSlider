@@ -43,7 +43,26 @@ const char* Input::ToString(JoystickButton button)
     }
 }
 
+const char* Input::ToString(ButtonState button)
+{
+    switch (button)
+    {
+        case ButtonNone:
+            return "None";
+            break;
+        case ButtonPressed:
+            return "Pressed";
+            break;
+        case ButtonReleased:
+            return "Released";
+            break;
+        default:
+            return "Unknown";
+            break;
+    }
+}
+
 InputData::InputData(
     DpadButton button, JoystickButton joystickButton, float x, float y)
-    : button(button), joystickButton(joystickButton), x(x), y(y)
+    : dpadButton(button), joystickButton(joystickButton), x(x), y(y)
 {}

@@ -43,7 +43,7 @@ Event Process(const InputData& last, const InputData& current)
     else
         event.dpadButtonState = ButtonNone;
 
-    event.button = current.button;
+    event.button = current.dpadButton;
     event.joystickX = current.x;
     event.joystickY = current.y;
     event.joystickDirectionChanged = last.x != current.x || last.y != current.y;
@@ -62,7 +62,7 @@ void EventDispatcher::ProcessInput(const InputData& input)
     else
     {   //last input wins
         if (input.DpadActive())
-            m_Input.button = input.button;
+            m_Input.dpadButton = input.dpadButton;
         if (input.IsCenterButton())
             m_Input.joystickButton = input.joystickButton;
         if (input.x != 0 || input.y != 0)
