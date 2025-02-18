@@ -4,6 +4,7 @@
 #include "input.h"
 #include "src/core/event/eventSource.h"
 #include <functional>
+#include "src/core/utils/enumUtils.h"
 
 namespace Input
 {
@@ -18,35 +19,58 @@ namespace Input
     constexpr auto ButtonPressed = ButtonState::Pressed;
     constexpr auto ButtonReleased = ButtonState::Released;
 
+    enum class ButtonEvent
+    {
+        None = 0,
+        DpadUp = 1 << 0,
+        DpadDown = 1 << 1,
+        DpadLeft = 1 << 2,
+        DpadRight = 1 << 3,
+        DpadSelect = 1 << 4,
+        Dpad = DpadUp|DpadDown|DpadLeft|DpadRight|DpadSelect,
+        StickCenter = 1 << 5,
+        Any = Dpad|StickCenter
+    };
+
     static const char* ToString(ButtonState button);
-    
+
+    struct EventDiff
+    {
+        DpadButton button;
+        ButtonState dpadState;
+        JoystickButton joystickButton;
+        ButtonState joystickState;
+        bool joystickDirectionChanged;
+    };
+
     struct Event
     {
+        Event(const Event& previous, const InputData& input);
         bool operator==(const Event& other) const;
         bool operator!=(const Event& other) const;
+
         bool HasChange() const;
         bool HadDpadChange() const;
         bool HasJoystickChange() const;
 
-        inline bool DpadActive() const { return button != DpadNone; }
-        inline bool IsJoystickCenter() const { return joystickButton == JoystickCenter; }
-        inline bool IsDpadButtonPressed() const { return dpadButtonState == ButtonPressed; }
-        inline bool IsJoystickPressed() const { return joystickButtonState == ButtonPressed; }
-        inline bool IsDown() const { return button == DpadDown; }
-        inline bool IsUp() const { return button == DpadUp; }
-        inline bool IsLeft() const { return button == DpadLeft; }
-        inline bool IsRight() const { return button == DpadRight; }
-        inline bool IsSelect() const { return button == DpadSelect; }
-        
+        inline ButtonEvent GetButtonEvent() const { return buttonEvent; }
+
+        inline bool IsDpadUp() const {  return Core::HasValue(buttonEvent, ButtonEvent::DpadUp);  }
+        inline bool IsDpadDown() const;
+        inline bool IsDpadLeft() const;
+        inline bool IsDpadRight() const;
+        inline bool IsDpadSelect() const;
+        inline bool IsJoystickCenter() const;
+
+        inline bool GetButtonChangeState(ButtonEvent button) const;
+
         static const char* ToString(const Event& event);
-        
-        DpadButton button;
-        ButtonState dpadButtonState;
-        JoystickButton joystickButton;
-        ButtonState joystickButtonState;
+
+    private:
+        ButtonEvent buttonEvent;
         float joystickX;
         float joystickY;
-        bool joystickDirectionChanged;
+        EventDiff diff;
     };
 
     class EventDispatcher : public Core::EventSource<const Event&>
@@ -57,7 +81,6 @@ namespace Input
         void Dispatch();
     private:
         InputData m_Input;
-        InputData m_Last;
         Event m_LastEvent;
         unsigned int m_AggregateCount;
     };

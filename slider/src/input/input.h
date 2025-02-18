@@ -21,15 +21,6 @@ namespace Input
         Center
     };
 
-    constexpr auto DpadNone = DpadButton::None;
-    constexpr auto DpadSelect = DpadButton::Select;
-    constexpr auto DpadUp = DpadButton::Up;
-    constexpr auto DpadDown = DpadButton::Down;
-    constexpr auto DpadLeft = DpadButton::Left;
-    constexpr auto DpadRight = DpadButton::Right;
-    constexpr auto JoystickNone = JoystickButton::None;
-    constexpr auto JoystickCenter = JoystickButton::Center;
-
     const char* ToString(DpadButton button);
     const char* ToString(JoystickButton button);
 
@@ -38,13 +29,13 @@ namespace Input
         InputData() = default;
         InputData(DpadButton button, JoystickButton joystickButton, float x, float y);
 
-        inline bool DpadActive() const { return dpadButton != DpadNone; }
-        inline bool IsDown() const { return dpadButton == DpadDown; }
-        inline bool IsUp() const { return dpadButton == DpadUp; }
-        inline bool IsLeft() const { return dpadButton == DpadLeft; }
-        inline bool IsRight() const { return dpadButton == DpadRight; }
-        inline bool IsSelect() const { return dpadButton == DpadSelect; }
-        inline bool IsCenterButton() const { return joystickButton == JoystickCenter; }
+        inline bool DpadActive() const { return dpadButton != DpadButton::None; }
+        inline bool IsDown() const { return dpadButton == DpadButton::Down; }
+        inline bool IsUp() const { return dpadButton == DpadButton::Up; }
+        inline bool IsLeft() const { return dpadButton == DpadButton::Left; }
+        inline bool IsRight() const { return dpadButton == DpadButton::Right; }
+        inline bool IsSelect() const { return dpadButton == DpadButton::Select; }
+        inline bool IsCenterButton() const { return joystickButton == JoystickButton::Center; }
 
         DpadButton dpadButton;
         JoystickButton joystickButton;

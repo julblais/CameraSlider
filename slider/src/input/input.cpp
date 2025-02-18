@@ -6,22 +6,22 @@ const char* Input::ToString(DpadButton button)
 {
     switch (button)
     {
-        case DpadLeft:
+        case DpadButton::Left :
             return "Left";
             break;
-        case DpadRight:
+        case DpadButton::Right:
             return "Right";
             break;
-        case DpadUp:
+        case DpadButton::Up:
             return "Up";
             break;
-        case DpadDown:
+        case DpadButton::Down:
             return "Down";
             break;
-        case DpadSelect:
+        case DpadButton::Select:
             return "Select";
             break;
-        case DpadNone:
+        case DpadButton::None:
             return "None";
             break;
         default:
@@ -34,10 +34,10 @@ const char* Input::ToString(JoystickButton button)
 {
     switch (button)
     {
-        case JoystickCenter:
+        case JoystickButton::Center:
             return "Center";
             break;
-        case JoystickNone:
+        case JoystickButton::None:
             return "None";
             break;
         default:
