@@ -30,8 +30,8 @@ namespace Input
     constexpr auto JoystickNone = JoystickButton::None;
     constexpr auto JoystickCenter = JoystickButton::Center;
 
-    static const char* ToString(DpadButton button);
-    static const char* ToString(JoystickButton button);
+    const char* ToString(DpadButton button);
+    const char* ToString(JoystickButton button);
 
     struct InputData
     {

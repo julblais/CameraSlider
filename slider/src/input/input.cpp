@@ -21,6 +21,9 @@ const char* Input::ToString(DpadButton button)
         case DpadSelect:
             return "Select";
             break;
+        case DpadNone:
+            return "None";
+            break;
         default:
             return "Unknown";
             break;

@@ -7,25 +7,23 @@
 
 namespace Input
 {
-    struct Event : public Printable
+    enum class ButtonState
     {
-        virtual size_t printTo(Print& p) const
-        {
-            auto size = p.printf("Event: button %i, buttonstate %i, Joystick %i state %i x %f, y%f",
-                button, dpadButtonState, joystickButton, joystickButtonState, joystickX, joystickY);
-            return size;
-        };
-        ///////add comparer!!!!!!!!!!!!!!
+        None,
+        Released,
+        Pressed
+    };
 
-        DpadButton button;
-        ButtonState dpadButtonState;
+    constexpr auto ButtonNone = ButtonState::None;
+    constexpr auto ButtonPressed = ButtonState::Pressed;
+    constexpr auto ButtonReleased = ButtonState::Released;
 
-        JoystickButton joystickButton;
-        ButtonState joystickButtonState;
-        float joystickX;
-        float joystickY;
-        bool joystickDirectionChanged;
-
+    static const char* ToString(ButtonState button);
+    
+    struct Event
+    {
+        bool operator==(const Event& other) const;
+        bool operator!=(const Event& other) const;
         bool HasChange() const;
         bool HadDpadChange() const;
         bool HasJoystickChange() const;
@@ -39,6 +37,16 @@ namespace Input
         inline bool IsLeft() const { return button == DpadLeft; }
         inline bool IsRight() const { return button == DpadRight; }
         inline bool IsSelect() const { return button == DpadSelect; }
+        
+        static const char* ToString(const Event& event);
+        
+        DpadButton button;
+        ButtonState dpadButtonState;
+        JoystickButton joystickButton;
+        ButtonState joystickButtonState;
+        float joystickX;
+        float joystickY;
+        bool joystickDirectionChanged;
     };
 
     class EventDispatcher : public Core::EventSource<const Event&>
@@ -50,7 +58,8 @@ namespace Input
     private:
         InputData m_Input;
         InputData m_Last;
-        bool m_ShouldAggregate;
+        Event m_LastEvent;
+        unsigned int m_AggregateCount;
     };
 }
 
