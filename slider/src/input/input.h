@@ -21,13 +21,6 @@ namespace Input
         Center
     };
 
-    enum class ButtonState
-    {
-        None,
-        Released,
-        Pressed
-    };
-
     constexpr auto DpadNone = DpadButton::None;
     constexpr auto DpadSelect = DpadButton::Select;
     constexpr auto DpadUp = DpadButton::Up;
@@ -36,13 +29,9 @@ namespace Input
     constexpr auto DpadRight = DpadButton::Right;
     constexpr auto JoystickNone = JoystickButton::None;
     constexpr auto JoystickCenter = JoystickButton::Center;
-    constexpr auto ButtonNone = ButtonState::None;
-    constexpr auto ButtonPressed = ButtonState::Pressed;
-    constexpr auto ButtonReleased = ButtonState::Released;
 
     static const char* ToString(DpadButton button);
     static const char* ToString(JoystickButton button);
-    static const char* ToString(ButtonState button);
 
     struct InputData
     {
