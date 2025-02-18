@@ -32,7 +32,7 @@ void Slider::Menu::Setup()
 
 bool Slider::Menu::OnInputEvent(const Input::Event& inputEvent)
 {
-    if (inputEvent.dpadButtonState == Input::ButtonReleased)
+    if (inputEvent == Input::ButtonReleased)
     {
         m_ShowHideTimer.Stop();
         return false;

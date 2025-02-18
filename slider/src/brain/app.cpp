@@ -11,8 +11,8 @@ static bool OnInputEvent(DisplayBuffer& display, const Event& event)
 {
     if (event.HasJoystickChange())
     {
-        display.PrintLine(0, "Joystick ", event.IsJoystickCenter() ? "pressed" : "");
-        display.PrintLine(1, "X: ", event.joystickX, " Y: ", event.joystickY);
+        display.PrintLine(0, "Joystick ", event.IsStickCenter() ? "pressed" : "");
+        display.PrintLine(1, "X: ", event.GetStickX(), " Y: ", event.GetStickY());
     }
 
     return false;
