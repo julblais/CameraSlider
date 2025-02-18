@@ -1,7 +1,22 @@
-#include "inputDispatcher.h"
+#include "event.h"
 #include "src/debug.h"
 
 using namespace Input;
+
+bool Event::HasChange() const
+{
+    return HadDpadChange() || HasJoystickChange();
+}
+
+bool Event::HadDpadChange() const
+{
+    return dpadButtonState != ButtonNone;
+}
+
+bool Event::HasJoystickChange() const
+{
+    return joystickButtonState != ButtonNone || joystickDirectionChanged;
+}
 
 Event Process(const InputData2& last, const InputData2& current)
 {
@@ -37,7 +52,7 @@ Event Process(const InputData2& last, const InputData2& current)
     return event;
 }
 
-void InputDispatcher::ProcessInput(const InputData2& input)
+void EventDispatcher::ProcessInput(const InputData2& input)
 {
     if (!m_ShouldAggregate)
     {
@@ -58,7 +73,7 @@ void InputDispatcher::ProcessInput(const InputData2& input)
     }
 }
 
-void InputDispatcher::Dispatch()
+void EventDispatcher::Dispatch()
 {
     auto event = Process(m_Last, m_Input);
     SendEvent(event);

@@ -43,40 +43,6 @@ namespace Input
     static const char* ToString(DpadButton button);
     static const char* ToString(JoystickButton button);
 
-    struct Event : public Printable
-    {
-        virtual size_t printTo(Print& p) const
-        {
-            auto size = p.printf("Event: button %i, buttonstate %i, Joystick %i state %i x %f, y%f",
-                button, dpadButtonState, joystickButton, joystickButtonState, joystickX, joystickY);
-            return size;
-        };
-        ///////add comparer!!!!!!!!!!!!!!
-
-        DpadButton button;
-        ButtonState dpadButtonState;
-
-        JoystickButton joystickButton;
-        ButtonState joystickButtonState;
-        float joystickX;
-        float joystickY;
-        bool joystickDirectionChanged;
-
-        bool HasChange() const;
-        bool HadDpadChange() const;
-        bool HasJoystickChange() const;
-
-        inline bool DpadActive() const { return button != DpadNone; }
-        inline bool IsJoystickCenter() const { return joystickButton == JoystickCenter; }
-        inline bool IsDpadButtonPressed() const { return dpadButtonState == ButtonPressed; }
-        inline bool IsJoystickPressed() const { return joystickButtonState == ButtonPressed; }
-        inline bool IsDown() const { return button == DpadDown; }
-        inline bool IsUp() const { return button == DpadUp; }
-        inline bool IsLeft() const { return button == DpadLeft; }
-        inline bool IsRight() const { return button == DpadRight; }
-        inline bool IsSelect() const { return button == DpadSelect; }
-    };
-
     struct InputData2
     {
         InputData2() = default;
@@ -93,6 +59,14 @@ namespace Input
         inline bool IsRight() const { return button == DpadRight; }
         inline bool IsSelect() const { return button == DpadSelect; }
         inline bool IsCenterButton() const { return joystickButton == JoystickCenter; }
+    };
+    
+    class InputReader
+    {
+    public:
+        virtual ~InputReader() = default;
+        virtual void Setup() {}
+        virtual InputData2 ReadInput() = 0;
     };
 }
 

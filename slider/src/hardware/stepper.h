@@ -3,7 +3,7 @@
 
 #include <AccelStepper.h>
 #include "src/core/component/component.h"
-#include "src/input/input.h"
+#include "src/input/event.h"
 
 namespace Slider
 {

@@ -2,7 +2,7 @@
 #define MENU_H
 
 #include "src/core/component/component.h"
-#include "src/input/input.h"
+#include "src/input/event.h"
 #include "src/core/time/timer.h"
 #include "src/core/menu/menuSystem.h"
 

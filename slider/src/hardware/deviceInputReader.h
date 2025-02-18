@@ -2,7 +2,6 @@
 #define DEVICEINPUTREADER_H
 
 #include "src/input/input.h"
-#include "src/input/inputReader.h"
 
 using namespace Input;
 

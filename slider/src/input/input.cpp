@@ -1,5 +1,7 @@
 #include "input.h"
 
+using namespace Input;
+
 const char* Input::ToString(DpadButton button)
 {
     switch (button)
@@ -41,22 +43,7 @@ const char* Input::ToString(JoystickButton button)
     }
 }
 
-bool Input::Event::HasChange() const
-{
-    return HadDpadChange() || HasJoystickChange();
-}
-
-bool Input::Event::HadDpadChange() const
-{
-    return dpadButtonState != ButtonNone;
-}
-
-bool Input::Event::HasJoystickChange() const
-{
-    return joystickButtonState != ButtonNone || joystickDirectionChanged;
-}
-
-Input::InputData2::InputData2(
+InputData2::InputData2(
     DpadButton button, JoystickButton joystickButton, float x, float y)
     : button(button), joystickButton(joystickButton), x(x), y(y)
 {}
