@@ -5,7 +5,7 @@
 
 namespace Input
 {
-    enum class DpadButton 
+    enum class DpadButton
     {
         None,
         Select,
@@ -43,10 +43,10 @@ namespace Input
     static const char* ToString(DpadButton button);
     static const char* ToString(JoystickButton button);
 
-    struct InputData2
+    struct InputData
     {
-        InputData2() = default;
-        InputData2(DpadButton button, JoystickButton joystickButton, float x, float y);
+        InputData() = default;
+        InputData(DpadButton button, JoystickButton joystickButton, float x, float y);
         DpadButton button;
         float x;
         float y;
@@ -60,13 +60,13 @@ namespace Input
         inline bool IsSelect() const { return button == DpadSelect; }
         inline bool IsCenterButton() const { return joystickButton == JoystickCenter; }
     };
-    
+
     class InputReader
     {
     public:
         virtual ~InputReader() = default;
         virtual void Setup() {}
-        virtual InputData2 ReadInput() = 0;
+        virtual InputData ReadInput() = 0;
     };
 }
 

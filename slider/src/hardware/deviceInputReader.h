@@ -20,7 +20,7 @@ namespace Hardware
         DeviceInputReader(const InputPins& pins);
         virtual ~DeviceInputReader() override = default;
         virtual void Setup() override;
-        virtual InputData2 ReadInput() override;
+        virtual InputData ReadInput() override;
 
     private:
         const InputPins m_Pins;

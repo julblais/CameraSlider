@@ -18,7 +18,7 @@ bool Event::HasJoystickChange() const
     return joystickButtonState != ButtonNone || joystickDirectionChanged;
 }
 
-Event Process(const InputData2& last, const InputData2& current)
+Event Process(const InputData& last, const InputData& current)
 {
     Event event;
     if (last.IsDown() && !current.IsDown() ||
@@ -52,7 +52,7 @@ Event Process(const InputData2& last, const InputData2& current)
     return event;
 }
 
-void EventDispatcher::ProcessInput(const InputData2& input)
+void EventDispatcher::ProcessInput(const InputData& input)
 {
     if (!m_ShouldAggregate)
     {
@@ -79,7 +79,7 @@ void EventDispatcher::Dispatch()
     SendEvent(event);
     m_ShouldAggregate = false;
     m_Last = m_Input;
-    m_Input = InputData2();
+    m_Input = InputData();
     if (event.HasChange())
         LogInfo(event);
 }

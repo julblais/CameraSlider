@@ -43,7 +43,7 @@ const char* Input::ToString(JoystickButton button)
     }
 }
 
-InputData2::InputData2(
+InputData::InputData(
     DpadButton button, JoystickButton joystickButton, float x, float y)
     : button(button), joystickButton(joystickButton), x(x), y(y)
 {}

@@ -45,11 +45,11 @@ namespace Input
     {
     public:
         EventDispatcher() = default;
-        void ProcessInput(const InputData2& input);
+        void ProcessInput(const InputData& input);
         void Dispatch();
     private:
-        InputData2 m_Input;
-        InputData2 m_Last;
+        InputData m_Input;
+        InputData m_Last;
         bool m_ShouldAggregate;
     };
 }
