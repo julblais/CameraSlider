@@ -9,9 +9,12 @@ using namespace Output;
 
 static bool OnInputEvent(DisplayBuffer& display, const Event& event)
 {
-    if (event.HasStickChange())
+    if (event.HasChange())
     {
         display.PrintLine(0, "Joystick ", event.IsStickCenter() ? "pressed" : "");
+    }
+    if (event.HasStickMoved())
+    {
         display.PrintLine(1, "X: ", event.GetStickX(), " Y: ", event.GetStickY());
     }
 

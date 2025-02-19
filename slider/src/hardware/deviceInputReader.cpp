@@ -34,21 +34,22 @@ Input::InputData DeviceInputReader::ReadInput()
     auto h = analogRead(m_Pins.joystickHorizontal);
     auto joystickSelection = digitalRead(m_Pins.joystickCenter) == LOW;
 
-    auto dpadButton = Input::DpadButton::None;
+    auto buttons = Input::ButtonEvent::None;
     if (left)
-        dpadButton = Input::DpadButton::Left;
+        buttons = Input::ButtonEvent::Left;
     else if (right)
-        dpadButton = Input::DpadButton::Right;
+        buttons = Input::ButtonEvent::Right;
     else if (up)
-        dpadButton = Input::DpadButton::Up;
+        buttons = Input::ButtonEvent::Up;
     else if (down)
-        dpadButton = Input::DpadButton::Down;
+        buttons = Input::ButtonEvent::Down;
     else if (selection)
-        dpadButton = Input::DpadButton::Select;
+        buttons = Input::ButtonEvent::Select;
+    else if (joystickSelection)
+        buttons = Input::ButtonEvent::Center;
 
     auto x = -Core::Remap((float)h, 0.0f, (float)JOYSTICK_RANGE_X, -1.0f, 1.0f);
     auto y = Core::Remap((float)v, 0.0f, (float)JOYSTICK_RANGE_Y, -1.0f, 1.0f);
-    auto joystickButton = joystickSelection ? Input::JoystickButton::Center : Input::JoystickButton::None;
 
-    return Input::InputData(dpadButton, joystickButton, x, y);
+    return Input::InputData(buttons, x, y);
 }

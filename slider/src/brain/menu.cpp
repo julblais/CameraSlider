@@ -32,21 +32,21 @@ void Slider::Menu::Setup()
 
 bool Slider::Menu::OnInputEvent(const Input::Event& evt)
 {
-    auto dpadChange = evt.GetDpadChange();
-    if (dpadChange == Input::ButtonReleased)
+    auto buttonChange = evt.GetButtonChange();
+    if (buttonChange == Input::ButtonReleased)
     {
         m_ShowHideTimer.Stop();
         return false;
     }
 
-    if (dpadChange == Input::ButtonPressed)
+    if (buttonChange == Input::ButtonPressed)
     {
-        auto dpadBtn = evt.GetDpadEvent();
-        if (dpadBtn == Input::DpadSelect)
+        auto button = evt.GetButtonEvent();
+        if (button == Input::DpadSelect)
             m_ShowHideTimer.Start(m_Delay);
         if (m_State == State::Shown)
         {
-            switch (dpadBtn)
+            switch (button)
             {
                 case Input::DpadLeft:
                     m_MenuSystem.Left();

@@ -29,8 +29,7 @@ EventDiff CreateDiff(const Event& previous, const InputData& input)
 }
 
 Event::Event(const Event& previous, const InputData& input)
-    : dpadEvent(input.dpadButton),
-    stickEvent(input.joystickButton),
+    : button(input.button),
     joystickX(input.x),
     joystickY(input.y)
 {
@@ -39,8 +38,7 @@ Event::Event(const Event& previous, const InputData& input)
 
 bool Event::operator==(const Event& other) const
 {
-    return dpadEvent == other.dpadEvent &&
-        stickEvent == other.stickEvent &&
+    return button == other.button &&
         joystickX == other.joystickX &&
         joystickY == other.joystickY;
 }
@@ -53,10 +51,8 @@ bool Event::operator!=(const Event& other) const
 InputData Merge(const InputData& input, InputData& destination)
 {
     //last input wins
-    if (input.DpadActive())
-        destination.dpadButton = input.dpadButton;
-    if (input.IsCenterButton())
-        destination.joystickButton = input.joystickButton;
+    if (input.IsActive())
+        destination.button = input.button;
     if (input.x != 0 || input.y != 0)
     {
         destination.x = input.x;
@@ -82,15 +78,14 @@ void DebugPrint(const Event& lastEvent, const Event& event)
         return;
 
     LogDebug("Event:");
-    if (event.HasDpadChange())
+    if (event.HasButtonChange())
     {
-        LogDebug("\tdpad\t", Input::ToString(event.GetDpadChange()),
-            "\t", Input::ToString(event.GetDpadChange()));
+        LogDebug("\tbutton\t", Input::ToString(event.GetButtonEvent()),
+            "\t", Input::ToString(event.GetButtonChange()));
     }
-    if (event.HasStickChange())
+    if (event.HasStickMoved())
     {
-        LogDebug("\tjoystick\t", Input::ToString(event.GetStickChange()),
-            "\t", Input::ToString(event.GetStickChange()), "\t", event.GetStickX(), "\t", event.GetStickY());
+        LogDebug("\tjoystick\t", event.GetStickX(), "\t", event.GetStickY());
     }
 };
 #elif
@@ -106,67 +101,4 @@ void EventDispatcher::Dispatch()
     m_AggregateCount = 0;
     m_Input = InputData();
     m_LastEvent = event;
-}
-
-const char* Input::ToString(ButtonChange button)
-{
-    switch (button)
-    {
-        case ButtonNone:
-            return "None";
-            break;
-        case ButtonPressed:
-            return "Pressed";
-            break;
-        case ButtonReleased:
-            return "Released";
-            break;
-        default:
-            return "Unknown";
-            break;
-    }
-}
-
-const char* Input::ToString(DpadEvent button)
-{
-    switch (button)
-    {
-        case DpadUp:
-            return "Up";
-            break;
-        case DpadDown:
-            return "Down";
-            break;
-        case DpadLeft:
-            return "Left";
-            break;
-        case DpadRight:
-            return "Right";
-            break;
-        case DpadSelect:
-            return "Select";
-            break;
-        case DpadNone:
-            return "None";
-            break;
-        default:
-            return "Unknown";
-            break;
-    }
-}
-
-const char* Input::ToString(StickEvent button)
-{
-    switch (button)
-    {
-        case StickCenter:
-            return "Center";
-            break;
-        case StickNone:
-            return "None";
-            break;
-        default:
-            return "Unknown";
-            break;
-    }
 }
