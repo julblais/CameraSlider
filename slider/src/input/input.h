@@ -1,44 +1,26 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include "Print.h"
+#include "buttonEvent.h"
 
 namespace Input
 {
-    enum class DpadButton
-    {
-        None,
-        Select,
-        Up,
-        Down,
-        Left,
-        Right
-    };
-
-    enum class JoystickButton
-    {
-        None,
-        Center
-    };
-
-    const char* ToString(DpadButton button);
-    const char* ToString(JoystickButton button);
-
     struct InputData
     {
         InputData() = default;
-        InputData(DpadButton button, JoystickButton joystickButton, float x, float y);
+        InputData(ButtonEvent buttons, float x, float y)
+            : button(buttons), x(x), y(y)
+        {}
 
-        inline bool DpadActive() const { return dpadButton != DpadButton::None; }
-        inline bool IsDown() const { return dpadButton == DpadButton::Down; }
-        inline bool IsUp() const { return dpadButton == DpadButton::Up; }
-        inline bool IsLeft() const { return dpadButton == DpadButton::Left; }
-        inline bool IsRight() const { return dpadButton == DpadButton::Right; }
-        inline bool IsSelect() const { return dpadButton == DpadButton::Select; }
-        inline bool IsCenterButton() const { return joystickButton == JoystickButton::Center; }
+        inline bool IsActive() const { return button != ButtonEvent::None; }
+        inline bool IsDown() const { return button == ButtonEvent::Down; }
+        inline bool IsUp() const { return button == ButtonEvent::Up; }
+        inline bool IsLeft() const { return button == ButtonEvent::Left; }
+        inline bool IsRight() const { return button == ButtonEvent::Right; }
+        inline bool IsSelect() const { return button == ButtonEvent::Select; }
+        inline bool IsCenterButton() const { return button == ButtonEvent::Center; }
 
-        DpadButton dpadButton;
-        JoystickButton joystickButton;
+        ButtonEvent button;
         float x;
         float y;
     };
