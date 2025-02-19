@@ -16,9 +16,9 @@ namespace Input
 
     enum class ButtonChange
     {
-        None,
-        Released,
-        Pressed
+        None = 0,
+        Released = 1 << 0,
+        Pressed = 1 << 1
     };
 
     constexpr auto DpadNone = ButtonEvent::None;

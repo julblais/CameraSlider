@@ -10,8 +10,11 @@ namespace Input
 {
     struct EventDiff
     {
-        ButtonEvent button;
-        ButtonChange state;
+        EventDiff() = default;
+        EventDiff(ButtonEvent pressed, ButtonEvent released, bool stickMoved);
+        ButtonEvent released;
+        ButtonEvent pressed;
+        ButtonChange change;
         bool stickMoved;
     };
 
@@ -24,14 +27,10 @@ namespace Input
 
         inline bool HasButtonChange() const
         {
-            return button != DpadNone && diff.state != ButtonNone;
+            return button != DpadNone || diff.change != ButtonNone;
         }
 
-        inline bool HasStickMoved() const
-        {
-            return diff.stickMoved;
-        }
-
+        inline bool HasStickMoved() const { return diff.stickMoved; }
         inline bool HasChange() const { return HasButtonChange() || HasStickMoved(); }
 
         inline ButtonEvent GetButtonEvent() const { return button; }
@@ -46,7 +45,9 @@ namespace Input
         inline float GetStickX() const { return joystickX; }
         inline float GetStickY() const { return joystickY; }
 
-        inline ButtonChange GetButtonChange() const { return diff.state; }
+        inline ButtonChange GetButtonChange() const { return diff.change; }
+        inline ButtonEvent GetButtonPressed() const { return diff.pressed; }
+        inline ButtonEvent GetButtonReleased() const { return diff.released; }
 
     private:
         ButtonEvent button;

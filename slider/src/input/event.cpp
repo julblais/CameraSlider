@@ -1,47 +1,51 @@
 #include "event.h"
 #include "src/debug.h"
+#include "core/utils/enumUtils.h"
 
 using namespace Input;
+using namespace Core::Enums;
 
-inline void SetButtonState(ButtonEvent button, ButtonState state, EventDiff& out)
+Input::EventDiff::EventDiff(ButtonEvent pressed, ButtonEvent released, bool stickMoved)
+: released(released), pressed(pressed), stickMoved(stickMoved), change(ButtonChange::None)
 {
-    out.button = button;
-    out.dpadButtonState = state;
+    if (pressed != DpadNone)
+        change |= ButtonChange::Pressed;
+    if (released != DpadNone)
+        change |= ButtonChange::Released;
 }
-
-//two different buttons can be pressed and released in the same event
-//whoops
 
 EventDiff CreateDiff(const Event& previous, const InputData& input)
 {
-    EventDiff diff;
-    if (previous.IsDpadDown() && !current.IsDown())
-        SetButtonState(Input::DpadDown, Input::ButtonReleased, out);
-    else if (previous.IsUp() && !current.IsUp())
-        SetButtonState(Input::DpadUp, Input::ButtonReleased, out);
-    else if (previous.IsLeft() && !current.IsLeft())
-        SetButtonState(Input::DpadLeft, Input::ButtonReleased, out);
-    else if (previous.IsRight() && !current.IsRight())
-        SetButtonState(Input::DpadRight, Input::ButtonReleased, out);
-    else if (previous.IsSelect() && !current.IsSelect())
-        SetButtonState(Input::DpadSelect, Input::ButtonReleased, out);
-    else if (previous.IsCenterButton() && !current.IsCenterButton())
-        SetButtonState(Input::StickCenter, Input::ButtonReleased, out);
-    else if (!previous.IsDown() && current.IsDown())
-        SetButtonState(Input::DpadDown, Input::ButtonPressed, out);
-    else if (!previous.IsUp() && current.IsUp())
-        SetButtonState(Input::DpadUp, Input::ButtonPressed, out);
-    else if (!previous.IsLeft() && current.IsLeft())
-        SetButtonState(Input::DpadLeft, Input::ButtonPressed, out);
-    else if (!previous.IsRight() && current.IsRight())
-        SetButtonState(Input::DpadRight, Input::ButtonPressed, out);
-    else if (!previous.IsSelect() && current.IsSelect())
-        SetButtonState(Input::DpadSelect, Input::ButtonPressed, out);
-    else if (!previous.IsCenterButton() && current.IsCenterButton())
-        SetButtonState(Input::StickCenter, Input::ButtonPressed, out);
+    ButtonEvent pressed = DpadNone;
+    ButtonEvent released = DpadNone;
 
-    diff.stickMoved = last.x != current.x || last.y != current.y;
-    return diff;
+    if (previous.IsDpadDown() && !input.IsDown())
+        released = DpadDown;
+    else if (previous.IsDpadUp() && !input.IsUp())
+        released = DpadUp;
+    else if (previous.IsDpadLeft() && !input.IsLeft())
+        released = DpadLeft;
+    else if (previous.IsDpadRight() && !input.IsRight())
+        released = DpadRight;
+    else if (previous.IsDpadSelect() && !input.IsSelect())
+        released = DpadSelect;
+    else if (!previous.IsDpadDown() && input.IsDown())
+        pressed = DpadDown;
+    else if (!previous.IsDpadUp() && input.IsUp())
+        pressed = DpadUp;
+    else if (!previous.IsDpadLeft() && input.IsLeft())
+        pressed = DpadLeft;
+    else if (!previous.IsDpadRight() && input.IsRight())
+        pressed = DpadRight;
+    else if (!previous.IsDpadSelect() && input.IsSelect())
+        pressed = DpadSelect;
+    else if (previous.IsStickCenter() && !input.IsCenterButton())
+        released = StickCenter;
+    else if (!previous.IsStickCenter() && input.IsCenterButton())
+        pressed = StickCenter;
+
+    bool stickMoved = previous.GetStickX() != input.x || previous.GetStickY() != input.y;
+    return EventDiff(pressed, released, stickMoved);
 }
 
 Event::Event(const Event& previous, const InputData& input)
@@ -64,7 +68,7 @@ bool Event::operator!=(const Event& other) const
     return !(*this == other);
 }
 
-InputData Merge(const InputData& input, InputData& destination)
+void Merge(const InputData& input, InputData& destination)
 {
     //last input wins
     if (input.IsActive())
@@ -96,8 +100,9 @@ void DebugPrint(const Event& lastEvent, const Event& event)
     LogDebug("Event:");
     if (event.HasButtonChange())
     {
-        LogDebug("\tbutton\t", Input::ToString(event.GetButtonEvent()),
-            "\t", Input::ToString(event.GetButtonChange()));
+        LogDebug("\tbutton:\t", Input::ToString(event.GetButtonEvent()),
+            "\tpressed: ", Input::ToString(event.GetButtonPressed()),
+            "\treleased: ", Input::ToString(event.GetButtonReleased()));
     }
     if (event.HasStickMoved())
     {
