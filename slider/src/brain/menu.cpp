@@ -36,7 +36,6 @@ bool Slider::Menu::OnInputEvent(const Input::Event& evt)
     if (buttonChange == Input::ButtonReleased)
     {
         m_ShowHideTimer.Stop();
-        return false;
     }
 
     if (buttonChange == Input::ButtonPressed)
