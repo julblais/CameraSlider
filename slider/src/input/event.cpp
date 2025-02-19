@@ -3,29 +3,45 @@
 
 using namespace Input;
 
+inline void SetButtonState(ButtonEvent button, ButtonState state, EventDiff& out)
+{
+    out.button = button;
+    out.dpadButtonState = state;
+}
+
+//two different buttons can be pressed and released in the same event
+//whoops
+
 EventDiff CreateDiff(const Event& previous, const InputData& input)
 {
     EventDiff diff;
-    ButtonChange dpadState = ButtonNone;
-    if (last.IsDown() && !current.IsDown() ||
-        last.IsUp() && !current.IsUp() ||
-        last.IsLeft() && !current.IsLeft() ||
-        last.IsRight() && !current.IsRight() ||
-        last.IsSelect() && !current.IsSelect())
-        dpadState = ButtonReleased;
-    else if (!last.IsDown() && current.IsDown() ||
-        !last.IsUp() && current.IsUp() ||
-        !last.IsLeft() && current.IsLeft() ||
-        !last.IsRight() && current.IsRight() ||
-        !last.IsSelect() && current.IsSelect())
-        dpadState = ButtonPressed;
+    if (previous.IsDpadDown() && !current.IsDown())
+        SetButtonState(Input::DpadDown, Input::ButtonReleased, out);
+    else if (previous.IsUp() && !current.IsUp())
+        SetButtonState(Input::DpadUp, Input::ButtonReleased, out);
+    else if (previous.IsLeft() && !current.IsLeft())
+        SetButtonState(Input::DpadLeft, Input::ButtonReleased, out);
+    else if (previous.IsRight() && !current.IsRight())
+        SetButtonState(Input::DpadRight, Input::ButtonReleased, out);
+    else if (previous.IsSelect() && !current.IsSelect())
+        SetButtonState(Input::DpadSelect, Input::ButtonReleased, out);
+    else if (previous.IsCenterButton() && !current.IsCenterButton())
+        SetButtonState(Input::StickCenter, Input::ButtonReleased, out);
+    else if (!previous.IsDown() && current.IsDown())
+        SetButtonState(Input::DpadDown, Input::ButtonPressed, out);
+    else if (!previous.IsUp() && current.IsUp())
+        SetButtonState(Input::DpadUp, Input::ButtonPressed, out);
+    else if (!previous.IsLeft() && current.IsLeft())
+        SetButtonState(Input::DpadLeft, Input::ButtonPressed, out);
+    else if (!previous.IsRight() && current.IsRight())
+        SetButtonState(Input::DpadRight, Input::ButtonPressed, out);
+    else if (!previous.IsSelect() && current.IsSelect())
+        SetButtonState(Input::DpadSelect, Input::ButtonPressed, out);
+    else if (!previous.IsCenterButton() && current.IsCenterButton())
+        SetButtonState(Input::StickCenter, Input::ButtonPressed, out);
 
-    ButtonChange joystickState = ButtonNone;
-    if (last.IsCenterButton() && !current.IsCenterButton())
-        joystickState = ButtonReleased;
-    else if (!last.IsCenterButton() && current.IsCenterButton())
-        joystickState = ButtonPressed;
-
+    diff.stickMoved = last.x != current.x || last.y != current.y;
+    return diff;
 }
 
 Event::Event(const Event& previous, const InputData& input)
