@@ -43,10 +43,12 @@
 #define LogPerf(...) Debug::Logger().Log(__VA_ARGS__)
 #define SAMPLER_START(sampler) sampler.Start();
 #define SAMPLER_END(sampler) sampler.End();
+#define CREATE_SAMPLER(type, name, frequency) static Performance::type name(frequency);
 #else
 #define LogPerf(...) ;
 #define SAMPLER_START(sampler) ;
 #define SAMPLER_END(sampler) ;
+#define CREATE_SAMPLER(type, name, frequency) ;
 #endif
 
 namespace Debug
