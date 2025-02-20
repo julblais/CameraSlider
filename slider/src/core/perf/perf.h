@@ -10,8 +10,10 @@
 #define LogPerf(...) Debug::Logger().Log(__VA_ARGS__)
 #define SAMPLER_START(sampler) sampler.Start();
 #define SAMPLER_END(sampler) sampler.End();
-#define CREATE_SAMPLER(type, name, frequency) static Performance::type name(frequency);
-#define MEASURE(sampler, func) sampler.Measure([]()func);
+#define CREATE_SAMPLER(type, name, frequency) static Performance::type name(#name, frequency);
+#define MEASURE(sampler, func) sampler.Start(); \
+func \
+sampler.End();
 
 namespace Performance
 {
@@ -26,7 +28,7 @@ namespace Performance
         static_assert(std::is_same<HasValue, TValue>::value, "Incorrect return type from GetValue");
 
     public:
-        Sampler(const unsigned int logFrequency);
+        Sampler(const char* name, const unsigned int logFrequency);
         virtual ~Sampler() override = default;
         virtual size_t printTo(Print& p) const override;
 
@@ -55,6 +57,7 @@ namespace Performance
             unsigned int freq;
             unsigned int count;
         };
+        const char* m_Name;
         TSample m_Sample;
         Data m_Data;
         const unsigned int m_LogFreqCount;
@@ -63,7 +66,7 @@ namespace Performance
     struct CpuTime
     {
     public:
-        struct Tag { static constexpr const char* Name { "Cpu time" }; };
+        struct Tag { static constexpr const char* Name { "cpu_time" }; };
         static constexpr const char* Unit { "us" };
 
         void Start();

@@ -6,20 +6,20 @@
 using namespace Performance;
 
 template<typename TTag, typename TSample, typename TValue>
-Sampler<TTag, TSample, TValue>::Sampler(const unsigned int logFrequency)
-    : m_Sample(), m_Data(), m_LogFreqCount(logFrequency)
+Sampler<TTag, TSample, TValue>::Sampler(const char*name, const unsigned int logFrequency)
+    : m_Name(name), m_Sample(), m_Data(), m_LogFreqCount(logFrequency)
 {}
 
 template<typename TTag, typename TSample, typename TValue>
 size_t Sampler<TTag, TSample, TValue>::printTo(Print& p) const
 {
-    auto size = p.printf("%s(%s)\tcurrent ", TTag::Name, TSample::Unit);
+    auto size = p.printf("%s:%s(%s)\tcurrent:", m_Name, TTag::Name, TSample::Unit);
     size += p.print(m_Data.last);
-    size += p.print("\tmean ");
+    size += p.print("\tmean:");
     size += p.print(GetAverage());
-    size += p.print("\tmax ");
+    size += p.print("\tmax:");
     size += p.print(m_Data.max);
-    size += p.print("\tmin ");
+    size += p.print("\tmin:");
     size += p.print(m_Data.min);
     return size;
 }

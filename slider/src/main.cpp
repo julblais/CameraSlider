@@ -43,7 +43,7 @@ static AppConfig CreateConfig()
 
 static auto app = Core::AppCreator<AppConfig>::Create(CreateConfig());
 
-CREATE_SAMPLER(CpuTimeSampler, cpuSampler, 200u);
+CREATE_SAMPLER(CpuTimeSampler, AppUpdate, 200u);
 
 void setup()
 {
@@ -56,7 +56,7 @@ void setup()
 
 void loop()
 {
-    MEASURE(cpuSampler, 
+    MEASURE(AppUpdate, 
     {
         app->Update();
     });
