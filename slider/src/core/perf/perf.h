@@ -6,6 +6,13 @@
 #include <utility>
 #include <type_traits>
 
+#ifdef LOG_PERFORMANCE
+#define LogPerf(...) Debug::Logger().Log(__VA_ARGS__)
+#define SAMPLER_START(sampler) sampler.Start();
+#define SAMPLER_END(sampler) sampler.End();
+#define CREATE_SAMPLER(type, name, frequency) static Performance::type name(frequency);
+#define MEASURE(sampler, func) sampler.Measure([]()func);
+
 namespace Performance
 {
     template <typename TTag, typename TSample, typename TValue>
@@ -39,7 +46,8 @@ namespace Performance
         unsigned int GetSampleCount();
 
     private:
-        struct Data {
+        struct Data
+        {
             TValue sum;
             TValue max;
             TValue min;
@@ -51,8 +59,46 @@ namespace Performance
         Data m_Data;
         const unsigned int m_LogFreqCount;
     };
-}
 
+    struct CpuTime
+    {
+    public:
+        struct Tag { static constexpr const char* Name { "Cpu time" }; };
+        static constexpr const char* Unit { "us" };
+
+        void Start();
+        uint64_t GetValue() const;
+    private:
+        uint64_t m_StartMicroseconds;
+    };
+
+    template class Sampler<CpuTime::Tag, CpuTime, uint64_t>;
+    using CpuTimeSampler = Sampler<CpuTime::Tag, CpuTime, uint64_t>;
+
+    /*
+    struct CpuUsage
+    {
+    public:
+        struct Tag { static constexpr const char* Name { "Cpu usage" }; };
+        static constexpr const char* Unit { "%" };
+        void Start();
+        uint8_t GetValue() const;
+    private:
+
+    };
+
+    template class Sampler<CpuUsage::Tag, CpuUsage, uint8_t>;
+    using CpuUsageSampler = Sampler<CpuUsage::Tag, CpuUsage, uint8_t>;
+    */
+}
 #include "perf.tpp"
 
-#endif
+#else
+#define LogPerf(...) ;
+#define SAMPLER_START(sampler) ;
+#define SAMPLER_END(sampler) ;
+#define CREATE_SAMPLER(type, name, frequency) ;
+#define MEASURE(sampler, func) func;
+#endif //LOG_PERFORMANCE
+
+#endif //PERF_H
