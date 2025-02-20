@@ -8,21 +8,14 @@
 
 using namespace Performance;
 
-void CpuTime::Start()
-{
-    #ifdef ARDUINO_ARCH_ESP32
-    m_StartMicroseconds = esp_timer_get_time();
-    #else
-    m_StartMicroseconds = micros();
-    #endif
-}
+void CpuTime::Setup() {}
 
 uint64_t CpuTime::GetValue() const
 {
     #ifdef ARDUINO_ARCH_ESP32
-    return (esp_timer_get_time() - m_StartMicroseconds);
+    return esp_timer_get_time();
     #else
-    return (micros() - m_StartMicroseconds);
+    return micros();
     #endif
 }
 
@@ -66,7 +59,7 @@ void RegisterIdleHook()
         LogError("Error initializing cpu time sampler: ", esp_err_to_name(result));
 }
 
-void CpuUsage::Start()
+void CpuUsage::Setup()
 {
     static bool isInit = false;
     if (!isInit)

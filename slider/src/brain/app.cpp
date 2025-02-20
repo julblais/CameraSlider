@@ -59,21 +59,18 @@ void Slider::App::Setup()
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
 }
 
-CREATE_SAMPLER(CpuTimeSampler, InputDispatch, 200u);
-CREATE_SAMPLER(CpuTimeSampler, ComponentUpdate, 200u);
-
 void Slider::App::Update()
 {
     auto input = InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
     /*-> process received messages here <- */
     
-    MEASURE(InputDispatch, 
+    TAKE_SAMPLE(Performance::CpuSampler, "InputDispatch",
     {
         m_InputDispatcher.ProcessInput(input);
     });
 
     //update all systems
-    MEASURE(ComponentUpdate, 
+    TAKE_SAMPLE(Performance::CpuSampler, "ComponentUpdate",
     {
         UpdateComponents();
     });

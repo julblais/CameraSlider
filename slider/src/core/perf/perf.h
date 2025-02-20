@@ -5,15 +5,17 @@
 #include "Print.h"
 #include <utility>
 #include <type_traits>
+#include <stack>
+#include <map>
 
 #ifdef LOG_PERFORMANCE
 #define LogPerf(...) Debug::Logger().Log(__VA_ARGS__)
-#define SAMPLER_START(sampler) sampler.Start();
-#define SAMPLER_END(sampler) sampler.End();
-#define CREATE_SAMPLER(type, name, frequency) static Performance::type name(#name, frequency);
 #define MEASURE(sampler, func) sampler.Start(); \
 func \
 sampler.End();
+#define TAKE_SAMPLE(sampler, tag, func) sampler.BeginSample(tag);\
+func \
+sampler.EndSample();
 
 namespace Performance
 {
@@ -23,44 +25,39 @@ namespace Performance
         using Unit = decltype(TSample::Unit);
         static_assert(std::is_same<Unit, const char* const>::value, "Incorrect type for Unit");
         static_assert(std::is_default_constructible<TSample>::value, "Type should have empty ctor");
-        using HasStart = decltype(std::declval<TSample>().Start());
+        using HasStart = decltype(std::declval<TSample>().Setup());
         using HasValue = decltype(std::declval<const TSample>().GetValue());
         static_assert(std::is_same<HasValue, TValue>::value, "Incorrect return type from GetValue");
 
     public:
-        Sampler(const char* name, const unsigned int logFrequency);
+        Sampler(const unsigned int logFrequency);
         virtual ~Sampler() override = default;
         virtual size_t printTo(Print& p) const override;
 
-        inline void Start() { m_Sample.Start(); }
-
-        template <typename TFunc>
-        inline void Measure(TFunc&& func)
-        {
-            Start();
-            func();
-            End();
-        }
-
+        void Start();
+        void BeginSample(const char* tag);
+        void EndSample();
         void End();
-        void Reset();
-        TValue GetAverage() const;
-        unsigned int GetSampleCount();
-
     private:
         struct Data
         {
             TValue sum;
             TValue max;
             TValue min;
-            TValue last;
-            unsigned int freq;
             unsigned int count;
         };
-        const char* m_Name;
-        TSample m_Sample;
-        Data m_Data;
+        struct StackData
+        {
+            TValue value;
+            const char* name;
+        };
+        
+        std::stack<StackData> m_Stack;
+        std::map<const char*, Data> m_Values;
+        
+        unsigned int freq;
         const unsigned int m_LogFreqCount;
+        TSample m_Sample;
     };
 
     struct CpuTime
@@ -69,14 +66,13 @@ namespace Performance
         struct Tag { static constexpr const char* Name { "cpu_time" }; };
         static constexpr const char* Unit { "us" };
 
-        void Start();
+        void Setup();
         uint64_t GetValue() const;
-    private:
-        uint64_t m_StartMicroseconds;
     };
 
     template class Sampler<CpuTime::Tag, CpuTime, uint64_t>;
     using CpuTimeSampler = Sampler<CpuTime::Tag, CpuTime, uint64_t>;
+    static CpuTimeSampler CpuSampler(200u);
 
     /*
     struct CpuUsage
@@ -96,12 +92,11 @@ namespace Performance
 }
 #include "perf.tpp"
 
+
 #else
 #define LogPerf(...) ;
-#define SAMPLER_START(sampler) ;
-#define SAMPLER_END(sampler) ;
-#define CREATE_SAMPLER(type, name, frequency) ;
-#define MEASURE(sampler, func) func;
+#define MEASURE(sampler, func) func
+#define TAKE_SAMPLE(sampler, tag, func) func
 #endif //LOG_PERFORMANCE
 
 #endif //PERF_H

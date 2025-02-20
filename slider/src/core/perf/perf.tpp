@@ -6,61 +6,68 @@
 using namespace Performance;
 
 template<typename TTag, typename TSample, typename TValue>
-Sampler<TTag, TSample, TValue>::Sampler(const char*name, const unsigned int logFrequency)
-    : m_Name(name), m_Sample(), m_Data(), m_LogFreqCount(logFrequency)
+Sampler<TTag, TSample, TValue>::Sampler(const unsigned int logFrequency)
+    : m_Sample(), m_LogFreqCount(logFrequency)
 {}
 
 template<typename TTag, typename TSample, typename TValue>
 size_t Sampler<TTag, TSample, TValue>::printTo(Print& p) const
-{
-    auto size = p.printf("%s:%s(%s)\tcurrent:", m_Name, TTag::Name, TSample::Unit);
-    size += p.print(m_Data.last);
-    size += p.print("\tmean:");
+{/*
+    auto size = p.printf("%s:%s(%s)\tmean:", m_Name, TTag::Name, TSample::Unit);
     size += p.print(GetAverage());
     size += p.print("\tmax:");
     size += p.print(m_Data.max);
     size += p.print("\tmin:");
     size += p.print(m_Data.min);
     return size;
+    */
+   return 0;
+}
+
+template<typename TTag, typename TSample, typename TValue>
+void Performance::Sampler<TTag, TSample, TValue>::Start()
+{
+    m_Sample.Setup();
+}
+
+template<typename TTag, typename TSample, typename TValue>
+void Performance::Sampler<TTag, TSample, TValue>::BeginSample(const char* tag)
+{
+    m_Stack.push({ m_Sample.GetValue(), tag });
+}
+
+template<typename TTag, typename TSample, typename TValue>
+void Sampler<TTag, TSample, TValue>::EndSample()
+{
+    auto endValue = m_Sample.GetValue();
+    auto stackData = m_Stack.top();
+    auto value = m_Sample.GetValue() - stackData.value;
+    m_Stack.pop();
+
+    auto found = m_Values.find(stackData.name);
+    Data data;
+    if (found != m_Values.end())
+        data = found->second;
+
+    data.count++;
+    data.sum += value;
+    data.max = std::max(data.max, value);
+    if (data.count == 1)
+        data.min = value;
+    else
+        data.min = std::min(data.min, value);
+    m_Values[stackData.name] = data;
 }
 
 template<typename TTag, typename TSample, typename TValue>
 void Sampler<TTag, TSample, TValue>::End()
 {
-    auto val = m_Sample.GetValue();
-    m_Data.count++;
-    m_Data.last = val;
-    m_Data.sum += val;
-    m_Data.max = std::max(m_Data.max, val);
-    if (m_Data.count == 1)
-        m_Data.min = val;
-    else
-        m_Data.min = std::min(m_Data.min, val);
-    m_Sample = TSample();
-
-    if (m_Data.freq++ >= m_LogFreqCount)
+    m_Stack = std::stack<StackData>();
+    m_Values.clear();
+    freq = 0;
+    if (freq++ >= m_LogFreqCount)
     {
         LogPerf(*this);
-        Reset();
+        //Reset();
     }
-}
-
-template<typename TTag, typename TSample, typename TValue>
-void Sampler<TTag, TSample, TValue>::Reset()
-{
-    m_Data = {};
-}
-
-template<typename TTag, typename TSample, typename TValue>
-TValue Sampler<TTag, TSample, TValue>::GetAverage() const
-{
-    if (m_Data.count == 0)
-        return 0;
-    return m_Data.sum / m_Data.count;
-}
-
-template<typename TTag, typename TSample, typename TValue>
-unsigned int Sampler<TTag, TSample, TValue>::GetSampleCount()
-{
-    return m_Data.count;
 }
