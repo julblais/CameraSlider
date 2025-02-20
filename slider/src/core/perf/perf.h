@@ -24,6 +24,15 @@ namespace Performance
         virtual size_t printTo(Print& p) const override;
 
         inline void Start() { m_Sample.Start(); }
+
+        template <typename TFunc>
+        inline void Measure(TFunc&& func)
+        {
+            Start();
+            func();
+            End();
+        }
+
         void End();
         void Reset();
         TValue GetAverage() const;

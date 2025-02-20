@@ -44,11 +44,13 @@
 #define SAMPLER_START(sampler) sampler.Start();
 #define SAMPLER_END(sampler) sampler.End();
 #define CREATE_SAMPLER(type, name, frequency) static Performance::type name(frequency);
+#define MEASURE(sampler, func) sampler.Measure([]()func);
 #else
 #define LogPerf(...) ;
 #define SAMPLER_START(sampler) ;
 #define SAMPLER_END(sampler) ;
 #define CREATE_SAMPLER(type, name, frequency) ;
+#define MEASURE(sampler, func) func;
 #endif
 
 namespace Debug
