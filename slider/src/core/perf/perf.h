@@ -16,6 +16,10 @@ sampler.End();
 func \
 sampler.EndSample();
 
+namespace Core{
+    class TableFormatter;
+}
+
 namespace Performance
 {
     template <typename TTag, typename TSample, typename TValue>
@@ -34,22 +38,30 @@ namespace Performance
         void EndSample();
         void End();
     private:
+        void Log();
         struct Data
         {
             TValue sum;
             TValue max;
             TValue min;
+            unsigned int indent;
             unsigned int count;
+            const char* parent;
         };
         struct StackData
         {
             TValue value;
-            const char* name;
+            const char* tag;
         };
-        
+
+        using DataMap = std::map<const char*, Data>;
+        using DataPair = std::pair<const char*, Data>;
+
+        void AddData(const DataPair& pair, Core::TableFormatter& table, int indent) const;
+
         std::stack<StackData> m_Stack;
-        std::map<const char*, Data> m_Values;
-        
+        DataMap m_Values;
+
         unsigned int freq;
         const unsigned int m_LogFreqCount;
         TSample m_Sample;
@@ -66,9 +78,8 @@ namespace Performance
 
     template class Sampler<CpuTime::Tag, CpuTime, uint64_t>;
     using CpuTimeSampler = Sampler<CpuTime::Tag, CpuTime, uint64_t>;
-    static CpuTimeSampler CpuSampler(200u);
 
-    /*
+/*
     struct CpuUsage
     {
     public:
@@ -83,8 +94,10 @@ namespace Performance
     using CpuUsageSampler = Sampler<CpuUsage::Tag, CpuUsage, uint8_t>;
     */
 }
-#include "perf.tpp"
 
+extern Performance::CpuTimeSampler CpuSampler;
+
+#include "perf.tpp"
 
 #else
 #define LogPerf(...) ;

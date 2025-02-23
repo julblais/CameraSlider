@@ -8,6 +8,8 @@
 
 using namespace Performance;
 
+Performance::CpuTimeSampler CpuSampler = (200u);
+
 void CpuTime::Setup() {}
 
 uint64_t CpuTime::GetValue() const
