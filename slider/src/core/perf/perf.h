@@ -2,7 +2,6 @@
 #define PERF_H
 
 #include "esp_log.h"
-#include "Print.h"
 #include <utility>
 #include <type_traits>
 #include <stack>
@@ -20,10 +19,8 @@ sampler.EndSample();
 namespace Performance
 {
     template <typename TTag, typename TSample, typename TValue>
-    class Sampler : public Printable
+    class Sampler
     {
-        using Unit = decltype(TSample::Unit);
-        static_assert(std::is_same<Unit, const char* const>::value, "Incorrect type for Unit");
         static_assert(std::is_default_constructible<TSample>::value, "Type should have empty ctor");
         using HasStart = decltype(std::declval<TSample>().Setup());
         using HasValue = decltype(std::declval<const TSample>().GetValue());
@@ -31,8 +28,6 @@ namespace Performance
 
     public:
         Sampler(const unsigned int logFrequency);
-        virtual ~Sampler() override = default;
-        virtual size_t printTo(Print& p) const override;
 
         void Start();
         void BeginSample(const char* tag);
@@ -63,8 +58,7 @@ namespace Performance
     struct CpuTime
     {
     public:
-        struct Tag { static constexpr const char* Name { "cpu_time" }; };
-        static constexpr const char* Unit { "us" };
+        struct Tag { static constexpr const char* Name { "cpu_time(us)" }; };
 
         void Setup();
         uint64_t GetValue() const;
@@ -79,7 +73,6 @@ namespace Performance
     {
     public:
         struct Tag { static constexpr const char* Name { "Cpu usage" }; };
-        static constexpr const char* Unit { "%" };
         void Start();
         uint8_t GetValue() const;
     private:

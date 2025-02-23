@@ -64,13 +64,13 @@ void Slider::App::Update()
     auto input = InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
     /*-> process received messages here <- */
     
-    TAKE_SAMPLE(Performance::CpuSampler, "InputDispatch",
+    TAKE_SAMPLE(CpuSampler, "InputDispatch",
     {
         m_InputDispatcher.ProcessInput(input);
     });
 
     //update all systems
-    TAKE_SAMPLE(Performance::CpuSampler, "ComponentUpdate",
+    TAKE_SAMPLE(CpuSampler, "ComponentUpdate",
     {
         UpdateComponents();
     });
