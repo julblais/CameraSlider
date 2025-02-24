@@ -9,14 +9,16 @@
 
 #ifdef LOG_PERFORMANCE
 #define LogPerf(...) Debug::Logger().Log(__VA_ARGS__)
-#define MEASURE(sampler, func) sampler.Start(); \
+#define INIT_SAMPLER(sampler) sampler.Setup()
+#define MEASURE(sampler, tag, func) sampler.BeginSample(tag);\
 func \
-sampler.End();
+sampler.EndSample(); \
+sampler.Finish();
 #define TAKE_SAMPLE(sampler, tag, func) sampler.BeginSample(tag);\
 func \
 sampler.EndSample();
 
-namespace Core{
+namespace Core {
     class TableFormatter;
 }
 
@@ -33,10 +35,10 @@ namespace Performance
     public:
         Sampler(const unsigned int logFrequency);
 
-        void Start();
+        void Setup();
         void BeginSample(const char* tag);
         void EndSample();
-        void End();
+        void Finish();
     private:
         void Log();
         struct Data
@@ -44,7 +46,7 @@ namespace Performance
             TValue sum;
             TValue max;
             TValue min;
-            unsigned int indent;
+            TValue current;
             unsigned int count;
             const char* parent;
         };
@@ -52,6 +54,7 @@ namespace Performance
         {
             TValue value;
             const char* tag;
+            TValue bias;
         };
 
         using DataMap = std::map<const char*, Data>;
@@ -70,7 +73,7 @@ namespace Performance
     struct CpuTime
     {
     public:
-        struct Tag { static constexpr const char* Name { "cpu_time(us)" }; };
+        struct Tag { static constexpr const char* Name { "cpu time(us)" }; };
 
         void Setup();
         uint64_t GetValue() const;
@@ -101,7 +104,8 @@ extern Performance::CpuTimeSampler CpuSampler;
 
 #else
 #define LogPerf(...) ;
-#define MEASURE(sampler, func) func
+#define INIT_SAMPLER(sampler) ;
+#define MEASURE(sampler, tag, func) func
 #define TAKE_SAMPLE(sampler, tag, func) func
 #endif //LOG_PERFORMANCE
 
