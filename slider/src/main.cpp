@@ -46,6 +46,7 @@ static auto app = Core::AppCreator<AppConfig>::Create(CreateConfig());
 void setup()
 {
     Debug::Init(9600);
+    INIT_SAMPLER(CpuSampler);
 
     LogInfo("Being setup...");
     app->Setup();
@@ -54,7 +55,7 @@ void setup()
 
 void loop()
 {
-    MEASURE(Performance::CpuSampler, 
+    MEASURE(CpuSampler, "AppUpdate",
     {
         app->Update();
     });

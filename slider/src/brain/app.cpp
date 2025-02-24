@@ -61,11 +61,10 @@ void Slider::App::Setup()
 
 void Slider::App::Update()
 {
-    auto input = InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
-    /*-> process received messages here <- */
-    
-    TAKE_SAMPLE(CpuSampler, "InputDispatch",
+    TAKE_SAMPLE(CpuSampler, "ProcessInput",
     {
+        auto input = InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
+        /*-> process received messages here <- */
         m_InputDispatcher.ProcessInput(input);
     });
 
@@ -76,5 +75,8 @@ void Slider::App::Update()
     });
 
     //output final display buffer
-    m_DisplayBuffer.PrintToDisplay();
+    TAKE_SAMPLE(CpuSampler, "OutputToLCD",
+    {
+        m_DisplayBuffer.PrintToDisplay();
+    });
 }
