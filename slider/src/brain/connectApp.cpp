@@ -2,9 +2,11 @@
 
 #include "src/debug.h"
 #include "src/core/network/address.h"
-#include "wifi.h"
-#include "messages.h"
+#include "src/network/wifi.h"
+#include "src/network/messages.h"
+#include "settings.h"
 
+using namespace Slider;
 using namespace Net;
 
 #define Led_Pin 17
@@ -65,7 +67,28 @@ void BrainConnector::Setup()
 }
 
 void BrainConnector::Update()
-{}
+{
+    if (state == ConnectionState::BROADCASTING)
+    {
+        LogInfo("Sending connection request...");
+        ConnectionRequest request(m_Wifi->GetMacAddress());
+        m_Wifi->Send(BROADCAST_ADDRESS, request);
+        delay(BRAIN_BROADCAST_DELAY);
+    }
+    else if (state == ConnectionState::SENDING_HANDSHAKE)
+    {
+        m_Wifi->RemovePeer(BROADCAST_ADDRESS);
+        m_Wifi->AddPeer(controllerMac);
+        LogInfo("Sending handshake message...");
+        Handshake handshake(m_Wifi->GetMacAddress());
+        m_Wifi->Send(handshake);
+        state = ConnectionState::WAITING_FOR_HANDSHAKE;
+    }
+    else if (state == ConnectionState::CONNECTED)
+    {
+        //remove timer
+    }
+}
 
 //////////////////////////
 
@@ -98,4 +121,26 @@ void ControllerConnector::Setup()
 }
 
 void ControllerConnector::Update()
-{}
+{
+    if (state == ConnectionState::WAITING_FOR_CONNECTION)
+    {
+        LogInfo("Waiting for connection request");
+        delay(CONTROLLER_CONNECTION_DELAY);
+    }
+    else if (state == ConnectionState::SENDING_REQUEST)
+    {
+        m_Wifi->AddPeer(brainMac);
+        LogInfo("Sending connection request.");
+        ConnectionRequest request(m_Wifi->GetMacAddress());
+        m_Wifi->Send(request);
+        state = ConnectionState::WAITING_FOR_HANDSHAKE;
+    }
+    else if (state == ConnectionState::SENDING_HANDSHAKE)
+    {
+        LogInfo("Sending handshake to: ", brainMac);
+        Handshake handshake(m_Wifi->GetMacAddress());
+        m_Wifi->Send(handshake);
+        Slider::Settings::GetInstance().SetPeerAddress(brainMac);
+        state = ConnectionState::CONNECTED;
+    }
+}

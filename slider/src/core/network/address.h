@@ -15,6 +15,7 @@ namespace Core
         MacAddress(const uint8_t* address);
 
         void CopyTo(uint8_t* dest) const;
+        const size_t Size() const { return m_Address.size(); }
         const uint8_t* Data() const { return m_Address.data(); }
         virtual size_t printTo(Print& p) const override;
 

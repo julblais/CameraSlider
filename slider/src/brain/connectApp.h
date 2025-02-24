@@ -6,10 +6,10 @@
 #include "src/core/app/appBase.h"
 #include "src/core/network/address.h"
 
-namespace Net
-{
-    class WifiModule;
+namespace Net { class WifiModule; }
 
+namespace Slider
+{
     class BrainConnector : public Core::Component
     {
         enum class ConnectionState

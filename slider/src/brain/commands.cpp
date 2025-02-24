@@ -1,5 +1,5 @@
 #include "commands.h"
-#include "src/settings/settings.h"
+#include "settings.h"
 #include "src/core/utils/mathUtils.h"
 
 using namespace Core;
