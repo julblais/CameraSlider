@@ -1,6 +1,6 @@
 #include "event.h"
 #include "src/debug.h"
-#include "core/utils/enumUtils.h"
+#include "src/core/utils/enumUtils.h"
 
 using namespace Input;
 using namespace Core::Enums;
