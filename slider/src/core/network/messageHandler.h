@@ -19,15 +19,20 @@ namespace Core
         class InvokerBase
         {
         public:
+            InvokerBase(const char* name) : name(name) {}
             virtual void Invoke(const uint8_t* data, size_t length) const = 0;
             virtual ~InvokerBase() {}
+
+            const char* name;
         };
 
         template <class TMessage>
         class Invoker : public InvokerBase
         {
         public:
-            Invoker(std::function<void(TMessage)> function) : m_Function(function) {}
+            Invoker(const char* name, std::function<void(TMessage)> function)
+                : InvokerBase(name), m_Function(function)
+            {}
             virtual void Invoke(const uint8_t* data, size_t length) const override;
         private:
             std::function<void(TMessage)>  m_Function;
@@ -45,10 +50,18 @@ namespace Core
         };
 
     public:
+        struct CallbackHandle
+        {
+            friend class MessageHandler;
+        private:
+            InvokerBase* invoker;
+        };
+
         MessageHandler();
 
         template <class T>
-        void AddCallback(std::function<void(T)> cb);
+        CallbackHandle AddCallback(const char* name, std::function<void(T)> cb);
+        void RemoveCallback(const CallbackHandle& handle);
 
         template <class T>
         static MessageWrapper<T> CreateMessage(const T& message);

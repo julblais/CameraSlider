@@ -29,6 +29,20 @@ MessageHandler::MessageHandler()
     m_Queue = xQueueCreate(QUEUE_LENGTH, sizeof(QueueItem));
 }
 
+void MessageHandler::RemoveCallback(const CallbackHandle& handle)
+{
+    auto it = m_Selectors.begin();
+    while (it != m_Selectors.end())
+    {
+        if (it->second.get() == handle.invoker)
+        {
+            m_Selectors.erase(it);
+            return;
+        }
+    }
+    LogError("Cannot remove callback, not found: ", handle.invoker->name);
+}
+
 void MessageHandler::ProcessMessages() const
 {
     QueueItem item;
@@ -41,7 +55,10 @@ void MessageHandler::ProcessMessages() const
             {
                 auto cmd = selector.second.get();
                 if (cmd)
+                {
+                    LogDebug("Invoking: ", cmd->name);
                     cmd->Invoke(item.data, item.length);
+                }
             }
         }
         item.Finish();

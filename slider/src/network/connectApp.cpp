@@ -50,13 +50,13 @@ void BrainConnector::Setup()
 {
     LogInfo("Setup brain connector...");
 
-    m_Wifi->RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+    m_Wifi->RegisterReceiveCallback<ConnectionRequest>("Brain-Connection", [this](ConnectionRequest msg) {
         if (state != ConnectionState::BROADCASTING) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::SENDING_HANDSHAKE;
         controllerMac = msg.from;
     });
-    m_Wifi->RegisterReceiveCallback<Handshake>([this](Handshake msg) {
+    m_Wifi->RegisterReceiveCallback<Handshake>("Brain-handshake", [this](Handshake msg) {
         if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::CONNECTED;
@@ -84,13 +84,13 @@ void ControllerConnector::Setup()
 {
     LogInfo("Setup controller connector");
 
-    m_Wifi->RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+    m_Wifi->RegisterReceiveCallback<ConnectionRequest>("Controller-connection", [this](ConnectionRequest msg) {
         if (state != ConnectionState::WAITING_FOR_CONNECTION) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::SENDING_REQUEST;
         brainMac = msg.from;
     });
-    m_Wifi->RegisterReceiveCallback<Handshake>([this](Handshake msg) {
+    m_Wifi->RegisterReceiveCallback<Handshake>("Controller-handshake", [this](Handshake msg) {
         if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::SENDING_HANDSHAKE;

@@ -14,10 +14,13 @@ inline void MessageHandler::Invoker<TMessage>::Invoke(const uint8_t* data, size_
 }
 
 template <class T>
-inline void MessageHandler::AddCallback(std::function<void(T)> callback)
+inline MessageHandler::CallbackHandle MessageHandler::AddCallback(const char* name, std::function<void(T)> callback)
 {
-    auto ptr = new Invoker<T>(callback);
+    auto ptr = new Invoker<T>(name, callback);
+    CallbackHandle handle;
+    handle.invoker = ptr;
     m_Selectors.emplace_back(MessageWrapper<T>::typeId, std::unique_ptr<InvokerBase>(ptr));
+    return handle;
 }
 
 template <class T>
