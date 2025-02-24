@@ -19,10 +19,9 @@ namespace Core
         class InvokerBase
         {
         public:
-            InvokerBase(const char* name) : name(name) {}
+            InvokerBase(const char* name);
             virtual void Invoke(const uint8_t* data, size_t length) const = 0;
-            virtual ~InvokerBase() {}
-
+            virtual ~InvokerBase() = default;
             const char* name;
         };
 
@@ -30,9 +29,7 @@ namespace Core
         class Invoker : public InvokerBase
         {
         public:
-            Invoker(const char* name, std::function<void(TMessage)> function)
-                : InvokerBase(name), m_Function(function)
-            {}
+            Invoker(const char* name, std::function<void(TMessage)> function);
             virtual void Invoke(const uint8_t* data, size_t length) const override;
         private:
             std::function<void(TMessage)>  m_Function;

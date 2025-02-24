@@ -4,6 +4,10 @@
 
 using namespace Core;
 
+MessageHandler::InvokerBase::InvokerBase(const char* name)
+    : name(name)
+{}
+
 MessageHandler::QueueItem::QueueItem()
     :data(0), length(0)
 {}
