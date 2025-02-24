@@ -2,6 +2,7 @@
 #include "src/hardware/lcd.h"
 #include "src/hardware/dpad.h"
 #include "src/hardware/joystick.h"
+#include "src/core/perf/perf.h"
 
 #include <esp32-hal-timer.h>
 
@@ -60,13 +61,22 @@ void Slider::App::Setup()
 
 void Slider::App::Update()
 {
-    auto input = InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
-    /*-> process received messages here <- */
-    m_InputDispatcher.ProcessInput(input);
+    TAKE_SAMPLE(CpuSampler, "ProcessInput",
+    {
+        auto input = InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
+        /*-> process received messages here <- */
+        m_InputDispatcher.ProcessInput(input);
+    });
 
     //update all systems
-    UpdateComponents();
+    TAKE_SAMPLE(CpuSampler, "ComponentUpdate",
+    {
+        UpdateComponents();
+    });
 
     //output final display buffer
-    m_DisplayBuffer.PrintToDisplay();
+    TAKE_SAMPLE(CpuSampler, "OutputToLCD",
+    {
+        m_DisplayBuffer.PrintToDisplay();
+    });
 }
