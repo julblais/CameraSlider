@@ -16,7 +16,6 @@ namespace Hardware
     class DeviceInputReader : public Input::InputReader
     {
     public:
-
         DeviceInputReader(const InputPins& pins);
         virtual ~DeviceInputReader() override = default;
         virtual void Setup() override;
