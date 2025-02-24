@@ -1,11 +1,7 @@
 #include "messages.h"
-#include "src/core/network/message.h"
 
 using namespace Core;
 using namespace Net;
-
-REGISTER_MESSAGE_TYPE(ConnectionRequest, 1);
-REGISTER_MESSAGE_TYPE(Handshake, 2);
 
 ConnectionRequest::ConnectionRequest(const Core::MacAddress& address)
 {

@@ -3,6 +3,7 @@
 
 #include <Print.h>
 #include "src/core/network/address.h"
+#include "src/core/network/message.h"
 
 namespace Net
 {
@@ -22,5 +23,8 @@ namespace Net
         virtual size_t printTo(Print& p) const override;
     };
 }
+
+REGISTER_MESSAGE_TYPE(Net::ConnectionRequest, 1);
+REGISTER_MESSAGE_TYPE(Net::Handshake, 2);
 
 #endif
