@@ -18,6 +18,7 @@
 #include "src/core/app/appBase.h"
 #include "src/brain/appConfig.h"
 #include "debug.h"
+#include "src/core/perf/perf.h"
 #include <memory>
 
 using namespace Slider;
@@ -42,14 +43,10 @@ static AppConfig CreateConfig()
 
 static auto app = Core::AppCreator<AppConfig>::Create(CreateConfig());
 
-#ifdef DEBUG_PERF
-#include "src/core/perf/cpuTime.h"
-static Performance::CpuTimeSampler cpuSampler(200u);
-#endif
-
 void setup()
 {
     Debug::Init(9600);
+    INIT_SAMPLER(CpuSampler);
 
     LogInfo("Being setup...");
     app->Setup();
@@ -58,9 +55,10 @@ void setup()
 
 void loop()
 {
-    SAMPLER_START(cpuSampler);
-    app->Update();
-    SAMPLER_END(cpuSampler);
+    MEASURE(CpuSampler, "AppUpdate",
+    {
+        app->Update();
+    });
 
     #ifdef IS_SIMULATOR //somehow this makes the timing more accurate...
     delay(10);

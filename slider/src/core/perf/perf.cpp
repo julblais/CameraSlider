@@ -1,6 +1,25 @@
-#include "cpuUsage.h"
+#include "perf.h"
+
+#ifdef LOG_PERFORMANCE
+
+#ifdef ARDUINO_ARCH_ESP32 
+#include "esp_timer.h"
+#endif
 
 using namespace Performance;
+
+Performance::CpuTimeSampler CpuSampler = (200u);
+
+void CpuTime::Setup() {}
+
+uint64_t CpuTime::GetValue() const
+{
+    #ifdef ARDUINO_ARCH_ESP32
+    return esp_timer_get_time();
+    #else
+    return micros();
+    #endif
+}
 
 /*
 #include "freertos/FreeRTOS.h"
@@ -42,7 +61,7 @@ void RegisterIdleHook()
         LogError("Error initializing cpu time sampler: ", esp_err_to_name(result));
 }
 
-void CpuUsage::Start()
+void CpuUsage::Setup()
 {
     static bool isInit = false;
     if (!isInit)
@@ -52,3 +71,5 @@ void CpuUsage::Start()
     }
 }
 */
+
+#endif //LOG_PERFORMANCE

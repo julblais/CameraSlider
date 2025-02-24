@@ -1,6 +1,7 @@
 #include "app.h"
 #include "src/hardware/lcd.h"
 #include "src/hardware/deviceInputReader.h"
+#include "src/core/perf/perf.h"
 
 #include <esp32-hal-timer.h>
 
@@ -57,14 +58,23 @@ void Slider::App::Setup()
 
 void Slider::App::Update()
 {
-    auto input = m_InputReader->ReadInput();
-    m_InputDispatcher.ProcessInput(input);
-    /*-> ProcessInput(message_from_controller) */
-    m_InputDispatcher.Dispatch();
+    TAKE_SAMPLE(CpuSampler, "ProcessInput",
+    {
+        auto input = m_InputReader->ReadInput();
+        m_InputDispatcher.ProcessInput(input);
+        /*-> ProcessInput(message_from_controller) */
+        m_InputDispatcher.Dispatch();
+    });
 
     //update all systems
-    UpdateComponents();
+    TAKE_SAMPLE(CpuSampler, "ComponentUpdate",
+    {
+        UpdateComponents();
+    });
 
     //output final display buffer
-    m_DisplayBuffer.PrintToDisplay();
+    TAKE_SAMPLE(CpuSampler, "OutputToLCD",
+    {
+        m_DisplayBuffer.PrintToDisplay();
+    });
 }
