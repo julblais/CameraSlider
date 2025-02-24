@@ -5,8 +5,7 @@
 #include "appConfig.h"
 #include "menu.h"
 #include "src/input/input.h"
-#include "src/input/inputDispatcher.h"
-#include "src/input/inputReader.h"
+#include "src/input/event.h"
 #include "src/output/display.h"
 #include "src/output/displayBuffer.h"
 
@@ -28,10 +27,9 @@ namespace Slider
     private:
         AppConfig m_Config;
         std::unique_ptr<Display> m_Display;
-        std::unique_ptr<IDpadReader> m_Dpad;
-        std::unique_ptr<IJoystickReader> m_Joystick;
+        std::unique_ptr<Input::InputReader> m_InputReader;
         DisplayBuffer m_DisplayBuffer;
-        InputDispatcher m_InputDispatcher;
+        EventDispatcher m_InputDispatcher;
     };
 }
 

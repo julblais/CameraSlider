@@ -34,7 +34,14 @@ namespace Core
         constexpr T operator|(T lhs, T rhs)
         {
             return static_cast<T>(
-                static_cast<underlying_type<T>>(lhs) &
+                static_cast<underlying_type<T>>(lhs) |
+                static_cast<underlying_type<T>>(rhs));
+        }
+        template<typename T, is_type_enum<T> = true>
+        constexpr T operator^(T lhs, T rhs)
+        {
+            return static_cast<T>(
+                static_cast<underlying_type<T>>(lhs) ^
                 static_cast<underlying_type<T>>(rhs));
         }
 
@@ -45,36 +52,13 @@ namespace Core
         }
 
         template<typename T, is_type_enum<T> = true>
-        constexpr T operator^(T lhs, T rhs)
-        {
-            return static_cast<T>(
-                static_cast<underlying_type<T>>(lhs) ^
-                static_cast<underlying_type<T>>(rhs));
-        }
+        constexpr T& operator|=(T& lhs, T rhs) { return lhs = lhs | rhs; }
 
         template<typename T, is_type_enum<T> = true>
-        constexpr T operator|=(T lhs, T rhs)
-        {
-            return static_cast<T>(
-                static_cast<underlying_type<T>>(lhs) |=
-                static_cast<underlying_type<T>>(rhs));
-        }
+        constexpr T& operator&=(T& lhs, T rhs) { return lhs = lhs & rhs; }
 
         template<typename T, is_type_enum<T> = true>
-        constexpr T operator&=(T lhs, T rhs)
-        {
-            return static_cast<T>(
-                static_cast<underlying_type<T>>(lhs) &=
-                static_cast<underlying_type<T>>(rhs));
-        }
-
-        template<typename T, is_type_enum<T> = true>
-        constexpr T operator^=(T lhs, T rhs)
-        {
-            return static_cast<T>(
-                static_cast<underlying_type<T>>(lhs) ^=
-                static_cast<underlying_type<T>>(rhs));
-        }
+        constexpr T& operator^=(T& lhs, T rhs) { return lhs = lhs ^ rhs; }
     }
 }
 

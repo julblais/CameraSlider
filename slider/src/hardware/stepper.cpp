@@ -22,11 +22,11 @@ void Stepper::Update()
 
 bool Stepper::OnInputEvent(const Input::Event& inputEvent)
 {
-    if (inputEvent.joystickX < 0)
+    if (inputEvent.GetStickX() < 0)
     {
         m_Stepper.setSpeed(-50);
     }
-    else if (inputEvent.joystickX > 0)
+    else if (inputEvent.GetStickY() > 0)
     {
         m_Stepper.setSpeed(50);
     }

@@ -1,7 +1,6 @@
 #include "app.h"
 #include "src/hardware/lcd.h"
-#include "src/hardware/dpad.h"
-#include "src/hardware/joystick.h"
+#include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
 
 #include <esp32-hal-timer.h>
@@ -11,10 +10,10 @@ using namespace Output;
 
 static bool OnInputEvent(DisplayBuffer& display, const Event& event)
 {
-    if (event.HasJoystickChange())
+    if (event.HasChange())
     {
-        display.PrintLine(0, "Joystick ", event.IsJoystickPressed() ? "pressed" : "");
-        display.PrintLine(1, "X: ", event.joystickX, " Y: ", event.joystickY);
+        display.PrintLine(0, "Joystick ", event.IsStickCenter() ? "pressed" : "");
+        display.PrintLine(1, "X: ", event.GetStickX(), " Y: ", event.GetStickY());
     }
 
     return false;
@@ -31,19 +30,17 @@ void Slider::App::Setup()
     auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
 
-    auto dpad = new Hardware::Dpad(
-        m_Config.DpadUpPin,
-        m_Config.DpadDownPin,
-        m_Config.DpadLeftPin,
-        m_Config.DpadRightPin,
-        m_Config.DpadSelectionPin);
+    Hardware::InputPins pins;
+    pins.dpadUp = m_Config.DpadUpPin;
+    pins.dpadDown = m_Config.DpadDownPin;
+    pins.dpadLeft = m_Config.DpadLeftPin;
+    pins.dpadRight = m_Config.DpadRightPin;
+    pins.dpadSelection = m_Config.DpadSelectionPin;
+    pins.joystickCenter = m_Config.JoystickCenterPin;
+    pins.joystickHorizontal = m_Config.JoystickXPin;
+    pins.joystickVertical = m_Config.JoystickYPin;
 
-    m_Dpad = std::unique_ptr<IDpadReader>(dpad);
-
-    m_Joystick = std::unique_ptr<IJoystickReader>(new Hardware::Joystick(
-        m_Config.JoystickXPin,
-        m_Config.JoystickYPin,
-        m_Config.JoystickCenterPin));
+    m_InputReader = std::unique_ptr<Input::InputReader>(new Hardware::DeviceInputReader(pins));
 
     m_InputDispatcher.AddListener(menu);
     m_InputDispatcher.AddListener(stepper);
@@ -54,7 +51,7 @@ void Slider::App::Setup()
     SetupComponents();
     m_Display->Init();
     m_DisplayBuffer.Init(m_Display.get());
-    m_Dpad->Init();
+    m_InputReader->Setup();
 
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
 }
@@ -63,9 +60,10 @@ void Slider::App::Update()
 {
     TAKE_SAMPLE(CpuSampler, "ProcessInput",
     {
-        auto input = InputData(m_Dpad->ReadInput(), m_Joystick->ReadInput());
-        /*-> process received messages here <- */
+        auto input = m_InputReader->ReadInput();
         m_InputDispatcher.ProcessInput(input);
+        /*-> ProcessInput(message_from_controller) */
+        m_InputDispatcher.Dispatch();
     });
 
     //update all systems
