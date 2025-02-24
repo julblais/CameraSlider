@@ -8,16 +8,6 @@
 
 namespace Input
 {
-    struct EventDiff
-    {
-        EventDiff() = default;
-        EventDiff(ButtonEvent pressed, ButtonEvent released, bool stickMoved);
-        ButtonEvent released;
-        ButtonEvent pressed;
-        ButtonChange change;
-        bool stickMoved;
-    };
-
     struct Event
     {
         Event() = default;
@@ -50,10 +40,21 @@ namespace Input
         inline ButtonEvent GetButtonReleased() const { return diff.released; }
 
     private:
+        struct Diff
+        {
+            Diff() = default;
+            Diff(ButtonEvent pressed, ButtonEvent released, bool stickMoved);
+            ButtonEvent released;
+            ButtonEvent pressed;
+            ButtonChange change;
+            bool stickMoved;
+        };
+        static Diff CreateDiff(const Event& previous, const InputData& input);
+
         ButtonEvent button;
         float joystickX;
         float joystickY;
-        EventDiff diff;
+        Diff diff;
     };
 
     class EventDispatcher : public Core::EventSource<const Event&>

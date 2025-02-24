@@ -5,7 +5,7 @@
 using namespace Input;
 using namespace Core::Enums;
 
-Input::EventDiff::EventDiff(ButtonEvent pressed, ButtonEvent released, bool stickMoved)
+Event::Diff::Diff(ButtonEvent pressed, ButtonEvent released, bool stickMoved)
 : released(released), pressed(pressed), stickMoved(stickMoved), change(ButtonChange::None)
 {
     if (pressed != DpadNone)
@@ -14,7 +14,7 @@ Input::EventDiff::EventDiff(ButtonEvent pressed, ButtonEvent released, bool stic
         change |= ButtonChange::Released;
 }
 
-EventDiff CreateDiff(const Event& previous, const InputData& input)
+Event::Diff Event::CreateDiff(const Event& previous, const InputData& input)
 {
     ButtonEvent pressed = DpadNone;
     ButtonEvent released = DpadNone;
@@ -45,7 +45,7 @@ EventDiff CreateDiff(const Event& previous, const InputData& input)
         pressed = StickCenter;
 
     bool stickMoved = previous.GetStickX() != input.x || previous.GetStickY() != input.y;
-    return EventDiff(pressed, released, stickMoved);
+    return Diff(pressed, released, stickMoved);
 }
 
 Event::Event(const Event& previous, const InputData& input)
