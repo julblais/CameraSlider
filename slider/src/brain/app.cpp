@@ -2,6 +2,7 @@
 #include "src/hardware/lcd.h"
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
+#include "src/network/wifi.h"
 
 #include <esp32-hal-timer.h>
 
@@ -27,7 +28,8 @@ void Slider::App::Setup()
 {
     m_Display = std::unique_ptr<Display>(new Hardware::LCD(m_Config.LcdAddress));
     auto timer = AddComponent<TimerComponent>();
-    auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
+    auto wifi = AddComponent<Net::WifiModule>();
+    auto menu = AddComponent<Menu>(wifi, &m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
 
     Hardware::InputPins pins;
