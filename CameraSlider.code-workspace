@@ -57,7 +57,9 @@
 			"set": "cpp",
 			"*.tpp": "cpp",
 			"forward_list": "cpp",
-			"list": "cpp"
+			"list": "cpp",
+			"iostream": "cpp",
+			"variant": "cpp"
 		}
 	}
 }
