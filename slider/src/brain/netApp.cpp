@@ -35,11 +35,11 @@ WAITING_FOR_HANDSHAKE  │                            Handshake   │  SENDING_H
 //const uint8_t receiver_mac[6] = { 0x94, 0x54, 0xc5, 0x63, 0x0a, 0xec };
 //const uint8_t sender_mac[6] = { 0x5c, 0x01, 0x3b, 0x68, 0xb1, 0x0c};
 
-struct ConnectionRequest : public Printable
+struct ConnectionRequest2 : public Printable
 {
     uint8_t from[6];
 
-    ConnectionRequest(const MacAddress& address)
+    ConnectionRequest2(const MacAddress& address)
     {
         address.CopyTo(&from[0]);
     }
@@ -52,11 +52,11 @@ struct ConnectionRequest : public Printable
     }
 };
 
-struct Handshake : public Printable
+struct Handshake2 : public Printable
 {
     uint8_t from[6];
 
-    Handshake(const MacAddress& address)
+    Handshake2(const MacAddress& address)
     {
         address.CopyTo(&from[0]);
     }
@@ -80,13 +80,13 @@ struct InputMessage : public Printable
     }
 };
 
-REGISTER_MESSAGE_TYPE(ConnectionRequest, 1);
+REGISTER_MESSAGE_TYPE(ConnectionRequest2, 1);
 REGISTER_MESSAGE_TYPE(InputMessage, 2);
-REGISTER_MESSAGE_TYPE(Handshake, 3);
+REGISTER_MESSAGE_TYPE(Handshake2, 3);
 
 BrainApp::BrainApp(const AppConfig& config)
-    : state(ConnectionState::BROADCASTING), 
-    isComplete(false), 
+    : state(ConnectionState::BROADCASTING),
+    isComplete(false),
     m_Wifi(nullptr),
     m_Timeout()
 {}
@@ -102,31 +102,31 @@ void BrainApp::Setup()
     AddComponent(m_Wifi);
     SetupComponents();
 
-    m_Wifi->RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+    m_Wifi->RegisterReceiveCallback<ConnectionRequest2>("connection", [this](ConnectionRequest2 msg) {
         if (state != ConnectionState::BROADCASTING) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::SENDING_HANDSHAKE;
         controllerMac = msg.from;
     });
-    m_Wifi->RegisterReceiveCallback<Handshake>([this](Handshake msg) {
+    m_Wifi->RegisterReceiveCallback<Handshake2>("handshake", [this](Handshake2 msg) {
         if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::CONNECTED;
     });
-    m_Wifi->RegisterReceiveCallback<InputMessage>([this](InputMessage msg) {
+    m_Wifi->RegisterReceiveCallback<InputMessage>("input", [this](InputMessage msg) {
         LogInfo("Received: ", msg);
         isComplete = state == ConnectionState::CONNECTED;
     });
     m_Wifi->AddPeer(BROADCAST_ADDRESS);
 
     #ifdef IS_SIMULATOR
-    m_Wifi->RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+    m_Wifi->RegisterSimulateSendCallback<ConnectionRequest2>("connection", [this](ConnectionRequest2 msg) {
         MacAddress otherMac { {0x11, 0x22, 0x33, 0x44, 0x55, 0x66} };
-        ConnectionRequest connectMsg(otherMac);
+        ConnectionRequest2 connectMsg(otherMac);
         m_Wifi->SimulateSend(msg);
     });
-    m_Wifi->RegisterSimulateSendCallback<Handshake>([this](Handshake msg) {
-        Handshake handshake(MacAddress({ 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 }));
+    m_Wifi->RegisterSimulateSendCallback<Handshake2>("handshake", [this](Handshake2 msg) {
+        Handshake2 handshake(MacAddress({ 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 }));
         m_Wifi->SimulateSend(handshake);
         InputMessage inoutMsg;
         inoutMsg.x = 10;
@@ -149,7 +149,7 @@ void BrainApp::Update()
     if (state == ConnectionState::BROADCASTING)
     {
         LogInfo("Sending connection request...");
-        ConnectionRequest request(m_Wifi->GetMacAddress());
+        ConnectionRequest2 request(m_Wifi->GetMacAddress());
         m_Wifi->Send(BROADCAST_ADDRESS, request);
         delay(BRAIN_BROADCAST_DELAY);
     }
@@ -159,7 +159,7 @@ void BrainApp::Update()
         m_Wifi->RemovePeer(BROADCAST_ADDRESS);
         m_Wifi->AddPeer(controllerMac);
         LogInfo("Sending handshake message...");
-        Handshake handshake(m_Wifi->GetMacAddress());
+        Handshake2 handshake(m_Wifi->GetMacAddress());
         m_Wifi->Send(handshake);
         state = ConnectionState::WAITING_FOR_HANDSHAKE;
     }
@@ -184,22 +184,22 @@ void ControllerApp::Setup()
     AddComponent(m_Wifi);
     SetupComponents();
 
-    m_Wifi->RegisterReceiveCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+    m_Wifi->RegisterReceiveCallback<ConnectionRequest2>("connection", [this](ConnectionRequest2 msg) {
         if (state != ConnectionState::WAITING_FOR_CONNECTION) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::SENDING_REQUEST;
         brainMac = msg.from;
     });
-    m_Wifi->RegisterReceiveCallback<Handshake>([this](Handshake msg) {
+    m_Wifi->RegisterReceiveCallback<Handshake2>("input", [this](Handshake2 msg) {
         if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
         LogInfo("Received: ", msg);
         state = SENDING_HANDSHAKE;
     });
 
     #ifdef IS_SIMULATOR
-    m_Wifi->RegisterSimulateSendCallback<ConnectionRequest>([this](ConnectionRequest msg) {
+    m_Wifi->RegisterSimulateSendCallback<ConnectionRequest2>("connection", [this](ConnectionRequest2 msg) {
         MacAddress otherMac { {0x11, 0x22, 0x33, 0x44, 0x55, 0x66} };
-        Handshake hand(otherMac);
+        Handshake2 hand(otherMac);
         m_Wifi->SimulateSend(hand);
     });
     #endif
@@ -221,7 +221,7 @@ void ControllerApp::Update()
         #ifdef IS_SIMULATOR
                 //Simulate a connection from brain
         MacAddress receiverMac { {0x11, 0x22, 0x33, 0x44, 0x55, 0x66} };
-        ConnectionRequest msg(receiverMac);
+        ConnectionRequest2 msg(receiverMac);
         m_Wifi->SimulateSend(msg);
         #endif
     }
@@ -230,7 +230,7 @@ void ControllerApp::Update()
     {
         m_Wifi->AddPeer(brainMac);
         LogInfo("Sending connection request.");
-        ConnectionRequest request(m_Wifi->GetMacAddress());
+        ConnectionRequest2 request(m_Wifi->GetMacAddress());
         m_Wifi->Send(request);
         state = ConnectionState::WAITING_FOR_HANDSHAKE;
         return;
@@ -238,7 +238,7 @@ void ControllerApp::Update()
     if (state == ConnectionState::SENDING_HANDSHAKE)
     {
         LogInfo("Sending handshake to: ", brainMac);
-        Handshake handshake(m_Wifi->GetMacAddress());
+        Handshake2 handshake(m_Wifi->GetMacAddress());
         m_Wifi->Send(handshake);
         state = ConnectionState::CONNECTED;
         return;
