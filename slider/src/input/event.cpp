@@ -56,18 +56,6 @@ Event::Event(const Event& previous, const InputData& input)
     diff = CreateDiff(previous, input);
 }
 
-bool Event::operator==(const Event& other) const
-{
-    return button == other.button &&
-        joystickX == other.joystickX &&
-        joystickY == other.joystickY;
-}
-
-bool Event::operator!=(const Event& other) const
-{
-    return !(*this == other);
-}
-
 void Merge(const InputData& input, InputData& destination)
 {
     //last input wins
@@ -94,9 +82,6 @@ void EventDispatcher::ProcessInput(const InputData& input)
 #if LOG_LEVEL >= LOG_LEVEL_DEBUG
 void DebugPrint(const Event& lastEvent, const Event& event)
 {
-    if (lastEvent == event)
-        return;
-
     LogDebug("Event:");
     if (event.HasButtonChange())
     {

@@ -12,8 +12,6 @@ namespace Input
     {
         Event() = default;
         Event(const Event& previous, const InputData& input);
-        bool operator==(const Event& other) const;
-        bool operator!=(const Event& other) const;
 
         inline bool HasButtonChange() const
         {
