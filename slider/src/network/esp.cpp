@@ -139,7 +139,7 @@ bool Esp::Send(const uint8_t* address, const uint8_t* data, size_t len)
     }
     else
     {
-        LogInfo("Error sending message: ", esp_err_to_name(result));
+        LogError("Error sending message: ", esp_err_to_name(result));
         return false;
     }
 }
