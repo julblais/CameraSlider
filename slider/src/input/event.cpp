@@ -6,7 +6,7 @@ using namespace Input;
 using namespace Core::Enums;
 
 Event::Diff::Diff(ButtonEvent pressed, ButtonEvent released, bool stickMoved)
-: released(released), pressed(pressed), stickMoved(stickMoved), change(ButtonChange::None)
+    : released(released), pressed(pressed), stickMoved(stickMoved), change(ButtonChange::None)
 {
     if (pressed != DpadNone)
         change |= ButtonChange::Pressed;
@@ -82,16 +82,15 @@ void EventDispatcher::ProcessInput(const InputData& input)
 #if LOG_LEVEL >= LOG_LEVEL_DEBUG
 void DebugPrint(const Event& lastEvent, const Event& event)
 {
-    LogDebug("Event:");
     if (event.HasButtonChange())
     {
-        LogDebug("\tbutton:\t", Input::ToString(event.GetButtonEvent()),
+        LogDebug("\tEvent button:\t", Input::ToString(event.GetButtonEvent()),
             "\tpressed: ", Input::ToString(event.GetButtonPressed()),
             "\treleased: ", Input::ToString(event.GetButtonReleased()));
     }
     if (event.HasStickMoved())
     {
-        LogDebug("\tjoystick\t", event.GetStickX(), "\t", event.GetStickY());
+        LogDebug("\tEvent joystick\t", event.GetStickX(), "\t", event.GetStickY());
     }
 };
 #elif
