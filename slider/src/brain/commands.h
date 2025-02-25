@@ -6,6 +6,11 @@
 
 using namespace Core;
 
+namespace Net
+{
+    class WifiModule;
+}
+
 namespace Slider
 {
     class MaxSpeedCommand : public MenuCommand
@@ -21,6 +26,27 @@ namespace Slider
     public:
         virtual const char* GetTitle() override;
         virtual const char* GetDesc() override;
+        virtual void Invoke(MenuCommandButton command) override;
+    };
+
+    class BrainMacAddress : public MenuCommand
+    {
+    public:
+        BrainMacAddress(Net::WifiModule* wifiModule);
+        virtual const char* GetTitle() override;
+        virtual const char* GetDesc() override;
+        virtual bool ShowArrows() { return false; }
+        virtual void Invoke(MenuCommandButton command) override;
+    private:
+        Net::WifiModule* m_Wifi;
+    };
+
+    class ControllerMacAddress : public MenuCommand
+    {
+    public:
+        virtual const char* GetTitle() override;
+        virtual const char* GetDesc() override;
+        virtual bool ShowArrows() { return false; }
         virtual void Invoke(MenuCommandButton command) override;
     };
 }

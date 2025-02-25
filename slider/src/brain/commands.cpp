@@ -3,18 +3,19 @@
 #include "src/core/utils/mathUtils.h"
 
 using namespace Core;
+using namespace Slider;
 
-const char* Slider::MaxSpeedCommand::GetTitle()
+const char* MaxSpeedCommand::GetTitle()
 {
     return "Vitesse max.";
 }
 
-const char* Slider::SpeedCurveCommand::GetTitle()
+const char* SpeedCurveCommand::GetTitle()
 {
     return "Courbe vitesse";
 }
 
-const char* Slider::MaxSpeedCommand::GetDesc()
+const char* MaxSpeedCommand::GetDesc()
 {
     switch (Settings::GetInstance().GetSpeed())
     {
@@ -29,7 +30,7 @@ const char* Slider::MaxSpeedCommand::GetDesc()
     };
 }
 
-void Slider::MaxSpeedCommand::Invoke(MenuCommandButton command)
+void MaxSpeedCommand::Invoke(MenuCommandButton command)
 {
     const auto speed = Settings::GetInstance().GetSpeed();
     if (command == MenuCommand::ButtonLeft)
@@ -38,7 +39,7 @@ void Slider::MaxSpeedCommand::Invoke(MenuCommandButton command)
         Settings::GetInstance().SetSpeed(GetNextEnumValue(speed));
 }
 
-const char* Slider::SpeedCurveCommand::GetDesc()
+const char* SpeedCurveCommand::GetDesc()
 {
     switch (Settings::GetInstance().GetCurve())
     {
@@ -53,7 +54,7 @@ const char* Slider::SpeedCurveCommand::GetDesc()
     };
 }
 
-void Slider::SpeedCurveCommand::Invoke(MenuCommandButton command)
+void SpeedCurveCommand::Invoke(MenuCommandButton command)
 {
     const auto curve = Settings::GetInstance().GetCurve();
     if (command == MenuCommand::ButtonLeft)
@@ -61,3 +62,30 @@ void Slider::SpeedCurveCommand::Invoke(MenuCommandButton command)
     else if (command == MenuCommand::ButtonRight)
         Settings::GetInstance().SetCurve(GetNextEnumValue(curve));
 }
+
+BrainMacAddress::BrainMacAddress(Net::WifiModule* wifiModule)
+{}
+
+const char* BrainMacAddress::GetTitle()
+{
+    return "Mac address";
+}
+
+const char* BrainMacAddress::GetDesc()
+{
+    return m_Wifi->GetMacAddress().c_str();
+}
+
+void BrainMacAddress::Invoke(MenuCommandButton command) {}
+
+const char* ControllerMacAddress::GetTitle()
+{
+    return "Ctrl. address";
+}
+
+const char* ControllerMacAddress::GetDesc()
+{
+    return nullptr;
+}
+
+void ControllerMacAddress::Invoke(MenuCommandButton command) {}
