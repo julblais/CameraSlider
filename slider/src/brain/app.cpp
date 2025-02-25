@@ -8,6 +8,7 @@
 
 using namespace Input;
 using namespace Output;
+using namespace Net;
 
 static bool OnInputEvent(DisplayBuffer& display, const Event& event)
 {
@@ -28,7 +29,7 @@ void Slider::App::Setup()
 {
     m_Display = std::unique_ptr<Display>(new Hardware::LCD(m_Config.LcdAddress));
     auto timer = AddComponent<TimerComponent>();
-    auto wifi = AddComponent<Net::WifiComponent>();
+    auto wifi = AddComponent<WifiComponent>();
     auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
 
