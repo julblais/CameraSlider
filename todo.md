@@ -1,4 +1,3 @@
 - Add debug output levels (timer, system, menu, lcd, events)
 - Implement stepper controls
-- Merge Display and DisplayBuffer
 - Add timer to netApp when handshake is not received.
