@@ -3,16 +3,16 @@
 #include "settings.h"
 
 #include "src/debug.h"
-#include "src/output/displayBuffer.h"
+#include "src/core/output/display.h"
 
 #define MENU_INTRO_DELAY_MS 1500
 #define MENU_INTRO_MSG "   -- Menu --"
 
 using namespace Core;
 
-Slider::Menu::Menu(Output::DisplayBuffer* display, int delay) :
+Slider::Menu::Menu(Output::Display* display, int delay) :
     m_Delay(delay),
-    m_DisplayBuffer(display),
+    m_Display(display),
     m_ShowHideTimer(),
     m_IntroTimer(),
     m_MenuSystem(),
@@ -82,14 +82,14 @@ void Slider::Menu::OnSelectionLongPress()
     {
         m_IsIntroFinished = false;
         m_IntroTimer.Start(MENU_INTRO_DELAY_MS);
-        m_DisplayBuffer->Clear();
-        m_DisplayBuffer->Print(MENU_INTRO_MSG);
+        m_Display->Clear();
+        m_Display->Print(MENU_INTRO_MSG);
     }
     else
     {
         m_MenuSystem.Close();
         m_IntroTimer.Stop();
-        m_DisplayBuffer->Clear();
+        m_Display->Clear();
     }
 }
 
@@ -102,9 +102,5 @@ void Slider::Menu::OnIntroFinished()
 
 void Slider::Menu::OutputMenu()
 {
-    const auto out = m_MenuSystem.GetOutput();
-    const auto upDownArrows = m_DisplayBuffer->GetSymbol(Output::Symbol::UpDownArrows);
-    const auto leftRightArrows = m_DisplayBuffer->GetSymbol(Output::Symbol::LeftRightArrows);
-    m_DisplayBuffer->PrintLine(0, upDownArrows, out.title);
-    m_DisplayBuffer->PrintLine(1, " ", leftRightArrows, out.desc);
+    m_MenuSystem.Print(m_Display);
 }
