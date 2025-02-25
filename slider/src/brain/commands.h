@@ -31,19 +31,14 @@ namespace Slider
     class BrainMacAddress : public MenuCommand
     {
     public:
-        BrainMacAddress(Net::WifiModule* wifiModule);
         virtual void Print(Output::Display* display) const override;
-        virtual bool ShowArrows() { return false; }
         virtual void Invoke(MenuCommandButton command) override {}
-    private:
-        Net::WifiModule* m_Wifi;
     };
 
     class ControllerMacAddress : public MenuCommand
     {
     public:
         virtual void Print(Output::Display* display) const override;
-        virtual bool ShowArrows() { return false; }
         virtual void Invoke(MenuCommandButton command) override {}
     };
 }

@@ -4,7 +4,6 @@
 
 #include "src/debug.h"
 #include "src/core/output/display.h"
-#include "src/network/wifi.h"
 
 #define MENU_INTRO_DELAY_MS 1500
 #define MENU_INTRO_MSG "   -- Menu --"
@@ -12,13 +11,12 @@
 using namespace Core;
 using namespace Net;
 
-Slider::Menu::Menu(WifiModule* const wifi, Output::Display* display, int delay) :
+Slider::Menu::Menu(Output::Display* display, int delay) :
     m_Delay(delay),
     m_Display(display),
     m_ShowHideTimer(),
     m_IntroTimer(),
     m_MenuSystem(),
-    m_Wifi(wifi),
     m_IsIntroFinished(false)
 {
     m_ShowHideTimer = Timer::Create("Selection menu", [this]() {
@@ -31,7 +29,7 @@ void Slider::Menu::Setup()
 {
     m_MenuSystem.AddCommand(new MaxSpeedCommand());
     m_MenuSystem.AddCommand(new SpeedCurveCommand());
-    m_MenuSystem.AddCommand(new BrainMacAddress(m_Wifi));
+    m_MenuSystem.AddCommand(new BrainMacAddress());
     m_MenuSystem.AddCommand(new ControllerMacAddress());
 }
 

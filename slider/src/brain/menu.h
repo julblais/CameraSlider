@@ -23,7 +23,7 @@ namespace Slider {
     class Menu : public Core::Component
     {
     public:
-        Menu(Net::WifiModule* const wifi, Output::Display* display, int delay);
+        Menu(Output::Display* display, int delay);
         void Setup() override;
         void Update() override;
         bool OnInputEvent(const Input::Event& inputEvent);
@@ -34,7 +34,6 @@ namespace Slider {
         void OutputMenu();
 
         Output::Display* m_Display;
-        Net::WifiModule* m_Wifi;
         Core::Timer m_ShowHideTimer;
         Core::Timer m_IntroTimer;
         Core::MenuSystem m_MenuSystem;

@@ -1,7 +1,7 @@
 #include "commands.h"
 #include "settings.h"
 #include "src/core/utils/mathUtils.h"
-#include "src/network/wifi.h"
+#include "src/network/wifiModule.h"
 
 using namespace Core;
 using namespace Slider;
@@ -68,13 +68,10 @@ void SpeedCurveCommand::Invoke(MenuCommandButton command)
         Settings::GetInstance().SetCurve(GetNextEnumValue(curve));
 }
 
-BrainMacAddress::BrainMacAddress(Net::WifiModule* wifiModule)
-{}
-
 void Slider::BrainMacAddress::Print(Output::Display* display) const
 {
     PrintTitle(display, "Adr. mac");
-    display->PrintLine(1, " ", m_Wifi->GetMacAddress());
+    display->PrintLine(1, " ", Net::WifiModule::GetInstance().GetMacAddress());
 }
 
 void Slider::ControllerMacAddress::Print(Output::Display* display) const
