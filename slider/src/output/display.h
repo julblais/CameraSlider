@@ -2,7 +2,7 @@
 #define DISPLAY_H
 
 #include <Print.h>
-#include <Printable.h>
+#include "src/core/utils/templateUtils.h"
 
 namespace Output
 {
@@ -28,17 +28,33 @@ namespace Output
         uint8_t m_Id;
     };
 
-    class Display
+    class Display : public Print
     {
     public:
-        Display() = default;
-        virtual ~Display() = default;
-
         virtual void Init() {}
-        virtual size_t write(Keycode value) = 0;
         virtual void SetCursor(const int column, const int row) = 0;
         virtual SymbolHandle GetSymbol(Symbol symbol) const = 0;
+        virtual void Clear() = 0;
+
+        template <typename... TArgs> void Print(TArgs&&... args);
+        template <typename... TArgs> void PrintLine(const int line, TArgs&&... args);
+    protected:
+        virtual void FillCurrentLine() {}
     };
+
+    template <typename... TArgs>
+    inline void Display::Print(TArgs &&...args)
+    {
+        Core::PassParamPack { (print(args), 1)... };
+    }
+
+    template <typename... TArgs>
+    void Display::PrintLine(const int line, TArgs &&...args)
+    {
+        SetCursor(0, line);
+        Core::PassParamPack { (print(args), 1)... };
+        FillCurrentLine();
+    }
 }
 
 #endif
