@@ -4,7 +4,7 @@
 
 constexpr auto SPEED_KEY = "speed";
 constexpr auto CURVE_KEY = "curve";
-constexpr auto PEER_KEY = "curve";
+constexpr auto PEER_KEY = "peer";
 
 Slider::Settings::Settings() :
     m_Prefs()
