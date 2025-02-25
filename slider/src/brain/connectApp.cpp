@@ -2,7 +2,7 @@
 
 #include "src/debug.h"
 #include "src/core/network/address.h"
-#include "src/network/wifi.h"
+#include "src/network/wifiModule.h"
 #include "src/network/messages.h"
 #include "settings.h"
 
@@ -52,18 +52,18 @@ void BrainConnector::Setup()
 {
     LogInfo("Setup brain connector...");
 
-    m_Wifi->RegisterReceiveCallback<ConnectionRequest>("Brain-Connection", [this](ConnectionRequest msg) {
+    WifiModule::GetInstance().RegisterReceiveCallback<ConnectionRequest>("Brain-Connection", [this](ConnectionRequest msg) {
         if (state != ConnectionState::BROADCASTING) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::SENDING_HANDSHAKE;
         controllerMac = msg.from;
     });
-    m_Wifi->RegisterReceiveCallback<Handshake>("Brain-handshake", [this](Handshake msg) {
+    WifiModule::GetInstance().RegisterReceiveCallback<Handshake>("Brain-handshake", [this](Handshake msg) {
         if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::CONNECTED;
     });
-    m_Wifi->AddPeer(BROADCAST_ADDRESS);
+    WifiModule::GetInstance().AddPeer(BROADCAST_ADDRESS);
 }
 
 void BrainConnector::Update()
@@ -71,17 +71,17 @@ void BrainConnector::Update()
     if (state == ConnectionState::BROADCASTING)
     {
         LogInfo("Sending connection request...");
-        ConnectionRequest request(m_Wifi->GetMacAddress());
-        m_Wifi->Send(BROADCAST_ADDRESS, request);
+        ConnectionRequest request(WifiModule::GetInstance().GetMacAddress());
+        WifiModule::GetInstance().Send(BROADCAST_ADDRESS, request);
         delay(BRAIN_BROADCAST_DELAY);
     }
     else if (state == ConnectionState::SENDING_HANDSHAKE)
     {
-        m_Wifi->RemovePeer(BROADCAST_ADDRESS);
-        m_Wifi->AddPeer(controllerMac);
+        WifiModule::GetInstance().RemovePeer(BROADCAST_ADDRESS);
+        WifiModule::GetInstance().AddPeer(controllerMac);
         LogInfo("Sending handshake message...");
-        Handshake handshake(m_Wifi->GetMacAddress());
-        m_Wifi->Send(handshake);
+        Handshake handshake(WifiModule::GetInstance().GetMacAddress());
+        WifiModule::GetInstance().Send(handshake);
         state = ConnectionState::WAITING_FOR_HANDSHAKE;
     }
     else if (state == ConnectionState::CONNECTED)
@@ -107,13 +107,13 @@ void ControllerConnector::Setup()
 {
     LogInfo("Setup controller connector");
 
-    m_Wifi->RegisterReceiveCallback<ConnectionRequest>("Controller-connection", [this](ConnectionRequest msg) {
+    WifiModule::GetInstance().RegisterReceiveCallback<ConnectionRequest>("Controller-connection", [this](ConnectionRequest msg) {
         if (state != ConnectionState::WAITING_FOR_CONNECTION) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::SENDING_REQUEST;
         brainMac = msg.from;
     });
-    m_Wifi->RegisterReceiveCallback<Handshake>("Controller-handshake", [this](Handshake msg) {
+    WifiModule::GetInstance().RegisterReceiveCallback<Handshake>("Controller-handshake", [this](Handshake msg) {
         if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::SENDING_HANDSHAKE;
@@ -129,17 +129,17 @@ void ControllerConnector::Update()
     }
     else if (state == ConnectionState::SENDING_REQUEST)
     {
-        m_Wifi->AddPeer(brainMac);
+        WifiModule::GetInstance().AddPeer(brainMac);
         LogInfo("Sending connection request.");
-        ConnectionRequest request(m_Wifi->GetMacAddress());
-        m_Wifi->Send(request);
+        ConnectionRequest request(WifiModule::GetInstance().GetMacAddress());
+        WifiModule::GetInstance().Send(request);
         state = ConnectionState::WAITING_FOR_HANDSHAKE;
     }
     else if (state == ConnectionState::SENDING_HANDSHAKE)
     {
         LogInfo("Sending handshake to: ", brainMac);
-        Handshake handshake(m_Wifi->GetMacAddress());
-        m_Wifi->Send(handshake);
+        Handshake handshake(WifiModule::GetInstance().GetMacAddress());
+        WifiModule::GetInstance().Send(handshake);
         Slider::Settings::GetInstance().SetPeerAddress(brainMac);
         state = ConnectionState::CONNECTED;
     }
