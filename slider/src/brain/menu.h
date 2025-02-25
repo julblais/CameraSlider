@@ -20,6 +20,7 @@ namespace Slider {
     public:
         Menu(Output::DisplayBuffer* display, int delay);
         void Setup() override;
+        void Update() override;
         bool OnInputEvent(const Input::Event& inputEvent);
 
     private:

@@ -30,6 +30,11 @@ void Slider::Menu::Setup()
     m_MenuSystem.AddCommand(new SpeedCurveCommand());
 }
 
+void Slider::Menu::Update()
+{
+    m_MenuSystem.Update();
+}
+
 bool Slider::Menu::OnInputEvent(const Input::Event& evt)
 {
     auto buttonChange = evt.GetButtonChange();
