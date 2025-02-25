@@ -11,11 +11,6 @@ namespace Output
     class Display;
 };
 
-namespace Net
-{
-    class WifiModule;
-}
-
 using namespace Input;
 
 namespace Slider {

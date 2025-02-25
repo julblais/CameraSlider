@@ -9,7 +9,6 @@
 #define MENU_INTRO_MSG "   -- Menu --"
 
 using namespace Core;
-using namespace Net;
 
 Slider::Menu::Menu(Output::Display* display, int delay) :
     m_Delay(delay),

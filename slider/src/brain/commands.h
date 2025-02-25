@@ -7,11 +7,6 @@
 
 using namespace Core;
 
-namespace Net
-{
-    class WifiModule;
-}
-
 namespace Slider
 {
     class MaxSpeedCommand : public MenuCommand
