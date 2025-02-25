@@ -1,7 +1,13 @@
-#include "wifi.h"
+#include "wifiModule.h"
 #include "src/debug.h"
 
 using namespace Net;
+
+WifiModule& WifiModule::GetInstance()
+{
+    static WifiModule instance;
+    return instance;
+}
 
 #ifndef IS_SIMULATOR
 

@@ -1,7 +1,6 @@
 #ifndef WIFI_H
 #define WIFI_H
 
-#include "src/core/component/component.h"
 #include "src/core/network/messageHandler.h"
 #include "src/core/network/address.h"
 
@@ -9,11 +8,13 @@ using namespace Core;
 
 namespace Net
 {
-    class WifiModule : public Component
+    class WifiModule
     {
     public:
-        virtual void Setup() override;
-        virtual void Update() override;
+        static WifiModule& GetInstance();
+
+        void Setup();
+        void Update();
 
         MacAddress GetMacAddress();
         bool AddPeer(const MacAddress& address);
@@ -32,6 +33,9 @@ namespace Net
     private:
         bool SendImpl(const uint8_t* address, const uint8_t* data, size_t len);
         MessageHandler m_MessageHandler;
+    private:
+        WifiModule() = default;
+        WifiModule(const WifiModule&) = delete;
 
         #ifdef IS_SIMULATOR
     private:
