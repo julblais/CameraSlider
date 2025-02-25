@@ -2,6 +2,7 @@
 #define CMDS_H
 
 #include "src/core/menu/menuSystem.h"
+#include "src/core/output/display.h"
 #include "settings.h"
 
 using namespace Core;

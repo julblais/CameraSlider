@@ -2,6 +2,7 @@
 #define MENU_SYSTEM_H
 
 #include "src/debug.h"
+#include "src/core/output/display.h"
 
 #include <vector>
 #include <memory>

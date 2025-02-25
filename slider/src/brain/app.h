@@ -6,7 +6,7 @@
 #include "menu.h"
 #include "src/input/input.h"
 #include "src/input/event.h"
-#include "src/output/display.h"
+#include "src/core/output/display.h"
 #include "src/output/displayBuffer.h"
 
 #include <memory>

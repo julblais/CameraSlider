@@ -1,7 +1,7 @@
 #ifndef DISPLAY_BUFFER_H
 #define DISPLAY_BUFFER_H
 
-#include "display.h"
+#include "src/core/output/display.h"
 
 #include <array>
 #include <Print.h>

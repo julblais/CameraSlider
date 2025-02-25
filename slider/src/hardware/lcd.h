@@ -2,7 +2,7 @@
 #define LCD_H
 
 #include <LiquidCrystal_I2C.h>
-#include "src/output/display.h"
+#include "src/core/output/display.h"
 #include <array>
 #include <type_traits>
 

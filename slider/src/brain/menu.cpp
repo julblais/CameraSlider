@@ -3,7 +3,7 @@
 #include "settings.h"
 
 #include "src/debug.h"
-#include "src/output/displayBuffer.h"
+#include "src/core/output/display.h"
 
 #define MENU_INTRO_DELAY_MS 1500
 #define MENU_INTRO_MSG "   -- Menu --"
