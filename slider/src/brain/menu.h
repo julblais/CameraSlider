@@ -8,7 +8,7 @@
 
 namespace Output
 {
-    class DisplayBuffer;
+    class Display;
 };
 
 namespace Net
@@ -23,7 +23,7 @@ namespace Slider {
     class Menu : public Core::Component
     {
     public:
-        Menu(Net::WifiModule* const wifi, Output::DisplayBuffer* display, int delay);
+        Menu(Net::WifiModule* const wifi, Output::Display* display, int delay);
         void Setup() override;
         void Update() override;
         bool OnInputEvent(const Input::Event& inputEvent);
@@ -33,7 +33,7 @@ namespace Slider {
         void OnIntroFinished();
         void OutputMenu();
 
-        Output::DisplayBuffer* m_DisplayBuffer;
+        Output::Display* m_Display;
         Net::WifiModule* m_Wifi;
         Core::Timer m_ShowHideTimer;
         Core::Timer m_IntroTimer;

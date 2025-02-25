@@ -1,5 +1,4 @@
 #include "displayBuffer.h"
-#include "src/output/display.h"
 
 Output::DisplayBuffer::DisplayBuffer() :
     m_Display(nullptr)

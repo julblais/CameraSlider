@@ -5,19 +5,24 @@
 using namespace Core;
 using namespace Slider;
 
-const char* MaxSpeedCommand::GetTitle()
+const char* GetDesc(Settings::Curve curve)
 {
-    return "Vitesse max.";
+    switch (curve)
+    {
+        case Settings::CurveLinear:
+            return "Lineaire";
+        case Settings::CurveQuadratic:
+            return "Quadratique";
+        case Settings::CurveExponential:
+            return "Exponentielle";
+        default:
+            return nullptr;
+    };
 }
 
-const char* SpeedCurveCommand::GetTitle()
+const char* GetDesc(Settings::Speed speed)
 {
-    return "Courbe vitesse";
-}
-
-const char* MaxSpeedCommand::GetDesc()
-{
-    switch (Settings::GetInstance().GetSpeed())
+    switch (speed)
     {
         case Settings::SpeedSlow:
             return "Pas vite";
@@ -30,6 +35,20 @@ const char* MaxSpeedCommand::GetDesc()
     };
 }
 
+void MaxSpeedCommand::Print(Output::Display* display) const
+{
+    PrintTitle(display, "Vitesse max.");
+    auto desc = GetDesc(Settings::GetInstance().GetSpeed());
+    PrintDescription(display, desc);
+}
+
+void SpeedCurveCommand::Print(Output::Display* display) const
+{
+    PrintTitle(display, "Courbe vitesse");
+    auto desc = GetDesc(Settings::GetInstance().GetCurve());
+    PrintDescription(display, desc);
+}
+
 void MaxSpeedCommand::Invoke(MenuCommandButton command)
 {
     const auto speed = Settings::GetInstance().GetSpeed();
@@ -37,21 +56,6 @@ void MaxSpeedCommand::Invoke(MenuCommandButton command)
         Settings::GetInstance().SetSpeed(GetPreviousEnumValue(speed));
     else if (command == MenuCommand::ButtonRight)
         Settings::GetInstance().SetSpeed(GetNextEnumValue(speed));
-}
-
-const char* SpeedCurveCommand::GetDesc()
-{
-    switch (Settings::GetInstance().GetCurve())
-    {
-        case Settings::CurveLinear:
-            return "Lineaire";
-        case Settings::CurveQuadratic:
-            return "Quadratique";
-        case Settings::CurveExponential:
-            return "Exponentielle";
-        default:
-            return nullptr;
-    };
 }
 
 void SpeedCurveCommand::Invoke(MenuCommandButton command)
