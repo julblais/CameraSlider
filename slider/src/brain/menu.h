@@ -32,6 +32,7 @@ namespace Slider {
         Core::Timer m_IntroTimer;
         Core::MenuSystem m_MenuSystem;
         const int m_Delay;
+        bool m_IsIntroFinished;
     };
 }
 

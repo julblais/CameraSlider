@@ -44,8 +44,6 @@ namespace Core
     class MenuSystem
     {
     public:
-        enum class State { Hidden = 0, Intro = 1, Shown = 2 };
-
         MenuSystem();
 
         void Open();
@@ -53,12 +51,8 @@ namespace Core
         void Update();
 
         void AddCommand(MenuCommand* command);
-        inline State GetState() const { return m_State; }
-        inline bool IsHidden() const { return m_State == State::Hidden; }
-        inline bool IsShown() const { return m_State == State::Shown; }
-        inline bool IsIntro() const { return m_State == State::Intro; }
-
-        inline void SetState(State state) { m_State = state; }
+        inline bool IsHidden() const { return !m_IsOpened; }
+        inline bool IsShown() const { return m_IsOpened; }
 
         void Up();
         void Down();
@@ -71,7 +65,7 @@ namespace Core
     private:
         std::vector<std::unique_ptr<MenuCommand>> m_Items;
         int m_Index;
-        State m_State;
+        bool m_IsOpened;
     };
 }
 

@@ -6,30 +6,30 @@ using namespace Core;
 MenuSystem::MenuSystem() :
     m_Items(),
     m_Index(0),
-    m_State(State::Hidden)
+    m_IsOpened(false)
 {}
 
 void MenuSystem::Open()
 {
-    m_State = State::Shown;
+    m_IsOpened = true;
+    m_Index = 0;
     for (auto& item : m_Items)
         item->OnOpenMenu();
-    m_Index = 0;
     m_Items[m_Index]->OnShow();
 }
 
 void MenuSystem::Close()
 {
-    m_State = State::Hidden;
     m_Items[m_Index]->OnHide();
     for (auto& item : m_Items)
         item->OnCloseMenu();
     m_Index = -1;
+    m_IsOpened = false;
 }
 
 void MenuSystem::Update()
 {
-    if (m_State == State::Shown)
+    if (m_IsOpened)
         m_Items[m_Index]->OnUpdate();
 }
 
@@ -37,6 +37,7 @@ void MenuSystem::AddCommand(MenuCommand* command)
 {
     m_Items.emplace_back(command);
 }
+
 void MenuSystem::Up()
 {
     auto oldIdx = m_Index;
