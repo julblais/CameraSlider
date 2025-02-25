@@ -19,7 +19,7 @@ Slider::Menu::Menu(WifiModule* const wifi, Output::DisplayBuffer* display, int d
     m_IntroTimer(),
     m_MenuSystem(),
     m_Wifi(wifi),
-    m_State(State::Hidden)
+    m_IsIntroFinished(false)
 {
     m_ShowHideTimer = Timer::Create("Selection menu", [this]() {
         OnSelectionLongPress(); });
@@ -31,6 +31,11 @@ void Slider::Menu::Setup()
 {
     m_MenuSystem.AddCommand(new MaxSpeedCommand());
     m_MenuSystem.AddCommand(new SpeedCurveCommand());
+}
+
+void Slider::Menu::Update()
+{
+    m_MenuSystem.Update();
 }
 
 bool Slider::Menu::OnInputEvent(const Input::Event& evt)
@@ -46,7 +51,7 @@ bool Slider::Menu::OnInputEvent(const Input::Event& evt)
         auto button = evt.GetButtonEvent();
         if (button == Input::DpadSelect)
             m_ShowHideTimer.Start(m_Delay);
-        if (m_State == State::Shown)
+        if (m_MenuSystem.IsShown())
         {
             switch (button)
             {
@@ -71,21 +76,21 @@ bool Slider::Menu::OnInputEvent(const Input::Event& evt)
         }
     }
 
-    return m_State != State::Hidden;
+    return !m_MenuSystem.IsHidden() || !m_IsIntroFinished;
 }
 
 void Slider::Menu::OnSelectionLongPress()
 {
-    if (m_State == State::Hidden) //show intro
+    if (m_MenuSystem.IsHidden()) //show intro
     {
-        m_State = State::Intro;
+        m_IsIntroFinished = false;
         m_IntroTimer.Start(MENU_INTRO_DELAY_MS);
         m_DisplayBuffer->Clear();
         m_DisplayBuffer->Print(MENU_INTRO_MSG);
     }
     else
-    { //quit menu
-        m_State = State::Hidden;
+    {
+        m_MenuSystem.Close();
         m_IntroTimer.Stop();
         m_DisplayBuffer->Clear();
     }
@@ -93,9 +98,8 @@ void Slider::Menu::OnSelectionLongPress()
 
 void Slider::Menu::OnIntroFinished()
 {
-    //show menu
-    m_State = State::Shown;
-    m_MenuSystem.Reset();
+    m_IsIntroFinished = true;
+    m_MenuSystem.Open();
     OutputMenu();
 }
 

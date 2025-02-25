@@ -25,11 +25,10 @@ namespace Slider {
     public:
         Menu(Net::WifiModule* const wifi, Output::DisplayBuffer* display, int delay);
         void Setup() override;
+        void Update() override;
         bool OnInputEvent(const Input::Event& inputEvent);
 
     private:
-        enum class State { Hidden = 0, Intro = 1, Shown = 2 };
-
         void OnSelectionLongPress();
         void OnIntroFinished();
         void OutputMenu();
@@ -40,7 +39,7 @@ namespace Slider {
         Core::Timer m_IntroTimer;
         Core::MenuSystem m_MenuSystem;
         const int m_Delay;
-        State m_State;
+        bool m_IsIntroFinished;
     };
 }
 
