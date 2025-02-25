@@ -23,23 +23,18 @@ namespace Core
         static constexpr auto ButtonRight = MenuCommandButton::RIGHT;
         static constexpr auto ButtonSelect = MenuCommandButton::SELECT;
 
+        static void PrintTitle(Output::Display* display, const char* title);
+        static void PrintDescription(Output::Display* display, const char* description);
+
         virtual ~MenuCommand() = default;
+        virtual void Print(Output::Display* display) const = 0;
+        virtual void Invoke(MenuCommandButton command) = 0;
+
         virtual void OnOpenMenu() {};
         virtual void OnCloseMenu() {};
         virtual void OnShow() {};
         virtual void OnUpdate() {};
         virtual void OnHide() {};
-        virtual const char* GetTitle() = 0;
-        virtual const char* GetDesc() = 0;
-        virtual void Invoke(MenuCommandButton command) = 0;
-    };
-
-    struct MenuOutput
-    {
-        const char* title;
-        const char* desc;
-
-        MenuOutput(const char* title, const char* desc);
     };
 
     class MenuSystem
@@ -50,6 +45,7 @@ namespace Core
         void Open();
         void Close();
         void Update();
+        void Print(Output::Display* display);
 
         void AddCommand(MenuCommand* command);
         inline bool IsHidden() const { return !m_IsOpened; }
@@ -60,8 +56,6 @@ namespace Core
         void Left();
         void Right();
         void Select();
-
-        MenuOutput GetOutput() const;
 
     private:
         std::vector<std::unique_ptr<MenuCommand>> m_Items;
