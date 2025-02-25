@@ -34,6 +34,11 @@ void Slider::Settings::SetCurve(Curve value)
     m_Prefs.putChar(CURVE_KEY, static_cast<char>(value));
 }
 
+bool Slider::Settings::HasPeerAddress() const
+{
+    return m_Prefs.isKey(PEER_KEY);
+}
+
 Core::MacAddress Slider::Settings::GetPeerAddress() const
 {
     uint8_t buffer[6];

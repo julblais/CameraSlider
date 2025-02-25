@@ -32,10 +32,9 @@ namespace Slider
     {
     public:
         BrainMacAddress(Net::WifiModule* wifiModule);
-        virtual const char* GetTitle() override;
-        virtual const char* GetDesc() override;
+        virtual void Print(Output::Display* display) const override;
         virtual bool ShowArrows() { return false; }
-        virtual void Invoke(MenuCommandButton command) override;
+        virtual void Invoke(MenuCommandButton command) override {}
     private:
         Net::WifiModule* m_Wifi;
     };
@@ -43,10 +42,9 @@ namespace Slider
     class ControllerMacAddress : public MenuCommand
     {
     public:
-        virtual const char* GetTitle() override;
-        virtual const char* GetDesc() override;
+        virtual void Print(Output::Display* display) const override;
         virtual bool ShowArrows() { return false; }
-        virtual void Invoke(MenuCommandButton command) override;
+        virtual void Invoke(MenuCommandButton command) override {}
     };
 }
 

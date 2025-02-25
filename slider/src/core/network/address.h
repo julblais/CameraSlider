@@ -10,7 +10,7 @@ namespace Core
     struct MacAddress : public Printable
     {
     public:
-        MacAddress();
+        MacAddress() = default;
         MacAddress(const std::array<uint8_t, 6> address);
         MacAddress(const uint8_t* address);
 

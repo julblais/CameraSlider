@@ -1,6 +1,7 @@
 #include "commands.h"
 #include "settings.h"
 #include "src/core/utils/mathUtils.h"
+#include "src/network/wifi.h"
 
 using namespace Core;
 using namespace Slider;
@@ -70,26 +71,17 @@ void SpeedCurveCommand::Invoke(MenuCommandButton command)
 BrainMacAddress::BrainMacAddress(Net::WifiModule* wifiModule)
 {}
 
-const char* BrainMacAddress::GetTitle()
+void Slider::BrainMacAddress::Print(Output::Display* display) const
 {
-    return "Mac address";
+    PrintTitle(display, "Adr. mac");
+    display->PrintLine(1, " ", m_Wifi->GetMacAddress());
 }
 
-const char* BrainMacAddress::GetDesc()
+void Slider::ControllerMacAddress::Print(Output::Display* display) const
 {
-    return m_Wifi->GetMacAddress().c_str();
+    PrintTitle(display, "Adr. manette");
+    if (Settings::GetInstance().HasPeerAddress())
+        display->PrintLine(1, " ", Settings::GetInstance().GetPeerAddress());
+    else
+        display->PrintLine(1, " ", "Aucune manette");
 }
-
-void BrainMacAddress::Invoke(MenuCommandButton command) {}
-
-const char* ControllerMacAddress::GetTitle()
-{
-    return "Ctrl. address";
-}
-
-const char* ControllerMacAddress::GetDesc()
-{
-    return nullptr;
-}
-
-void ControllerMacAddress::Invoke(MenuCommandButton command) {}
