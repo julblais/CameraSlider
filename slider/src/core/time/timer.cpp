@@ -89,20 +89,22 @@ Timer Timer::Create(const char* name, const Callback& callback)
     return Timer(handle, std::move(userData));
 }
 
-void Timer::Start(Time delayMs)
+void Timer::Start(Time delayMs) const
 {
-    esp_timer_start_once(m_Handle, delayMs * 1000);
+    if (m_Handle)
+        esp_timer_start_once(m_Handle, delayMs * 1000);
 }
 
-void Timer::Stop()
+void Timer::Stop() const
 {
-    esp_timer_stop(m_Handle);
+    if (m_Handle)
+        esp_timer_stop(m_Handle);
 }
 
-void Timer::Restart(Time delay)
+void Timer::Restart(Time delay) const
 {
     Stop();
-    esp_timer_start_once(m_Handle, delay);
+    Start(delay);
 }
 
 #elif
