@@ -93,7 +93,7 @@ void Timer::Start(Time delayMs, bool periodic) const
     if (m_Handle)
     {
         if (periodic)
-            esp_timer_start_once(m_Handle, delayMs * 1000);
+            esp_timer_start_periodic(m_Handle, delayMs * 1000);
         else
             esp_timer_start_once(m_Handle, delayMs * 1000);
     }
