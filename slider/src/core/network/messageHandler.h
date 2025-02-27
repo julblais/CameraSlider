@@ -3,6 +3,8 @@
 
 #include "message.h"
 #include "src/debug.h"
+#include "invokerBase.h"
+#include "messageCallbackHandle.h"
 
 #include <vector>
 #include <functional>
@@ -13,23 +15,6 @@
 
 namespace Core
 {
-    class InvokerBase
-    {
-    public:
-        InvokerBase(const char* name);
-        virtual void Invoke(const uint8_t* data, size_t length) const = 0;
-        virtual ~InvokerBase() = default;
-        const char* name;
-    };
-
-    struct MessageCallbackHandle
-    {
-        friend class MessageHandler;
-    private:
-        MessageCallbackHandle(InvokerBase* invoker) : invoker(invoker) {}
-        InvokerBase* invoker;
-    };
-
     class MessageHandler
     {
         template <class TMessage>

@@ -5,6 +5,8 @@
 #include "src/core/time/timer.h"
 #include "src/core/app/appBase.h"
 #include "src/core/network/address.h"
+#include "src/core/network/messageCallbackHandle.h"
+#include <vector>
 
 namespace Net { class WifiModule; }
 
@@ -31,6 +33,7 @@ namespace Slider
         ConnectionState state;
         bool isComplete;
         Core::MacAddress controllerMac;
+        std::vector<Core::MessageCallbackHandle> m_Callbacks;
     };
 
     class ControllerConnector : public Core::Component
@@ -56,6 +59,7 @@ namespace Slider
         bool isComplete;
         Core::MacAddress brainMac;
         Core::Timer m_Timeout;
+        std::vector<Core::MessageCallbackHandle> m_Callbacks;
     };
 }
 

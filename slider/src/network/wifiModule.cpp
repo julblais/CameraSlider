@@ -42,6 +42,11 @@ bool WifiModule::RemovePeer(const MacAddress& address)
     return Esp::RemovePeer(address);
 }
 
+void Net::WifiModule::RemoveReceiveCallback(const MessageCallbackHandle& handle)
+{
+    m_MessageHandler.RemoveCallback(handle);
+}
+
 void WifiModule::RegisterSendCallback(std::function<void(const MacAddress&, bool)> callback)
 {
     Esp::RegisterSendCallback(callback);
@@ -84,6 +89,11 @@ bool WifiModule::RemovePeer(const MacAddress& address)
 void WifiModule::RegisterSendCallback(std::function<void(const MacAddress&, bool)> callback)
 {
     s_SendCallback = callback;
+}
+
+void Net::WifiModule::RemoveReceiveCallback(const MessageCallbackHandle& handle)
+{
+    m_MessageHandler.RemoveCallback(handle);
 }
 
 bool WifiModule::SendImpl(const uint8_t* address, const uint8_t* data, size_t len)

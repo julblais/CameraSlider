@@ -45,24 +45,29 @@ BrainConnector::BrainConnector(Net::WifiModule* const wifi)
 
 BrainConnector::~BrainConnector()
 {
-    //remove callbacks
+    for (const auto& handle : m_Callbacks)
+        WifiModule::GetInstance().RemoveReceiveCallback(handle);
 }
 
 void BrainConnector::Setup()
 {
     LogInfo("Setup brain connector...");
 
-    WifiModule::GetInstance().RegisterReceiveCallback<ConnectionRequest>("Brain-Connection", [this](ConnectionRequest msg) {
+    auto connect = WifiModule::GetInstance().RegisterReceiveCallback<ConnectionRequest>("Brain-Connection",
+        [this](ConnectionRequest msg) {
         if (state != ConnectionState::BROADCASTING) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::SENDING_HANDSHAKE;
         controllerMac = msg.from;
     });
-    WifiModule::GetInstance().RegisterReceiveCallback<Handshake>("Brain-handshake", [this](Handshake msg) {
+    auto handshake = WifiModule::GetInstance().RegisterReceiveCallback<Handshake>("Brain-handshake",
+        [this](Handshake msg) {
         if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::CONNECTED;
     });
+    m_Callbacks.push_back(connect);
+    m_Callbacks.push_back(handshake);
     WifiModule::GetInstance().AddPeer(BROADCAST_ADDRESS);
 }
 
@@ -100,24 +105,29 @@ ControllerConnector::ControllerConnector(Net::WifiModule* const wifi) :
 
 ControllerConnector::~ControllerConnector()
 {
-    //remove callbacks
+    for (const auto& handle : m_Callbacks)
+        WifiModule::GetInstance().RemoveReceiveCallback(handle);
 }
 
 void ControllerConnector::Setup()
 {
     LogInfo("Setup controller connector");
 
-    WifiModule::GetInstance().RegisterReceiveCallback<ConnectionRequest>("Controller-connection", [this](ConnectionRequest msg) {
+    auto connect = WifiModule::GetInstance().RegisterReceiveCallback<ConnectionRequest>("Controller-connection",
+        [this](ConnectionRequest msg) {
         if (state != ConnectionState::WAITING_FOR_CONNECTION) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::SENDING_REQUEST;
         brainMac = msg.from;
     });
-    WifiModule::GetInstance().RegisterReceiveCallback<Handshake>("Controller-handshake", [this](Handshake msg) {
+    auto handshake = WifiModule::GetInstance().RegisterReceiveCallback<Handshake>("Controller-handshake",
+        [this](Handshake msg) {
         if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
         LogInfo("Received: ", msg);
         state = ConnectionState::SENDING_HANDSHAKE;
     });
+    m_Callbacks.push_back(connect);
+    m_Callbacks.push_back(handshake);
 }
 
 void ControllerConnector::Update()

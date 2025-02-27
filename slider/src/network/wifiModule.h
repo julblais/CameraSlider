@@ -22,6 +22,8 @@ namespace Net
 
         template <typename TMessage>
         MessageCallbackHandle RegisterReceiveCallback(const char* name, std::function<void(TMessage)> callback);
+        void RemoveReceiveCallback(const MessageCallbackHandle& handle);
+        
         void RegisterSendCallback(std::function<void(const MacAddress&, bool)> callback);
 
         template <typename TMessage>
