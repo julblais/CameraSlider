@@ -26,14 +26,14 @@ namespace Slider
     class BrainMacAddress : public MenuCommand
     {
     public:
-        virtual void Print(Output::Display* display) const override;
+        virtual void Print(Core::Display* display) const override;
         virtual void Invoke(MenuCommandButton command) override {}
     };
 
     class ControllerMacAddress : public MenuCommand
     {
     public:
-        virtual void Print(Output::Display* display) const override;
+        virtual void Print(Core::Display* display) const override;
         virtual void Invoke(MenuCommandButton command) override {}
     };
 }
