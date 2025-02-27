@@ -1,7 +1,13 @@
-#include "wifi.h"
+#include "wifiModule.h"
 #include "src/debug.h"
 
 using namespace Net;
+
+WifiModule& WifiModule::GetInstance()
+{
+    static WifiModule instance;
+    return instance;
+}
 
 #ifndef IS_SIMULATOR
 
@@ -34,6 +40,11 @@ bool WifiModule::AddPeer(const MacAddress& address)
 bool WifiModule::RemovePeer(const MacAddress& address)
 {
     return Esp::RemovePeer(address);
+}
+
+void Net::WifiModule::RemoveReceiveCallback(const MessageCallbackHandle& handle)
+{
+    m_MessageHandler.RemoveCallback(handle);
 }
 
 void WifiModule::RegisterSendCallback(std::function<void(const MacAddress&, bool)> callback)
@@ -78,6 +89,11 @@ bool WifiModule::RemovePeer(const MacAddress& address)
 void WifiModule::RegisterSendCallback(std::function<void(const MacAddress&, bool)> callback)
 {
     s_SendCallback = callback;
+}
+
+void Net::WifiModule::RemoveReceiveCallback(const MessageCallbackHandle& handle)
+{
+    m_MessageHandler.RemoveCallback(handle);
 }
 
 bool WifiModule::SendImpl(const uint8_t* address, const uint8_t* data, size_t len)

@@ -6,8 +6,6 @@
 #include "src/core/app/appBase.h"
 #include "src/core/network/address.h"
 
-namespace Net { class WifiModule; }
-
 enum ConnectionState
 {
     BROADCASTING,
@@ -26,7 +24,6 @@ public:
     virtual void Update() override;
 
 private:
-    Net::WifiModule* m_Wifi;
     ConnectionState state;
     bool isComplete;
     Core::MacAddress controllerMac;
@@ -42,7 +39,6 @@ public:
     virtual void Update() override;
 
 private:
-    Net::WifiModule* m_Wifi;
     ConnectionState state;
     bool isComplete;
     Core::MacAddress brainMac;

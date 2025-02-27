@@ -17,10 +17,10 @@ namespace Slider
     using namespace Input;
     using namespace Output;
 
-    class App : public Core::AppBase
+    class SimulatorApp : public Core::AppBase
     {
     public:
-        App(const AppConfig& config);
+        SimulatorApp(const AppConfig& config);
         virtual void Setup() override;
         virtual void Update() override;
 

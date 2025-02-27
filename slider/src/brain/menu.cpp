@@ -28,6 +28,8 @@ void Slider::Menu::Setup()
 {
     m_MenuSystem.AddCommand(new MaxSpeedCommand());
     m_MenuSystem.AddCommand(new SpeedCurveCommand());
+    m_MenuSystem.AddCommand(new BrainMacAddress());
+    m_MenuSystem.AddCommand(new ControllerMacAddress());
 }
 
 void Slider::Menu::Update()

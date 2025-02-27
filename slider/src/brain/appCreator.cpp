@@ -6,7 +6,7 @@
 #ifdef TEST_NETWORK
 #include "src/brain/netApp.h"
 #else
-#include "app.h"
+#include "simulatorApp.h"
 #endif
 
 using namespace Core;
@@ -23,6 +23,6 @@ std::unique_ptr<AppBase> AppCreator<AppConfig>::Create(const AppConfig& config)
     return std::unique_ptr<AppBase>(new ControllerApp(config));
     #endif
     #else
-    return std::unique_ptr<AppBase>(new App(config));
+    return std::unique_ptr<AppBase>(new SimulatorApp(config));
     #endif
 }
