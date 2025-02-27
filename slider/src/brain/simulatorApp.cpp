@@ -1,4 +1,4 @@
-#include "app.h"
+#include "simulatorApp.h"
 #include "src/hardware/lcd.h"
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
@@ -21,11 +21,11 @@ static bool OnInputEvent(DisplayBuffer& display, const Event& event)
     return false;
 }
 
-Slider::App::App(const AppConfig& config) :
+Slider::SimulatorApp::SimulatorApp(const AppConfig& config) :
     m_Config(config)
 {}
 
-void Slider::App::Setup()
+void Slider::SimulatorApp::Setup()
 {
     m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
     auto timer = AddComponent<TimerComponent>();
@@ -59,7 +59,7 @@ void Slider::App::Setup()
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
 }
 
-void Slider::App::Update()
+void Slider::SimulatorApp::Update()
 {
     TAKE_SAMPLE(CpuSampler, "ProcessInput",
     {
