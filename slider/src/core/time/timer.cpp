@@ -28,8 +28,7 @@ Timer::UserData::UserData(const char* name, const Callback& callback)
 
 void Timer::UserData::Invoke()
 {
-    LogInfo("Timer \"", m_Name, "\" activated");
-    LogDebug(" at ", esp_timer_get_time() / 1000, "ms");
+    LogDebug("Timer \"", m_Name, "\" activated at ", esp_timer_get_time() / 1000, "ms");
     m_Callback();
 }
 
