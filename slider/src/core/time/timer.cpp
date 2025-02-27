@@ -88,7 +88,7 @@ Timer Timer::Create(const char* name, const Callback& callback)
     return Timer(handle, std::move(userData));
 }
 
-void Timer::Start(Time delayMs, bool periodic = false) const
+void Timer::Start(Time delayMs, bool periodic) const
 {
     if (m_Handle)
     {
@@ -166,7 +166,7 @@ void TimerComponent::Update()
     }
 }
 
-void TimerComponent::Start(Timer::Id id, Time delay, bool periodic = false)
+void TimerComponent::Start(Timer::Id id, Time delay, bool periodic)
 {
     auto itr = Find(id);
     LogDebug("Starting timer: ", itr->name);

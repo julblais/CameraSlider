@@ -93,8 +93,8 @@ void DebugPrint(const Event& lastEvent, const Event& event)
         LogDebug("\tEvent joystick\t", event.GetStickX(), "\t", event.GetStickY());
     }
 };
-#elif
-void DebugPrint(const Event& event) {}
+#else
+void DebugPrint(const Event& lastEvent, const Event& event) {}
 #endif
 
 void EventDispatcher::Dispatch()
