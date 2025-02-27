@@ -31,7 +31,7 @@ namespace Core
         ~Timer();
 
         static Timer Create(const char* name, const Callback& callback);
-        void Start(Time delayMs) const;
+        void Start(Time delayMs, bool periodic=false) const;
         void Stop() const;
         void Restart(Time delayMs) const;
 
