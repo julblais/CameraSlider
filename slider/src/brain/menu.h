@@ -6,11 +6,6 @@
 #include "src/core/time/timer.h"
 #include "src/core/menu/menuSystem.h"
 
-namespace Output
-{
-    class Display;
-};
-
 using namespace Input;
 
 namespace Slider {
@@ -18,7 +13,7 @@ namespace Slider {
     class Menu : public Core::Component
     {
     public:
-        Menu(Output::Display* display, int delay);
+        Menu(Core::Display* display, int delay);
         void Setup() override;
         void Update() override;
         bool OnInputEvent(const Input::Event& inputEvent);
@@ -28,7 +23,7 @@ namespace Slider {
         void OnIntroFinished();
         void OutputMenu();
 
-        Output::Display* m_Display;
+        Core::Display* m_Display;
         Core::Timer m_ShowHideTimer;
         Core::Timer m_IntroTimer;
         Core::MenuSystem m_MenuSystem;

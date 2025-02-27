@@ -41,14 +41,15 @@ static AppConfig CreateConfig()
     return conf;
 }
 
-static auto app = Core::AppCreator<AppConfig>::Create(CreateConfig());
+static std::unique_ptr<AppBase> app;
 
 void setup()
-{
+{ 
     Debug::Init(9600);
     INIT_SAMPLER(CpuSampler);
 
     LogInfo("Being setup...");
+    app = Core::AppCreator<AppConfig>::Create(CreateConfig());
     app->Setup();
     LogInfo("End setup.");
 }

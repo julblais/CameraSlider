@@ -70,7 +70,7 @@ void Hardware::LCD::SetCursor(const int column, const int row)
     chip.setCursor(column, row);
 }
 
-Output::SymbolHandle Hardware::LCD::GetSymbol(Symbol symbol) const
+Core::SymbolHandle Hardware::LCD::GetSymbol(Symbol symbol) const
 {
     using namespace Output;
     switch (symbol)

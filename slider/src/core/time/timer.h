@@ -31,9 +31,9 @@ namespace Core
         ~Timer();
 
         static Timer Create(const char* name, const Callback& callback);
-        void Start(Time delayMs);
-        void Stop();
-        void Restart(Time delayMs);
+        void Start(Time delayMs) const;
+        void Stop() const;
+        void Restart(Time delayMs) const;
 
     private:
         struct UserData

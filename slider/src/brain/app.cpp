@@ -27,7 +27,7 @@ Slider::App::App(const AppConfig& config) :
 
 void Slider::App::Setup()
 {
-    m_Display = std::unique_ptr<Display>(new Hardware::LCD(m_Config.LcdAddress));
+    m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
     auto timer = AddComponent<TimerComponent>();
     auto wifi = AddComponent<WifiComponent>();
     auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
