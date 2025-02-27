@@ -20,11 +20,10 @@ void MessageHandler::Invoker<TMessage>::Invoke(const uint8_t* data, size_t lengt
 }
 
 template <class T>
-MessageHandler::CallbackHandle MessageHandler::AddCallback(const char* name, std::function<void(T)> callback)
+MessageCallbackHandle MessageHandler::AddCallback(const char* name, std::function<void(T)> callback)
 {
     auto ptr = new Invoker<T>(name, callback);
-    CallbackHandle handle;
-    handle.invoker = ptr;
+    MessageCallbackHandle handle(ptr);
     m_Selectors.emplace_back(MessageWrapper<T>::typeId, std::unique_ptr<InvokerBase>(ptr));
     return handle;
 }

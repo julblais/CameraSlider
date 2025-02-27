@@ -21,7 +21,7 @@ namespace Net
         bool RemovePeer(const MacAddress& address);
 
         template <typename TMessage>
-        void RegisterReceiveCallback(const char* name, std::function<void(TMessage)> callback);
+        MessageCallbackHandle RegisterReceiveCallback(const char* name, std::function<void(TMessage)> callback);
         void RegisterSendCallback(std::function<void(const MacAddress&, bool)> callback);
 
         template <typename TMessage>
@@ -49,9 +49,9 @@ namespace Net
     };
 
     template <typename TMessage>
-    void WifiModule::RegisterReceiveCallback(const char* name, std::function<void(TMessage)> callback)
+    MessageCallbackHandle WifiModule::RegisterReceiveCallback(const char* name, std::function<void(TMessage)> callback)
     {
-        m_MessageHandler.AddCallback<TMessage>(name, callback);
+        return m_MessageHandler.AddCallback<TMessage>(name, callback);
     }
 
     template <typename TMessage>

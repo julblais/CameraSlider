@@ -4,7 +4,7 @@
 
 using namespace Core;
 
-MessageHandler::InvokerBase::InvokerBase(const char* name)
+InvokerBase::InvokerBase(const char* name)
     : name(name)
 {}
 
@@ -33,7 +33,7 @@ MessageHandler::MessageHandler()
     m_Queue = xQueueCreate(QUEUE_LENGTH, sizeof(QueueItem));
 }
 
-void MessageHandler::RemoveCallback(const CallbackHandle& handle)
+void MessageHandler::RemoveCallback(const MessageCallbackHandle& handle)
 {
     auto it = m_Selectors.begin();
     while (it != m_Selectors.end())
