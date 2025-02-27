@@ -2,6 +2,7 @@
 #include "src/hardware/lcd.h"
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
+#include "src/core/output/serialDisplay.h"
 
 #include <esp32-hal-timer.h>
 
@@ -26,7 +27,7 @@ Slider::App::App(const AppConfig& config) :
 
 void Slider::App::Setup()
 {
-    m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
+    m_Display = std::unique_ptr<Core::Display>(new Core::SerialDisplay());
     auto timer = AddComponent<TimerComponent>();
     auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
