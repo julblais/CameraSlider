@@ -8,9 +8,8 @@ void SerialDisplay::Init()
 {
     m_Timer = Timer::Create("SerialDisplay", [this]() {
         PrintToSerial();
-        m_Timer.Restart(1000);
     });
-    m_Timer.Start(1000);
+    m_Timer.Start(1000, true);
 }
 
 size_t Core::SerialDisplay::write(uint8_t value)
