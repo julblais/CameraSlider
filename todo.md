@@ -1,7 +1,4 @@
 - Add debug output levels (timer, system, menu, lcd, events)
 - Implement stepper controls
-- Add better handling of events
-  - merge ijostick reader and idpad reader
-  - improve dispatcher to match the timer implementation
-- Merge Display and DisplayBuffer
+- Implement auto-restart (start once or periodic) for timer;
 - Add timer to netApp when handshake is not received.
