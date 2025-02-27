@@ -44,7 +44,7 @@ void Output::DisplayBuffer::SetCursor(const int column, const int row)
     m_Cursor = row * LCD_LINE_LENGTH + column;
 }
 
-Output::SymbolHandle Output::DisplayBuffer::GetSymbol(Symbol symbol) const
+Core::SymbolHandle Output::DisplayBuffer::GetSymbol(Core::Symbol symbol) const
 {
     return m_Display->GetSymbol(symbol);
 }

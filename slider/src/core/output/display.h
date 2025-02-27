@@ -4,7 +4,7 @@
 #include <Print.h>
 #include "src/core/utils/templateUtils.h"
 
-namespace Output
+namespace Core
 {
     using Keycode = uint8_t;
 

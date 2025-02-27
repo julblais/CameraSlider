@@ -7,6 +7,7 @@
 
 using namespace Input;
 using namespace Output;
+using namespace Core;
 
 static bool OnInputEvent(DisplayBuffer& display, const Event& event)
 {
@@ -25,7 +26,7 @@ Slider::App::App(const AppConfig& config) :
 
 void Slider::App::Setup()
 {
-    m_Display = std::unique_ptr<Display>(new Hardware::LCD(m_Config.LcdAddress));
+    m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
     auto timer = AddComponent<TimerComponent>();
     auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);

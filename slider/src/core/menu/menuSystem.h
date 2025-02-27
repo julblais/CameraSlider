@@ -23,11 +23,11 @@ namespace Core
         static constexpr auto ButtonRight = MenuCommandButton::RIGHT;
         static constexpr auto ButtonSelect = MenuCommandButton::SELECT;
 
-        static void PrintTitle(Output::Display* display, const char* title);
-        static void PrintDescription(Output::Display* display, const char* description);
+        static void PrintTitle(Core::Display* display, const char* title);
+        static void PrintDescription(Core::Display* display, const char* description);
 
         virtual ~MenuCommand() = default;
-        virtual void Print(Output::Display* display) const = 0;
+        virtual void Print(Core::Display* display) const = 0;
         virtual void Invoke(MenuCommandButton command) = 0;
 
         virtual void OnOpenMenu() {};
@@ -45,7 +45,7 @@ namespace Core
         void Open();
         void Close();
         void Update();
-        void Print(Output::Display* display);
+        void Print(Core::Display* display);
 
         void AddCommand(MenuCommand* command);
         inline bool IsHidden() const { return !m_IsOpened; }

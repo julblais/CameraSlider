@@ -12,14 +12,14 @@ namespace Slider
     class MaxSpeedCommand : public MenuCommand
     {
     public:
-        virtual void Print(Output::Display* display) const override;
+        virtual void Print(Core::Display* display) const override;
         virtual void Invoke(MenuCommandButton command) override;
     };
 
     class SpeedCurveCommand : public MenuCommand
     {
     public: 
-        virtual void Print(Output::Display* display) const override;
+        virtual void Print(Core::Display* display) const override;
         virtual void Invoke(MenuCommandButton command) override;
     };
 }

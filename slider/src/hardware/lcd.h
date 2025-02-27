@@ -6,7 +6,7 @@
 #include <array>
 #include <type_traits>
 
-using namespace Output;
+using namespace Core;
 
 namespace Hardware {
 
