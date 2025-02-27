@@ -15,9 +15,7 @@ namespace Slider
         enum class ConnectionState
         {
             BROADCASTING,
-            WAITING_FOR_CONNECTION,
             SENDING_HANDSHAKE,
-            SENDING_REQUEST,
             WAITING_FOR_HANDSHAKE,
             CONNECTED
         };
@@ -39,7 +37,6 @@ namespace Slider
     {
         enum class ConnectionState
         {
-            BROADCASTING,
             WAITING_FOR_CONNECTION,
             SENDING_HANDSHAKE,
             SENDING_REQUEST,
