@@ -88,10 +88,15 @@ Timer Timer::Create(const char* name, const Callback& callback)
     return Timer(handle, std::move(userData));
 }
 
-void Timer::Start(Time delayMs) const
+void Timer::Start(Time delayMs, bool periodic = false) const
 {
     if (m_Handle)
-        esp_timer_start_once(m_Handle, delayMs * 1000);
+    {
+        if (periodic)
+            esp_timer_start_once(m_Handle, delayMs * 1000);
+        else
+            esp_timer_start_once(m_Handle, delayMs * 1000);
+    }
 }
 
 void Timer::Stop() const
@@ -161,7 +166,7 @@ void TimerComponent::Update()
     }
 }
 
-void TimerComponent::Start(Timer::Id id, Time delay)
+void TimerComponent::Start(Timer::Id id, Time delay, bool periodic = false)
 {
     auto itr = Find(id);
     LogDebug("Starting timer: ", itr->name);
