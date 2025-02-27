@@ -33,7 +33,7 @@ void MenuSystem::Update()
         m_Items[m_Index]->OnUpdate();
 }
 
-void MenuSystem::Print(Output::Display* display)
+void MenuSystem::Print(Display* display)
 {
     if (m_IsOpened)
         m_Items[m_Index]->Print(display);
@@ -93,14 +93,14 @@ void MenuSystem::Select()
     m_Items[m_Index]->Invoke(MenuCommand::ButtonSelect);
 }
 
-void MenuCommand::PrintTitle(Output::Display* display, const char* title)
+void MenuCommand::PrintTitle(Display* display, const char* title)
 {
-    const auto upDownArrows = display->GetSymbol(Output::Symbol::UpDownArrows);
+    const auto upDownArrows = display->GetSymbol(Symbol::UpDownArrows);
     display->PrintLine(0, upDownArrows, title);
 }
 
-void MenuCommand::PrintDescription(Output::Display* display, const char* description)
+void MenuCommand::PrintDescription(Display* display, const char* description)
 {
-    const auto leftRightArrows = display->GetSymbol(Output::Symbol::LeftRightArrows);
+    const auto leftRightArrows = display->GetSymbol(Symbol::LeftRightArrows);
     display->PrintLine(1, " ", leftRightArrows, description);
 }

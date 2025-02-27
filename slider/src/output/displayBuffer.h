@@ -10,7 +10,7 @@ namespace Output
 {
     using Keycode = uint8_t;
 
-    class DisplayBuffer : public Display
+    class DisplayBuffer : public Core::Display
     {
         constexpr static auto LCD_LINE_LENGTH = 16;
         constexpr static auto LCD_NUM_LINES = 2;
@@ -21,11 +21,11 @@ namespace Output
     public:
         DisplayBuffer();
         virtual ~DisplayBuffer() = default;
-        void Init(Display* display);
+        void Init(Core::Display* display);
 
         virtual size_t write(uint8_t value) override;
         virtual void SetCursor(const int column, const int row) override;
-        virtual SymbolHandle GetSymbol(Symbol symbol) const override;
+        virtual Core::SymbolHandle GetSymbol(Core::Symbol symbol) const override;
         virtual void Clear() override;
 
         void PrintToDisplay() const;
@@ -36,7 +36,7 @@ namespace Output
         virtual void FillCurrentLine() override;
     private:
         unsigned int m_Cursor;
-        Display* m_Display;
+        Core::Display* m_Display;
         std::array<Keycode, LCD_LINE_LENGTH* LCD_NUM_LINES> m_Buffer;
         mutable std::array<Keycode, LCD_LINE_LENGTH* LCD_NUM_LINES> m_PreviousBuffer;
     };

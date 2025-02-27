@@ -10,7 +10,7 @@
 
 using namespace Core;
 
-Slider::Menu::Menu(Output::Display* display, int delay) :
+Slider::Menu::Menu(Display* display, int delay) :
     m_Delay(delay),
     m_Display(display),
     m_ShowHideTimer(),

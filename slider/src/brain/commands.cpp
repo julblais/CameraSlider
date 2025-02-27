@@ -35,14 +35,14 @@ const char* GetDesc(Settings::Speed speed)
     };
 }
 
-void MaxSpeedCommand::Print(Output::Display* display) const
+void MaxSpeedCommand::Print(Display* display) const
 {
     PrintTitle(display, "Vitesse max.");
     auto desc = GetDesc(Settings::GetInstance().GetSpeed());
     PrintDescription(display, desc);
 }
 
-void SpeedCurveCommand::Print(Output::Display* display) const
+void SpeedCurveCommand::Print(Display* display) const
 {
     PrintTitle(display, "Courbe vitesse");
     auto desc = GetDesc(Settings::GetInstance().GetCurve());
