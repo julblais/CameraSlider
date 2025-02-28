@@ -4,7 +4,6 @@
 #include "src/core/utils/templateUtils.h"
 #include "Print.h"
 #include <HardwareSerial.h>
-#include "log.h"
 
 #define LOG_LEVEL_NONE 0
 #define LOG_LEVEL_ERROR 1
@@ -67,6 +66,7 @@ namespace Debug
         Underline = 4,
         Strikethrough = 9
     };
+
     constexpr Color Black = Color::Black;
     constexpr Color Red = Color::Red;
     constexpr Color Green = Color::Green;
