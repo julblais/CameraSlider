@@ -17,29 +17,29 @@
 //-------------------------------------
 
 #if LOG_LEVEL >= LOG_LEVEL_ERROR
-#define LogError(...) Debug::LoggerStyle(Debug::Bold, Debug::Color::Red).Log("Error\t");\
-Debug::Logger().Log(" ", __FILE__, "(", __LINE__, "): ",  __VA_ARGS__)
+#define LogError(...) Debug::LogStyle(Debug::Styler(Debug::Red), "Error\t");\
+Debug::Log(__FILE__, "(", __LINE__, "): ",  __VA_ARGS__)
 #else
 #define LogError(...) ;
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_WARNING
-#define LogWarning(...) Debug::LoggerStyle(Debug::Regular, Debug::Color::Yellow).Log("Warning\t");\
-Debug::Logger().Log(" ", __VA_ARGS__)
+#define LogWarning(...) Debug::LogStyle(Debug::Styler(Debug::Yellow), "Warning\t");\
+Debug::Log(__VA_ARGS__)
 #else
 #define LogWarning(...) ;
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
-#define LogInfo(...) Debug::LoggerStyle(Debug::Regular, Debug::Color::Cyan).Log("Info\t");\
-Debug::Logger().Log(" ", __VA_ARGS__)
+#define LogInfo(...) Debug::LogStyle(Debug::Styler(Debug::Cyan), "Info\t");\
+Debug::Log(__VA_ARGS__)
 #else
 #define LogInfo(...) ;
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_DEBUG
-#define LogDebug(...) Debug::LoggerStyle(Debug::Regular, Debug::Color::White).Log("Debug\t");\
-Debug::Logger().Log(" ", __VA_ARGS__)
+#define LogDebug(...) Debug::LogStyle(Debug::Styler(Debug::White), "Debug\t");\
+Debug::Log(__VA_ARGS__)
 #else
 #define LogDebug(...) ;
 #endif
@@ -55,7 +55,8 @@ namespace Debug
         Blue = 4,
         Purple = 5,
         Cyan = 6,
-        White = 7
+        White = 7,
+        None = 8  //yeah I know
     };
 
     enum class Style : char
@@ -66,57 +67,55 @@ namespace Debug
         Underline = 4,
         Strikethrough = 9
     };
-
     constexpr Color Black = Color::Black;
-    constexpr Style Regular = Style::Regular;
+    constexpr Color Red = Color::Red;
+    constexpr Color Green = Color::Green;
+    constexpr Color Yellow = Color::Yellow;
+    constexpr Color Blue = Color::Blue;
+    constexpr Color Purple = Color::Purple;
+    constexpr Color Cyan = Color::Cyan;
+    constexpr Color White = Color::White;
+
     constexpr Style Bold = Style::Bold;
+    constexpr Style Italic = Style::Italic;
+    constexpr Style Underline = Style::Underline;
+    constexpr Style Strikethrough = Style::Strikethrough;
 
-    //idea : eLog::Colorize::colorize("string", eLog::AsciiColor::ColorEnum::BOLD_RED, true)
-    //as a function???
-
-
-    struct LoggerStyle
+    struct Styler
     {
-        static constexpr const char* RESET = "\e[0m";
-
-        static void Colorize()
-        {
-            
-        }
-
-        LoggerStyle(Style style = Style::Regular, Color color = Black, Color background = Black)
-        {
-            m_color = color;
-            m_style = style;
-            m_back = background;
-        }
-
-        template <typename... TArgs>
-        void Log(TArgs&&... args)
-        {
-            Serial.printf("\e[%i;3%i;4%im", static_cast<int>(m_style), static_cast<int>(m_color), static_cast<int>(m_back));
-            Core::PassParamPack { (Serial.print(args), 1)... };
-            Serial.print(RESET);
-        }
-
-        Color m_color;
-        Color m_back;
-        Style m_style;
+        constexpr Styler(Color color = Color::None, Style style = Style::Bold, Color background = Color::None)
+            :color(color), style(style), background(background)
+        {}
+        constexpr Styler(Style style)
+            : Styler(Color::None, style)
+        {}
+        Color color;
+        Style style;
+        Color background;
     };
 
-    struct Logger
+    template <typename... TArgs>
+    void Log(TArgs&&... args)
     {
-        template <typename... TArgs>
-        void Log(TArgs&&... args)
-        {
-            Core::PassParamPack { (Serial.print(args), 1)... };
-        }
+        Core::PassParamPack { (Serial.print(args), 1)... };
+        Serial.println();
+    }
 
-        ~Logger()
-        {
-            Serial.println();
-        }
-    };
+    template <typename... TArgs>
+    void LogStyle(const Styler& styler, TArgs&&... args)
+    {
+        constexpr const char* RESET = "\e[0m";
+
+        if (styler.style != Style::Regular)
+            Serial.printf("\e[%im", static_cast<int>(styler.style));
+        if (styler.color != Color::None)
+            Serial.printf("\e[3%im", static_cast<int>(styler.color));
+        if (styler.background != Color::None)
+            Serial.printf("\e[4%im", static_cast<int>(styler.background));
+
+        Core::PassParamPack { (Serial.print(args), 1)... };
+        Serial.print(RESET);
+    }
 
     void Init(const int baud);
 }
