@@ -56,6 +56,20 @@ Event::Event(const Event& previous, const InputData& input)
     diff = CreateDiff(previous, input);
 }
 
+bool Input::Event::operator==(const Event& rhs) const
+{
+    return diff.released == rhs.diff.released &&
+        diff.pressed == rhs.diff.pressed &&
+        diff.change == rhs.diff.change &&
+        diff.stickMoved == rhs.diff.stickMoved &&
+        button == rhs.button;
+}
+
+bool Input::Event::operator!=(const Event& rhs) const
+{
+    return !(*this == rhs);
+}
+
 void Merge(const InputData& input, InputData& destination)
 {
     //last input wins
@@ -82,15 +96,17 @@ void EventDispatcher::ProcessInput(const InputData& input)
 #if LOG_LEVEL >= LOG_LEVEL_DEBUG
 void DebugPrint(const Event& lastEvent, const Event& event)
 {
+    if (lastEvent == event)
+        return;
     if (event.HasButtonChange())
     {
-        LogDebug("\tEvent button:\t", Input::ToString(event.GetButtonEvent()),
+        LogDebug("Event button:\t", Input::ToString(event.GetButtonEvent()),
             "\tpressed: ", Input::ToString(event.GetButtonPressed()),
             "\treleased: ", Input::ToString(event.GetButtonReleased()));
     }
     if (event.HasStickMoved())
     {
-        LogDebug("\tEvent joystick\t", event.GetStickX(), "\t", event.GetStickY());
+        LogDebug("Event joystick\t", event.GetStickX(), "\t", event.GetStickY());
     }
 };
 #else
