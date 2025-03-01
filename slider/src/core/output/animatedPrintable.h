@@ -25,7 +25,6 @@ namespace Core
     private:
         Messages m_Messages;
         Timer m_Timer;
-        mutable unsigned int m_Interval;
         unsigned int m_CurrentMessageIndex;
     };
 }

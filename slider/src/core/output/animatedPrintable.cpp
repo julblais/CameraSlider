@@ -7,13 +7,11 @@ AnimatedPrintable::AnimatedPrintable(const char* name, Messages messages)
 {
     m_Timer = Timer::Create(name, [this]() {
         m_CurrentMessageIndex = (m_CurrentMessageIndex + 1) % m_Messages.size();
-        m_Timer.Restart(m_Interval);
     });
 }
 
 AnimatedPrintable::AnimatedPrintable(AnimatedPrintable&& other)
     :m_Messages(std::move(other.m_Messages)),
-    m_Interval(other.m_Interval),
     m_Timer(std::move(other.m_Timer)),
     m_CurrentMessageIndex(other.m_CurrentMessageIndex)
 {}
@@ -21,7 +19,6 @@ AnimatedPrintable::AnimatedPrintable(AnimatedPrintable&& other)
 AnimatedPrintable& Core::AnimatedPrintable::operator=(AnimatedPrintable&& other)
 {
     m_Messages = std::move(other.m_Messages);
-    m_Interval = other.m_Interval;
     m_Timer = std::move(other.m_Timer);
     m_CurrentMessageIndex = other.m_CurrentMessageIndex;
     return *this;
@@ -29,8 +26,7 @@ AnimatedPrintable& Core::AnimatedPrintable::operator=(AnimatedPrintable&& other)
 
 void Core::AnimatedPrintable::Start(const unsigned int interval) const
 {
-    m_Interval = interval;
-    m_Timer.Restart(interval);
+    m_Timer.Start(interval, true);
 }
 
 void Core::AnimatedPrintable::Stop() const

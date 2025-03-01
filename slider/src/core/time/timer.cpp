@@ -28,8 +28,7 @@ Timer::UserData::UserData(const char* name, const Callback& callback)
 
 void Timer::UserData::Invoke()
 {
-    LogInfo("Timer \"", m_Name, "\" activated");
-    LogDebug(" at ", esp_timer_get_time() / 1000, "ms");
+    LogDebug("Timer \"", m_Name, "\" activated at ", esp_timer_get_time() / 1000, "ms");
     m_Callback();
 }
 
@@ -89,10 +88,15 @@ Timer Timer::Create(const char* name, const Callback& callback)
     return Timer(handle, std::move(userData));
 }
 
-void Timer::Start(Time delayMs) const
+void Timer::Start(Time delayMs, bool periodic) const
 {
     if (m_Handle)
-        esp_timer_start_once(m_Handle, delayMs * 1000);
+    {
+        if (periodic)
+            esp_timer_start_periodic(m_Handle, delayMs * 1000);
+        else
+            esp_timer_start_once(m_Handle, delayMs * 1000);
+    }
 }
 
 void Timer::Stop() const
@@ -162,7 +166,7 @@ void TimerComponent::Update()
     }
 }
 
-void TimerComponent::Start(Timer::Id id, Time delay)
+void TimerComponent::Start(Timer::Id id, Time delay, bool periodic)
 {
     auto itr = Find(id);
     LogDebug("Starting timer: ", itr->name);
