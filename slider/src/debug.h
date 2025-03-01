@@ -2,7 +2,6 @@
 #define DBG_H
 
 #include "src/core/utils/templateUtils.h"
-#include "Print.h"
 #include <HardwareSerial.h>
 
 #define LOG_LEVEL_NONE 0
