@@ -18,12 +18,19 @@ namespace Slider
 
     class SpeedCurveCommand : public MenuCommand
     {
-    public: 
+    public:
         virtual void Print(Core::Display* display) const override;
         virtual void Invoke(MenuCommandButton command) override;
     };
 
-    class BrainMacAddress : public MenuCommand
+    class BrainAddressCommand : public MenuCommand
+    {
+    public:
+        virtual void Print(Core::Display* display) const override;
+        virtual void Invoke(MenuCommandButton command) override {}
+    };
+
+    class ControllerAddressCommand : public MenuCommand
     {
     public:
         virtual void Print(Core::Display* display) const override;

@@ -68,13 +68,13 @@ void SpeedCurveCommand::Invoke(MenuCommandButton command)
         Settings::GetInstance().SetCurve(GetNextEnumValue(curve));
 }
 
-void Slider::BrainMacAddress::Print(Core::Display* display) const
+void Slider::BrainAddressCommand::Print(Core::Display* display) const
 {
     PrintTitle(display, "Adr. mac");
     display->PrintLine(1, " ", Net::WifiModule::GetInstance().GetMacAddress());
 }
 
-void Slider::ControllerMacAddress::Print(Core::Display* display) const
+void Slider::ControllerAddressCommand::Print(Core::Display* display) const
 {
     PrintTitle(display, "Adr. manette");
     if (Settings::GetInstance().HasPeerAddress())
