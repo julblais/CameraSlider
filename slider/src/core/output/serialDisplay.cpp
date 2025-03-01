@@ -4,6 +4,13 @@
 
 using namespace Core;
 
+constexpr const char* border = "\e[48;5;22m";
+constexpr const char* reset = "\e[0m";
+constexpr const char* format = "\e[1m\e[48;5;112m";
+constexpr const char* goBackUp = "\r\e[4F";
+constexpr const char* hborder = "                    ";
+constexpr const char* vborder = "  ";
+
 void SerialDisplay::Init()
 {
     m_Timer = Timer::Create("SerialDisplay", [this]() {
@@ -50,9 +57,6 @@ void SerialDisplay::FillCurrentLine()
 
 void PrintBorder(const char* text)
 {
-    constexpr const char* border = "\e[48;5;22m";
-    constexpr const char* reset = "\e[0m";
-
     Serial.print(border);
     Serial.print(text);
     Serial.print(reset);
@@ -66,12 +70,6 @@ void PrintBorderln(const char* text)
 
 void SerialDisplay::PrintToSerial() const
 {
-    constexpr const char* format = "\e[48;5;112m";
-    constexpr const char* goBackUp = "\r\e[4F";
-    constexpr const char* reset = "\e[0m";
-    constexpr const char* hborder = "                    ";
-    constexpr const char* vborder = "  ";
-
     const auto areEqual = std::equal(
         std::begin(m_Buffer), std::end(m_Buffer), std::begin(m_PreviousBuffer));
 
@@ -83,6 +81,7 @@ void SerialDisplay::PrintToSerial() const
         PrintBorderln(hborder);
         PrintBorder(vborder);
         Serial.print(format);
+
         for (const auto it : m_Buffer)
         {
             if (count >= LCD_LINE_LENGTH)
@@ -96,6 +95,7 @@ void SerialDisplay::PrintToSerial() const
             count++;
             Serial.write(it);
         }
+        
         Serial.print(reset);
         PrintBorderln(vborder);
         PrintBorderln(hborder);
