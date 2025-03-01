@@ -2,8 +2,6 @@
 
 using namespace Core;
 
-MacAddress::MacAddress() {}
-
 MacAddress::MacAddress(std::array<uint8_t, 6> address)
     : m_Address(address)
 {}
@@ -22,10 +20,6 @@ size_t MacAddress::printTo(Print& p) const
 {
     size_t n = 0;
     for (int i = 0; i < 6; i++)
-    {
         n += p.printf("%02x", m_Address[i]);
-        if (i < 6 - 1)
-            n += p.print(':');
-    }
     return n;
 }

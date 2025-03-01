@@ -1,13 +1,14 @@
-#include "app.h"
+#include "simulatorApp.h"
 #include "src/hardware/lcd.h"
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
+#include "src/network/wifiComponent.h"
 
 #include <esp32-hal-timer.h>
 
 using namespace Input;
 using namespace Output;
-using namespace Core;
+using namespace Net;
 
 static bool OnInputEvent(DisplayBuffer& display, const Event& event)
 {
@@ -20,14 +21,15 @@ static bool OnInputEvent(DisplayBuffer& display, const Event& event)
     return false;
 }
 
-Slider::App::App(const AppConfig& config) :
+Slider::SimulatorApp::SimulatorApp(const AppConfig& config) :
     m_Config(config)
 {}
 
-void Slider::App::Setup()
+void Slider::SimulatorApp::Setup()
 {
     m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
     auto timer = AddComponent<TimerComponent>();
+    auto wifi = AddComponent<WifiComponent>();
     auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
 
@@ -57,7 +59,7 @@ void Slider::App::Setup()
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
 }
 
-void Slider::App::Update()
+void Slider::SimulatorApp::Update()
 {
     TAKE_SAMPLE(CpuSampler, "ProcessInput",
     {

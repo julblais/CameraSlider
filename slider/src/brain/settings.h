@@ -2,6 +2,7 @@
 #define SETTINGS_H
 
 #include <Preferences.h>
+#include "src/core/network/address.h"
 
 namespace Slider
 {
@@ -23,6 +24,10 @@ namespace Slider
 
         void SetSpeed(Speed value);
         void SetCurve(Curve value);
+
+        bool HasPeerAddress() const;
+        Core::MacAddress GetPeerAddress() const;
+        void SetPeerAddress(const Core::MacAddress& address) const;
 
         static Settings& GetInstance();
 

@@ -22,6 +22,20 @@ namespace Slider
         virtual void Print(Core::Display* display) const override;
         virtual void Invoke(MenuCommandButton command) override;
     };
+
+    class BrainMacAddress : public MenuCommand
+    {
+    public:
+        virtual void Print(Core::Display* display) const override;
+        virtual void Invoke(MenuCommandButton command) override {}
+    };
+
+    class ControllerMacAddress : public MenuCommand
+    {
+    public:
+        virtual void Print(Core::Display* display) const override;
+        virtual void Invoke(MenuCommandButton command) override {}
+    };
 }
 
 #endif

@@ -3,6 +3,8 @@
 
 #include "message.h"
 #include "src/debug.h"
+#include "invokerBase.h"
+#include "messageCallbackHandle.h"
 
 #include <vector>
 #include <functional>
@@ -15,19 +17,11 @@ namespace Core
 {
     class MessageHandler
     {
-    private:
-        class InvokerBase
-        {
-        public:
-            virtual void Invoke(const uint8_t* data, size_t length) const = 0;
-            virtual ~InvokerBase() {}
-        };
-
         template <class TMessage>
         class Invoker : public InvokerBase
         {
         public:
-            Invoker(std::function<void(TMessage)> function) : m_Function(function) {}
+            Invoker(const char* name, std::function<void(TMessage)> function);
             virtual void Invoke(const uint8_t* data, size_t length) const override;
         private:
             std::function<void(TMessage)>  m_Function;
@@ -48,7 +42,8 @@ namespace Core
         MessageHandler();
 
         template <class T>
-        void AddCallback(std::function<void(T)> cb);
+        MessageCallbackHandle AddCallback(const char* name, std::function<void(T)> cb);
+        void RemoveCallback(const MessageCallbackHandle& handle);
 
         template <class T>
         static MessageWrapper<T> CreateMessage(const T& message);
