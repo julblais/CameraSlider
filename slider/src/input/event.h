@@ -13,6 +13,9 @@ namespace Input
         Event() = default;
         Event(const Event& previous, const InputData& input);
 
+        bool operator==(const Event& rhs) const;
+        bool operator!=(const Event& rhs) const;
+
         inline bool HasButtonChange() const
         {
             return button != DpadNone || diff.change != ButtonNone;

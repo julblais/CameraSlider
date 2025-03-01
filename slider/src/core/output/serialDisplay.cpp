@@ -4,12 +4,19 @@
 
 using namespace Core;
 
+constexpr const char* border = "\e[48;5;22m";
+constexpr const char* reset = "\e[0m";
+constexpr const char* format = "\e[1m\e[48;5;112m";
+constexpr const char* goBackUp = "\r\e[4F";
+constexpr const char* hborder = "                    ";
+constexpr const char* vborder = "  ";
+
 void SerialDisplay::Init()
 {
     m_Timer = Timer::Create("SerialDisplay", [this]() {
         PrintToSerial();
     });
-    m_Timer.Start(1000, true);
+    m_Timer.Start(300, true);
 }
 
 size_t Core::SerialDisplay::write(uint8_t value)
@@ -32,7 +39,7 @@ void SerialDisplay::SetCursor(const int column, const int row)
 
 SymbolHandle SerialDisplay::GetSymbol(Symbol symbol) const
 {
-    return SymbolHandle('?');
+    return SymbolHandle('|');
 }
 
 void SerialDisplay::Clear()
@@ -48,6 +55,19 @@ void SerialDisplay::FillCurrentLine()
         m_Buffer[m_Cursor++] = ' ';
 }
 
+void PrintBorder(const char* text)
+{
+    Serial.print(border);
+    Serial.print(text);
+    Serial.print(reset);
+}
+
+void PrintBorderln(const char* text)
+{
+    PrintBorder(text);
+    Serial.println();
+}
+
 void SerialDisplay::PrintToSerial() const
 {
     const auto areEqual = std::equal(
@@ -55,21 +75,31 @@ void SerialDisplay::PrintToSerial() const
 
     if (!areEqual)
     {
-        Serial.println("-----------------");
         unsigned int count = 0;
         unsigned int line = 0;
+
+        PrintBorderln(hborder);
+        PrintBorder(vborder);
+        Serial.print(format);
+
         for (const auto it : m_Buffer)
         {
             if (count >= LCD_LINE_LENGTH)
             {
-                Serial.println();
+                Serial.print(reset);
+                PrintBorderln(vborder);
+                PrintBorder(vborder);
+                Serial.print(format);
                 count = 0;
             }
             count++;
             Serial.write(it);
         }
-        Serial.println();
-        Serial.println("-----------------");
+        
+        Serial.print(reset);
+        PrintBorderln(vborder);
+        PrintBorderln(hborder);
+        Serial.print(goBackUp);
         std::copy(std::begin(m_Buffer), std::end(m_Buffer), std::begin(m_PreviousBuffer));
     }
 }
