@@ -21,7 +21,7 @@ namespace Slider {
     private:
         void OnSelectionLongPress();
         void OnIntroFinished();
-        void OutputMenu();
+        void OutputMenu() const;
 
         Core::Display* m_Display;
         Core::Timer m_ShowHideTimer;
