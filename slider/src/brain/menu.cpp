@@ -30,6 +30,7 @@ void Slider::Menu::Setup()
     m_MenuSystem.AddCommand(new SpeedCurveCommand());
     m_MenuSystem.AddCommand(new BrainAddressCommand());
     m_MenuSystem.AddCommand(new ControllerAddressCommand());
+    m_MenuSystem.AddCommand(new ConnectionCommand());
 }
 
 void Slider::Menu::Update()

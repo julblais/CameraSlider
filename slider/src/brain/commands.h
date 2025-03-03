@@ -3,6 +3,8 @@
 
 #include "src/core/menu/menuSystem.h"
 #include "src/core/output/display.h"
+#include "connectApp.h"
+#include <memory>
 #include "settings.h"
 
 using namespace Core;
@@ -37,11 +39,16 @@ namespace Slider
         virtual void Invoke(MenuCommandButton command) override {}
     };
 
-    class ControllerMacAddress : public MenuCommand
+    class ConnectionCommand : public MenuCommand
     {
     public:
         virtual void Print(Core::Display* display) const override;
-        virtual void Invoke(MenuCommandButton command) override {}
+        virtual void Invoke(MenuCommandButton command) override;
+        virtual void OnUpdate() override;
+        virtual void OnShow() override;
+        virtual void OnHide() override;
+    private:
+        std::unique_ptr<Slider::BrainConnector> m_Connector;
     };
 }
 

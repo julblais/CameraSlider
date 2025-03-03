@@ -68,13 +68,13 @@ void SpeedCurveCommand::Invoke(MenuCommandButton command)
         Settings::GetInstance().SetCurve(GetNextEnumValue(curve));
 }
 
-void Slider::BrainAddressCommand::Print(Core::Display* display) const
+void BrainAddressCommand::Print(Display* display) const
 {
     PrintTitle(display, "Adr. mac");
     display->PrintLine(1, " ", Net::WifiModule::GetInstance().GetMacAddress());
 }
 
-void Slider::ControllerAddressCommand::Print(Core::Display* display) const
+void ControllerAddressCommand::Print(Display* display) const
 {
     PrintTitle(display, "Adr. manette");
     if (Settings::GetInstance().HasPeerAddress())
@@ -82,3 +82,24 @@ void Slider::ControllerAddressCommand::Print(Core::Display* display) const
     else
         display->PrintLine(1, " ", "Aucune manette");
 }
+
+void ConnectionCommand::Print(Display* display) const
+{
+    PrintTitle(display, "Connect manett");
+    const auto rightArrow = display->GetSymbol(Symbol::RightArrow);
+    display->PrintLine(1, " ", rightArrow, "Oui  Non");
+}
+
+void ConnectionCommand::Invoke(MenuCommandButton command)
+{}
+
+void ConnectionCommand::OnUpdate()
+{}
+
+void ConnectionCommand::OnShow()
+{
+    m_Connector = std::unique_ptr<BrainConnector>(new BrainConnector());
+}
+
+void ConnectionCommand::OnHide()
+{}
