@@ -37,10 +37,9 @@ WAITING_FOR_HANDSHAKE  │                            Handshake   │  SENDING_H
 //const uint8_t receiver_mac[6] = { 0x94, 0x54, 0xc5, 0x63, 0x0a, 0xec };
 //const uint8_t sender_mac[6] = { 0x5c, 0x01, 0x3b, 0x68, 0xb1, 0x0c};
 
-BrainConnector::BrainConnector(Net::WifiModule* const wifi)
+BrainConnector::BrainConnector()
     : state(ConnectionState::BROADCASTING),
-    isComplete(false),
-    m_Wifi(wifi)
+    isComplete(false)
 {}
 
 BrainConnector::~BrainConnector()
@@ -97,10 +96,9 @@ void BrainConnector::Update()
 
 //////////////////////////
 
-ControllerConnector::ControllerConnector(Net::WifiModule* const wifi) :
+ControllerConnector::ControllerConnector() :
     state(ConnectionState::WAITING_FOR_CONNECTION),
-    isComplete(false),
-    m_Wifi(wifi)
+    isComplete(false)
 {}
 
 ControllerConnector::~ControllerConnector()
