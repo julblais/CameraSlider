@@ -91,15 +91,31 @@ void ConnectionCommand::Print(Display* display) const
 }
 
 void ConnectionCommand::Invoke(MenuCommandButton command)
-{}
+{
+    if (m_State == State::NotConnected)
+    {
+        if (command == MenuCommandButton::SELECT)
+        {
+            m_State == State::Connecting;
+            m_Connector = std::unique_ptr<BrainConnector>(new BrainConnector());
+            m_Connector.get()->Setup();
+        }
+    }
+}
 
 void ConnectionCommand::OnUpdate()
-{}
+{
+    if (m_Connector != nullptr)
+        m_Connector->Update();
+}
 
 void ConnectionCommand::OnShow()
 {
-    m_Connector = std::unique_ptr<BrainConnector>(new BrainConnector());
+
 }
 
 void ConnectionCommand::OnHide()
-{}
+{
+    if (m_Connector)
+        m_Connector.reset();
+}

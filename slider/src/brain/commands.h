@@ -41,6 +41,11 @@ namespace Slider
 
     class ConnectionCommand : public MenuCommand
     {
+        enum class State{
+            NotConnected,
+            Connected,
+            Connecting
+        };
     public:
         virtual void Print(Core::Display* display) const override;
         virtual void Invoke(MenuCommandButton command) override;
@@ -49,6 +54,7 @@ namespace Slider
         virtual void OnHide() override;
     private:
         std::unique_ptr<Slider::BrainConnector> m_Connector;
+        State m_State;
     };
 }
 
