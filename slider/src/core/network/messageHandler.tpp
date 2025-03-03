@@ -24,7 +24,7 @@ MessageCallbackHandle MessageHandler::AddCallback(const char* name, std::functio
 {
     auto ptr = new Invoker<T>(name, callback);
     MessageCallbackHandle handle(ptr);
-    m_Selectors.emplace_back(MessageWrapper<T>::ID(), std::unique_ptr<InvokerBase>(ptr));
+    m_Selectors.emplace_back(MessageWrapper<T>::StaticId(), std::unique_ptr<InvokerBase>(ptr));
     return handle;
 }
 
