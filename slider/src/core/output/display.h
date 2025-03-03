@@ -11,7 +11,9 @@ namespace Core
     enum class Symbol : char
     {
         LeftRightArrows,
-        UpDownArrows
+        UpDownArrows,
+        LeftArrow,
+        RightArrow
     };
 
     class SymbolHandle : public Printable

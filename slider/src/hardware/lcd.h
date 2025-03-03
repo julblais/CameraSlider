@@ -30,6 +30,8 @@ namespace Hardware {
         LiquidCrystal_I2C chip;
         Keycode m_DoubleLeftRightArrows;
         Keycode m_DoubleUpDownArrows;
+        Keycode m_LeftArrow;
+        Keycode m_RightArrow;
     };
 }
 
