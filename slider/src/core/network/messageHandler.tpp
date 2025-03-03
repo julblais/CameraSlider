@@ -3,7 +3,7 @@ using namespace Core;
 
 template <class TMessage>
 MessageHandler::Invoker<TMessage>::Invoker(const char* name, std::function<void(TMessage)> function)
-: InvokerBase(name), m_Function(function)
+    : InvokerBase(name), m_Function(function)
 {}
 
 template <class TMessage>
@@ -24,12 +24,12 @@ MessageCallbackHandle MessageHandler::AddCallback(const char* name, std::functio
 {
     auto ptr = new Invoker<T>(name, callback);
     MessageCallbackHandle handle(ptr);
-    m_Selectors.emplace_back(MessageWrapper<T>::typeId, std::unique_ptr<InvokerBase>(ptr));
+    m_Selectors.emplace_back(MessageWrapper<T>::ID(), std::unique_ptr<InvokerBase>(ptr));
     return handle;
 }
 
 template <class T>
 MessageWrapper<T> MessageHandler::CreateMessage(const T& message)
 {
-    return MessageWrapper<T>(MessageWrapper<T>::typeId, message);
+    return MessageWrapper<T>(message);
 }

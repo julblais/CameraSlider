@@ -4,11 +4,11 @@
 #include "src/core/utils/templateUtils.h"
 
 #define REGISTER_MESSAGE_TYPE(T, id_value) \
-    template<> struct Core::MessageWrapper<T> : public Core::MessageBase \
-    { \
-        static constexpr unsigned int typeId = id_value; \
-        T data; \
-        MessageWrapper(int id, T data): MessageBase(id), data(data){}\
+    template<> class Core::MessageWrapper<T> : public MessageBase {\
+        public: \
+        T data;\
+        static constexpr unsigned int ID() { return id_value; } \
+        MessageWrapper(T data): MessageBase(id_value), data(data){}\
     };
 
 namespace Core
@@ -22,6 +22,8 @@ namespace Core
     template<class T>
     struct MessageWrapper : public MessageBase
     {
+    public:
+
         static_assert(IsTypeComplete<MessageWrapper<T>>::value, "You need to call REGISTER_TYPE_ID.");
     };
 }
