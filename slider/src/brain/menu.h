@@ -14,14 +14,14 @@ namespace Slider {
     {
     public:
         Menu(Core::Display* display, int delay);
-        void Setup() override;
         void Update() override;
         bool OnInputEvent(const Input::Event& inputEvent);
+        void AddCommand(MenuCommand* command);
 
     private:
         void OnSelectionLongPress();
         void OnIntroFinished();
-        void OutputMenu();
+        void OutputMenu() const;
 
         Core::Display* m_Display;
         Core::Timer m_ShowHideTimer;

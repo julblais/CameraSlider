@@ -1,4 +1,5 @@
 #include "simulatorApp.h"
+#include "commands.h"
 #include "src/hardware/lcd.h"
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
@@ -44,6 +45,12 @@ void Slider::SimulatorApp::Setup()
     pins.joystickVertical = m_Config.JoystickYPin;
 
     m_InputReader = std::unique_ptr<Input::InputReader>(new Hardware::DeviceInputReader(pins));
+
+    menu->AddCommand(new MaxSpeedCommand());
+    menu->AddCommand(new SpeedCurveCommand());
+    menu->AddCommand(new BrainAddressCommand());
+    menu->AddCommand(new ControllerAddressCommand());
+    menu->AddCommand(new ConnectionCommand());
 
     m_InputDispatcher.AddListener(menu);
     m_InputDispatcher.AddListener(stepper);

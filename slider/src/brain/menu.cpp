@@ -1,5 +1,4 @@
 #include "menu.h"
-#include "commands.h"
 #include "settings.h"
 
 #include "src/debug.h"
@@ -22,15 +21,6 @@ Slider::Menu::Menu(Display* display, int delay) :
         OnSelectionLongPress(); });
     m_IntroTimer = Timer::Create("Intro menu", [this]() {
         OnIntroFinished(); });
-}
-
-void Slider::Menu::Setup()
-{
-    m_MenuSystem.AddCommand(new MaxSpeedCommand());
-    m_MenuSystem.AddCommand(new SpeedCurveCommand());
-    m_MenuSystem.AddCommand(new BrainAddressCommand());
-    m_MenuSystem.AddCommand(new ControllerAddressCommand());
-    m_MenuSystem.AddCommand(new ConnectionCommand());
 }
 
 void Slider::Menu::Update()
@@ -79,6 +69,11 @@ bool Slider::Menu::OnInputEvent(const Input::Event& evt)
     return !m_MenuSystem.IsHidden() || !m_IsIntroFinished;
 }
 
+void Slider::Menu::AddCommand(MenuCommand* command)
+{
+    m_MenuSystem.AddCommand(command);
+}
+
 void Slider::Menu::OnSelectionLongPress()
 {
     if (m_MenuSystem.IsHidden()) //show intro
@@ -103,7 +98,7 @@ void Slider::Menu::OnIntroFinished()
     OutputMenu();
 }
 
-void Slider::Menu::OutputMenu()
+void Slider::Menu::OutputMenu() const
 {
     m_MenuSystem.Print(m_Display);
 }

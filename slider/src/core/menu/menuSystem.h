@@ -45,7 +45,7 @@ namespace Core
         void Open();
         void Close();
         void Update();
-        void Print(Core::Display* display);
+        void Print(Core::Display* display) const;
 
         void AddCommand(MenuCommand* command);
         inline bool IsHidden() const { return !m_IsOpened; }
