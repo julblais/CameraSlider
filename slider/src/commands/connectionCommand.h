@@ -1,11 +1,9 @@
-#ifndef CMDS_H
-#define CMDS_H
+#ifndef CONNECTIONCOMMAND_H
+#define CONNECTIONCOMMAND_H
 
 #include "src/core/menu/menuSystem.h"
-#include "src/core/output/display.h"
 #include "src/app/brain/connectApp.h"
 #include <memory>
-#include "settings.h"
 
 using namespace Core;
 

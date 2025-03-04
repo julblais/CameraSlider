@@ -1,4 +1,4 @@
-#include "commands.h"
+#include "connectionCommand.h"
 #include "settings.h"
 #include "src/network/wifiModule.h"
 
