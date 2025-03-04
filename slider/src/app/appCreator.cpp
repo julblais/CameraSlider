@@ -1,11 +1,13 @@
 #include "src/core/app/appBase.h"
 #include "appConfig.h"
 
-#undef TEST_NETWORK
-
-#ifdef TEST_NETWORK
-#include "src/brain/netApp.h"
-#else
+#ifdef IS_BRAIN
+#include "src/app/brain/brainApp.h"
+#endif
+#ifdef IS_CONTROLLER
+#include "src/app/controller/controllerApp.h"
+#endif
+#ifdef IS_SIMULATOR
 #include "src/app/simulator/simulatorApp.h"
 #endif
 
@@ -13,16 +15,17 @@ using namespace Core;
 using namespace Slider;
 
 template<>
-std::unique_ptr<AppBase> AppCreator<AppConfig>::Create(const AppConfig& config)
+std::unique_ptr<AppBase> AppCreator<AppConfig>::Create(const AppConfig & config)
 {
-    #ifdef TEST_NETWORK
-    #ifdef IS_RECEIVER
+    #ifdef IS_BRAIN
+    #include "src/app/brain/brainApp.h"
     return std::unique_ptr<AppBase>(new BrainApp(config));
     #endif
-    #ifdef IS_SENDER
+    #ifdef IS_CONTROLLER
     return std::unique_ptr<AppBase>(new ControllerApp(config));
     #endif
-    #else
+    #ifdef IS_SIMULATOR
+    #include "src/app/simulator/simulatorApp.h"
     return std::unique_ptr<AppBase>(new SimulatorApp(config));
     #endif
 }

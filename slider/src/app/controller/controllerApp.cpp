@@ -1,4 +1,4 @@
-#include "simulatorApp.h"
+#include "controllerApp.h"
 #include "src/hardware/lcd.h"
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
@@ -23,17 +23,15 @@ static bool OnInputEvent(DisplayBuffer& display, const Event& event)
     return false;
 }
 
-Slider::SimulatorApp::SimulatorApp(const AppConfig& config) :
+Slider::ControllerApp::ControllerApp(const AppConfig& config) :
     m_Config(config)
 {}
 
-void Slider::SimulatorApp::Setup()
+void Slider::ControllerApp::Setup()
 {
     m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
     auto timer = AddComponent<TimerComponent>();
     auto wifi = AddComponent<WifiComponent>();
-    auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
-    auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
 
     Hardware::InputPins pins;
     pins.dpadUp = m_Config.DpadUpPin;
@@ -47,14 +45,6 @@ void Slider::SimulatorApp::Setup()
 
     m_InputReader = std::unique_ptr<Input::InputReader>(new Hardware::DeviceInputReader(pins));
 
-    menu->AddCommand(new MaxSpeedCommand());
-    menu->AddCommand(new SpeedCurveCommand());
-    menu->AddCommand(new BrainAddressCommand());
-    menu->AddCommand(new ControllerAddressCommand());
-    menu->AddCommand(new ConnectionCommand());
-
-    m_InputDispatcher.AddListener(menu);
-    m_InputDispatcher.AddListener(stepper);
     m_InputDispatcher.AddListener([this](const Event& event) {
         return OnInputEvent(m_DisplayBuffer, event);
     });
@@ -67,7 +57,7 @@ void Slider::SimulatorApp::Setup()
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
 }
 
-void Slider::SimulatorApp::Update()
+void Slider::ControllerApp::Update()
 {
     TAKE_SAMPLE(CpuSampler, "ProcessInput",
     {

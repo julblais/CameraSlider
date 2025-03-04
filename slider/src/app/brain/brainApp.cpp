@@ -1,7 +1,9 @@
-#include "simulatorApp.h"
+#include "brainApp.h"
 #include "src/hardware/lcd.h"
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
+#include "src/app/menu.h"
+#include "src/hardware/stepper.h"
 #include "src/network/wifiComponent.h"
 
 #include "src/commands/settingCommand.h"
@@ -23,11 +25,11 @@ static bool OnInputEvent(DisplayBuffer& display, const Event& event)
     return false;
 }
 
-Slider::SimulatorApp::SimulatorApp(const AppConfig& config) :
+Slider::BrainApp::BrainApp(const AppConfig& config) :
     m_Config(config)
 {}
 
-void Slider::SimulatorApp::Setup()
+void Slider::BrainApp::Setup()
 {
     m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
     auto timer = AddComponent<TimerComponent>();
@@ -67,7 +69,7 @@ void Slider::SimulatorApp::Setup()
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
 }
 
-void Slider::SimulatorApp::Update()
+void Slider::BrainApp::Update()
 {
     TAKE_SAMPLE(CpuSampler, "ProcessInput",
     {
