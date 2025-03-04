@@ -8,8 +8,6 @@
 #include "src/core/network/messageCallbackHandle.h"
 #include <vector>
 
-namespace Net { class WifiModule; }
-
 namespace Slider
 {
     class BrainConnector : public Core::Component
@@ -23,13 +21,12 @@ namespace Slider
         };
 
     public:
-        BrainConnector(Net::WifiModule* const wifi);
+        BrainConnector();
         ~BrainConnector();
         virtual void Setup() override;
         virtual void Update() override;
 
     private:
-        Net::WifiModule* const m_Wifi;
         ConnectionState state;
         bool isComplete;
         Core::MacAddress controllerMac;
@@ -48,13 +45,12 @@ namespace Slider
         };
 
     public:
-        ControllerConnector(Net::WifiModule* const wifi);
+        ControllerConnector();
         ~ControllerConnector();
         virtual void Setup() override;
         virtual void Update() override;
 
     private:
-        Net::WifiModule* const m_Wifi;
         ConnectionState state;
         bool isComplete;
         Core::MacAddress brainMac;

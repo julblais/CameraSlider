@@ -48,8 +48,9 @@ void Slider::SimulatorApp::Setup()
 
     menu->AddCommand(new MaxSpeedCommand());
     menu->AddCommand(new SpeedCurveCommand());
-    menu->AddCommand(new BrainMacAddress());
-    menu->AddCommand(new ControllerMacAddress());
+    menu->AddCommand(new BrainAddressCommand());
+    menu->AddCommand(new ControllerAddressCommand());
+    menu->AddCommand(new ConnectionCommand());
 
     m_InputDispatcher.AddListener(menu);
     m_InputDispatcher.AddListener(stepper);
