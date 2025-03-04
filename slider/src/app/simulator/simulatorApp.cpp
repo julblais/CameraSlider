@@ -5,8 +5,7 @@
 #include "src/core/perf/perf.h"
 #include "src/network/wifiComponent.h"
 
-#include "src/commands/speedCommand.h"
-#include "src/commands/curveCommand.h"
+#include "src/commands/settingCommand.h"
 
 #include <esp32-hal-timer.h>
 
