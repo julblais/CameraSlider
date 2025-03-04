@@ -4,7 +4,7 @@
 #include "src/core/network/address.h"
 #include "src/network/wifiModule.h"
 #include "src/network/messages.h"
-#include "settings.h"
+#include "src/app/settings.h"
 
 using namespace Slider;
 using namespace Net;

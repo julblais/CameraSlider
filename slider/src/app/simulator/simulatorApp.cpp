@@ -1,5 +1,5 @@
 #include "simulatorApp.h"
-#include "commands.h"
+#include "src/app/commands.h"
 #include "src/hardware/lcd.h"
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"

@@ -3,7 +3,7 @@
 
 #include "src/core/menu/menuSystem.h"
 #include "src/core/output/display.h"
-#include "connectApp.h"
+#include "src/app/brain/connectApp.h"
 #include <memory>
 #include "settings.h"
 
@@ -41,7 +41,8 @@ namespace Slider
 
     class ConnectionCommand : public MenuCommand
     {
-        enum class State{
+        enum class State
+        {
             NotConnected,
             Connected,
             Connecting

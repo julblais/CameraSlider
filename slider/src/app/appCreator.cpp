@@ -6,7 +6,7 @@
 #ifdef TEST_NETWORK
 #include "src/brain/netApp.h"
 #else
-#include "simulatorApp.h"
+#include "src/app/simulator/simulatorApp.h"
 #endif
 
 using namespace Core;

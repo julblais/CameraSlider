@@ -1,7 +1,7 @@
 #ifndef NETAPP_H
 #define NETAPP_H
 
-#include "appConfig.h"
+#include "src/app/appConfig.h"
 #include "src/core/time/timer.h"
 #include "src/core/app/appBase.h"
 #include "src/core/network/address.h"

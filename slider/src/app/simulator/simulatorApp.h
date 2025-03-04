@@ -2,8 +2,8 @@
 #define APP_H
 
 #include "src/core/app/appBase.h"
-#include "appConfig.h"
-#include "menu.h"
+#include "src/app/appConfig.h"
+#include "src/app/menu.h"
 #include "src/input/input.h"
 #include "src/input/event.h"
 #include "src/core/output/display.h"

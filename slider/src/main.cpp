@@ -16,7 +16,7 @@
 #endif
 
 #include "src/core/app/appBase.h"
-#include "src/brain/appConfig.h"
+#include "src/app/appConfig.h"
 #include "debug.h"
 #include "src/core/perf/perf.h"
 #include <memory>

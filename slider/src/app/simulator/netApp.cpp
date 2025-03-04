@@ -1,5 +1,5 @@
 #include "netApp.h"
-#include "appConfig.h"
+#include "src/app/appConfig.h"
 #include "src/debug.h"
 #include "src/core/network/address.h"
 #include "src/network/wifiModule.h"
