@@ -6,6 +6,7 @@
 #include "src/network/wifiComponent.h"
 
 #include "src/commands/settingCommand.h"
+#include "src/commands/addressCommand.h"
 
 #include <esp32-hal-timer.h>
 

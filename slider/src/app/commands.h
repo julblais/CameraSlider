@@ -11,20 +11,6 @@ using namespace Core;
 
 namespace Slider
 {
-    class BrainAddressCommand : public MenuCommand
-    {
-    public:
-        virtual void Print(Core::Display* display) const override;
-        virtual void Invoke(MenuCommandButton command) override {}
-    };
-
-    class ControllerAddressCommand : public MenuCommand
-    {
-    public:
-        virtual void Print(Core::Display* display) const override;
-        virtual void Invoke(MenuCommandButton command) override {}
-    };
-
     class ConnectionCommand : public MenuCommand
     {
         enum class State
