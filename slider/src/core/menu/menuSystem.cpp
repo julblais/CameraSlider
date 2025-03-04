@@ -33,7 +33,7 @@ void MenuSystem::Update()
         m_Items[m_Index]->OnUpdate();
 }
 
-void MenuSystem::Print(Display* display)
+void MenuSystem::Print(Display* display) const
 {
     if (m_IsOpened)
         m_Items[m_Index]->Print(display);
