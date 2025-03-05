@@ -15,17 +15,6 @@ using namespace Input;
 using namespace Output;
 using namespace Net;
 
-static bool OnInputEvent(DisplayBuffer& display, const Event& event)
-{
-    if (event.HasChange())
-    {
-        display.PrintLine(0, "Joystick ", event.IsStickCenter() ? "pressed" : "");
-        display.PrintLine(1, "X: ", event.GetStickX(), " Y: ", event.GetStickY());
-    }
-
-    return false;
-}
-
 Slider::BrainApp::BrainApp(const AppConfig& config) :
     m_Config(config)
 {}
@@ -55,13 +44,10 @@ void Slider::BrainApp::Setup()
     menu->AddCommand(new SpeedCurveCommand());
     menu->AddCommand(new BrainAddressCommand());
     menu->AddCommand(new ControllerAddressCommand());
-    menu->AddCommand(new ConnectionCommand());
+    menu->AddCommand(new ConnectionCommand(connector));
 
     m_InputDispatcher.AddListener(menu);
     m_InputDispatcher.AddListener(stepper);
-    m_InputDispatcher.AddListener([this](const Event& event) {
-        return OnInputEvent(m_DisplayBuffer, event);
-    });
 
     SetupComponents();
     m_Display->Init();

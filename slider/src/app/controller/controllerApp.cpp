@@ -13,17 +13,6 @@ using namespace Input;
 using namespace Output;
 using namespace Net;
 
-static bool OnInputEvent(DisplayBuffer& display, const Event& event)
-{
-    if (event.HasChange())
-    {
-        display.PrintLine(0, "Joystick ", event.IsStickCenter() ? "pressed" : "");
-        display.PrintLine(1, "X: ", event.GetStickX(), " Y: ", event.GetStickY());
-    }
-
-    return false;
-}
-
 Slider::ControllerApp::ControllerApp(const AppConfig& config) :
     m_Config(config)
 {}
@@ -46,10 +35,6 @@ void Slider::ControllerApp::Setup()
     pins.joystickVertical = m_Config.JoystickYPin;
 
     m_InputReader = std::unique_ptr<Input::InputReader>(new Hardware::DeviceInputReader(pins));
-
-    m_InputDispatcher.AddListener([this](const Event& event) {
-        return OnInputEvent(m_DisplayBuffer, event);
-    });
 
     SetupComponents();
     m_Display->Init();
