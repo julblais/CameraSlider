@@ -1,11 +1,10 @@
 #ifndef CONNECTOR_CONTROLLER_H
 #define CONNECTOR_CONTROLLER_H
 
-#include "src/core/app/appBase.h"
-#include "src/core/time/timer.h"
-#include "src/core/app/appBase.h"
+#include "src/core/component/component.h"
 #include "src/core/network/address.h"
 #include "src/core/network/messageCallbackHandle.h"
+#include "src/network/messages.h"
 #include <vector>
 
 namespace Slider
@@ -28,10 +27,13 @@ namespace Slider
         virtual void Update() override;
 
     private:
+        void BeginConnectionAttempt();
+        void EndConnectionAttempt();
+        void OnConnectionReceived(const Net::ConnectionRequest& message);
+        void OnHandshakeReceived(const Net::Handshake& message);
+
         ConnectionState state;
-        bool isComplete;
         Core::MacAddress brainMac;
-        Core::Timer m_Timeout;
         std::vector<Core::MessageCallbackHandle> m_Callbacks;
     };
 }

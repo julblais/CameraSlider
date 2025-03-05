@@ -32,46 +32,66 @@ WAITING_FOR_HANDSHAKE  │                            Handshake   │  SENDING_H
             CONNECTED  │                                        │  CONNECTED
  */
 
-//const uint8_t receiver_mac[6] = { 0x94, 0x54, 0xc5, 0x63, 0x0a, 0xec };
-//const uint8_t sender_mac[6] = { 0x5c, 0x01, 0x3b, 0x68, 0xb1, 0x0c};
-
 ControllerConnector::ControllerConnector() :
-    state(ConnectionState::WAITING_FOR_CONNECTION),
-    isComplete(false)
+    state(ConnectionState::WAITING_FOR_CONNECTION)
 {}
 
-ControllerConnector::~ControllerConnector()
+void ControllerConnector::Setup()
+{
+    if (Settings::GetInstance().HasPeerAddress())
+    {
+        auto peer = Settings::GetInstance().GetPeerAddress();
+        LogInfo("Connecting to: ", peer);
+        WifiModule::GetInstance().AddPeer(BROADCAST_ADDRESS);
+        state = ConnectionState::CONNECTED;
+    }
+    else
+    {
+        BeginConnectionAttempt();
+        LogInfo("Waiting for answer from brain...");
+    }
+}
+
+void Slider::ControllerConnector::BeginConnectionAttempt()
+{
+    auto connect = WifiModule::GetInstance().RegisterReceiveCallback<ConnectionRequest>("Connection received",
+        [this](ConnectionRequest msg) {
+        OnConnectionReceived(msg);
+    });
+    auto handshake = WifiModule::GetInstance().RegisterReceiveCallback<Handshake>("Handshake received",
+        [this](Handshake msg) {
+        OnHandshakeReceived(msg);
+    });
+    m_Callbacks.push_back(connect);
+    m_Callbacks.push_back(handshake);
+}
+
+void Slider::ControllerConnector::EndConnectionAttempt()
 {
     for (const auto& handle : m_Callbacks)
         WifiModule::GetInstance().RemoveReceiveCallback(handle);
 }
 
-void ControllerConnector::Setup()
+void ControllerConnector::OnConnectionReceived(const Net::ConnectionRequest& message)
 {
-    LogInfo("Setup controller connector");
+    if (state != ConnectionState::WAITING_FOR_CONNECTION) return;
+    LogInfo("Received: ", message);
+    state = ConnectionState::SENDING_REQUEST;
+    brainMac = message.from;
+}
 
-    auto connect = WifiModule::GetInstance().RegisterReceiveCallback<ConnectionRequest>("Controller-connection",
-        [this](ConnectionRequest msg) {
-        if (state != ConnectionState::WAITING_FOR_CONNECTION) return;
-        LogInfo("Received: ", msg);
-        state = ConnectionState::SENDING_REQUEST;
-        brainMac = msg.from;
-    });
-    auto handshake = WifiModule::GetInstance().RegisterReceiveCallback<Handshake>("Controller-handshake",
-        [this](Handshake msg) {
-        if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
-        LogInfo("Received: ", msg);
-        state = ConnectionState::SENDING_HANDSHAKE;
-    });
-    m_Callbacks.push_back(connect);
-    m_Callbacks.push_back(handshake);
+void ControllerConnector::OnHandshakeReceived(const Net::Handshake& message)
+{
+    if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
+    LogInfo("Received: ", message);
+    state = ConnectionState::SENDING_HANDSHAKE;
 }
 
 void ControllerConnector::Update()
 {
     if (state == ConnectionState::WAITING_FOR_CONNECTION)
     {
-        LogInfo("Waiting for connection request");
+        LogInfo("Waiting for connection request...");
         delay(CONTROLLER_CONNECTION_DELAY);
     }
     else if (state == ConnectionState::SENDING_REQUEST)
