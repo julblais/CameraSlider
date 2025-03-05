@@ -15,29 +15,29 @@
 //-------------------------------------
 
 #if LOG_LEVEL >= LOG_LEVEL_ERROR
-#define LogError(...) Debug::LogStyle(Debug::Styler(Debug::Red), "Error\t");\
-Debug::Log(__FILE__, "(", __LINE__, "): ",  __VA_ARGS__)
+#define LogError(...) {Debug::LogStyle(Debug::Styler(Debug::Red), "Error\t");\
+Debug::Log(__FILE__, "(", __LINE__, "): ",  __VA_ARGS__);}
 #else
 #define LogError(...) ;
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_WARNING
-#define LogWarning(...) Debug::LogStyle(Debug::Styler(Debug::Yellow), "Warning\t");\
-Debug::Log(__VA_ARGS__)
+#define LogWarning(...) {Debug::LogStyle(Debug::Styler(Debug::Yellow), "Warning\t");\
+Debug::Log(__VA_ARGS__);}
 #else
 #define LogWarning(...) ;
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
-#define LogInfo(...) Debug::LogStyle(Debug::Styler(Debug::Cyan), "Info\t");\
-Debug::Log(__VA_ARGS__)
+#define LogInfo(...) {Debug::LogStyle(Debug::Styler(Debug::Cyan), "Info\t");\
+Debug::Log(__VA_ARGS__);}
 #else
 #define LogInfo(...) ;
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_DEBUG
-#define LogDebug(...) Debug::LogStyle(Debug::Styler(Debug::White), "Debug\t");\
-Debug::Log(__VA_ARGS__)
+#define LogDebug(...) {Debug::LogStyle(Debug::Styler(Debug::White), "Debug\t");\
+Debug::Log(__VA_ARGS__);}
 #else
 #define LogDebug(...) ;
 #endif
