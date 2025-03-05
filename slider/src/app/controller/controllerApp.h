@@ -17,6 +17,8 @@ namespace Slider
 
     class ControllerApp : public Core::AppBase
     {
+        friend class SimulatorApp;
+        
     public:
         ControllerApp(const AppConfig& config);
         virtual void Setup() override;

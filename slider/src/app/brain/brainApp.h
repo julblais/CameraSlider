@@ -17,6 +17,7 @@ namespace Slider
 
     class BrainApp : public Core::AppBase
     {
+        friend class SimulatorApp;
     public:
         BrainApp(const AppConfig& config);
         virtual void Setup() override;

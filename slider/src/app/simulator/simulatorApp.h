@@ -27,10 +27,7 @@ namespace Slider
     private:
         void AddDeviceMessageSimulator();
         AppConfig m_Config;
-        std::unique_ptr<Core::Display> m_Display;
-        std::unique_ptr<Input::InputReader> m_InputReader;
-        DisplayBuffer m_DisplayBuffer;
-        EventDispatcher m_InputDispatcher;
+        std::unique_ptr<Core::AppBase> m_BaseApp;
     };
 }
 
