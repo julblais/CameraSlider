@@ -1,7 +1,7 @@
 #ifndef CONNECTOR_BRAIN_H
 #define CONNECTOR_BRAIN_H
 
-#include "src/core/app/appBase.h"
+#include "src/core/component/component.h"
 #include "src/core/network/address.h"
 #include "src/core/network/messageCallbackHandle.h"
 #include "src/core/time/timer.h"
@@ -36,7 +36,7 @@ namespace Slider
         void OnConnectionReceived(const Net::ConnectionRequest& message);
         void OnHandshakeReceived(const Net::Handshake& message);
 
-        Timer m_BroadcastTimer;
+        Core::Timer m_BroadcastTimer;
         ConnectionState state;
         bool isComplete;
         Core::MacAddress controllerMac;

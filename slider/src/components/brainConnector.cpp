@@ -32,9 +32,6 @@ WAITING_FOR_HANDSHAKE  │                            Handshake   │  SENDING_H
             CONNECTED  │                                        │  CONNECTED
  */
 
-//const uint8_t receiver_mac[6] = { 0x94, 0x54, 0xc5, 0x63, 0x0a, 0xec };
-//const uint8_t sender_mac[6] = { 0x5c, 0x01, 0x3b, 0x68, 0xb1, 0x0c};
-
 BrainConnector::BrainConnector()
     : state(ConnectionState::IDLE),
     isComplete(false)
@@ -51,6 +48,7 @@ void Slider::BrainConnector::Setup()
     if (Settings::GetInstance().HasPeerAddress())
     {
         auto peer = Settings::GetInstance().GetPeerAddress();
+        LogInfo("Connecting to: ", peer);
         WifiModule::GetInstance().AddPeer(BROADCAST_ADDRESS);
         state = ConnectionState::CONNECTED;
     }
