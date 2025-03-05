@@ -1,5 +1,5 @@
 #include "controllerApp.h"
-#include "src/hardware/lcd.h"
+#include "src/core/output/serialDisplay.h"
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
 #include "src/network/wifiComponent.h"
@@ -12,26 +12,16 @@ using namespace Input;
 using namespace Output;
 using namespace Net;
 
-static bool OnInputEvent(DisplayBuffer& display, const Event& event)
-{
-    if (event.HasChange())
-    {
-        display.PrintLine(0, "Joystick ", event.IsStickCenter() ? "pressed" : "");
-        display.PrintLine(1, "X: ", event.GetStickX(), " Y: ", event.GetStickY());
-    }
-
-    return false;
-}
-
 Slider::ControllerApp::ControllerApp(const AppConfig& config) :
-    m_Config(config)
+    m_Config(config), m_ConnectAnim("", { " ", ".", "..", "..." })
 {}
 
 void Slider::ControllerApp::Setup()
 {
-    m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
+    m_Display = std::unique_ptr<Core::Display>(new Core::SerialDisplay());
     auto timer = AddComponent<TimerComponent>();
     auto wifi = AddComponent<WifiComponent>();
+    m_Connector = AddComponent<ControllerConnector>();
 
     Hardware::InputPins pins;
     pins.dpadUp = m_Config.DpadUpPin;
@@ -45,16 +35,11 @@ void Slider::ControllerApp::Setup()
 
     m_InputReader = std::unique_ptr<Input::InputReader>(new Hardware::DeviceInputReader(pins));
 
-    m_InputDispatcher.AddListener([this](const Event& event) {
-        return OnInputEvent(m_DisplayBuffer, event);
-    });
-
     SetupComponents();
     m_Display->Init();
     m_DisplayBuffer.Init(m_Display.get());
     m_InputReader->Setup();
-
-    m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
+    m_ConnectAnim.Start(500);
 }
 
 void Slider::ControllerApp::Update()
@@ -67,15 +52,21 @@ void Slider::ControllerApp::Update()
         m_InputDispatcher.Dispatch();
     });
 
-    //update all systems
-    TAKE_SAMPLE(CpuSampler, "ComponentUpdate",
+    if (m_Connector->GetState() == Slider::ControllerConnector::State::CONNECTED)
     {
-        UpdateComponents();
-    });
+        m_DisplayBuffer.PrintLine(0, "Connexion");
+        m_DisplayBuffer.PrintLine(1, "reussie");
+    }
+
+    //update all systems
+    TAKE_SAMPLE(CpuSampler, "ComponentUpdate", { UpdateComponents(); });
+
+    if (m_Connector->GetState() != Slider::ControllerConnector::State::CONNECTED)
+    {
+        m_DisplayBuffer.PrintLine(0, "Attente de");
+        m_DisplayBuffer.PrintLine(1, "connexion", m_ConnectAnim);
+    }
 
     //output final display buffer
-    TAKE_SAMPLE(CpuSampler, "OutputToLCD",
-    {
-        m_DisplayBuffer.PrintToDisplay();
-    });
+    TAKE_SAMPLE(CpuSampler, "OutputToLCD", { m_DisplayBuffer.PrintToDisplay(); });
 }

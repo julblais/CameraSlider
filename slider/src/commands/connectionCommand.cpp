@@ -5,39 +5,42 @@
 using namespace Core;
 using namespace Slider;
 
+ConnectionCommand::ConnectionCommand(Slider::BrainConnector* connector)
+    :m_Connector(connector), m_AnimPrint("", { " ", ".", "..", "..." })
+{}
+
 void ConnectionCommand::Print(Display* display) const
 {
-    PrintTitle(display, "Connect manett");
-    const auto rightArrow = display->GetSymbol(Symbol::RightArrow);
-    display->PrintLine(1, " ", rightArrow, "Oui  Non");
+    PrintTitle(display, "Manette");
+    auto state = m_Connector->GetState();
+    if (state == BrainConnector::State::CONNECTED)
+        display->PrintLine(1, "  Connectee!");
+    else if (state == BrainConnector::State::IDLE)
+    {
+        const auto rightArrow = display->GetSymbol(Symbol::RightArrow);
+        display->PrintLine(1, " ", rightArrow, "Commencer");
+    }
+    else
+        display->PrintLine(1, "  Connexion", m_AnimPrint);
 }
 
 void ConnectionCommand::Invoke(MenuCommandButton command)
 {
-    if (m_State == State::NotConnected)
+    if (m_Connector->GetState() != BrainConnector::State::CONNECTED)
     {
         if (command == MenuCommandButton::SELECT)
         {
-            m_State == State::Connecting;
-            m_Connector = std::unique_ptr<BrainConnector>(new BrainConnector());
-            m_Connector.get()->Setup();
+            m_Connector->BeginConnectionAttempt();
+            m_AnimPrint.Start(500);
         }
     }
 }
 
-void ConnectionCommand::OnUpdate()
-{
-    if (m_Connector != nullptr)
-        m_Connector->Update();
-}
-
 void ConnectionCommand::OnShow()
-{
-
-}
+{}
 
 void ConnectionCommand::OnHide()
 {
-    if (m_Connector)
-        m_Connector.reset();
+    m_AnimPrint.Stop();
+    m_Connector->EndConnectionAttempt();
 }

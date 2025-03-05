@@ -62,6 +62,6 @@ void loop()
     });
 
     #ifdef IS_SIMULATOR //somehow this makes the timing more accurate...
-    delay(10);
+    delay(30);
     #endif
 }

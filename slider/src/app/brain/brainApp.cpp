@@ -1,10 +1,11 @@
 #include "brainApp.h"
-#include "src/hardware/lcd.h"
+#include "src/core/output/serialDisplay.h"
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
 #include "src/app/menu.h"
 #include "src/hardware/stepper.h"
 #include "src/network/wifiComponent.h"
+#include "src/components/brainConnector.h"
 
 #include "src/commands/settingCommand.h"
 #include "src/commands/addressCommand.h"
@@ -14,28 +15,18 @@ using namespace Input;
 using namespace Output;
 using namespace Net;
 
-static bool OnInputEvent(DisplayBuffer& display, const Event& event)
-{
-    if (event.HasChange())
-    {
-        display.PrintLine(0, "Joystick ", event.IsStickCenter() ? "pressed" : "");
-        display.PrintLine(1, "X: ", event.GetStickX(), " Y: ", event.GetStickY());
-    }
-
-    return false;
-}
-
 Slider::BrainApp::BrainApp(const AppConfig& config) :
     m_Config(config)
 {}
 
 void Slider::BrainApp::Setup()
 {
-    m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
+    m_Display = std::unique_ptr<Core::Display>(new Core::SerialDisplay());
     auto timer = AddComponent<TimerComponent>();
     auto wifi = AddComponent<WifiComponent>();
     auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
+    auto connector = AddComponent<BrainConnector>();
 
     Hardware::InputPins pins;
     pins.dpadUp = m_Config.DpadUpPin;
@@ -53,13 +44,10 @@ void Slider::BrainApp::Setup()
     menu->AddCommand(new SpeedCurveCommand());
     menu->AddCommand(new BrainAddressCommand());
     menu->AddCommand(new ControllerAddressCommand());
-    menu->AddCommand(new ConnectionCommand());
+    menu->AddCommand(new ConnectionCommand(connector));
 
     m_InputDispatcher.AddListener(menu);
     m_InputDispatcher.AddListener(stepper);
-    m_InputDispatcher.AddListener([this](const Event& event) {
-        return OnInputEvent(m_DisplayBuffer, event);
-    });
 
     SetupComponents();
     m_Display->Init();

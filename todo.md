@@ -1,3 +1,6 @@
 - Add debug output levels (timer, system, menu, lcd, events)
 - Implement stepper controls
+- Add simple easy timer to fire and forget
+- Add auto input class
+- Auto start for animated printable???
 - Add timer to netApp when handshake is not received.

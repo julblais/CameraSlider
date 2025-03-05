@@ -1,8 +1,17 @@
+#ifdef IS_SIMULATOR
+
 #include "simulatorApp.h"
 #include "src/hardware/lcd.h"
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
+#include "src/network/wifiModule.h"
 #include "src/network/wifiComponent.h"
+#include "src/network/messages.h"
+
+#include "src/app/brain/brainApp.h"
+#include "src/components/brainConnector.h"
+#include "src/app/controller/controllerApp.h"
+#include "src/components/controllerConnector.h"
 
 #include "src/commands/settingCommand.h"
 #include "src/commands/addressCommand.h"
@@ -23,69 +32,66 @@ static bool OnInputEvent(DisplayBuffer& display, const Event& event)
     return false;
 }
 
-Slider::SimulatorApp::SimulatorApp(const AppConfig& config) :
-    m_Config(config)
-{}
+Slider::SimulatorApp::SimulatorApp(const AppConfig& config)
+    : m_Config(config)
+{
+    #if defined(IS_BRAIN)
+    m_BaseApp = std::unique_ptr<Core::AppBase>(new BrainApp(config));
+    #elif defined(IS_CONTROLLER)
+    m_BaseApp = std::unique_ptr<Core::AppBase>(new ControllerApp(config));
+    #endif
+}
+
+void Slider::SimulatorApp::AddDeviceMessageSimulator()
+{
+    #if defined(IS_BRAIN)
+    WifiModule::GetInstance().RegisterSimulateSendCallback<ConnectionRequest>("connection-sim", [this](ConnectionRequest msg) {
+        MacAddress otherMac { {0x11, 0x22, 0x33, 0x44, 0x55, 0x66} };
+        ConnectionRequest connectMsg(otherMac);
+        WifiModule::GetInstance().SimulateSend(msg);
+    });
+    WifiModule::GetInstance().RegisterSimulateSendCallback<Handshake>("handshake-sim", [this](Handshake msg) {
+        Handshake handshake(MacAddress({ 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 }));
+        WifiModule::GetInstance().SimulateSend(handshake);
+    });
+    #elif defined(IS_CONTROLLER)
+    WifiModule::GetInstance().RegisterSimulateSendCallback<ConnectionRequest>("connection-sim", [this](ConnectionRequest msg) {
+        MacAddress otherMac { {0x11, 0x22, 0x33, 0x44, 0x55, 0x66} };
+        Handshake hand(otherMac);
+        WifiModule::GetInstance().SimulateSend(hand);
+    });
+    m_ControllerTimer = Timer::Create("Controller sim timer", []() {
+        //Simulate a connection from brain
+        MacAddress receiverMac { {0x11, 0x22, 0x33, 0x44, 0x55, 0x66} };
+        ConnectionRequest msg(receiverMac);
+        WifiModule::GetInstance().SimulateSend(msg);
+    });
+    m_ControllerTimer.Start(2000);
+    #endif
+}
 
 void Slider::SimulatorApp::Setup()
 {
-    m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
-    auto timer = AddComponent<TimerComponent>();
-    auto wifi = AddComponent<WifiComponent>();
-    auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
-    auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
+    #if defined(IS_BRAIN)
+    auto app = reinterpret_cast<BrainApp*>(m_BaseApp.get());
+    #elif defined(IS_CONTROLLER)
+    auto app = reinterpret_cast<ControllerApp*>(m_BaseApp.get());
+    #endif
 
-    Hardware::InputPins pins;
-    pins.dpadUp = m_Config.DpadUpPin;
-    pins.dpadDown = m_Config.DpadDownPin;
-    pins.dpadLeft = m_Config.DpadLeftPin;
-    pins.dpadRight = m_Config.DpadRightPin;
-    pins.dpadSelection = m_Config.DpadSelectionPin;
-    pins.joystickCenter = m_Config.JoystickCenterPin;
-    pins.joystickHorizontal = m_Config.JoystickXPin;
-    pins.joystickVertical = m_Config.JoystickYPin;
+    app->Setup();
+    app->m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
+    app->m_Display->Init();
+    app->m_DisplayBuffer.Init(app->m_Display.get());
 
-    m_InputReader = std::unique_ptr<Input::InputReader>(new Hardware::DeviceInputReader(pins));
-
-    menu->AddCommand(new MaxSpeedCommand());
-    menu->AddCommand(new SpeedCurveCommand());
-    menu->AddCommand(new BrainAddressCommand());
-    menu->AddCommand(new ControllerAddressCommand());
-    menu->AddCommand(new ConnectionCommand());
-
-    m_InputDispatcher.AddListener(menu);
-    m_InputDispatcher.AddListener(stepper);
-    m_InputDispatcher.AddListener([this](const Event& event) {
-        return OnInputEvent(m_DisplayBuffer, event);
+    app->m_InputDispatcher.AddListener([app](const Event& event) {
+        return OnInputEvent(app->m_DisplayBuffer, event);
     });
-
-    SetupComponents();
-    m_Display->Init();
-    m_DisplayBuffer.Init(m_Display.get());
-    m_InputReader->Setup();
-
-    m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
+    AddDeviceMessageSimulator();
 }
 
 void Slider::SimulatorApp::Update()
 {
-    TAKE_SAMPLE(CpuSampler, "ProcessInput",
-    {
-        auto input = m_InputReader->ReadInput();
-        m_InputDispatcher.ProcessInput(input);
-        /*-> ProcessInput(message_from_controller) */
-        m_InputDispatcher.Dispatch();
-    });
-
-    //update all systems
-    TAKE_SAMPLE(CpuSampler, "ComponentUpdate",
-    {
-        UpdateComponents();
-    });
-
-    //output final display buffer
-    TAKE_SAMPLE(CpuSampler, "OutputToLCD",
-    {
-        m_DisplayBuffer.PrintToDisplay();
-    });
+    m_BaseApp->Update();
 }
+
+#endif
