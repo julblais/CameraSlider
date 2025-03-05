@@ -13,7 +13,7 @@ using namespace Output;
 using namespace Net;
 
 Slider::ControllerApp::ControllerApp(const AppConfig& config) :
-    m_Config(config), m_ConnectAnim("ControllerAnimProgress", { " ", ".", "..", "..." })
+    m_Config(config), m_ConnectAnim("ControllerAnimProgress", 500, { " ", ".", "..", "..." })
 {}
 
 void Slider::ControllerApp::Setup()
@@ -39,7 +39,6 @@ void Slider::ControllerApp::Setup()
     m_Display->Init();
     m_DisplayBuffer.Init(m_Display.get());
     m_InputReader->Setup();
-    m_ConnectAnim.Start(500);
 }
 
 void Slider::ControllerApp::Update()
