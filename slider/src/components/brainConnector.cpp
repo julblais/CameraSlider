@@ -9,7 +9,7 @@
 using namespace Slider;
 using namespace Net;
 
-#define BRAIN_BROADCAST_DELAY 1000
+#define BRAIN_BROADCAST_DELAY 2000
 
 /*
                  ┌─────────┐                              ┌────────────┐
@@ -36,48 +36,85 @@ WAITING_FOR_HANDSHAKE  │                            Handshake   │  SENDING_H
 //const uint8_t sender_mac[6] = { 0x5c, 0x01, 0x3b, 0x68, 0xb1, 0x0c};
 
 BrainConnector::BrainConnector()
-    : state(ConnectionState::BROADCASTING),
+    : state(ConnectionState::IDLE),
     isComplete(false)
-{}
-
-BrainConnector::~BrainConnector()
 {
-    for (const auto& handle : m_Callbacks)
-        WifiModule::GetInstance().RemoveReceiveCallback(handle);
+    m_BroadcastTimer = Timer::Create("Broadcast", [this]() {
+        LogInfo("Sending connection request...");
+        ConnectionRequest request(WifiModule::GetInstance().GetMacAddress());
+        WifiModule::GetInstance().Send(BROADCAST_ADDRESS, request);
+    });
 }
 
-void BrainConnector::Setup()
+void Slider::BrainConnector::Setup()
 {
-    LogInfo("Setup brain connector...");
-
-    auto connect = WifiModule::GetInstance().RegisterReceiveCallback<ConnectionRequest>("Brain-Connection",
-        [this](ConnectionRequest msg) {
-        if (state != ConnectionState::BROADCASTING) return;
-        LogInfo("Received: ", msg);
-        state = ConnectionState::SENDING_HANDSHAKE;
-        controllerMac = msg.from;
-    });
-    auto handshake = WifiModule::GetInstance().RegisterReceiveCallback<Handshake>("Brain-handshake",
-        [this](Handshake msg) {
-        if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
-        LogInfo("Received: ", msg);
+    if (Settings::GetInstance().HasPeerAddress())
+    {
+        auto peer = Settings::GetInstance().GetPeerAddress();
+        WifiModule::GetInstance().AddPeer(BROADCAST_ADDRESS);
         state = ConnectionState::CONNECTED;
+    }
+}
+
+void BrainConnector::BeginConnectionAttempt()
+{
+    if (state != ConnectionState::IDLE)
+        return;
+
+    LogInfo("Starting broadcast...");
+    SetupBroadcast();
+    state = ConnectionState::BROADCASTING;
+}
+
+void BrainConnector::EndConnectionAttempt()
+{
+    if (state != ConnectionState::CONNECTED)
+        EndBroadcast();
+}
+
+void BrainConnector::SetupBroadcast()
+{
+    auto connect = WifiModule::GetInstance().RegisterReceiveCallback<ConnectionRequest>("Connection received",
+        [this](ConnectionRequest msg) {
+        OnConnectionReceived(msg);
+    });
+    auto handshake = WifiModule::GetInstance().RegisterReceiveCallback<Handshake>("Handshake received",
+        [this](Handshake msg) {
+        OnHandshakeReceived(msg);
     });
     m_Callbacks.push_back(connect);
     m_Callbacks.push_back(handshake);
     WifiModule::GetInstance().AddPeer(BROADCAST_ADDRESS);
+    m_BroadcastTimer.Start(BRAIN_BROADCAST_DELAY);
+}
+
+void BrainConnector::EndBroadcast()
+{
+    for (const auto& handle : m_Callbacks)
+        WifiModule::GetInstance().RemoveReceiveCallback(handle);
+    WifiModule::GetInstance().RemovePeer(BROADCAST_ADDRESS);
+    m_Callbacks.clear();
+}
+
+void BrainConnector::OnConnectionReceived(const ConnectionRequest& message)
+{
+    if (state != ConnectionState::BROADCASTING) return;
+    LogInfo("Received: ", message);
+    m_BroadcastTimer.Stop();
+    state = ConnectionState::SENDING_HANDSHAKE;
+    controllerMac = message.from;
+}
+
+void BrainConnector::OnHandshakeReceived(const Handshake& message)
+{
+    if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
+    LogInfo("Received: ", message);
+    state = ConnectionState::CONNECTED;
 }
 
 void BrainConnector::Update()
 {
-    if (state == ConnectionState::BROADCASTING)
-    {
-        LogInfo("Sending connection request...");
-        ConnectionRequest request(WifiModule::GetInstance().GetMacAddress());
-        WifiModule::GetInstance().Send(BROADCAST_ADDRESS, request);
-        delay(BRAIN_BROADCAST_DELAY);
-    }
-    else if (state == ConnectionState::SENDING_HANDSHAKE)
+    if (state == ConnectionState::SENDING_HANDSHAKE)
     {
         WifiModule::GetInstance().RemovePeer(BROADCAST_ADDRESS);
         WifiModule::GetInstance().AddPeer(controllerMac);
@@ -88,6 +125,7 @@ void BrainConnector::Update()
     }
     else if (state == ConnectionState::CONNECTED)
     {
+        EndBroadcast();
         //remove timer
     }
 }
