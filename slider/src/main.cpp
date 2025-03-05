@@ -6,7 +6,7 @@
 #define C_DpadSelectionPin      18
 #define C_JoystickXPin          35
 #define C_JoystickYPin          39
-#define C_JoystickCenterPin     5
+#define C_JoystickCenterPin     17
 #define C_StepperStepPin        33
 #define C_StepperDirectionPin   32
 #define C_LcdAddress        0x27
