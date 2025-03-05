@@ -67,7 +67,10 @@ void BrainConnector::BeginConnectionAttempt()
 void BrainConnector::EndConnectionAttempt()
 {
     if (state != ConnectionState::CONNECTED)
+    {
         EndBroadcast();
+        state = ConnectionState::IDLE;
+    }
 }
 
 void BrainConnector::SetupBroadcast()
@@ -107,6 +110,7 @@ void BrainConnector::OnHandshakeReceived(const Handshake& message)
 {
     if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
     LogInfo("Received: ", message);
+    Slider::Settings::GetInstance().SetPeerAddress(message.from);
     state = ConnectionState::CONNECTED;
 }
 
