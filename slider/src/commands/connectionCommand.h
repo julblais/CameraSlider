@@ -2,7 +2,7 @@
 #define CONNECTIONCOMMAND_H
 
 #include "src/core/menu/menuSystem.h"
-#include "src/app/brain/connectApp.h"
+#include "src/components/brainConnector.h"
 #include <memory>
 
 using namespace Core;

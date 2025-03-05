@@ -5,6 +5,7 @@
 #include "src/app/menu.h"
 #include "src/hardware/stepper.h"
 #include "src/network/wifiComponent.h"
+#include "src/components/brainConnector.h"
 
 #include "src/commands/settingCommand.h"
 #include "src/commands/addressCommand.h"
@@ -36,6 +37,7 @@ void Slider::BrainApp::Setup()
     auto wifi = AddComponent<WifiComponent>();
     auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
+    auto connector = AddComponent<BrainConnector>();
 
     Hardware::InputPins pins;
     pins.dpadUp = m_Config.DpadUpPin;

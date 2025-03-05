@@ -1,5 +1,5 @@
-#ifndef BRAINCONNECTAPP_H
-#define BRAINCONNECTAPP_H
+#ifndef CONNECTOR_CONTROLLER_H
+#define CONNECTOR_CONTROLLER_H
 
 #include "src/core/app/appBase.h"
 #include "src/core/time/timer.h"
@@ -10,29 +10,6 @@
 
 namespace Slider
 {
-    class BrainConnector : public Core::Component
-    {
-        enum class ConnectionState
-        {
-            BROADCASTING,
-            SENDING_HANDSHAKE,
-            WAITING_FOR_HANDSHAKE,
-            CONNECTED
-        };
-
-    public:
-        BrainConnector();
-        ~BrainConnector();
-        virtual void Setup() override;
-        virtual void Update() override;
-
-    private:
-        ConnectionState state;
-        bool isComplete;
-        Core::MacAddress controllerMac;
-        std::vector<Core::MessageCallbackHandle> m_Callbacks;
-    };
-
     class ControllerConnector : public Core::Component
     {
         enum class ConnectionState

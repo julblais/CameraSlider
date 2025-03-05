@@ -3,6 +3,7 @@
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
 #include "src/network/wifiComponent.h"
+#include "src/components/controllerConnector.h"
 
 #include "src/commands/settingCommand.h"
 #include "src/commands/addressCommand.h"
@@ -32,6 +33,7 @@ void Slider::ControllerApp::Setup()
     m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
     auto timer = AddComponent<TimerComponent>();
     auto wifi = AddComponent<WifiComponent>();
+    auto connector = AddComponent<ControllerConnector>();
 
     Hardware::InputPins pins;
     pins.dpadUp = m_Config.DpadUpPin;
