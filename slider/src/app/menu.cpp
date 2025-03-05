@@ -26,6 +26,8 @@ Slider::Menu::Menu(Display* display, int delay) :
 void Slider::Menu::Update()
 {
     m_MenuSystem.Update();
+    if (m_MenuSystem.IsShown())
+        OutputMenu();
 }
 
 bool Slider::Menu::OnInputEvent(const Input::Event& evt)
@@ -62,7 +64,6 @@ bool Slider::Menu::OnInputEvent(const Input::Event& evt)
                 default:
                     break;
             };
-            OutputMenu();
         }
     }
 
