@@ -13,7 +13,7 @@ namespace Slider
     class BrainConnector : public Core::Component
     {
     public:
-        enum class ConnectionState
+        enum class State
         {
             IDLE,
             BROADCASTING,
@@ -29,7 +29,7 @@ namespace Slider
 
         void BeginConnectionAttempt();
         void EndConnectionAttempt();
-        inline ConnectionState GetState() { return state; }
+        inline State GetState() { return state; }
     private:
         void SetupBroadcast();
         void EndBroadcast();
@@ -37,7 +37,7 @@ namespace Slider
         void OnHandshakeReceived(const Net::Handshake& message);
 
         Core::Timer m_BroadcastTimer;
-        ConnectionState state;
+        State state;
         bool isComplete;
         Core::MacAddress controllerMac;
         std::vector<Core::MessageCallbackHandle> m_Callbacks;

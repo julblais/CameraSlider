@@ -11,7 +11,8 @@ namespace Slider
 {
     class ControllerConnector : public Core::Component
     {
-        enum class ConnectionState
+    public:
+        enum class State
         {
             WAITING_FOR_CONNECTION,
             SENDING_HANDSHAKE,
@@ -19,12 +20,10 @@ namespace Slider
             WAITING_FOR_HANDSHAKE,
             CONNECTED
         };
-
-    public:
         ControllerConnector();
-        ~ControllerConnector();
         virtual void Setup() override;
         virtual void Update() override;
+        inline State GetState() { return state; }
 
     private:
         void BeginConnectionAttempt();
@@ -32,7 +31,7 @@ namespace Slider
         void OnConnectionReceived(const Net::ConnectionRequest& message);
         void OnHandshakeReceived(const Net::Handshake& message);
 
-        ConnectionState state;
+        State state;
         Core::MacAddress brainMac;
         std::vector<Core::MessageCallbackHandle> m_Callbacks;
     };

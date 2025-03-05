@@ -13,9 +13,9 @@ void ConnectionCommand::Print(Display* display) const
 {
     PrintTitle(display, "Manette");
     auto state = m_Connector->GetState();
-    if (state == BrainConnector::ConnectionState::CONNECTED)
+    if (state == BrainConnector::State::CONNECTED)
         display->PrintLine(1, "  Connectee!");
-    else if (state == BrainConnector::ConnectionState::IDLE)
+    else if (state == BrainConnector::State::IDLE)
     {
         const auto rightArrow = display->GetSymbol(Symbol::RightArrow);
         display->PrintLine(1, " ", rightArrow, "Commencer");
@@ -26,7 +26,7 @@ void ConnectionCommand::Print(Display* display) const
 
 void ConnectionCommand::Invoke(MenuCommandButton command)
 {
-    if (m_Connector->GetState() != BrainConnector::ConnectionState::CONNECTED)
+    if (m_Connector->GetState() != BrainConnector::State::CONNECTED)
     {
         if (command == MenuCommandButton::SELECT)
         {

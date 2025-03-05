@@ -33,7 +33,7 @@ WAITING_FOR_HANDSHAKE  │                            Handshake   │  SENDING_H
  */
 
 BrainConnector::BrainConnector()
-    : state(ConnectionState::IDLE),
+    : state(State::IDLE),
     isComplete(false)
 {
     m_BroadcastTimer = Timer::Create("Broadcast", [this]() {
@@ -50,26 +50,26 @@ void Slider::BrainConnector::Setup()
         auto peer = Settings::GetInstance().GetPeerAddress();
         LogInfo("Connecting to: ", peer);
         WifiModule::GetInstance().AddPeer(BROADCAST_ADDRESS);
-        state = ConnectionState::CONNECTED;
+        state = State::CONNECTED;
     }
 }
 
 void BrainConnector::BeginConnectionAttempt()
 {
-    if (state != ConnectionState::IDLE)
+    if (state != State::IDLE)
         return;
 
     LogInfo("Starting broadcast...");
     SetupBroadcast();
-    state = ConnectionState::BROADCASTING;
+    state = State::BROADCASTING;
 }
 
 void BrainConnector::EndConnectionAttempt()
 {
-    if (state != ConnectionState::CONNECTED)
+    if (state != State::CONNECTED)
     {
         EndBroadcast();
-        state = ConnectionState::IDLE;
+        state = State::IDLE;
     }
 }
 
@@ -99,33 +99,33 @@ void BrainConnector::EndBroadcast()
 
 void BrainConnector::OnConnectionReceived(const ConnectionRequest& message)
 {
-    if (state != ConnectionState::BROADCASTING) return;
+    if (state != State::BROADCASTING) return;
     LogInfo("Received: ", message);
     m_BroadcastTimer.Stop();
-    state = ConnectionState::SENDING_HANDSHAKE;
+    state = State::SENDING_HANDSHAKE;
     controllerMac = message.from;
 }
 
 void BrainConnector::OnHandshakeReceived(const Handshake& message)
 {
-    if (state != ConnectionState::WAITING_FOR_HANDSHAKE) return;
+    if (state != State::WAITING_FOR_HANDSHAKE) return;
     LogInfo("Received: ", message);
     Slider::Settings::GetInstance().SetPeerAddress(message.from);
-    state = ConnectionState::CONNECTED;
+    state = State::CONNECTED;
 }
 
 void BrainConnector::Update()
 {
-    if (state == ConnectionState::SENDING_HANDSHAKE)
+    if (state == State::SENDING_HANDSHAKE)
     {
         WifiModule::GetInstance().RemovePeer(BROADCAST_ADDRESS);
         WifiModule::GetInstance().AddPeer(controllerMac);
         LogInfo("Sending handshake message...");
         Handshake handshake(WifiModule::GetInstance().GetMacAddress());
         WifiModule::GetInstance().Send(handshake);
-        state = ConnectionState::WAITING_FOR_HANDSHAKE;
+        state = State::WAITING_FOR_HANDSHAKE;
     }
-    else if (state == ConnectionState::CONNECTED)
+    else if (state == State::CONNECTED)
     {
         EndBroadcast();
         //remove timer
