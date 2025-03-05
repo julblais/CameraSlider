@@ -13,7 +13,7 @@ using namespace Output;
 using namespace Net;
 
 Slider::ControllerApp::ControllerApp(const AppConfig& config) :
-    m_Config(config), m_ConnectAnim("", { " ", ".", "..", "..." })
+    m_Config(config), m_ConnectAnim("ControllerAnimProgress", { " ", ".", "..", "..." })
 {}
 
 void Slider::ControllerApp::Setup()

@@ -28,10 +28,10 @@ namespace Core
         Timer& operator=(const Timer& timer) = delete;
         Timer(Timer&& timer);
         Timer& operator=(Timer&& timer);
-        ~Timer();
 
-        static Timer Create(const char* name, const Callback& callback);
-        void Start(Time delayMs, bool periodic=false) const;
+        static Timer Create(const char* name, Callback callback);
+        static void FireAndForget(const char* name, Time delayMs, Callback callback);
+        void Start(Time delayMs, bool periodic = false) const;
         void Stop() const;
         void Restart(Time delayMs) const;
 
@@ -39,23 +39,28 @@ namespace Core
         struct UserData
         {
         public:
-            UserData(const char* name, const Callback& callback);
+            UserData(const char* name, Callback callback, bool autoDelete);
+            ~UserData();
+            inline void SetHandle(esp_timer_handle_t handle) { m_Handle = handle; }
+            inline esp_timer_handle_t GetHandle() { return m_Handle; }
+            inline bool ShouldAutoDelete() { return m_AutoDelete; }
             void Invoke();
         private:
             const char* m_Name;
+            esp_timer_handle_t m_Handle;
             const Callback m_Callback;
+            const bool m_AutoDelete;
         };
 
-        Timer(const esp_timer_handle_t& handle, std::unique_ptr<UserData>&& userData);
-        static void OnTimerTriggered(void* callback);
+        Timer(UserData* userData);
         friend class TimerComponent;
+        static UserData* CreateTimer(const char* name, Callback cb, bool shouldDelete);
 
-        esp_timer_handle_t m_Handle;
         std::unique_ptr<UserData> m_UserData;
     };
 }
 
-#elif
+#else
 
 #include "src/core/component/component.h"
 #include <functional>
