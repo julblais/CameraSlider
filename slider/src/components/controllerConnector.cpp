@@ -108,6 +108,7 @@ void ControllerConnector::Update()
         Handshake handshake(WifiModule::GetInstance().GetMacAddress());
         WifiModule::GetInstance().Send(handshake);
         Slider::Settings::GetInstance().SetPeerAddress(brainMac);
+        EndConnectionAttempt();
         state = ConnectionState::CONNECTED;
     }
 }
