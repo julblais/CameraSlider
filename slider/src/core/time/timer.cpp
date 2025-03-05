@@ -130,6 +130,13 @@ void Timer::Restart(Time delay) const
     Start(delay);
 }
 
+bool Timer::IsRunning() const
+{
+    if (m_UserData->GetHandle())
+        return esp_timer_is_active(m_UserData->GetHandle());
+    return false;
+}
+
 #else
 
 #include "src/debug.h"
@@ -171,7 +178,7 @@ Timer TimerComponent::Create(const char* name, const Timer::Callback& callback)
 
 void TimerComponent::Update()
 {
-    auto currentTime = millis();
+    auto currentTime = GetTimeMs();
     m_TimeMs = currentTime;
     for (auto& timer : m_Timers)
     {
@@ -189,7 +196,7 @@ void TimerComponent::Start(Timer::Id id, Time delay, bool periodic)
 {
     auto itr = Find(id);
     LogDebug("Starting timer: ", itr->name);
-    itr->triggerTime = millis() + delay;
+    itr->triggerTime = GetTimeMs() + delay;
 }
 
 void TimerComponent::Stop(Timer::Id id)

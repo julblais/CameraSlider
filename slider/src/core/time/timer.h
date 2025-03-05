@@ -3,6 +3,7 @@
 
 #ifdef ARDUINO_ARCH_ESP32 
 
+#include "time.h"
 #include "esp_timer.h"
 #include "src/core/component/component.h"
 #include <functional>
@@ -10,8 +11,6 @@
 
 namespace Core
 {
-    using Time = unsigned long;
-
     class TimerComponent : public Component
     {
         virtual void Setup() override;
@@ -34,6 +33,7 @@ namespace Core
         void Start(Time delayMs, bool periodic = false) const;
         void Stop() const;
         void Restart(Time delayMs) const;
+        bool IsRunning() const;
 
     private:
         struct UserData
