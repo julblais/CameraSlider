@@ -28,7 +28,6 @@ namespace Core
         Timer& operator=(const Timer& timer) = delete;
         Timer(Timer&& timer);
         Timer& operator=(Timer&& timer);
-        ~Timer();
 
         static Timer Create(const char* name, Callback callback);
         static void FireAndForget(const char* name, Time delayMs, Callback callback);
@@ -40,21 +39,23 @@ namespace Core
         struct UserData
         {
         public:
-            UserData(const char* name, Callback callback);
+            UserData(const char* name, Callback callback, bool autoDelete);
             ~UserData();
             inline void SetHandle(esp_timer_handle_t handle) { m_Handle = handle; }
+            inline esp_timer_handle_t GetHandle() { return m_Handle; }
+            inline bool ShouldAutoDelete() { return m_AutoDelete; }
             void Invoke();
-        public:
-            esp_timer* m_Handle;
-            const char* m_Name;
         private:
+            const char* m_Name;
+            esp_timer_handle_t m_Handle;
             const Callback m_Callback;
+            const bool m_AutoDelete;
         };
 
-        Timer(const esp_timer_handle_t& handle, UserData* userData);
+        Timer(UserData* userData);
         friend class TimerComponent;
+        static UserData* CreateTimer(const char* name, Callback cb, bool shouldDelete);
 
-        esp_timer_handle_t m_Handle;
         std::unique_ptr<UserData> m_UserData;
     };
 }

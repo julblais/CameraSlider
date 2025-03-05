@@ -21,19 +21,24 @@ void TimerComponent::Update()
     if (xQueueReceive(s_Queue, &userData, 0))
     {
         userData->Invoke();
-        ///if (userData->m_Handle != nullptr)
-          //  delete userData;
+        if (userData->ShouldAutoDelete())
+            delete userData;
     }
 }
 
-Timer::UserData::UserData(const char* name, Callback callback)
-    : m_Name(name), m_Callback(std::move(callback))//, m_Handle(nullptr)
+Timer::UserData::UserData(const char* name, Callback callback, bool autoDelete)
+    : m_Name(name), m_Callback(std::move(callback)), m_Handle(nullptr), m_AutoDelete(autoDelete)
 {}
 
-Core::Timer::UserData::~UserData()
-{/*
+Timer::UserData::~UserData()
+{
     if (m_Handle != nullptr)
-        esp_timer_delete(m_Handle);*/
+    {
+        esp_timer_stop(m_Handle);
+        auto result = esp_timer_delete(m_Handle);
+        if (result != ESP_OK)
+            LogError("Problem deleting timer ", m_Name, ", ", esp_err_to_name(result));
+    }
 }
 
 void Timer::UserData::Invoke()
@@ -43,41 +48,24 @@ void Timer::UserData::Invoke()
 }
 
 Timer::Timer()
-    :m_Handle(nullptr), m_UserData(nullptr)
+    :m_UserData(nullptr)
 {}
 
-Timer::Timer(const esp_timer_handle_t& handle, UserData* userData)
-    : m_Handle(handle), m_UserData(userData)
+Timer::Timer(UserData* userData)
+    : m_UserData(userData)
 {}
 
 Timer::Timer(Timer&& timer)
 {
-    m_Handle = timer.m_Handle;
     m_UserData = std::move(timer.m_UserData);
-    timer.m_Handle = nullptr;
     timer.m_UserData = nullptr;
 }
 
 Timer& Timer::operator=(Timer&& timer)
 {
-    m_Handle = timer.m_Handle;
     m_UserData = std::move(timer.m_UserData);
-    timer.m_Handle = nullptr;
     timer.m_UserData = nullptr;
     return *this;
-}
-
-Timer::~Timer()
-{
-    if (m_Handle)
-    {
-        Stop();
-        auto result = esp_timer_delete(m_Handle);
-        if (result != ESP_OK)
-        {
-            LogError("Problem deleting timer ", this->m_UserData.get()->m_Name, ", ", esp_err_to_name(result));
-        }
-    }
 }
 
 void OnTimerTriggered(void* userData)
@@ -85,10 +73,9 @@ void OnTimerTriggered(void* userData)
     xQueueSend(s_Queue, &userData, 0);
 }
 
-Timer Timer::Create(const char* name, Callback cb)
+Timer::UserData* Timer::CreateTimer(const char* name, Callback cb, bool shouldDelete)
 {
-    auto userData = new UserData(name, std::move(cb));
-
+    auto userData = new UserData(name, std::move(cb), false);
     const esp_timer_create_args_t args = {
         .callback = &OnTimerTriggered,
         .arg = userData,
@@ -97,52 +84,44 @@ Timer Timer::Create(const char* name, Callback cb)
     };
 
     esp_timer* handle;
-
     auto result = esp_timer_create(&args, &handle);
     if (result != ESP_OK)
     {
         LogError("Cannot create timer: ", name, ", ", esp_err_to_name(result));
-        return Timer();
+        return nullptr;
     }
-    return Timer(handle, userData);
+
+    userData->SetHandle(handle);
+    return userData;
 }
 
-void Timer::FireAndForget(const char* name, Time delayMs, Callback callback)
-{/*
-    auto cb = new Callback{std::move(callback)};
-    auto userData = new UserData(name, cb);
+Timer Timer::Create(const char* name, Callback cb)
+{
+    auto userData = CreateTimer(name, std::move(cb), false);
+    return Timer(userData);
+}
 
-    esp_timer_create_args_t args;
-    args.name = name;
-    args.callback = OnTimerTriggered;
-    args.arg = userData;
-    args.dispatch_method = esp_timer_dispatch_t::ESP_TIMER_TASK;
-    esp_timer* handle;
-
-    auto result = esp_timer_create(&args, &handle);
-    if (result != ESP_OK)
-    {
-        LogError("Cannot create timer: ", name, ", ", esp_err_to_name(result));
-    }
-    userData->SetHandle(handle);
-    esp_timer_start_once(handle, delayMs * 1000);*/
+void Timer::FireAndForget(const char* name, Time delayMs, Callback cb)
+{
+    auto userData = CreateTimer(name, std::move(cb), true);
+    esp_timer_start_once(userData->GetHandle(), delayMs * 1000);
 }
 
 void Timer::Start(Time delayMs, bool periodic) const
 {
-    if (m_Handle)
+    if (m_UserData->GetHandle())
     {
         if (periodic)
-            esp_timer_start_periodic(m_Handle, delayMs * 1000);
+            esp_timer_start_periodic(m_UserData->GetHandle(), delayMs * 1000);
         else
-            esp_timer_start_once(m_Handle, delayMs * 1000);
+            esp_timer_start_once(m_UserData->GetHandle(), delayMs * 1000);
     }
 }
 
 void Timer::Stop() const
 {
-    if (m_Handle)
-        esp_timer_stop(m_Handle);
+    if (m_UserData->GetHandle())
+        esp_timer_stop(m_UserData->GetHandle());
 }
 
 void Timer::Restart(Time delay) const
