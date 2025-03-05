@@ -10,7 +10,6 @@
 #include "src/input/event.h"
 #include "src/core/output/display.h"
 #include "src/output/displayBuffer.h"
-#include "src/core/time/timer.h"
 
 #include <memory>
 #include "src/hardware/stepper.h"
