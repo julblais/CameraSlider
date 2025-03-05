@@ -41,7 +41,7 @@ int TableFormatter::CalculateMaxColWith(std::vector<int>& colWidths) const
 
 size_t TableFormatter::printTo(Print& p) const
 {
-    size_t s;
+    size_t s = 0;
     std::vector<int> colWidths(m_Cols, 0);
     int sum = CalculateMaxColWith(colWidths);
 
