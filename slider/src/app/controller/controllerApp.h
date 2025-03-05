@@ -7,6 +7,7 @@
 #include "src/input/event.h"
 #include "src/core/output/display.h"
 #include "src/output/displayBuffer.h"
+#include "src/components/controllerConnector.h"
 
 #include <memory>
 
@@ -26,6 +27,7 @@ namespace Slider
 
     private:
         AppConfig m_Config;
+        ControllerConnector* m_Connector;
         std::unique_ptr<Core::Display> m_Display;
         std::unique_ptr<Input::InputReader> m_InputReader;
         DisplayBuffer m_DisplayBuffer;

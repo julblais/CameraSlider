@@ -3,7 +3,6 @@
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
 #include "src/network/wifiComponent.h"
-#include "src/components/controllerConnector.h"
 
 #include "src/commands/settingCommand.h"
 #include "src/commands/addressCommand.h"
@@ -22,7 +21,7 @@ void Slider::ControllerApp::Setup()
     m_Display = std::unique_ptr<Core::Display>(new Core::SerialDisplay());
     auto timer = AddComponent<TimerComponent>();
     auto wifi = AddComponent<WifiComponent>();
-    auto connector = AddComponent<ControllerConnector>();
+    m_Connector = AddComponent<ControllerConnector>();
 
     Hardware::InputPins pins;
     pins.dpadUp = m_Config.DpadUpPin;
@@ -60,9 +59,17 @@ void Slider::ControllerApp::Update()
         UpdateComponents();
     });
 
-    //output final display buffer
-    TAKE_SAMPLE(CpuSampler, "OutputToLCD",
+    if (m_Connector->GetState() == Slider::ControllerConnector::State::CONNECTED)
     {
-        m_DisplayBuffer.PrintToDisplay();
-    });
+        //output final display buffer
+        TAKE_SAMPLE(CpuSampler, "OutputToLCD",
+        {
+            m_DisplayBuffer.PrintToDisplay();
+        });
+    }
+    else
+    {
+        m_Display->PrintLine(0, "Attente de");
+        m_Display->PrintLine(1, "connexion...");
+    }
 }
