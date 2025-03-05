@@ -13,7 +13,7 @@ using namespace Output;
 using namespace Net;
 
 Slider::ControllerApp::ControllerApp(const AppConfig& config) :
-    m_Config(config)
+    m_Config(config), m_ConnectAnim("", { " ", ".", "..", "..." })
 {}
 
 void Slider::ControllerApp::Setup()
@@ -39,8 +39,7 @@ void Slider::ControllerApp::Setup()
     m_Display->Init();
     m_DisplayBuffer.Init(m_Display.get());
     m_InputReader->Setup();
-
-    m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
+    m_ConnectAnim.Start(500);
 }
 
 void Slider::ControllerApp::Update()
@@ -53,23 +52,21 @@ void Slider::ControllerApp::Update()
         m_InputDispatcher.Dispatch();
     });
 
-    //update all systems
-    TAKE_SAMPLE(CpuSampler, "ComponentUpdate",
-    {
-        UpdateComponents();
-    });
-
     if (m_Connector->GetState() == Slider::ControllerConnector::State::CONNECTED)
     {
-        //output final display buffer
-        TAKE_SAMPLE(CpuSampler, "OutputToLCD",
-        {
-            m_DisplayBuffer.PrintToDisplay();
-        });
+        m_DisplayBuffer.PrintLine(0, "Connexion");
+        m_DisplayBuffer.PrintLine(1, "reussie");
     }
-    else
+
+    //update all systems
+    TAKE_SAMPLE(CpuSampler, "ComponentUpdate", { UpdateComponents(); });
+
+    if (m_Connector->GetState() != Slider::ControllerConnector::State::CONNECTED)
     {
-        m_Display->PrintLine(0, "Attente de");
-        m_Display->PrintLine(1, "connexion...");
+        m_DisplayBuffer.PrintLine(0, "Attente de");
+        m_DisplayBuffer.PrintLine(1, "connexion", m_ConnectAnim);
     }
+
+    //output final display buffer
+    TAKE_SAMPLE(CpuSampler, "OutputToLCD", { m_DisplayBuffer.PrintToDisplay(); });
 }

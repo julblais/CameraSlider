@@ -48,7 +48,7 @@ void ControllerConnector::Setup()
     else
     {
         BeginConnectionAttempt();
-        LogInfo("Waiting for answer from brain...");
+        LogInfo("Waiting for connection request from slider...");
     }
 }
 
@@ -89,12 +89,7 @@ void ControllerConnector::OnHandshakeReceived(const Net::Handshake& message)
 
 void ControllerConnector::Update()
 {
-    if (state == State::WAITING_FOR_CONNECTION)
-    {
-        LogInfo("Waiting for connection request...");
-        delay(CONTROLLER_CONNECTION_DELAY);
-    }
-    else if (state == State::SENDING_REQUEST)
+    if (state == State::SENDING_REQUEST)
     {
         WifiModule::GetInstance().AddPeer(brainMac);
         LogInfo("Sending connection request.");

@@ -8,6 +8,7 @@
 #include "src/core/output/display.h"
 #include "src/output/displayBuffer.h"
 #include "src/components/controllerConnector.h"
+#include "src/core/output/animatedPrintable.h"
 
 #include <memory>
 
@@ -32,6 +33,7 @@ namespace Slider
         std::unique_ptr<Input::InputReader> m_InputReader;
         DisplayBuffer m_DisplayBuffer;
         EventDispatcher m_InputDispatcher;
+        AnimatedPrintable m_ConnectAnim;
     };
 }
 
