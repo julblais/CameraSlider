@@ -6,14 +6,22 @@ using namespace Core;
 using namespace Slider;
 
 ConnectionCommand::ConnectionCommand(Slider::BrainConnector* connector)
-    :m_Connector(connector)
+    :m_Connector(connector), m_AnimPrint("", { " ", ".", "..", "..." })
 {}
 
 void ConnectionCommand::Print(Display* display) const
 {
-    PrintTitle(display, "Connect manett");
-    const auto rightArrow = display->GetSymbol(Symbol::RightArrow);
-    display->PrintLine(1, " ", rightArrow, "Oui  Non");
+    PrintTitle(display, "Manette");
+    auto state = m_Connector->GetState();
+    if (state == BrainConnector::ConnectionState::CONNECTED)
+        display->PrintLine(1, "  Connectee!");
+    else if (state == BrainConnector::ConnectionState::IDLE)
+    {
+        const auto rightArrow = display->GetSymbol(Symbol::RightArrow);
+        display->PrintLine(1, " ", rightArrow, "Commencer");
+    }
+    else
+        display->PrintLine(1, "  Connexion", m_AnimPrint);
 }
 
 void ConnectionCommand::Invoke(MenuCommandButton command)
@@ -21,11 +29,18 @@ void ConnectionCommand::Invoke(MenuCommandButton command)
     if (m_Connector->GetState() != BrainConnector::ConnectionState::CONNECTED)
     {
         if (command == MenuCommandButton::SELECT)
+        {
             m_Connector->BeginConnectionAttempt();
+            m_AnimPrint.Start(500);
+        }
     }
 }
 
+void ConnectionCommand::OnShow()
+{}
+
 void ConnectionCommand::OnHide()
 {
+    m_AnimPrint.Stop();
     m_Connector->EndConnectionAttempt();
 }
