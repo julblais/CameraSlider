@@ -1,12 +1,12 @@
 #ifdef IS_SIMULATOR
 #define C_DpadUpPin             23
-#define C_DpadDownPin           14
-#define C_DpadLeftPin           13
+#define C_DpadDownPin           34
+#define C_DpadLeftPin           16
 #define C_DpadRightPin          19
 #define C_DpadSelectionPin      18
-#define C_JoystickXPin          26
-#define C_JoystickYPin          25
-#define C_JoystickCenterPin     5
+#define C_JoystickXPin          35
+#define C_JoystickYPin          39
+#define C_JoystickCenterPin     17
 #define C_StepperStepPin        33
 #define C_StepperDirectionPin   32
 #define C_LcdAddress        0x27
@@ -44,7 +44,7 @@ static AppConfig CreateConfig()
 static std::unique_ptr<AppBase> app;
 
 void setup()
-{ 
+{
     Debug::Init(9600);
     INIT_SAMPLER(CpuSampler);
 
