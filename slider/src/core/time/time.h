@@ -5,7 +5,7 @@ namespace Core
 {
     using Time = unsigned long;
 
-    static Time GetTimeMs();
+    Time GetTimeMs();
 }
 
 #endif
