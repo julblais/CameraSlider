@@ -1,5 +1,7 @@
-#ifndef APP_H
-#define APP_H
+#ifdef IS_SIMULATOR
+
+#ifndef SIMULATOR_APP_H
+#define SIMULATOR_APP_H
 
 #include "src/core/app/appBase.h"
 #include "src/app/appConfig.h"
@@ -33,4 +35,5 @@ namespace Slider
     };
 }
 
+#endif
 #endif

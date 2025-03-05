@@ -1,3 +1,5 @@
+#ifdef IS_SIMULATOR
+
 #include "simulatorApp.h"
 #include "src/hardware/lcd.h"
 #include "src/hardware/deviceInputReader.h"
@@ -91,3 +93,5 @@ void Slider::SimulatorApp::Update()
 {
     m_BaseApp->Update();
 }
+
+#endif
