@@ -1,5 +1,5 @@
 #include "brainApp.h"
-#include "src/hardware/lcd.h"
+#include "src/core/output/serialDisplay.h"
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
 #include "src/app/menu.h"
@@ -21,7 +21,7 @@ Slider::BrainApp::BrainApp(const AppConfig& config) :
 
 void Slider::BrainApp::Setup()
 {
-    m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
+    m_Display = std::unique_ptr<Core::Display>(new Core::SerialDisplay());
     auto timer = AddComponent<TimerComponent>();
     auto wifi = AddComponent<WifiComponent>();
     auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);

@@ -1,5 +1,5 @@
 #include "controllerApp.h"
-#include "src/hardware/lcd.h"
+#include "src/core/output/serialDisplay.h"
 #include "src/hardware/deviceInputReader.h"
 #include "src/core/perf/perf.h"
 #include "src/network/wifiComponent.h"
@@ -19,7 +19,7 @@ Slider::ControllerApp::ControllerApp(const AppConfig& config) :
 
 void Slider::ControllerApp::Setup()
 {
-    m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
+    m_Display = std::unique_ptr<Core::Display>(new Core::SerialDisplay());
     auto timer = AddComponent<TimerComponent>();
     auto wifi = AddComponent<WifiComponent>();
     auto connector = AddComponent<ControllerConnector>();
