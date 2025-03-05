@@ -60,7 +60,7 @@ void Slider::SimulatorApp::AddDeviceMessageSimulator()
         Handshake hand(otherMac);
         WifiModule::GetInstance().SimulateSend(hand);
     });
-    Timer::FireAndForget("Controller sim timer", 2000, [this]() {
+    Timer::FireAndForget("Controller sim timer", 2000, []() {
         //Simulate a connection from brain
         MacAddress receiverMac { {0x11, 0x22, 0x33, 0x44, 0x55, 0x66} };
         ConnectionRequest msg(receiverMac);
