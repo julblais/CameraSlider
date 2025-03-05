@@ -1,7 +1,7 @@
 using namespace Core;
 
 template <typename... TArgs>
-void EventSource<TArgs...>::AddListener(TListener listener)
+void EventSource<TArgs...>::AddListener(const TListener& listener)
 {
     m_Listeners.push_back(listener);
 }

@@ -14,7 +14,7 @@ namespace Core
 
     public:
         EventSource() = default;
-        void AddListener(TListener listener);
+        void AddListener(const TListener& listener);
 
         // AddListener for classes that have OnInputEvent method
         template <typename C>
