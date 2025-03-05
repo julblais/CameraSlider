@@ -35,7 +35,7 @@ Slider::SimulatorApp::SimulatorApp(const AppConfig& config)
 {
     #if defined(IS_BRAIN)
     m_BaseApp = std::unique_ptr<Core::AppBase>(new BrainApp(config));
-    #elif defined(IS_CONTROLLER)ic ControllerApp
+    #elif defined(IS_CONTROLLER)
     m_BaseApp = std::unique_ptr<Core::AppBase>(new ControllerApp(config));
     #endif
 }
@@ -65,7 +65,7 @@ void Slider::SimulatorApp::Setup()
 {
     #if defined(IS_BRAIN)
     auto app = reinterpret_cast<BrainApp*>(m_BaseApp.get());
-    #elif defined(IS_CONTROLLER)ic ControllerApp
+    #elif defined(IS_CONTROLLER)
     auto app = reinterpret_cast<ControllerApp*>(m_BaseApp.get());
     #endif
 
