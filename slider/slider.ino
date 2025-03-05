@@ -1,10 +1,10 @@
-#define C_DpadUpPin             25
-#define C_DpadDownPin           26
-#define C_DpadLeftPin           27
-#define C_DpadRightPin          33
-#define C_DpadSelectionPin      14
-#define C_JoystickXPin          26
-#define C_JoystickYPin          25
+#define C_DpadUpPin             23
+#define C_DpadDownPin           34
+#define C_DpadLeftPin           16
+#define C_DpadRightPin          19
+#define C_DpadSelectionPin      18
+#define C_JoystickXPin          35
+#define C_JoystickYPin          39
 #define C_JoystickCenterPin     5
 #define C_StepperStepPin        33
 #define C_StepperDirectionPin   32
