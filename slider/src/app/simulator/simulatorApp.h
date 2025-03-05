@@ -29,7 +29,6 @@ namespace Slider
 
     private:
         void AddDeviceMessageSimulator();
-        Timer m_ControllerTimer;
         AppConfig m_Config;
         std::unique_ptr<Core::AppBase> m_BaseApp;
     };

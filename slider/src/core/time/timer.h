@@ -30,8 +30,9 @@ namespace Core
         Timer& operator=(Timer&& timer);
         ~Timer();
 
-        static Timer Create(const char* name, const Callback& callback);
-        void Start(Time delayMs, bool periodic=false) const;
+        static Timer Create(const char* name, Callback callback);
+        static void FireAndForget(const char* name, Time delayMs, Callback callback);
+        void Start(Time delayMs, bool periodic = false) const;
         void Stop() const;
         void Restart(Time delayMs) const;
 
@@ -39,15 +40,18 @@ namespace Core
         struct UserData
         {
         public:
-            UserData(const char* name, const Callback& callback);
+            UserData(const char* name, Callback callback);
+            ~UserData();
+            inline void SetHandle(esp_timer_handle_t handle) { m_Handle = handle; }
             void Invoke();
-        private:
+        public:
+            esp_timer* m_Handle;
             const char* m_Name;
+        private:
             const Callback m_Callback;
         };
 
-        Timer(const esp_timer_handle_t& handle, std::unique_ptr<UserData>&& userData);
-        static void OnTimerTriggered(void* callback);
+        Timer(const esp_timer_handle_t& handle, UserData* userData);
         friend class TimerComponent;
 
         esp_timer_handle_t m_Handle;
@@ -55,7 +59,7 @@ namespace Core
     };
 }
 
-#elif
+#else
 
 #include "src/core/component/component.h"
 #include <functional>
