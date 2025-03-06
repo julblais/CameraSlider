@@ -21,7 +21,7 @@ namespace Input
         Pressed = 1 << 1
     };
 
-    constexpr auto DpadNone = ButtonEvent::None;
+    constexpr auto None = ButtonEvent::None;
     constexpr auto DpadUp = ButtonEvent::Up;
     constexpr auto DpadDown = ButtonEvent::Down;
     constexpr auto DpadLeft = ButtonEvent::Left;

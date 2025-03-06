@@ -8,16 +8,16 @@ using namespace Core::Enums;
 Event::Diff::Diff(ButtonEvent pressed, ButtonEvent released, bool stickMoved)
     : released(released), pressed(pressed), stickMoved(stickMoved), change(ButtonChange::None)
 {
-    if (pressed != DpadNone)
+    if (pressed != None)
         change |= ButtonChange::Pressed;
-    if (released != DpadNone)
+    if (released != None)
         change |= ButtonChange::Released;
 }
 
 Event::Diff Event::CreateDiff(const Event& previous, const InputData& input)
 {
-    ButtonEvent pressed = DpadNone;
-    ButtonEvent released = DpadNone;
+    ButtonEvent pressed = None;
+    ButtonEvent released = None;
 
     if (previous.IsDpadDown() && !input.IsDown())
         released = DpadDown;

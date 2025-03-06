@@ -38,9 +38,9 @@ namespace Slider
 
         Core::Timer m_BroadcastTimer;
         State state;
-        bool isComplete;
         Core::MacAddress controllerMac;
         std::vector<Core::MessageCallbackHandle> m_Callbacks;
+        bool m_BroadcastActive;
     };
 }
 
