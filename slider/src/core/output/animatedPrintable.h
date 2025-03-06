@@ -3,7 +3,7 @@
 
 #include <Print.h>
 #include <initializer_list>
-#include "src/core/time/timer.h"
+#include "src/core/time/time.h"
 
 namespace Core
 {
@@ -11,21 +11,19 @@ namespace Core
     {
         using Messages = std::initializer_list<const char*>;
     public:
-        AnimatedPrintable(const char* name, Messages messages);
+        AnimatedPrintable(const char* name, unsigned int interval, Messages messages);
         AnimatedPrintable(const AnimatedPrintable& other) = delete;
         AnimatedPrintable& operator=(const AnimatedPrintable& other) = delete;
         AnimatedPrintable(AnimatedPrintable&& other);
         AnimatedPrintable& operator=(AnimatedPrintable&& other);
-
-        void Start(const unsigned int interval) const;
-        void Stop() const;
         
         virtual ~AnimatedPrintable() override = default;
         virtual size_t printTo(Print& p) const override;
     private:
         Messages m_Messages;
-        Timer m_Timer;
-        unsigned int m_CurrentMessageIndex;
+        const unsigned int m_Interval;
+        mutable Time m_LastTimeMs;
+        mutable unsigned int m_CurrentMessageIndex;
     };
 }
 #endif

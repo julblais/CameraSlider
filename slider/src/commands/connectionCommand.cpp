@@ -6,7 +6,7 @@ using namespace Core;
 using namespace Slider;
 
 ConnectionCommand::ConnectionCommand(Slider::BrainConnector* connector)
-    :m_Connector(connector), m_AnimPrint("", { " ", ".", "..", "..." })
+    :m_Connector(connector), m_AnimPrint("", 500, { " ", ".", "..", "..." })
 {}
 
 void ConnectionCommand::Print(Display* display) const
@@ -29,10 +29,7 @@ void ConnectionCommand::Invoke(MenuCommandButton command)
     if (m_Connector->GetState() != BrainConnector::State::CONNECTED)
     {
         if (command == MenuCommandButton::SELECT)
-        {
             m_Connector->BeginConnectionAttempt();
-            m_AnimPrint.Start(500);
-        }
     }
 }
 
@@ -41,6 +38,5 @@ void ConnectionCommand::OnShow()
 
 void ConnectionCommand::OnHide()
 {
-    m_AnimPrint.Stop();
     m_Connector->EndConnectionAttempt();
 }
