@@ -7,8 +7,9 @@ namespace Input
 {
     struct InputData
     {
-        InputData() = default;
-        InputData(ButtonEvent buttons, float x, float y)
+        constexpr InputData() : InputData(ButtonEvent::None, 0.0f, 0.0f) {}
+        constexpr InputData(ButtonEvent buttons) : InputData(buttons, 0.0f, 0.0f) {}
+        constexpr InputData(ButtonEvent buttons, float x, float y)
             : button(buttons), x(x), y(y)
         {}
 

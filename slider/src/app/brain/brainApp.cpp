@@ -6,6 +6,7 @@
 #include "src/hardware/stepper.h"
 #include "src/network/wifiComponent.h"
 #include "src/components/brainConnector.h"
+#include "src/input/autoInput.h"
 
 #include "src/commands/settingCommand.h"
 #include "src/commands/addressCommand.h"
@@ -38,7 +39,15 @@ void Slider::BrainApp::Setup()
     pins.joystickHorizontal = m_Config.JoystickXPin;
     pins.joystickVertical = m_Config.JoystickYPin;
 
-    m_InputReader = std::unique_ptr<Input::InputReader>(new Hardware::DeviceInputReader(pins));
+    //m_InputReader = std::unique_ptr<InputReader>(new Hardware::DeviceInputReader(pins));
+    m_InputReader = std::unique_ptr<InputReader>(new AutoInput(3500, {
+        DpadSelectInstr(3000),
+        DpadDownInstr(),
+        DpadDownInstr(),
+        DpadLeftInstr(),
+        DpadSelectInstr(3000),
+        JoystickInstr(0.5f, 0.5f, 5000)
+    }));
 
     menu->AddCommand(new MaxSpeedCommand());
     menu->AddCommand(new SpeedCurveCommand());
