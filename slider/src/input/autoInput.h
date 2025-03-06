@@ -57,7 +57,7 @@ namespace Input
     public:
         AutoInput(std::initializer_list<Instruction> instructions);
         AutoInput(const unsigned int interval, std::initializer_list<Instruction> instructions);
-        virtual ~AutoInput() = default;
+        virtual ~AutoInput() override = default;
         virtual InputData ReadInput() override;
 
     private:
