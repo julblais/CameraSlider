@@ -11,60 +11,58 @@ using namespace Core;
 
 namespace Input
 {
-    struct Command
+    struct Instruction
     {
-        enum class Instruction
+        enum class Type
         {
             Input,
             Hold,
             Pause
         };
 
-        constexpr Command(const Core::Time durationMs, const InputData& input)
-            :durationMs(durationMs), input(input), instruction(Instruction::Hold)
+        constexpr Instruction(const Core::Time durationMs, const InputData& input)
+            :durationMs(durationMs), input(input), type(Type::Hold)
         {}
-        constexpr Command(const InputData& input)
-            : durationMs(0), input(input), instruction(Instruction::Input)
+        constexpr Instruction(const InputData& input)
+            : durationMs(0), input(input), type(Type::Input)
         {}
-        constexpr Command(const Core::Time durationMs)
-            : durationMs(durationMs), input(), instruction(Instruction::Pause)
+        constexpr Instruction(const Core::Time durationMs)
+            : durationMs(durationMs), input(), type(Type::Pause)
         {}
 
         const Core::Time durationMs;
         const InputData input;
-        const Instruction instruction;
+        const Type type;
+
+        static constexpr Instruction Pause(Time durationMs) { return { durationMs }; }
+        
+        static constexpr Instruction DpadUp() { return { { Input::DpadUp } }; }
+        static constexpr Instruction DpadDown() { return { { Input::DpadDown } }; }
+        static constexpr Instruction DpadLeft() { return { { Input::DpadLeft } }; }
+        static constexpr Instruction DpadRight() { return { { Input::DpadRight } }; }
+        static constexpr Instruction DpadSelect() { return { { Input::DpadSelect } }; }
+
+        static constexpr Instruction DpadUp(Time hold) { return { hold, { Input::DpadUp } }; }
+        static constexpr Instruction DpadDown(Time hold) { return { hold, { Input::DpadDown } }; }
+        static constexpr Instruction DpadLeft(Time hold) { return { hold, { Input::DpadLeft } }; }
+        static constexpr Instruction DpadRight(Time hold) { return { hold, { Input::DpadRight } }; }
+        static constexpr Instruction DpadSelect(Time hold) { return { hold, { Input::DpadSelect } }; }
+
+        static constexpr Instruction Joystick(float x, float y) { return { { x, y } }; }
+        static constexpr Instruction Joystick(float x, float y, Time hold) { return { hold, { x, y } }; }
     };
-
-    namespace CommandCreator
-    {
-        constexpr Command DpadUp() { return { { Input::DpadUp } }; }
-        constexpr Command DpadDown() { return { { Input::DpadDown } }; }
-        constexpr Command DpadLeft() { return { { Input::DpadLeft } }; }
-        constexpr Command DpadRight() { return { { Input::DpadRight } }; }
-        constexpr Command DpadSelect() { return { { Input::DpadSelect } }; }
-
-        constexpr Command DpadUp(Time hold) { return { hold, { Input::DpadUp } }; }
-        constexpr Command DpadDown(Time hold) { return { hold, { Input::DpadDown } }; }
-        constexpr Command DpadLeft(Time hold) { return { hold, { Input::DpadLeft } }; }
-        constexpr Command DpadRight(Time hold) { return { hold, { Input::DpadRight } }; }
-        constexpr Command DpadSelect(Time hold) { return { hold, { Input::DpadSelect } }; }
-
-        constexpr Command Joystick(float x, float y) { return { { x, y } }; }
-        constexpr Command Joystick(float x, float y, Time hold) { return { hold, { x, y } }; }
-        constexpr Command Pause(Time durationMs) { return { durationMs }; }
-    }
 
     class AutoInput : public Input::InputReader
     {
     public:
-        AutoInput(std::initializer_list<Command> commands);
-        AutoInput(const unsigned int interval, std::initializer_list<Command> commands);
+        AutoInput(std::initializer_list<Instruction> instructions);
+        AutoInput(const unsigned int interval, std::initializer_list<Instruction> instructions);
         virtual ~AutoInput() = default;
         virtual InputData ReadInput() override;
 
     private:
         Core::Timer m_Timer;
-        std::queue<Command> m_Commands;
+        std::queue<Instruction> m_Instructions;
         bool m_Ready;
     };
 }

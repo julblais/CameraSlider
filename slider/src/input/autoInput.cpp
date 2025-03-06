@@ -3,37 +3,37 @@
 using namespace Input;
 using namespace Core;
 
-AutoInput::AutoInput(std::initializer_list<Command> commands)
-    : m_Commands(commands), m_Ready(true)
+AutoInput::AutoInput(std::initializer_list<Instruction> instructions)
+    : m_Instructions(instructions), m_Ready(true)
 {
     m_Timer = Timer::Create("Auto-input", [this]() {
         m_Ready = true;
-        m_Commands.pop();
+        m_Instructions.pop();
     });
 }
 
-Input::AutoInput::AutoInput(const unsigned int interval, std::initializer_list<Command> commands)
-    : m_Commands(), m_Ready(true)
+Input::AutoInput::AutoInput(const unsigned int interval, std::initializer_list<Instruction> instructions)
+    : m_Instructions(), m_Ready(true)
 {
-    for (auto cmd : commands)
+    for (auto cmd : instructions)
     {
-        m_Commands.push(CommandCreator::Pause(interval));
-        m_Commands.push(cmd);
+        m_Instructions.push(Instruction::Pause(interval));
+        m_Instructions.push(cmd);
     }
     m_Timer = Timer::Create("Auto-input", [this]() {
         m_Ready = true;
-        m_Commands.pop();
+        m_Instructions.pop();
     });
 }
 
 InputData Input::AutoInput::ReadInput()
 {
-    if (m_Commands.empty())
+    if (m_Instructions.empty())
         return InputData();
 
-    auto command = m_Commands.front();
+    auto command = m_Instructions.front();
 
-    if (command.instruction == Command::Instruction::Pause)
+    if (command.type == Instruction::Type::Pause)
     {
         if (m_Ready)
         {
@@ -41,7 +41,7 @@ InputData Input::AutoInput::ReadInput()
             m_Timer.Start(command.durationMs);
         }
     }
-    else if (command.instruction == Command::Instruction::Hold)
+    else if (command.type == Instruction::Type::Hold)
     {
         if (m_Ready)
         {
@@ -50,9 +50,9 @@ InputData Input::AutoInput::ReadInput()
         }
         return command.input;
     }
-    else if (command.instruction == Command::Instruction::Input)
+    else if (command.type == Instruction::Type::Input)
     {
-        m_Commands.pop();
+        m_Instructions.pop();
         return command.input;
     }
 

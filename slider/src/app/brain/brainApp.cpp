@@ -40,13 +40,13 @@ void Slider::BrainApp::Setup()
     pins.joystickVertical = m_Config.JoystickYPin;
 
     //m_InputReader = std::unique_ptr<InputReader>(new Hardware::DeviceInputReader(pins));
-    m_InputReader = std::unique_ptr<InputReader>(new AutoInput(3500, {
-        DpadSelectInstr(3000),
-        DpadDownInstr(),
-        DpadDownInstr(),
-        DpadLeftInstr(),
-        DpadSelectInstr(3000),
-        JoystickInstr(0.5f, 0.5f, 5000)
+    m_InputReader = std::unique_ptr<InputReader>(new AutoInput(2700, {
+        Instruction::DpadSelect(2500),
+        Instruction::DpadDown(),
+        Instruction::DpadDown(),
+        Instruction::DpadLeft(),
+        Instruction::DpadSelect(2500),
+        Instruction::Joystick(0.5f, 0.4f, 5000)
     }));
 
     menu->AddCommand(new MaxSpeedCommand());
