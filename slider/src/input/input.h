@@ -9,9 +9,8 @@ namespace Input
     {
         constexpr InputData() : InputData(ButtonEvent::None, 0.0f, 0.0f) {}
         constexpr InputData(ButtonEvent buttons) : InputData(buttons, 0.0f, 0.0f) {}
-        constexpr InputData(ButtonEvent buttons, float x, float y)
-            : button(buttons), x(x), y(y)
-        {}
+        constexpr InputData(float x, float y) : InputData(ButtonEvent::None, x, y) {}
+        constexpr InputData(ButtonEvent buttons, float x, float y) : button(buttons), x(x), y(y) {}
 
         inline bool IsActive() const { return button != ButtonEvent::None; }
         inline bool IsDown() const { return button == ButtonEvent::Down; }

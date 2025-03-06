@@ -7,59 +7,64 @@
 #include "src/core/time/timer.h"
 #include "src/input/input.h"
 
+using namespace Core;
+
 namespace Input
 {
-    struct InputInstruction
+    struct Command
     {
-        enum class Command
+        enum class Instruction
         {
             Input,
             Hold,
             Pause
         };
 
+        constexpr Command(const Core::Time durationMs, const InputData& input)
+            :durationMs(durationMs), input(input), instruction(Instruction::Hold)
+        {}
+        constexpr Command(const InputData& input)
+            : durationMs(0), input(input), instruction(Instruction::Input)
+        {}
+        constexpr Command(const Core::Time durationMs)
+            : durationMs(durationMs), input(), instruction(Instruction::Pause)
+        {}
+
         const Core::Time durationMs;
         const InputData input;
-        const Command command;
-
-        constexpr InputInstruction(const Core::Time durationMs, const InputData& input)
-            :durationMs(durationMs), input(input), command(Command::Hold)
-        {}
-        constexpr InputInstruction(const InputData& input)
-            : durationMs(0), input(input), command(Command::Input)
-        {}
-        constexpr InputInstruction(const Core::Time durationMs)
-            : durationMs(durationMs), input(), command(Command::Pause)
-        {}
+        const Instruction instruction;
     };
-    
-    constexpr InputInstruction DpadUpInstr() { return { InputData(ButtonEvent::Up) }; }
-    constexpr InputInstruction DpadDownInstr() { return { InputData(ButtonEvent::Down) }; }
-    constexpr InputInstruction DpadLeftInstr() { return { InputData(ButtonEvent::Left) }; }
-    constexpr InputInstruction DpadRightInstr() { return { InputData(ButtonEvent::Right) }; }
-    constexpr InputInstruction DpadSelectInstr() { return { InputData(ButtonEvent::Select) }; }
 
-    constexpr InputInstruction DpadUpInstr(Core::Time hold) { return { hold, InputData(ButtonEvent::Up) }; }
-    constexpr InputInstruction DpadDownInstr(Core::Time hold) { return { hold, InputData(ButtonEvent::Down) }; }
-    constexpr InputInstruction DpadLeftInstr(Core::Time hold) { return { hold, InputData(ButtonEvent::Left) }; }
-    constexpr InputInstruction DpadRightInstr(Core::Time hold) { return { hold, InputData(ButtonEvent::Right) }; }
-    constexpr InputInstruction DpadSelectInstr(Core::Time hold) { return { hold, InputData(ButtonEvent::Select) }; }
+    namespace CommandCreator
+    {
+        constexpr Command DpadUp() { return { { Input::DpadUp } }; }
+        constexpr Command DpadDown() { return { { Input::DpadDown } }; }
+        constexpr Command DpadLeft() { return { { Input::DpadLeft } }; }
+        constexpr Command DpadRight() { return { { Input::DpadRight } }; }
+        constexpr Command DpadSelect() { return { { Input::DpadSelect } }; }
 
-    constexpr InputInstruction JoystickInstr(float x, float y) { return { InputData(ButtonEvent::None, x, y) }; }
-    constexpr InputInstruction JoystickInstr(float x, float y, Core::Time hold) { return { hold, InputData(ButtonEvent::None, x, y) }; }
-    constexpr InputInstruction PauseInstr(Core::Time durationMs) { return { durationMs }; }
+        constexpr Command DpadUp(Time hold) { return { hold, { Input::DpadUp } }; }
+        constexpr Command DpadDown(Time hold) { return { hold, { Input::DpadDown } }; }
+        constexpr Command DpadLeft(Time hold) { return { hold, { Input::DpadLeft } }; }
+        constexpr Command DpadRight(Time hold) { return { hold, { Input::DpadRight } }; }
+        constexpr Command DpadSelect(Time hold) { return { hold, { Input::DpadSelect } }; }
+
+        constexpr Command Joystick(float x, float y) { return { { x, y } }; }
+        constexpr Command Joystick(float x, float y, Time hold) { return { hold, { x, y } }; }
+        constexpr Command Pause(Time durationMs) { return { durationMs }; }
+    }
 
     class AutoInput : public Input::InputReader
     {
     public:
-        AutoInput(std::initializer_list<InputInstruction> inputs);
-        AutoInput(const unsigned int interval, std::initializer_list<InputInstruction> inputs);
+        AutoInput(std::initializer_list<Command> commands);
+        AutoInput(const unsigned int interval, std::initializer_list<Command> commands);
         virtual ~AutoInput() = default;
         virtual InputData ReadInput() override;
 
     private:
         Core::Timer m_Timer;
-        std::queue<InputInstruction> m_Instructions;
+        std::queue<Command> m_Commands;
         bool m_Ready;
     };
 }

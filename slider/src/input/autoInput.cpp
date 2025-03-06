@@ -3,57 +3,57 @@
 using namespace Input;
 using namespace Core;
 
-AutoInput::AutoInput(std::initializer_list<InputInstruction> instructions)
-    : m_Instructions(instructions), m_Ready(true)
+AutoInput::AutoInput(std::initializer_list<Command> commands)
+    : m_Commands(commands), m_Ready(true)
 {
     m_Timer = Timer::Create("Auto-input", [this]() {
         m_Ready = true;
-        m_Instructions.pop();
+        m_Commands.pop();
     });
 }
 
-Input::AutoInput::AutoInput(const unsigned int interval, std::initializer_list<InputInstruction> instructions)
-    : m_Instructions(), m_Ready(true)
+Input::AutoInput::AutoInput(const unsigned int interval, std::initializer_list<Command> commands)
+    : m_Commands(), m_Ready(true)
 {
-    for (auto cmd : instructions)
+    for (auto cmd : commands)
     {
-        m_Instructions.push(PauseInstr(interval));
-        m_Instructions.push(cmd);
+        m_Commands.push(CommandCreator::Pause(interval));
+        m_Commands.push(cmd);
     }
     m_Timer = Timer::Create("Auto-input", [this]() {
         m_Ready = true;
-        m_Instructions.pop();
+        m_Commands.pop();
     });
 }
 
 InputData Input::AutoInput::ReadInput()
 {
-    if (m_Instructions.empty())
+    if (m_Commands.empty())
         return InputData();
 
-    auto instruction = m_Instructions.front();
+    auto command = m_Commands.front();
 
-    if (instruction.command == InputInstruction::Command::Pause)
+    if (command.instruction == Command::Instruction::Pause)
     {
         if (m_Ready)
         {
             m_Ready = false;
-            m_Timer.Start(instruction.durationMs);
+            m_Timer.Start(command.durationMs);
         }
     }
-    else if (instruction.command == InputInstruction::Command::Hold)
+    else if (command.instruction == Command::Instruction::Hold)
     {
         if (m_Ready)
         {
             m_Ready = false;
-            m_Timer.Start(instruction.durationMs);
+            m_Timer.Start(command.durationMs);
         }
-        return instruction.input;
+        return command.input;
     }
-    else if (instruction.command == InputInstruction::Command::Input)
+    else if (command.instruction == Command::Instruction::Input)
     {
-        m_Instructions.pop();
-        return instruction.input;
+        m_Commands.pop();
+        return command.input;
     }
 
     return InputData();
