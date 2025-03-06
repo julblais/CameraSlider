@@ -18,7 +18,7 @@ namespace Input
 
         inline bool HasButtonChange() const
         {
-            return button != DpadNone || diff.change != ButtonNone;
+            return button != None || diff.change != ButtonNone;
         }
 
         inline bool HasStickMoved() const { return diff.stickMoved; }

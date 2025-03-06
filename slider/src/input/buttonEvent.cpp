@@ -22,7 +22,7 @@ const char* Input::ToString(ButtonEvent button)
         case StickCenter:
             return "Center";
             break;
-        case DpadNone:
+        case None:
             return "None";
             break;
         default:
