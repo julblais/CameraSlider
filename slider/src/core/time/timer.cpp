@@ -1,24 +1,36 @@
 #include "timer.h"
 #include "src/debug.h"
-#include <freertos/FreeRTOS.h>
-#include <freertos/queue.h>
+#include "src/core/utils/queue.h"
 
 #ifdef ARDUINO_ARCH_ESP32 
 
 using namespace Core;
 
-const int QUEUE_LENGTH = 20;
-QueueHandle_t s_Queue;
+const int TIMER_QUEUE_LENGTH = 20;
+Queue<Timer::UserData*, TIMER_QUEUE_LENGTH> s_Queue { "Timer queue" };
 
-void TimerComponent::Setup()
+struct Timer::UserData
 {
-    s_Queue = xQueueCreate(QUEUE_LENGTH, sizeof(Timer::UserData*));
-}
+public:
+    UserData(const char* name, Callback callback, bool autoDelete);
+    ~UserData();
+    inline void SetHandle(esp_timer_handle_t handle) { m_Handle = handle; }
+    inline esp_timer_handle_t GetHandle() { return m_Handle; }
+    inline bool ShouldAutoDelete() { return m_AutoDelete; }
+    void Invoke();
+private:
+    const char* m_Name;
+    esp_timer_handle_t m_Handle;
+    const Callback m_Callback;
+    const bool m_AutoDelete;
+};
+
+void TimerComponent::Setup() {}
 
 void TimerComponent::Update()
 {
     Timer::UserData* userData;
-    if (xQueueReceive(s_Queue, &userData, 0))
+    for (auto& userData : s_Queue)
     {
         userData->Invoke();
         if (userData->ShouldAutoDelete())
@@ -51,31 +63,24 @@ Timer::Timer()
     :m_UserData(nullptr)
 {}
 
+Timer::~Timer()
+{
+    if (m_UserData != nullptr)
+        delete(m_UserData);
+}
+
 Timer::Timer(UserData* userData)
     : m_UserData(userData)
 {}
 
-Timer::Timer(Timer&& timer)
-{
-    m_UserData = std::move(timer.m_UserData);
-    timer.m_UserData = nullptr;
-}
-
-Timer& Timer::operator=(Timer&& timer)
-{
-    m_UserData = std::move(timer.m_UserData);
-    timer.m_UserData = nullptr;
-    return *this;
-}
-
 void OnTimerTriggered(void* userData)
 {
-    xQueueSend(s_Queue, &userData, 0);
+    s_Queue.push((Timer::UserData*)userData);
 }
 
-Timer::UserData* Timer::CreateTimer(const char* name, Callback cb, bool shouldDelete)
+Timer::UserData* CreateTimer(const char* name, Timer::Callback cb, bool shouldDelete)
 {
-    auto userData = new UserData(name, std::move(cb), false);
+    auto userData = new Timer::UserData(name, std::move(cb), false);
     const esp_timer_create_args_t args = {
         .callback = &OnTimerTriggered,
         .arg = userData,
