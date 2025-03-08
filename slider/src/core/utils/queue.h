@@ -54,11 +54,11 @@ namespace Core
     template <typename T, size_t Length>
     void Queue<T, Length>::push(const T& item)
     {
-        auto pending = uxQueueSpacesAvailable(m_Queue);
-        if (pending > QUEUE_WARNING_THRESHOLD)
-            LogWarning("Queue ", m_Name, " has only ", pending, " spaces left");
+        auto remaining = uxQueueSpacesAvailable(m_Queue);
+        if (remaining <= QUEUE_WARNING_THRESHOLD)
+            LogWarning("Queue ", m_Name, " has only ", remaining, " spaces left");
 
-        if (!xQueueSend(m_Queue, &item, 0) != pdPASS)
+        if (xQueueSend(m_Queue, &item, 0) != pdPASS)
             LogError("Queue ", m_Name, " has no space left.");
     }
 
