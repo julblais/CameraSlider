@@ -112,7 +112,7 @@ void Esp::RegisterSendCallback(const Esp::SendCallback& callback)
 bool Esp::Send(const uint8_t* address, const uint8_t* data, size_t len)
 {
     auto time = esp_timer_get_time();
-    if (xSemaphoreTake(semaphore, SEMAPHORE_WAIT_MS))
+    if (xSemaphoreTake(semaphore, pdMS_TO_TICKS(SEMAPHORE_WAIT_MS)))
     {
         auto delay = esp_timer_get_time() - time;
         if (delay > TOO_LONG_WARNING_MS)
