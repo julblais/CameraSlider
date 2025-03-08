@@ -4,10 +4,8 @@
 #ifdef ARDUINO_ARCH_ESP32 
 
 #include "time.h"
-#include "esp_timer.h"
 #include "src/core/component/component.h"
 #include <functional>
-#include <memory>
 
 namespace Core
 {

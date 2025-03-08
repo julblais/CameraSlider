@@ -1,6 +1,7 @@
 #include "timer.h"
 #include "src/debug.h"
 #include "src/core/utils/queue.h"
+#include "esp_timer.h"
 
 #ifdef ARDUINO_ARCH_ESP32 
 
