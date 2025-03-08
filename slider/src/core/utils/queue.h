@@ -58,7 +58,7 @@ namespace Core
         if (pending > QUEUE_WARNING_THRESHOLD)
             LogWarning("Queue ", m_Name, " has only ", pending, " spaces left");
 
-        if (!xQueueSend(m_Queue, &item, 0) != pdTRUE)
+        if (!xQueueSend(m_Queue, &item, 0) != pdPASS)
             LogError("Queue ", m_Name, " has no space left.");
     }
 
