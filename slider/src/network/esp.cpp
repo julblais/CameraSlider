@@ -114,9 +114,9 @@ bool Esp::Send(const uint8_t* address, const uint8_t* data, size_t len)
     auto time = esp_timer_get_time();
     if (xSemaphoreTake(semaphore, pdMS_TO_TICKS(SEMAPHORE_WAIT_MS)))
     {
-        auto delay = esp_timer_get_time() - time;
-        if (delay > TOO_LONG_WARNING_MS)
-            LogWarning("Message send delay: ", delay / 1000, "ms");
+        auto delayMs = (esp_timer_get_time() - time) / 1000;
+        if (delayMs > TOO_LONG_WARNING_MS)
+            LogWarning("Message send delay: ", delayMs, "ms");
         CHECK_ERROR_RETURN("Error sending message: ", esp_now_send(address, data, len));
         return true;
     }
