@@ -12,22 +12,14 @@ MessageHandler::QueueItem::QueueItem(const uint8_t* data, size_t length)
     :data(data), length(length)
 {}
 
-MessageHandler::QueueItem MessageHandler::QueueItem::CopyData(const uint8_t* data, size_t length)
-{
-    auto dataCopy = new uint8_t[length];
-    std::copy(data, data + length, dataCopy);
-    return QueueItem(dataCopy, length);
-}
-
 void MessageHandler::QueueItem::Finish()
 {
     delete[] data;
 }
 
 MessageHandler::MessageHandler()
-{
-    m_Queue = xQueueCreate(QUEUE_LENGTH, sizeof(QueueItem));
-}
+    :m_Queue("Message queue")
+{}
 
 void MessageHandler::RemoveCallback(const MessageCallbackHandle& handle)
 {
@@ -45,8 +37,7 @@ void MessageHandler::RemoveCallback(const MessageCallbackHandle& handle)
 
 void MessageHandler::ProcessMessages() const
 {
-    QueueItem item;
-    if (xQueueReceive(m_Queue, &item, 0))
+    for (auto item : m_Queue)
     {
         auto message = reinterpret_cast<const MessageBase*>(item.data);
         for (const auto& selector : m_Selectors)
@@ -65,9 +56,9 @@ void MessageHandler::ProcessMessages() const
     }
 }
 
-void MessageHandler::Invoke(const uint8_t* data, size_t length) const
+void MessageHandler::Invoke(const uint8_t* data, size_t length)
 {
-    //copy data in dynamic array
-    QueueItem item = QueueItem::CopyData(data, length);
-    xQueueSend(m_Queue, &item, 0);
+    auto dataCopy = new uint8_t[length];
+    std::copy(data, data + length, dataCopy);
+    m_Queue.push(QueueItem(dataCopy, length));
 }
