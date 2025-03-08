@@ -4,39 +4,40 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 
+#define QUEUE_WARNING_THRESHOLD 3
+
 namespace Core
 {
-    template <typename T>
-    struct QueueIterator
-    {
-    public:
-        QueueIterator();
-        QueueIterator(QueueHandle_t queue);
-
-        bool operator!=(QueueIterator rhs);
-        T& operator*() { return item; }
-        void operator++();
-
-    private:
-        QueueHandle_t m_Queue;
-        T item;
-    };
-
     template <typename T, size_t Length>
     class Queue
     {
     public:
+        struct Iterator
+        {
+            friend class Queue;
+        public:
+            const T& operator*() const { return item; }
+            bool operator!=(Iterator rhs) { return m_Queue != rhs.m_Queue; }
+            void operator++();
+        private:
+            Iterator() : m_Queue(nullptr), item() {}
+            Iterator(QueueHandle_t queue) : m_Queue(queue), item() { this->operator++(); }
+
+            QueueHandle_t m_Queue;
+            T item;
+        };
+
         Queue(const char* name);
-        Queue(const Queue&) = delete;
-        Queue& operator=(const Queue&) = delete;
         Queue(Queue&&) = default;
         Queue& operator=(Queue&&) = default;
+        Queue(const Queue&) = delete;
+        Queue& operator=(const Queue&) = delete;
 
         void push(const T& item);
-        template <typename... TArgs> void emplace(TArgs&&... args);
-        size_t size();
-        QueueIterator<T> begin();
-        QueueIterator<T> end();
+        size_t size() { return uxQueueMessagesWaiting(m_Queue); }
+
+        Iterator begin() const { return Iterator(m_Queue); }
+        Iterator end() const { return Iterator(); }
 
     private:
         const char* m_Name;
@@ -53,57 +54,17 @@ namespace Core
     template <typename T, size_t Length>
     inline void Queue<T, Length>::push(const T& item)
     {
-        xQueueSend(m_Queue, &item, 0);
-    }
+        auto pending = uxQueueSpacesAvailable(m_Queue);
+        if (pending > QUEUE_WARNING_THRESHOLD)
+            LogWarning("Queue ", m_Name, " has only ", pending, " spaces left");
 
-    template <typename T, size_t Length>
-    template<typename... TArgs>
-    inline void Queue<T, Length>::emplace(TArgs&& ...args)
-    {
-        xQueueSend(m_Queue, &T(args...), 0);
-    }
-
-    template <typename T, size_t Length>
-    inline size_t Queue<T, Length>::size()
-    {
-        return uxQueueMessagesWaiting(m_Queue);
+        if (!xQueueSend(m_Queue, &item, 0) != pdTRUE)
+            LogError("Queue ", m_Name, " has no space left.");
     }
 
     template<typename T, size_t Length>
-    inline QueueIterator<T> Queue<T, Length>::begin()
+    inline void Queue<T, Length>::Iterator::operator++()
     {
-        return QueueIterator<T>(m_Queue);
-    }
-
-    template<typename T, size_t Length>
-    inline QueueIterator<T> Queue<T, Length>::end()
-    {
-        return QueueIterator<T>();
-    }
-
-    template<typename T>
-    QueueIterator<T>::QueueIterator()
-        : m_Queue(nullptr), item()
-    {}
-
-    template<typename T>
-    QueueIterator<T>::QueueIterator(QueueHandle_t queue)
-        : m_Queue(queue), item()
-    {
-        this->operator++();
-    }
-
-    template<typename T>
-    inline bool QueueIterator<T>::operator!=(QueueIterator<T> rhs)
-    {
-        return m_Queue != rhs.m_Queue;
-    }
-
-    template<typename T>
-    inline void QueueIterator<T>::operator++()
-    {
-        ////check queue size
-        //xQueueMessagesWaiting(m_Queue);
         if (!xQueueReceive(m_Queue, &item, 0))
             m_Queue = nullptr;
     }
