@@ -52,7 +52,7 @@ namespace Core
     }
 
     template <typename T, size_t Length>
-    inline void Queue<T, Length>::push(const T& item)
+    void Queue<T, Length>::push(const T& item)
     {
         auto pending = uxQueueSpacesAvailable(m_Queue);
         if (pending > QUEUE_WARNING_THRESHOLD)
