@@ -23,41 +23,44 @@ namespace Core
     {
     public:
         using Callback = std::function<void(void)>;
+        using Id = intptr_t;
         
-        struct UserData
+        struct TimerTrace
         {
         public:
-            UserData(const char* name, Callback callback, bool autoDelete);
-            ~UserData();
-            inline void SetHandle(esp_timer_handle_t handle) { m_Handle = handle; }
-            inline esp_timer_handle_t GetHandle() { return m_Handle; }
-            inline bool ShouldAutoDelete() { return m_AutoDelete; }
+            TimerTrace(const char* name, const Id id, Callback callback);
             void Invoke();
+            Id GetId() const { return m_Id; }
+            const char* GetName() const { return m_Name; }
+            bool operator==(Id other) const { return m_Id == other; }
         private:
             const char* m_Name;
-            esp_timer_handle_t m_Handle;
-            const Callback m_Callback;
-            const bool m_AutoDelete;
+            Callback m_Callback;
+            Id m_Id;
         };
 
         Timer();
+        ~Timer();
         Timer(const Timer& timer) = delete;
         Timer& operator=(const Timer& timer) = delete;
         Timer(Timer&&) = default;
         Timer& operator=(Timer&&) = default;
 
         static Timer Create(const char* name, Callback callback);
-        static void FireAndForget(const char* name, Time delayMs, Callback callback);
+        //static void FireAndForget(const char* name, Time delayMs, Callback callback);
         void Start(Time delayMs, bool periodic = false) const;
         void Stop() const;
         void Restart(Time delayMs) const;
         bool IsRunning() const;
 
     private:
-        Timer(UserData* userData);
+        Timer(const Id id, const char* name, esp_timer_handle_t handle);
+        static Timer CreateTimer(const char* name, Timer::Callback cb, bool shouldDelete);
         friend class TimerComponent;
 
-        std::unique_ptr<UserData> m_UserData;
+        const char* m_Name;
+        esp_timer_handle_t m_Handle;
+        Id m_Id;
     };
 }
 
