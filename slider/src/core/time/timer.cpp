@@ -106,7 +106,7 @@ Timer& Timer::operator=(Timer&& other)
 
 void OnTimerTriggered(void* data)
 {
-    s_Queue.push(reinterpret_cast<unsigned int>(data));
+    s_Queue.push(reinterpret_cast<Timer::Id>(data));
 }
 
 esp_timer_handle_t CreateHandle(const char* name, Timer::Callback cb, bool autoRemove, Timer::Id& o_Id)
@@ -126,7 +126,7 @@ esp_timer_handle_t CreateHandle(const char* name, Timer::Callback cb, bool autoR
     if (result != ESP_OK)
     {
         LogError("Cannot create timer: ", name, ", ", esp_err_to_name(result));
-        return 0;
+        return nullptr;
     }
 
     s_Handles.emplace_back(name, id, std::move(cb), autoRemove ? handle : nullptr);
