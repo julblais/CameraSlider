@@ -24,7 +24,7 @@ private:
     esp_timer_handle_t m_Handle;
 };
 
-const int TIMER_QUEUE_LENGTH = 20;
+#define TIMER_QUEUE_LENGTH 20
 std::vector<Handle> s_Handles {};
 Queue<Timer::Id, TIMER_QUEUE_LENGTH> s_Queue { "Timer queue" };
 
