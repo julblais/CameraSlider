@@ -99,14 +99,14 @@ bool Esp::RemovePeer(const MacAddress& address)
     return true;
 }
 
-void Esp::RegisterReceiveCb(const ReceiveCallback& callback)
+void Esp::RegisterReceiveCb(ReceiveCallback callback)
 {
-    s_ReceiveCallback = callback;
+    s_ReceiveCallback = std::move(callback);
 }
 
-void Esp::RegisterSendCallback(const Esp::SendCallback& callback)
+void Esp::RegisterSendCallback(Esp::SendCallback callback)
 {
-    s_SendCallback = callback;
+    s_SendCallback = std::move(callback);
 }
 
 bool Esp::Send(const uint8_t* address, const uint8_t* data, size_t len)

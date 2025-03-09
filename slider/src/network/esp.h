@@ -22,8 +22,8 @@ namespace Net
         static bool AddPeer(const Core::MacAddress& address);
         static bool RemovePeer(const Core::MacAddress& address);
 
-        static void RegisterReceiveCb(const ReceiveCallback& callback);
-        static void RegisterSendCallback(const SendCallback& callback);
+        static void RegisterReceiveCb(ReceiveCallback callback);
+        static void RegisterSendCallback(SendCallback callback);
         static bool Send(const uint8_t* address, const uint8_t* data, size_t len);
     };
 }
