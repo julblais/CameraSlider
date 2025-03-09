@@ -7,7 +7,6 @@ MacAddress::MacAddress(std::array<uint8_t, 6> address)
 {}
 
 MacAddress::MacAddress(const uint8_t* address)
-    : m_Address()
 {
     std::copy(address, address + 6, m_Address.begin());
 }
