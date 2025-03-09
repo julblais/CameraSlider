@@ -15,9 +15,6 @@ struct Handle
 public:
     Handle(const char* name, const Timer::Id id, Timer::Callback callback, bool autoRemove);
     void Invoke() const;
-    Timer::Id GetId() const { return m_Id; }
-    const char* GetName() const { return m_Name; }
-    bool ShouldAutoRemove() { return m_AutoRemove; }
     bool operator==(const Handle& other) const { return m_Id == other.m_Id; }
     bool operator==(Timer::Id other) const { return m_Id == other; }
 private:
