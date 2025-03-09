@@ -13,7 +13,7 @@ using namespace Core;
 struct Handle
 {
 public:
-    Handle(const char* name, Timer::Id id, const Timer::Callback& callback, esp_timer_handle_t handleToRemove);
+    Handle(const char* name, Timer::Id id, Timer::Callback callback, esp_timer_handle_t handleToRemove);
     void Invoke() const;
     bool operator==(const Handle& other) const { return m_Id == other.m_Id; }
     bool operator==(Timer::Id other) const { return m_Id == other; }
@@ -41,8 +41,8 @@ void DeleteTimer(const char* name, const Timer::Id id, esp_timer_handle_t handle
     }
 }
 
-Handle::Handle(const char* name, Timer::Id id, const Timer::Callback& callback, esp_timer_handle_t handleToRemove)
-    :m_Name(name), m_Id(id), m_Callback(callback), m_Handle(handleToRemove)
+Handle::Handle(const char* name, Timer::Id id, Timer::Callback callback, esp_timer_handle_t handleToRemove)
+    :m_Name(name), m_Id(id), m_Callback(std::move(callback)), m_Handle(handleToRemove)
 {}
 
 void Handle::Invoke() const
@@ -109,7 +109,7 @@ void OnTimerTriggered(void* data)
     s_Queue.push(reinterpret_cast<Timer::Id>(data));
 }
 
-esp_timer_handle_t CreateHandle(const char* name, const Timer::Callback& cb, bool autoRemove, Timer::Id& o_Id)
+esp_timer_handle_t CreateHandle(const char* name, Timer::Callback cb, bool autoRemove, Timer::Id& o_Id)
 {
     static Timer::Id s_IdGenerator = 1;
     const auto id = s_IdGenerator++;
@@ -129,22 +129,22 @@ esp_timer_handle_t CreateHandle(const char* name, const Timer::Callback& cb, boo
         return nullptr;
     }
 
-    s_Handles.emplace_back(name, id, cb, autoRemove ? handle : nullptr);
+    s_Handles.emplace_back(name, id, std::move(cb), autoRemove ? handle : nullptr);
     o_Id = id;
     return handle;
 }
 
-Timer Timer::Create(const char* name, const Callback& cb)
+Timer Timer::Create(const char* name, Callback cb)
 {
     Timer::Id id = 0;
-    auto handle = CreateHandle(name, cb, false, id);
+    auto handle = CreateHandle(name, std::move(cb), false, id);
     return Timer(id, name, handle);
 }
 
-void Timer::FireAndForget(const char* name, Time delayMs, const Callback& cb)
+void Timer::FireAndForget(const char* name, Time delayMs, Callback cb)
 {
     Timer::Id id = 0;
-    auto handle = CreateHandle(name, cb, true, id);
+    auto handle = CreateHandle(name, std::move(cb), true, id);
     esp_timer_start_once(handle, delayMs * 1000);
 }
 
