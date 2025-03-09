@@ -29,8 +29,8 @@ namespace Core
         ~Timer();
         Timer(const Timer& timer) = delete;
         Timer& operator=(const Timer& timer) = delete;
-        Timer(Timer&&) = default;
-        Timer& operator=(Timer&&) = default;
+        Timer(Timer&&);
+        Timer& operator=(Timer&&);
 
         static Timer Create(const char* name, Callback callback);
         //static void FireAndForget(const char* name, Time delayMs, Callback callback);
