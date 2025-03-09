@@ -3,7 +3,6 @@
 
 #include "input.h"
 #include "src/core/event/eventSource.h"
-#include <functional>
 #include "src/core/utils/enumUtils.h"
 
 namespace Input
