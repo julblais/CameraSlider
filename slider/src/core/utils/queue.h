@@ -46,7 +46,7 @@ namespace Core
 
     template <typename T, size_t Length>
     Queue<T, Length>::Queue(const char* name)
-        : m_Name(name)
+        : m_Name(name), m_Queue()
     {
         m_Queue = xQueueCreate(Length, sizeof(T));
     }
