@@ -13,7 +13,7 @@ using namespace Core;
 struct Handle
 {
 public:
-    Handle(const char* name, const Timer::Id id, Timer::Callback callback, bool autoRemove);
+    Handle(const char* name, Timer::Id id, Timer::Callback callback, esp_timer_handle_t handleToRemove);
     void Invoke() const;
     bool operator==(const Handle& other) const { return m_Id == other.m_Id; }
     bool operator==(Timer::Id other) const { return m_Id == other; }
@@ -21,15 +21,28 @@ private:
     const char* m_Name;
     Timer::Callback m_Callback;
     Timer::Id m_Id;
-    bool m_AutoRemove;
+    esp_timer_handle_t m_Handle;
 };
 
 const int TIMER_QUEUE_LENGTH = 20;
 std::vector<Handle> s_Handles {};
 Queue<Timer::Id, TIMER_QUEUE_LENGTH> s_Queue { "Timer queue" };
 
-Handle::Handle(const char* name, const Timer::Id id, Timer::Callback callback, bool autoRemove)
-    :m_Name(name), m_Id(id), m_Callback(std::move(callback)), m_AutoRemove(autoRemove)
+void DeleteTimer(const char* name, const Timer::Id id, esp_timer_handle_t handle)
+{
+    if (handle != nullptr)
+    {
+        EraseFirst(s_Handles, id);
+        esp_timer_stop(handle);
+        auto result = esp_timer_delete(handle);
+        if (result != ESP_OK)
+            LogError("Problem deleting timer ", name, ", ", esp_err_to_name(result));
+        LogInfo("Removed timer: ", name, ", id: ", id);
+    }
+}
+
+Handle::Handle(const char* name, Timer::Id id, Timer::Callback callback, esp_timer_handle_t handleToRemove)
+    :m_Name(name), m_Id(id), m_Callback(std::move(callback)), m_Handle(handleToRemove)
 {}
 
 void Handle::Invoke() const
@@ -39,11 +52,8 @@ void Handle::Invoke() const
         LogDebug("Timer \"", m_Name, "\" activated at ", esp_timer_get_time() / 1000, "ms");
         m_Callback();
     }
-    if (m_AutoRemove)
-    {
-        EraseFirst(s_Handles, *this);
-        LogDebug("Removing fire and forget: ", m_Name);
-    }
+    if (m_Handle)
+        DeleteTimer(m_Name, m_Id, m_Handle);
 }
 
 void TimerComponent::Setup() {}
@@ -70,15 +80,7 @@ Timer::Timer(const Timer::Id id, const char* name, esp_timer_handle_t handle)
 
 Timer::~Timer()
 {
-    if (m_Handle != nullptr)
-    {
-        EraseFirst(s_Handles, m_Id);
-        esp_timer_stop(m_Handle);
-        auto result = esp_timer_delete(m_Handle);
-        if (result != ESP_OK)
-            LogError("Problem deleting timer ", m_Name, ", ", esp_err_to_name(result));
-        LogInfo("Removed timer: ", m_Name, ", id: ", m_Id);
-    }
+    DeleteTimer(m_Name, m_Id, m_Handle);
 }
 
 Timer::Timer(Timer&& other)
@@ -127,7 +129,7 @@ esp_timer_handle_t CreateHandle(const char* name, Timer::Callback cb, bool autoR
         return 0;
     }
 
-    s_Handles.emplace_back(name, id, std::move(cb), autoRemove);
+    s_Handles.emplace_back(name, id, std::move(cb), autoRemove ? handle : nullptr);
     o_Id = id;
     return handle;
 }
