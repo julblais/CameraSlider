@@ -41,7 +41,6 @@ namespace Core
 
     private:
         Timer(const Id id, const char* name, esp_timer_handle_t handle);
-        static Timer CreateTimer(const char* name, Timer::Callback cb, bool shouldDelete);
         friend class TimerComponent;
 
         const char* m_Name;
