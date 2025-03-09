@@ -24,20 +24,6 @@ namespace Core
     public:
         using Callback = std::function<void(void)>;
         using Id = intptr_t;
-        
-        struct TimerTrace
-        {
-        public:
-            TimerTrace(const char* name, const Id id, Callback callback);
-            void Invoke();
-            Id GetId() const { return m_Id; }
-            const char* GetName() const { return m_Name; }
-            bool operator==(Id other) const { return m_Id == other; }
-        private:
-            const char* m_Name;
-            Callback m_Callback;
-            Id m_Id;
-        };
 
         Timer();
         ~Timer();

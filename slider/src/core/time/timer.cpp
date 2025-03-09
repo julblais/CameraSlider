@@ -9,14 +9,42 @@
 
 using namespace Core;
 
-const int TIMER_QUEUE_LENGTH = 20;
+struct TimerTrace
+{
+public:
+    TimerTrace(const char* name, const Timer::Id id, Timer::Callback callback);
+    void Invoke();
+    Timer::Id GetId() const { return m_Id; }
+    const char* GetName() const { return m_Name; }
+    bool operator==(Timer::Id other) const { return m_Id == other; }
+private:
+    const char* m_Name;
+    Timer::Callback m_Callback;
+    Timer::Id m_Id;
+};
 
-std::vector<Timer::TimerTrace> s_Timers {};
+TimerTrace::TimerTrace(const char* name, const Timer::Id id, Timer::Callback callback)
+    :m_Name(name), m_Id(id), m_Callback(callback)
+{}
+
+void TimerTrace::Invoke()
+{
+    if (m_Callback)
+    {
+        LogDebug("Timer \"", m_Name, "\" activated at ", esp_timer_get_time() / 1000, "ms");
+        m_Callback();
+    }
+}
+
+////////////////////////////////////////////
+
+const int TIMER_QUEUE_LENGTH = 20;
+std::vector<TimerTrace> s_Timers {};
 Queue<Timer::Id, TIMER_QUEUE_LENGTH> s_Queue { "Timer queue" };
 
 void RemoveTrace(const Timer::Id id)
 {
-    std::remove_if(s_Timers.begin(), s_Timers.end(), [id](const Timer::TimerTrace& trace) {
+    std::remove_if(s_Timers.begin(), s_Timers.end(), [id](const TimerTrace& trace) {
         return trace == id; });
 }
 
@@ -33,19 +61,6 @@ void TimerComponent::Update()
             LogWarning("Trying to invoke callback on deleted timer: ", foundTimer->GetName());
         //if (userData->ShouldAutoDelete())
           //  delete userData;
-    }
-}
-
-Timer::TimerTrace::TimerTrace(const char* name, const Timer::Id id, Timer::Callback callback)
-    :m_Name(name), m_Id(id), m_Callback(callback)
-{}
-
-void Timer::TimerTrace::Invoke()
-{
-    if (m_Callback)
-    {
-        LogDebug("Timer \"", m_Name, "\" activated at ", esp_timer_get_time() / 1000, "ms");
-        m_Callback();
     }
 }
 
