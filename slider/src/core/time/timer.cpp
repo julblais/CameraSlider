@@ -12,21 +12,22 @@ using namespace Core;
 struct Handle
 {
 public:
-    Handle(const char* name, const Timer::Id id, Timer::Callback callback);
-    void Invoke();
+    Handle(const char* name, const Timer::Id id, Timer::Callback callback, bool autoRemove = false);
+    void Invoke() const;
     Timer::Id GetId() const { return m_Id; }
     bool operator==(Timer::Id other) const { return m_Id == other; }
 private:
     const char* m_Name;
     Timer::Callback m_Callback;
     Timer::Id m_Id;
+    bool m_AutoRemove;
 };
 
-Handle::Handle(const char* name, const Timer::Id id, Timer::Callback callback)
-    :m_Name(name), m_Id(id), m_Callback(callback)
+Handle::Handle(const char* name, const Timer::Id id, Timer::Callback callback, bool autoRemove)
+    :m_Name(name), m_Id(id), m_Callback(std::move(callback)), m_AutoRemove(autoRemove)
 {}
 
-void Handle::Invoke()
+void Handle::Invoke() const
 {
     if (m_Callback)
     {
@@ -80,7 +81,7 @@ Timer::~Timer()
         auto result = esp_timer_delete(m_Handle);
         if (result != ESP_OK)
             LogError("Problem deleting timer ", m_Name, ", ", esp_err_to_name(result));
-        LogInfo("Removed timer: " , m_Name, ", id: ", m_Id);
+        LogInfo("Removed timer: ", m_Name, ", id: ", m_Id);
     }
 }
 
@@ -131,7 +132,7 @@ Timer Timer::CreateTimer(const char* name, Timer::Callback cb, bool shouldDelete
         return Timer();
     }
 
-    s_Handles.emplace_back(name, id, cb);
+    s_Handles.emplace_back(name, id, std::move(cb));
     return Timer(id, name, handle);
 }
 
