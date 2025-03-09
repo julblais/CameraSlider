@@ -1,4 +1,5 @@
 #include "messageHandler.h"
+#include "src/core/utils/vectorUtils.h"
 
 using namespace Core;
 
@@ -21,15 +22,9 @@ MessageHandler::MessageHandler()
 
 void MessageHandler::RemoveCallback(const MessageCallbackHandle& handle)
 {
-    auto it = m_Selectors.begin();
-    while (it != m_Selectors.end())
-    {
-        if (it->second.get() == handle.invoker)
-        {
-            m_Selectors.erase(it);
-            return;
-        }
-    }
+    if (EraseFirstIf(m_Selectors, [handle](const Selector& sel) {
+        return sel.second.get() == handle.invoker; }))
+        return;
     LogError("Cannot remove callback, not found: ", handle.invoker->name);
 }
 

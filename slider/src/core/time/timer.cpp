@@ -78,7 +78,7 @@ Timer::~Timer()
 {
     if (m_Handle != nullptr)
     {
-        RemoveFirst(s_Handles, m_Id);
+        EraseFirst(s_Handles, m_Id);
         esp_timer_stop(m_Handle);
         auto result = esp_timer_delete(m_Handle);
         if (result != ESP_OK)
