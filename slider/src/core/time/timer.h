@@ -32,8 +32,8 @@ namespace Core
         Timer(Timer&&);
         Timer& operator=(Timer&&);
 
-        static Timer Create(const char* name, Callback callback);
-        static void FireAndForget(const char* name, Time delayMs, Callback callback);
+        static Timer Create(const char* name, const Callback& callback);
+        static void FireAndForget(const char* name, Time delayMs, const Callback& callback);
         void Start(Time delayMs, bool periodic = false) const;
         void Stop() const;
         void Restart(Time delayMs) const;
