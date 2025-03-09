@@ -4,6 +4,7 @@
 #include "esp_timer.h"
 #include <algorithm>
 #include <vector>
+#include "src/core/utils/vectorUtils.h"
 
 #ifdef ARDUINO_ARCH_ESP32 
 
@@ -44,20 +45,6 @@ const int TIMER_QUEUE_LENGTH = 20;
 std::vector<Handle> s_Handles {};
 Queue<Timer::Id, TIMER_QUEUE_LENGTH> s_Queue { "Timer queue" };
 
-void RemoveHandle(const Timer::Id id)
-{
-    auto it = s_Handles.begin();
-    while (it != s_Handles.end())
-    {
-        if (it->GetId() == id)
-        {
-            s_Handles.erase(it);
-            return;
-        }
-    }
-    LogError("Cannot remove callback, id not found: ", id);
-}
-
 void TimerComponent::Setup() {}
 
 void TimerComponent::Update()
@@ -70,7 +57,7 @@ void TimerComponent::Update()
             handle->Invoke();
             if (handle->ShouldAutoRemove())
             {
-                RemoveHandle(handle->GetId());
+                s_Handles.erase(handle);
                 LogDebug("Removing fire and forget: ", handle->GetName());
             }
         }
@@ -91,7 +78,7 @@ Timer::~Timer()
 {
     if (m_Handle != nullptr)
     {
-        RemoveHandle(m_Id);
+        RemoveFirst(s_Handles, m_Id);
         esp_timer_stop(m_Handle);
         auto result = esp_timer_delete(m_Handle);
         if (result != ESP_OK)
