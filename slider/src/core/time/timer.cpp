@@ -9,13 +9,12 @@
 
 using namespace Core;
 
-struct TimerTrace
+struct Handle
 {
 public:
-    TimerTrace(const char* name, const Timer::Id id, Timer::Callback callback);
+    Handle(const char* name, const Timer::Id id, Timer::Callback callback);
     void Invoke();
     Timer::Id GetId() const { return m_Id; }
-    const char* GetName() const { return m_Name; }
     bool operator==(Timer::Id other) const { return m_Id == other; }
 private:
     const char* m_Name;
@@ -23,11 +22,11 @@ private:
     Timer::Id m_Id;
 };
 
-TimerTrace::TimerTrace(const char* name, const Timer::Id id, Timer::Callback callback)
+Handle::Handle(const char* name, const Timer::Id id, Timer::Callback callback)
     :m_Name(name), m_Id(id), m_Callback(callback)
 {}
 
-void TimerTrace::Invoke()
+void Handle::Invoke()
 {
     if (m_Callback)
     {
@@ -39,13 +38,13 @@ void TimerTrace::Invoke()
 ////////////////////////////////////////////
 
 const int TIMER_QUEUE_LENGTH = 20;
-std::vector<TimerTrace> s_Timers {};
+std::vector<Handle> s_Handles {};
 Queue<Timer::Id, TIMER_QUEUE_LENGTH> s_Queue { "Timer queue" };
 
-void RemoveTrace(const Timer::Id id)
+void RemoveHandle(const Timer::Id id)
 {
-    std::remove_if(s_Timers.begin(), s_Timers.end(), [id](const TimerTrace& trace) {
-        return trace == id; });
+    std::remove_if(s_Handles.begin(), s_Handles.end(), [id](const Handle& trace) {
+        return trace.GetId() == id; });
 }
 
 void TimerComponent::Setup() {}
@@ -54,18 +53,18 @@ void TimerComponent::Update()
 {
     for (auto& id : s_Queue)
     {
-        auto foundTimer = std::find(s_Timers.begin(), s_Timers.end(), id);
-        if (foundTimer != s_Timers.end())
-            foundTimer->Invoke();
+        auto handle = std::find(s_Handles.begin(), s_Handles.end(), id);
+        if (handle != s_Handles.end())
+            handle->Invoke();
         else
-            LogWarning("Trying to invoke callback on deleted timer: ", foundTimer->GetName());
+            LogWarning("Skipping callback for deleted timer id: ", id);
         //if (userData->ShouldAutoDelete())
           //  delete userData;
     }
 }
 
 Timer::Timer()
-    :m_Id(0), m_Handle(nullptr), m_Name("")
+    :m_Id(0), m_Handle(nullptr), m_Name("NULL")
 {}
 
 Timer::Timer(const Timer::Id id, const char* name, esp_timer_handle_t handle)
@@ -76,12 +75,34 @@ Timer::~Timer()
 {
     if (m_Handle != nullptr)
     {
-        RemoveTrace(m_Id);
+        RemoveHandle(m_Id);
         esp_timer_stop(m_Handle);
         auto result = esp_timer_delete(m_Handle);
         if (result != ESP_OK)
             LogError("Problem deleting timer ", m_Name, ", ", esp_err_to_name(result));
+        LogInfo("Removed timer: " , m_Name, ", id: ", m_Id);
     }
+}
+
+Timer::Timer(Timer&& other)
+{
+    m_Name = other.m_Name;
+    other.m_Name = nullptr;
+    m_Handle = other.m_Handle;
+    other.m_Handle = nullptr;
+    m_Id = other.m_Id;
+    other.m_Id = 0;
+}
+
+Timer& Timer::operator=(Timer&& other)
+{
+    m_Name = other.m_Name;
+    other.m_Name = nullptr;
+    m_Handle = other.m_Handle;
+    other.m_Handle = nullptr;
+    m_Id = other.m_Id;
+    other.m_Id = 0;
+    return *this;
 }
 
 void OnTimerTriggered(void* data)
@@ -110,7 +131,7 @@ Timer Timer::CreateTimer(const char* name, Timer::Callback cb, bool shouldDelete
         return Timer();
     }
 
-    s_Timers.emplace_back(name, id, cb);
+    s_Handles.emplace_back(name, id, cb);
     return Timer(id, name, handle);
 }
 
