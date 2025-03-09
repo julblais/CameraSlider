@@ -1,4 +1,5 @@
 #include "messageHandler.h"
+#include <algorithm>
 
 using namespace Core;
 
@@ -21,16 +22,8 @@ MessageHandler::MessageHandler()
 
 void MessageHandler::RemoveCallback(const MessageCallbackHandle& handle)
 {
-    auto it = m_Selectors.begin();
-    while (it != m_Selectors.end())
-    {
-        if (it->second.get() == handle.invoker)
-        {
-            m_Selectors.erase(it);
-            return;
-        }
-    }
-    LogError("Cannot remove callback, not found: ", handle.invoker->name);
+    std::remove_if(m_Selectors.begin(), m_Selectors.end(), [handle](const Selector& selector) {
+        return selector.second.get() == handle.invoker; });
 }
 
 void MessageHandler::ProcessMessages() const
