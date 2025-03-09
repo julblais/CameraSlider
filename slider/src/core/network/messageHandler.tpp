@@ -23,9 +23,8 @@ template <class T>
 MessageCallbackHandle MessageHandler::AddCallback(const char* name, std::function<void(T)> callback)
 {
     auto ptr = new Invoker<T>(name, std::move(callback));
-    MessageCallbackHandle handle(ptr);
     m_Selectors.emplace_back(MessageWrapper<T>::StaticId(), std::unique_ptr<InvokerBase>(ptr));
-    return handle;
+    return MessageCallbackHandle(ptr);
 }
 
 template <class T>
