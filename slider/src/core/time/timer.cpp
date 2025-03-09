@@ -12,9 +12,11 @@ using namespace Core;
 struct Handle
 {
 public:
-    Handle(const char* name, const Timer::Id id, Timer::Callback callback, bool autoRemove = false);
+    Handle(const char* name, const Timer::Id id, Timer::Callback callback, bool autoRemove);
     void Invoke() const;
     Timer::Id GetId() const { return m_Id; }
+    const char* GetName() const { return m_Name; }
+    bool ShouldAutoRemove() { return m_AutoRemove; }
     bool operator==(Timer::Id other) const { return m_Id == other; }
 private:
     const char* m_Name;
@@ -44,8 +46,16 @@ Queue<Timer::Id, TIMER_QUEUE_LENGTH> s_Queue { "Timer queue" };
 
 void RemoveHandle(const Timer::Id id)
 {
-    std::remove_if(s_Handles.begin(), s_Handles.end(), [id](const Handle& trace) {
-        return trace.GetId() == id; });
+    auto it = s_Handles.begin();
+    while (it != s_Handles.end())
+    {
+        if (it->GetId() == id)
+        {
+            s_Handles.erase(it);
+            return;
+        }
+    }
+    LogError("Cannot remove callback, id not found: ", id);
 }
 
 void TimerComponent::Setup() {}
@@ -56,11 +66,16 @@ void TimerComponent::Update()
     {
         auto handle = std::find(s_Handles.begin(), s_Handles.end(), id);
         if (handle != s_Handles.end())
+        {
             handle->Invoke();
+            if (handle->ShouldAutoRemove())
+            {
+                RemoveHandle(handle->GetId());
+                LogDebug("Removing fire and forget: ", handle->GetName());
+            }
+        }
         else
             LogWarning("Skipping callback for deleted timer id: ", id);
-        //if (userData->ShouldAutoDelete())
-          //  delete userData;
     }
 }
 
@@ -112,7 +127,7 @@ void OnTimerTriggered(void* data)
     s_Queue.push(userData);
 }
 
-Timer Timer::CreateTimer(const char* name, Timer::Callback cb, bool shouldDelete)
+esp_timer_handle_t CreateHandle(const char* name, Timer::Callback cb, bool autoRemove, Timer::Id& o_Id)
 {
     static Timer::Id s_IdGenerator = 1;
     const auto id = s_IdGenerator++;
@@ -124,28 +139,32 @@ Timer Timer::CreateTimer(const char* name, Timer::Callback cb, bool shouldDelete
         .name = name
     };
 
-    esp_timer* handle;
+    esp_timer_handle_t handle;
     auto result = esp_timer_create(&args, &handle);
     if (result != ESP_OK)
     {
         LogError("Cannot create timer: ", name, ", ", esp_err_to_name(result));
-        return Timer();
+        return 0;
     }
 
-    s_Handles.emplace_back(name, id, std::move(cb));
-    return Timer(id, name, handle);
+    s_Handles.emplace_back(name, id, std::move(cb), autoRemove);
+    o_Id = id;
+    return handle;
 }
 
 Timer Timer::Create(const char* name, Callback cb)
 {
-    return CreateTimer(name, std::move(cb), false);
+    Timer::Id id = 0;
+    auto handle = CreateHandle(name, std::move(cb), false, id);
+    return Timer(id, name, handle);
 }
-/*
+
 void Timer::FireAndForget(const char* name, Time delayMs, Callback cb)
 {
-    auto userData = CreateTimer(name, std::move(cb), true);
-    esp_timer_start_once(userData->GetHandle(), delayMs * 1000);
-}*/
+    Timer::Id id = 0;
+    auto handle = CreateHandle(name, std::move(cb), true, id);
+    esp_timer_start_once(handle, delayMs * 1000);
+}
 
 void Timer::Start(Time delayMs, bool periodic) const
 {
