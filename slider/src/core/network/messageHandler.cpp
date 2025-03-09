@@ -1,7 +1,5 @@
 #include "messageHandler.h"
 
-#define QUEUE_LENGTH 10
-
 using namespace Core;
 
 MessageHandler::QueueItem::QueueItem()
