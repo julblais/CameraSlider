@@ -78,8 +78,7 @@ void Slider::SimulatorApp::Setup()
     #endif
 
     app->Setup();
-    app->m_Display = std::unique_ptr<Core::Display>(new Hardware::LCD(m_Config.LcdAddress));
-    app->m_Display->Init();
+    app->m_Display.reset(new Hardware::LCD(m_Config.LcdAddress));
     app->m_DisplayBuffer.Init(app->m_Display.get());
 
     app->m_InputDispatcher.AddListener([app](const Event& event) {

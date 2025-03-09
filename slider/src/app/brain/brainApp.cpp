@@ -59,7 +59,6 @@ void Slider::BrainApp::Setup()
     m_InputDispatcher.AddListener(stepper);
 
     SetupComponents();
-    m_Display->Init();
     m_DisplayBuffer.Init(m_Display.get());
     m_InputReader->Setup();
 

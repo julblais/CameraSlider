@@ -11,7 +11,7 @@ constexpr const char* goBackUp = "\r\e[4F";
 constexpr const char* hborder = "                    ";
 constexpr const char* vborder = "  ";
 
-void SerialDisplay::Init()
+SerialDisplay::SerialDisplay()
 {
     m_Timer = Timer::Create("SerialDisplay", [this]() {
         PrintToSerial();

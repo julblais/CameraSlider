@@ -33,7 +33,6 @@ namespace Core
     class Display : public Print
     {
     public:
-        virtual void Init() {}
         virtual void SetCursor(const int column, const int row) = 0;
         virtual SymbolHandle GetSymbol(Symbol symbol) const = 0;
         virtual void Clear() = 0;

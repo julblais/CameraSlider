@@ -17,7 +17,6 @@ namespace Hardware {
         constexpr static int NUM_ROWS = 2;
 
         LCD(const uint8_t address);
-        virtual void Init() override;
 
         void Clear();
         virtual size_t write(uint8_t value) override;
