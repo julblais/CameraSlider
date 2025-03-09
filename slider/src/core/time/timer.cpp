@@ -18,6 +18,7 @@ public:
     Timer::Id GetId() const { return m_Id; }
     const char* GetName() const { return m_Name; }
     bool ShouldAutoRemove() { return m_AutoRemove; }
+    bool operator==(const Handle& other) const { return m_Id == other.m_Id; }
     bool operator==(Timer::Id other) const { return m_Id == other; }
 private:
     const char* m_Name;
@@ -25,6 +26,10 @@ private:
     Timer::Id m_Id;
     bool m_AutoRemove;
 };
+
+const int TIMER_QUEUE_LENGTH = 20;
+std::vector<Handle> s_Handles {};
+Queue<Timer::Id, TIMER_QUEUE_LENGTH> s_Queue { "Timer queue" };
 
 Handle::Handle(const char* name, const Timer::Id id, Timer::Callback callback, bool autoRemove)
     :m_Name(name), m_Id(id), m_Callback(std::move(callback)), m_AutoRemove(autoRemove)
@@ -37,13 +42,12 @@ void Handle::Invoke() const
         LogDebug("Timer \"", m_Name, "\" activated at ", esp_timer_get_time() / 1000, "ms");
         m_Callback();
     }
+    if (m_AutoRemove)
+    {
+        EraseFirst(s_Handles, *this);
+        LogDebug("Removing fire and forget: ", handle->GetName());
+    }
 }
-
-////////////////////////////////////////////
-
-const int TIMER_QUEUE_LENGTH = 20;
-std::vector<Handle> s_Handles {};
-Queue<Timer::Id, TIMER_QUEUE_LENGTH> s_Queue { "Timer queue" };
 
 void TimerComponent::Setup() {}
 
@@ -53,14 +57,7 @@ void TimerComponent::Update()
     {
         auto handle = std::find(s_Handles.begin(), s_Handles.end(), id);
         if (handle != s_Handles.end())
-        {
             handle->Invoke();
-            if (handle->ShouldAutoRemove())
-            {
-                s_Handles.erase(handle);
-                LogDebug("Removing fire and forget: ", handle->GetName());
-            }
-        }
         else
             LogWarning("Skipping callback for deleted timer id: ", id);
     }
