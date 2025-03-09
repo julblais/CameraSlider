@@ -42,7 +42,7 @@ void Handle::Invoke() const
     if (m_AutoRemove)
     {
         EraseFirst(s_Handles, *this);
-        LogDebug("Removing fire and forget: ", handle->GetName());
+        LogDebug("Removing fire and forget: ", m_Name);
     }
 }
 
@@ -104,8 +104,7 @@ Timer& Timer::operator=(Timer&& other)
 
 void OnTimerTriggered(void* data)
 {
-    auto userData = reinterpret_cast<unsigned int>(data);
-    s_Queue.push(userData);
+    s_Queue.push(reinterpret_cast<unsigned int>(data));
 }
 
 esp_timer_handle_t CreateHandle(const char* name, Timer::Callback cb, bool autoRemove, Timer::Id& o_Id)
