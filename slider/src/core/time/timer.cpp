@@ -60,14 +60,13 @@ void TimerComponent::Setup() {}
 
 void TimerComponent::Update()
 {
-    for (auto& id : s_Queue)
-    {
+    s_Queue.foreach([](Timer::Id id) {
         auto handle = std::find(s_Handles.begin(), s_Handles.end(), id);
         if (handle != s_Handles.end())
             handle->Invoke();
         else
             LogWarning("Skipping callback for deleted timer id: ", id);
-    }
+    });
 }
 
 Timer::Timer()

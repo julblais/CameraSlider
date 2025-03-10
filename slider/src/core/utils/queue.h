@@ -12,21 +12,6 @@ namespace Core
     class Queue
     {
     public:
-        struct Iterator
-        {
-            friend class Queue;
-        public:
-            const T& operator*() const { return item; }
-            bool operator!=(Iterator rhs) { return m_Queue != rhs.m_Queue; }
-            void operator++();
-        private:
-            Iterator() : m_Queue(nullptr), item() {}
-            Iterator(QueueHandle_t queue) : m_Queue(queue), item() { this->operator++(); }
-
-            QueueHandle_t m_Queue;
-            T item;
-        };
-
         Queue(const char* name);
         Queue(Queue&&) = default;
         Queue& operator=(Queue&&) = default;
@@ -34,10 +19,9 @@ namespace Core
         Queue& operator=(const Queue&) = delete;
 
         void push(const T& item);
+        template <typename TFunc>
+        void foreach(TFunc func) const;
         size_t size() { return uxQueueMessagesWaiting(m_Queue); }
-
-        Iterator begin() const { return Iterator(m_Queue); }
-        Iterator end() const { return Iterator(); }
 
     private:
         const char* m_Name;
@@ -63,10 +47,12 @@ namespace Core
     }
 
     template<typename T, size_t Length>
-    inline void Queue<T, Length>::Iterator::operator++()
+    template<typename TFunc>
+    inline void Queue<T, Length>::foreach(TFunc func) const
     {
-        if (!xQueueReceive(m_Queue, &item, 0))
-            m_Queue = nullptr;
+        T item;
+        while (xQueueReceive(m_Queue, &item, 0))
+            func(item);
     }
 };
 

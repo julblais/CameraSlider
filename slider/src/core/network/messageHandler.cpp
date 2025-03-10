@@ -30,8 +30,7 @@ void MessageHandler::RemoveCallback(const MessageCallbackHandle& handle)
 
 void MessageHandler::ProcessMessages() const
 {
-    for (auto item : m_Queue)
-    {
+    m_Queue.foreach([this](MessageHandler::QueueItem& item) {
         auto message = reinterpret_cast<const MessageBase*>(item.data);
         for (const auto& selector : m_Selectors)
         {
@@ -46,7 +45,7 @@ void MessageHandler::ProcessMessages() const
             }
         }
         item.Finish();
-    }
+    });
 }
 
 void MessageHandler::Invoke(const uint8_t* data, size_t length)
