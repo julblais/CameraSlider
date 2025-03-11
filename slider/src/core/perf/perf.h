@@ -125,8 +125,8 @@ extern Performance::MemoryFreeSampler MemorySampler;
 #else
 #define LogPerf(...) ;
 #define INIT_SAMPLER(sampler) ;
-#define MEASURE(tag, func, ...) func
-#define TAKE_SAMPLE(tag, func, ...) func
+#define MEASURE(tag, func, ...) func();
+#define TAKE_SAMPLE(tag, func, ...) func();
 #endif //LOG_PERFORMANCE
 
 #endif //PERF_H
