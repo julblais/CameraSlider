@@ -5,8 +5,8 @@
 
 #include "time.h"
 #include "src/core/component/component.h"
-#include <functional>
 #include <memory>
+#include "src/core/utils/function.h"
 
 struct esp_timer;
 typedef struct esp_timer* esp_timer_handle_t;
@@ -22,7 +22,7 @@ namespace Core
     class Timer
     {
     public:
-        using Callback = std::function<void(void)>;
+        using Callback = function<void(void)>;
         using Id = intptr_t;
 
         Timer();
