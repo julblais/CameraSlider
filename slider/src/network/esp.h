@@ -3,8 +3,7 @@
 #ifndef ESP_UTILS_H
 #define ESP_UTILS_H
 
-#include <functional>
-
+#include "src/core/utils/function.h"
 #include "src/core/network/address.h"
 #include "src/debug.h"
 
@@ -13,8 +12,8 @@ namespace Net
     class Esp
     {
     public:
-        using SendCallback = std::function<void(const Core::MacAddress&, bool)>;
-        using ReceiveCallback = std::function<void(const uint8_t*, size_t)>;
+        using SendCallback = Core::function<void(const Core::MacAddress&, bool)>;
+        using ReceiveCallback = Core::function<void(const uint8_t*, size_t)>;
 
         static bool Init();
 
