@@ -110,10 +110,7 @@ namespace Performance
         int64_t GetValue() const;
     };
 
-    template class Sampler<CpuTime::Tag, CpuTime, uint64_t, false>;
     using CpuTimeSampler = Sampler<CpuTime::Tag, CpuTime, uint64_t, false>;
-
-    template class Sampler<MemoryFreeSize::Tag, MemoryFreeSize, int64_t, true>;
     using MemoryFreeSampler = Sampler<MemoryFreeSize::Tag, MemoryFreeSize, int64_t, true>;
 }
 
