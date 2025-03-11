@@ -42,13 +42,12 @@ void Slider::ControllerApp::Setup()
 
 void Slider::ControllerApp::Update()
 {
-    TAKE_SAMPLE(CpuSampler, "ProcessInput",
-    {
+    TAKE_SAMPLE("ProcessInput", [this]() {
         auto input = m_InputReader->ReadInput();
         m_InputDispatcher.ProcessInput(input);
         /*-> ProcessInput(message_from_controller) */
         m_InputDispatcher.Dispatch();
-    });
+    }, CpuSampler);
 
     if (m_Connector->GetState() == Slider::ControllerConnector::State::CONNECTED)
     {
@@ -57,7 +56,7 @@ void Slider::ControllerApp::Update()
     }
 
     //update all systems
-    TAKE_SAMPLE(CpuSampler, "ComponentUpdate", { UpdateComponents(); });
+    TAKE_SAMPLE("ComponentUpdate", [this](){ UpdateComponents(); }, CpuSampler);
 
     if (m_Connector->GetState() != Slider::ControllerConnector::State::CONNECTED)
     {
@@ -66,5 +65,5 @@ void Slider::ControllerApp::Update()
     }
 
     //output final display buffer
-    TAKE_SAMPLE(CpuSampler, "OutputToLCD", { m_DisplayBuffer.PrintToDisplay(); });
+    TAKE_SAMPLE("OutputToLCD", [this](){ m_DisplayBuffer.PrintToDisplay(); }, CpuSampler);
 }
