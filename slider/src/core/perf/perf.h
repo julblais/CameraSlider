@@ -1,6 +1,8 @@
 #ifndef PERF_H
 #define PERF_H
 
+#ifdef LOG_PERFORMANCE
+
 #include "esp_log.h"
 #include "src/core/utils/templateUtils.h"
 #include <utility>
@@ -8,7 +10,6 @@
 #include <stack>
 #include <map>
 
-#ifdef LOG_PERFORMANCE
 #define LogPerf(...) Debug::Log(__VA_ARGS__)
 #define INIT_SAMPLER(sampler) sampler.Setup()
 #define MEASURE(tag, func, ...) Performance::Measure(tag, func, __VA_ARGS__);\
