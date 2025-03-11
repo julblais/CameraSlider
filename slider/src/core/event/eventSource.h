@@ -1,8 +1,8 @@
 #ifndef EVT_SRC_H
 #define EVT_SRC_H
 
+#include "src/core/utils/function.h"
 #include <vector>
-#include <functional>
 #include <algorithm>
 
 namespace Core
@@ -10,7 +10,7 @@ namespace Core
     template <typename... TArgs>
     class EventSource
     {
-        using TListener = std::function<bool(TArgs...)>;
+        using TListener = function<bool(TArgs...)>;
 
     public:
         EventSource() = default;

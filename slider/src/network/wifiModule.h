@@ -3,6 +3,7 @@
 
 #include "src/core/network/messageHandler.h"
 #include "src/core/network/address.h"
+#include "src/core/utils/function.h"
 
 using namespace Core;
 
@@ -21,10 +22,10 @@ namespace Net
         bool RemovePeer(const MacAddress& address);
 
         template <typename TMessage>
-        MessageCallbackHandle RegisterReceiveCallback(const char* name, std::function<void(TMessage)> callback);
+        MessageCallbackHandle RegisterReceiveCallback(const char* name, function<void(TMessage)> callback);
         void RemoveReceiveCallback(const MessageCallbackHandle& handle);
         
-        void RegisterSendCallback(std::function<void(const MacAddress&, bool)> callback);
+        void RegisterSendCallback(function<void(const MacAddress&, bool)> callback);
 
         template <typename TMessage>
         bool Send(const MacAddress& address, const TMessage& message);
@@ -46,12 +47,12 @@ namespace Net
         template <typename TMessage>
         bool SimulateSend(const TMessage& message);
         template <typename TMessage>
-        void RegisterSimulateSendCallback(const char* name, std::function<void(TMessage)> callback);
+        void RegisterSimulateSendCallback(const char* name, function<void(TMessage)> callback);
         #endif
     };
 
     template <typename TMessage>
-    MessageCallbackHandle WifiModule::RegisterReceiveCallback(const char* name, std::function<void(TMessage)> callback)
+    MessageCallbackHandle WifiModule::RegisterReceiveCallback(const char* name, function<void(TMessage)> callback)
     {
         return m_MessageHandler.AddCallback<TMessage>(name, callback);
     }
@@ -72,7 +73,7 @@ namespace Net
 
     #ifdef IS_SIMULATOR
     template <typename TMessage>
-    void WifiModule::RegisterSimulateSendCallback(const char* name, std::function<void(TMessage)> callback)
+    void WifiModule::RegisterSimulateSendCallback(const char* name, function<void(TMessage)> callback)
     {
         m_OtherMessageHandler.AddCallback<TMessage>(name, callback);
     }

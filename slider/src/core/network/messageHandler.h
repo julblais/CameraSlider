@@ -6,9 +6,9 @@
 #include "invokerBase.h"
 #include "messageCallbackHandle.h"
 #include "src/core/utils/queue.h"
+#include "src/core/utils/function.h"
 
 #include <vector>
-#include <functional>
 #include <memory>
 #include <utility>
 
@@ -22,10 +22,10 @@ namespace Core
         class Invoker : public InvokerBase
         {
         public:
-            Invoker(const char* name, std::function<void(TMessage)> function);
+            Invoker(const char* name, function<void(TMessage)> function);
             virtual void Invoke(const uint8_t* data, size_t length) const override;
         private:
-            std::function<void(TMessage)>  m_Function;
+            function<void(TMessage)>  m_Function;
         };
 
         struct QueueItem
@@ -42,7 +42,7 @@ namespace Core
         MessageHandler();
 
         template <class T>
-        MessageCallbackHandle AddCallback(const char* name, std::function<void(T)> cb);
+        MessageCallbackHandle AddCallback(const char* name, function<void(T)> cb);
         void RemoveCallback(const MessageCallbackHandle& handle);
 
         template <class T>
