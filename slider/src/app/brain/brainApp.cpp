@@ -67,23 +67,20 @@ void Slider::BrainApp::Setup()
 
 void Slider::BrainApp::Update()
 {
-    TAKE_SAMPLE(CpuSampler, "ProcessInput",
-    {
+    TAKE_SAMPLE("ProcessInput", [this]() {
         auto input = m_InputReader->ReadInput();
         m_InputDispatcher.ProcessInput(input);
         /*-> ProcessInput(message_from_controller) */
         m_InputDispatcher.Dispatch();
-    });
+    }, CpuSampler);
 
     //update all systems
-    TAKE_SAMPLE(CpuSampler, "ComponentUpdate",
-    {
+    TAKE_SAMPLE("ComponentUpdate", [this]() {
         UpdateComponents();
-    });
+    }, CpuSampler);
 
     //output final display buffer
-    TAKE_SAMPLE(CpuSampler, "OutputToLCD",
-    {
+    TAKE_SAMPLE("OutputToLCD", [this]() {
         m_DisplayBuffer.PrintToDisplay();
-    });
+    }, CpuSampler);
 }

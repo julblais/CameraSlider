@@ -6,27 +6,27 @@
 
 using namespace Performance;
 
-template<typename TTag, typename TSample, typename TValue>
-Sampler<TTag, TSample, TValue>::Sampler(const unsigned int logFrequency)
+template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
+Sampler<TTag, TSample, TValue, IsAbsolute>::Sampler(const unsigned int logFrequency)
     : m_Sample(), m_LogFreqCount(logFrequency)
 {}
 
-template<typename TTag, typename TSample, typename TValue>
-void Performance::Sampler<TTag, TSample, TValue>::Setup()
+template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
+void Performance::Sampler<TTag, TSample, TValue, IsAbsolute>::Setup()
 {
     m_Sample.Setup();
 }
 
-template<typename TTag, typename TSample, typename TValue>
-void Performance::Sampler<TTag, TSample, TValue>::BeginSample(const char* tag)
+template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
+void Performance::Sampler<TTag, TSample, TValue, IsAbsolute>::BeginSample(const char* tag)
 {
     m_Stack.push({ m_Sample.GetValue(), tag, TValue() });
 }
 
-template<typename TTag, typename TSample, typename TValue>
-void Sampler<TTag, TSample, TValue>::EndSample()
+template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
+void Sampler<TTag, TSample, TValue, IsAbsolute>::EndSample()
 {
-    auto endValue = m_Sample.GetValue();
+    TValue endValue = m_Sample.GetValue();
     auto stackData = m_Stack.top();
     m_Stack.pop();
 
@@ -34,8 +34,10 @@ void Sampler<TTag, TSample, TValue>::EndSample()
     Data data = {};
     if (found != m_Values.end())
         data = found->second;
-
-    auto value = endValue - stackData.value - stackData.bias;
+    
+    auto value = endValue;
+    if (!IsAbsolute)
+        value -= stackData.value + stackData.bias;
     data.count++;
     data.current = value;
     data.sum += value;
@@ -51,8 +53,8 @@ void Sampler<TTag, TSample, TValue>::EndSample()
         m_Stack.top().bias += m_Sample.GetValue() - endValue + stackData.bias;
 }
 
-template<typename TTag, typename TSample, typename TValue>
-void Sampler<TTag, TSample, TValue>::AddData(const DataPair& pair, Core::TableFormatter& table, int indent) const
+template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
+void Sampler<TTag, TSample, TValue, IsAbsolute>::AddData(const DataPair& pair, Core::TableFormatter& table, int indent) const
 {
     auto data = pair.second;
     auto indentStr = std::string(indent, '-');
@@ -67,8 +69,8 @@ void Sampler<TTag, TSample, TValue>::AddData(const DataPair& pair, Core::TableFo
             AddData(child, table, indent + 1);
 }
 
-template<typename TTag, typename TSample, typename TValue>
-void Sampler<TTag, TSample, TValue>::Log()
+template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
+void Sampler<TTag, TSample, TValue, IsAbsolute>::Log()
 {
     Core::TableFormatter table(5, m_Values.size(), 1);
     table.AddRow({ TTag::Name, "Mean", "Max", "Min", "Last" });
@@ -79,8 +81,8 @@ void Sampler<TTag, TSample, TValue>::Log()
     LogPerf(table);
 }
 
-template<typename TTag, typename TSample, typename TValue>
-void Sampler<TTag, TSample, TValue>::Finish()
+template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
+void Sampler<TTag, TSample, TValue, IsAbsolute>::Finish()
 {
     if (freq++ >= m_LogFreqCount)
     {

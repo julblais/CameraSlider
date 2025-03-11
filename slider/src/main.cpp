@@ -47,6 +47,7 @@ void setup()
 {
     Debug::Init(9600);
     INIT_SAMPLER(CpuSampler);
+    INIT_SAMPLER(MemorySampler);
 
     LogInfo("Being setup...");
     app = Core::AppCreator<AppConfig>::Create(CreateConfig());
@@ -56,10 +57,9 @@ void setup()
 
 void loop()
 {
-    MEASURE(CpuSampler, "AppUpdate",
-    {
+    MEASURE("AppUpdate", []() {
         app->Update();
-    });
+    }, CpuSampler, MemorySampler);
 
     #ifdef IS_SIMULATOR //somehow this makes the timing more accurate...
     delay(30);
