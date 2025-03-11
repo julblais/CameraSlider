@@ -1,4 +1,3 @@
 - Add debug output levels (timer, system, menu, lcd, events)
 - Implement stepper controls
-- Add auto input class
 - Add timer to netApp when handshake is not received.
