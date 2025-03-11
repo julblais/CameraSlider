@@ -4,6 +4,7 @@
 
 #ifdef ARDUINO_ARCH_ESP32 
 #include "esp_timer.h"
+#include "esp_system.h"
 #endif
 
 using namespace Performance;
