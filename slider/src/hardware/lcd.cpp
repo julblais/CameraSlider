@@ -57,9 +57,6 @@ Hardware::LCD::LCD(const uint8_t address) :
     m_DoubleUpDownArrows(0),
     m_LeftArrow(0),
     m_RightArrow(0)
-{}
-
-void Hardware::LCD::Init()
 {
     LogInfo("Init LCD.");
     chip.init();

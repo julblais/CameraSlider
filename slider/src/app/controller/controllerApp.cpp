@@ -36,7 +36,6 @@ void Slider::ControllerApp::Setup()
     m_InputReader = std::unique_ptr<Input::InputReader>(new Hardware::DeviceInputReader(pins));
 
     SetupComponents();
-    m_Display->Init();
     m_DisplayBuffer.Init(m_Display.get());
     m_InputReader->Setup();
 }

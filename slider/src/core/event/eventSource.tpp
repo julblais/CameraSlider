@@ -1,9 +1,9 @@
 using namespace Core;
 
 template <typename... TArgs>
-void EventSource<TArgs...>::AddListener(const TListener& listener)
+void EventSource<TArgs...>::AddListener(TListener listener)
 {
-    m_Listeners.push_back(listener);
+    m_Listeners.push_back(std::move(listener));
 }
 
 template <typename... TArgs>

@@ -5,13 +5,14 @@
 #include "src/debug.h"
 #include "invokerBase.h"
 #include "messageCallbackHandle.h"
+#include "src/core/utils/queue.h"
 
 #include <vector>
 #include <functional>
 #include <memory>
 #include <utility>
-#include <freertos/FreeRTOS.h>
-#include <freertos/queue.h>
+
+#define MESSAGE_QUEUE_LENGTH 20
 
 namespace Core
 {
@@ -31,7 +32,6 @@ namespace Core
         {
             QueueItem();
             QueueItem(const uint8_t* data, size_t length);
-            static QueueItem CopyData(const uint8_t* data, size_t length);
             void Finish();
 
             const uint8_t* data;
@@ -48,13 +48,13 @@ namespace Core
         template <class T>
         static MessageWrapper<T> CreateMessage(const T& message);
 
-        void Invoke(const uint8_t* data, size_t length) const;
+        void Invoke(const uint8_t* data, size_t length);
         void ProcessMessages() const;
 
     private:
         using Selector = std::pair<int, std::unique_ptr<InvokerBase>>;
         std::vector<Selector> m_Selectors;
-        QueueHandle_t m_Queue;
+        Core::Queue<QueueItem, MESSAGE_QUEUE_LENGTH> m_Queue;
     };
 }
 
