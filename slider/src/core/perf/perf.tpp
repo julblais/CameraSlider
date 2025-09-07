@@ -1,3 +1,6 @@
+#ifndef PERF_TPP
+#define PERF_TPP
+
 #include "perf.h"
 #include "src/debug.h"
 #include "src/core/utils/tableFormatter.h"
@@ -94,3 +97,4 @@ void Sampler<TTag, TSample, TValue, IsAbsolute>::Finish()
         freq = 0;
     }
 }
+#endif // PERF_TPP
