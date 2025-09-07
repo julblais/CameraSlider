@@ -40,7 +40,7 @@ namespace Core
         bool IsRunning() const;
 
     private:
-        Timer(const Id id, const char* name, esp_timer_handle_t handle);
+        Timer(const Id id, const char* name, const esp_timer_handle_t handle);
         friend class TimerComponent;
 
         const char* m_Name;

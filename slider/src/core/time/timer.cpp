@@ -14,8 +14,16 @@ struct Handle
 {
     Handle(const char* name, const Timer::Id id, Timer::Callback callback, const esp_timer_handle_t handleToRemove);
     void Invoke() const;
-    bool operator==(const Handle& other) const { return m_Id == other.m_Id; }
-    bool operator==(Timer::Id other) const { return m_Id == other; }
+
+    bool operator==(const Handle& other) const
+    {
+        return m_Id == other.m_Id;
+    }
+
+    bool operator==(Timer::Id other) const
+    {
+        return m_Id == other;
+    }
 
 private:
     const char* m_Name;
@@ -28,7 +36,7 @@ private:
 std::vector<Handle> s_Handles {};
 Queue<Timer::Id, TIMER_QUEUE_LENGTH> s_Queue { "Timer queue" };
 
-void DeleteTimer(const char* name, const Timer::Id id, esp_timer_handle_t handle)
+void DeleteTimer(const char* name, const Timer::Id id, const esp_timer_handle_t handle)
 {
     if (handle != nullptr)
     {
@@ -77,12 +85,10 @@ Timer::Timer() :
     m_Handle(nullptr),
     m_Id(0) {}
 
-Timer::Timer(const Id id, const char* name, esp_timer_handle_t handle) :
-    m_Name(name),
-    m_Id(id),
-    m_Handle(handle) {}
-
-Timer::~Timer() { DeleteTimer(m_Name, m_Id, m_Handle); }
+Timer::~Timer()
+{
+    DeleteTimer(m_Name, m_Id, m_Handle);
+}
 
 Timer::Timer(Timer&& other)
 {
@@ -105,7 +111,15 @@ Timer& Timer::operator=(Timer&& other)
     return *this;
 }
 
-void OnTimerTriggered(void* data) { s_Queue.push(reinterpret_cast<Timer::Id>(data)); }
+Timer::Timer(const Id id, const char* name, const esp_timer_handle_t handle) :
+    m_Name(name),
+    m_Handle(handle),
+    m_Id(id) {}
+
+void OnTimerTriggered(void* data)
+{
+    s_Queue.push(reinterpret_cast<Timer::Id>(data));
+}
 
 esp_timer_handle_t CreateHandle(const char* name, Timer::Callback cb, bool autoRemove, Timer::Id& o_Id)
 {
