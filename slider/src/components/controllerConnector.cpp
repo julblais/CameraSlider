@@ -96,14 +96,14 @@ void ControllerConnector::Update()
     {
         WifiModule::GetInstance().AddPeer(brainMac);
         LogInfo("Sending connection request.");
-        ConnectionRequest request(WifiModule::GetInstance().GetMacAddress());
+        const ConnectionRequest request(WifiModule::GetInstance().GetMacAddress());
         WifiModule::GetInstance().Send(request);
         state = State::WAITING_FOR_HANDSHAKE;
     }
     else if (state == State::SENDING_HANDSHAKE)
     {
         LogInfo("Sending handshake to: ", brainMac);
-        Handshake handshake(WifiModule::GetInstance().GetMacAddress());
+        const Handshake handshake(WifiModule::GetInstance().GetMacAddress());
         WifiModule::GetInstance().Send(handshake);
         Settings::GetInstance().SetPeerAddress(brainMac);
         EndConnectionAttempt();

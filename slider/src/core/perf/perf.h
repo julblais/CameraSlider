@@ -16,14 +16,14 @@
 Performance::Finish(__VA_ARGS__);
 #define TAKE_SAMPLE(tag, func, ...) Performance::Measure(tag, func, __VA_ARGS__);
 
-namespace Core 
+namespace Core
 {
     class TableFormatter;
 }
 
 namespace Performance
 {
-    template <typename T, typename TFunc>
+    template<typename T, typename TFunc>
     void Measure(const char* tag, TFunc func, T&& sampler)
     {
         sampler.BeginSample(tag);
@@ -31,7 +31,7 @@ namespace Performance
         sampler.EndSample();
     }
 
-    template <typename T, typename... TArgs, typename TFunc>
+    template<typename T, typename... TArgs, typename TFunc>
     void Measure(const char* tag, TFunc func, T&& first, TArgs&&... args)
     {
         first.BeginSample(tag);
@@ -39,13 +39,13 @@ namespace Performance
         first.EndSample();
     }
 
-    template <typename... TArgs>
+    template<typename... TArgs>
     void Finish(TArgs&&... args)
     {
         Core::PassParamPack { (args.Finish(), 1)... };
     }
 
-    template <typename TTag, typename TSample, typename TValue, bool IsAbsolute = false>
+    template<typename TTag, typename TSample, typename TValue, bool IsAbsolute = false>
     class Sampler
     {
         static_assert(std::is_default_constructible<TSample>::value, "Type should have empty ctor");
@@ -60,8 +60,10 @@ namespace Performance
         void BeginSample(const char* tag);
         void EndSample();
         void Finish();
+
     private:
         void Log();
+
         struct Data
         {
             TValue sum;
@@ -71,12 +73,12 @@ namespace Performance
             unsigned int count;
             const char* parent;
         };
+
         struct StackData
         {
             TValue value;
             const char* tag;
             TValue bias;
-            StackData() = default;
         };
 
         using DataMap = std::map<const char*, Data>;
@@ -95,7 +97,10 @@ namespace Performance
     struct CpuTime
     {
     public:
-        struct Tag { static constexpr const char* Name { "cpu time(us)" }; };
+        struct Tag
+        {
+            static constexpr const char* Name { "cpu time(us)" };
+        };
 
         void Setup();
         uint64_t GetValue() const;
@@ -104,7 +109,10 @@ namespace Performance
     struct MemoryFreeSize
     {
     public:
-        struct Tag { static constexpr const char* Name { "free memory(kb)" }; };
+        struct Tag
+        {
+            static constexpr const char* Name { "free memory(kb)" };
+        };
 
         void Setup();
         int64_t GetValue() const;

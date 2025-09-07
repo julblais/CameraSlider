@@ -6,16 +6,17 @@
 namespace Core
 {
     //use this weird thing to avoid undefined order of variadic template arguments
-    struct PassParamPack { template<typename ...T> PassParamPack(T...) {} };
+    struct PassParamPack
+    {
+        template<typename... T>
+        PassParamPack(T...) {}
+    };
 
-    //check if is type is complete (specialized)
-    namespace {
-        template <class T, std::size_t = sizeof(T)>
-        std::true_type IsTypeCompleteImpl(T*);
-        std::false_type IsTypeCompleteImpl(...);
-    }
-    template <class T>
-    using IsTypeComplete = decltype(IsTypeCompleteImpl(std::declval<T*>()));
+    template<typename, typename = void>
+    struct IsTypeComplete : std::false_type {};
+
+    template<typename T>
+    struct IsTypeComplete<T, std::void_t<decltype(sizeof(T))> > : std::true_type {};
 }
 
 #endif

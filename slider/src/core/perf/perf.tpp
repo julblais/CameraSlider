@@ -1,3 +1,6 @@
+#ifndef PERF_TPP
+#define PERF_TPP
+
 #include "perf.h"
 #include "src/debug.h"
 #include "src/core/utils/tableFormatter.h"
@@ -7,20 +10,21 @@
 using namespace Performance;
 
 template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
-Sampler<TTag, TSample, TValue, IsAbsolute>::Sampler(const unsigned int logFrequency)
-    : m_Sample(), m_LogFreqCount(logFrequency)
-{}
+Sampler<TTag, TSample, TValue, IsAbsolute>::Sampler(const unsigned int logFrequency) :
+    freq(0),
+    m_LogFreqCount(logFrequency),
+    m_Sample() {}
 
 template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
-void Performance::Sampler<TTag, TSample, TValue, IsAbsolute>::Setup()
+void Sampler<TTag, TSample, TValue, IsAbsolute>::Setup()
 {
     m_Sample.Setup();
 }
 
 template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
-void Performance::Sampler<TTag, TSample, TValue, IsAbsolute>::BeginSample(const char* tag)
+void Sampler<TTag, TSample, TValue, IsAbsolute>::BeginSample(const char* tag)
 {
-    m_Stack.push({ m_Sample.GetValue(), tag, TValue() });
+    m_Stack.push({ .value = m_Sample.GetValue(), .tag = tag, .bias = TValue() });
 }
 
 template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
@@ -34,7 +38,7 @@ void Sampler<TTag, TSample, TValue, IsAbsolute>::EndSample()
     Data data = {};
     if (found != m_Values.end())
         data = found->second;
-    
+
     auto value = endValue;
     if (!IsAbsolute)
         value -= stackData.value + stackData.bias;
@@ -54,7 +58,8 @@ void Sampler<TTag, TSample, TValue, IsAbsolute>::EndSample()
 }
 
 template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
-void Sampler<TTag, TSample, TValue, IsAbsolute>::AddData(const DataPair& pair, Core::TableFormatter& table, int indent) const
+void Sampler<TTag, TSample, TValue, IsAbsolute>::AddData(const DataPair& pair, Core::TableFormatter& table,
+                                                         int indent) const
 {
     auto data = pair.second;
     auto indentStr = std::string(indent, '-');
@@ -63,8 +68,9 @@ void Sampler<TTag, TSample, TValue, IsAbsolute>::AddData(const DataPair& pair, C
         std::to_string(data.sum / data.count),
         std::to_string(data.max),
         std::to_string(data.min),
-        std::to_string(data.current) });
-    for (auto& child : m_Values)
+        std::to_string(data.current)
+    });
+    for (auto& child: m_Values)
         if (child.second.parent == pair.first)
             AddData(child, table, indent + 1);
 }
@@ -75,7 +81,7 @@ void Sampler<TTag, TSample, TValue, IsAbsolute>::Log()
     Core::TableFormatter table(5, m_Values.size(), 1);
     table.AddRow({ TTag::Name, "Mean", "Max", "Min", "Last" });
 
-    for (auto& pair : m_Values)
+    for (auto& pair: m_Values)
         if (pair.second.parent == nullptr)
             AddData(pair, table, 0);
     LogPerf(table);
@@ -92,3 +98,4 @@ void Sampler<TTag, TSample, TValue, IsAbsolute>::Finish()
         freq = 0;
     }
 }
+#endif // PERF_TPP

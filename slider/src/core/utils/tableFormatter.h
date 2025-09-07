@@ -10,7 +10,7 @@ namespace Core
     class TableFormatter : public Printable
     {
     public:
-        TableFormatter(const int cols, const int rows, const int padding = 0, bool hasHeader = true);
+        TableFormatter(const int cols, const int rows, const int padding = 0, const bool hasHeader = true);
 
         void AddRow(const std::initializer_list<std::string>& values);
         void AddRow(const std::vector<std::string>& values);

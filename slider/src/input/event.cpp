@@ -5,11 +5,14 @@
 using namespace Input;
 using namespace Core::Enums;
 
+Event::Diff::Diff() :
+    Diff(None, None, false) {}
+
 Event::Diff::Diff(const ButtonEvent pressed, const ButtonEvent released, const bool stickMoved) :
     released(released),
     pressed(pressed),
-    stickMoved(stickMoved),
-    change(ButtonChange::None)
+    change(ButtonChange::None),
+    stickMoved(stickMoved)
 {
     if (pressed != None)
         change |= ButtonChange::Pressed;
@@ -51,6 +54,12 @@ Event::Diff Event::CreateDiff(const Event& previous, const InputData& input)
     return Diff(pressed, released, stickMoved);
 }
 
+Event::Event() :
+    button(None),
+    joystickX(0),
+    joystickY(0),
+    diff() {}
+
 Event::Event(const Event& previous, const InputData& input) :
     button(input.button),
     joystickX(input.x),
@@ -84,6 +93,9 @@ void Merge(const InputData& input, InputData& destination)
         destination.y = input.y;
     }
 }
+
+EventDispatcher::EventDispatcher() :
+    m_AggregateCount(0) {}
 
 void EventDispatcher::ProcessInput(const InputData& input)
 {

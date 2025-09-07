@@ -19,7 +19,7 @@ namespace Core
         MessageBase(const int id) : id(id) {}
     };
 
-    template<class T>
+    template<typename T>
     struct MessageWrapper : MessageBase
     {
     public:
