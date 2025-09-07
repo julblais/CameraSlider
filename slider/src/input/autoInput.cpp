@@ -3,8 +3,9 @@
 using namespace Input;
 using namespace Core;
 
-AutoInput::AutoInput(std::initializer_list<Instruction> instructions)
-    : m_Instructions(instructions), m_Ready(true)
+AutoInput::AutoInput(const std::initializer_list<Instruction> instructions) :
+    m_Instructions(instructions),
+    m_Ready(true)
 {
     m_Timer = Timer::Create("Auto-input", [this]() {
         m_Ready = true;
@@ -12,10 +13,10 @@ AutoInput::AutoInput(std::initializer_list<Instruction> instructions)
     });
 }
 
-Input::AutoInput::AutoInput(const unsigned int interval, std::initializer_list<Instruction> instructions)
-    : m_Instructions(), m_Ready(true)
+AutoInput::AutoInput(const unsigned int interval, const std::initializer_list<Instruction> instructions) :
+    m_Ready(true)
 {
-    for (auto cmd : instructions)
+    for (auto cmd: instructions)
     {
         m_Instructions.push(Instruction::Pause(interval));
         m_Instructions.push(cmd);
@@ -26,12 +27,12 @@ Input::AutoInput::AutoInput(const unsigned int interval, std::initializer_list<I
     });
 }
 
-InputData Input::AutoInput::ReadInput()
+InputData AutoInput::ReadInput()
 {
     if (m_Instructions.empty())
         return InputData();
 
-    auto command = m_Instructions.front();
+    const auto command = m_Instructions.front();
 
     if (command.type == Instruction::Type::Pause)
     {

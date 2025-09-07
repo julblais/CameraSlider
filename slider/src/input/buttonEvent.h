@@ -33,7 +33,7 @@ namespace Input
     constexpr auto ButtonPressed = ButtonChange::Pressed;
     constexpr auto ButtonReleased = ButtonChange::Released;
 
-    const char* ToString(ButtonEvent button);
-    const char* ToString(ButtonChange button);
+    const char* ToString(const ButtonEvent button);
+    const char* ToString(const ButtonChange button);
 }
 #endif

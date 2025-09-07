@@ -5,8 +5,11 @@
 using namespace Input;
 using namespace Core::Enums;
 
-Event::Diff::Diff(ButtonEvent pressed, ButtonEvent released, bool stickMoved)
-    : released(released), pressed(pressed), stickMoved(stickMoved), change(ButtonChange::None)
+Event::Diff::Diff(const ButtonEvent pressed, const ButtonEvent released, const bool stickMoved) :
+    released(released),
+    pressed(pressed),
+    stickMoved(stickMoved),
+    change(ButtonChange::None)
 {
     if (pressed != None)
         change |= ButtonChange::Pressed;
@@ -44,28 +47,28 @@ Event::Diff Event::CreateDiff(const Event& previous, const InputData& input)
     else if (!previous.IsStickCenter() && input.IsCenterButton())
         pressed = StickCenter;
 
-    bool stickMoved = previous.GetStickX() != input.x || previous.GetStickY() != input.y;
+    const bool stickMoved = previous.GetStickX() != input.x || previous.GetStickY() != input.y;
     return Diff(pressed, released, stickMoved);
 }
 
-Event::Event(const Event& previous, const InputData& input)
-    : button(input.button),
+Event::Event(const Event& previous, const InputData& input) :
+    button(input.button),
     joystickX(input.x),
     joystickY(input.y)
 {
     diff = CreateDiff(previous, input);
 }
 
-bool Input::Event::operator==(const Event& rhs) const
+bool Event::operator==(const Event& rhs) const
 {
     return diff.released == rhs.diff.released &&
-        diff.pressed == rhs.diff.pressed &&
-        diff.change == rhs.diff.change &&
-        diff.stickMoved == rhs.diff.stickMoved &&
-        button == rhs.button;
+           diff.pressed == rhs.diff.pressed &&
+           diff.change == rhs.diff.change &&
+           diff.stickMoved == rhs.diff.stickMoved &&
+           button == rhs.button;
 }
 
-bool Input::Event::operator!=(const Event& rhs) const
+bool Event::operator!=(const Event& rhs) const
 {
     return !(*this == rhs);
 }
@@ -101,8 +104,8 @@ void DebugPrint(const Event& lastEvent, const Event& event)
     if (event.HasButtonChange())
     {
         LogDebug("Event button:\t", Input::ToString(event.GetButtonEvent()),
-            "\tpressed: ", Input::ToString(event.GetButtonPressed()),
-            "\treleased: ", Input::ToString(event.GetButtonReleased()));
+                 "\tpressed: ", Input::ToString(event.GetButtonPressed()),
+                 "\treleased: ", Input::ToString(event.GetButtonReleased()));
     }
     if (event.HasStickMoved())
     {
