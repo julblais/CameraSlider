@@ -11,7 +11,7 @@ ConnectionCommand::ConnectionCommand(BrainConnector* connector) :
 void ConnectionCommand::Print(Display* display) const
 {
     PrintTitle(display, "Manette");
-    auto state = m_Connector->GetState();
+    const auto state = m_Connector->GetState();
     if (state == BrainConnector::State::CONNECTED)
         display->PrintLine(1, "  Connectee!");
     else if (state == BrainConnector::State::IDLE)

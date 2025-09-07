@@ -13,9 +13,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: log file to console
-        run: cat slider/src/commands/connectionCommand.cpp
-
       # For more information: https://github.com/arduino/compile-sketches#readme
       - name: Compile sketch
         uses: arduino/compile-sketches@v1
