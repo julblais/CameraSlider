@@ -79,8 +79,6 @@ namespace Performance
             TValue value;
             const char* tag;
             TValue bias;
-
-            StackData() = default;
         };
 
         using DataMap = std::map<const char*, Data>;

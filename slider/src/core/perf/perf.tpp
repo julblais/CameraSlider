@@ -11,8 +11,8 @@ using namespace Performance;
 
 template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
 Sampler<TTag, TSample, TValue, IsAbsolute>::Sampler(const unsigned int logFrequency) :
-    m_Sample(),
-    m_LogFreqCount(logFrequency) {}
+    m_LogFreqCount(logFrequency),
+    m_Sample() {}
 
 template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
 void Sampler<TTag, TSample, TValue, IsAbsolute>::Setup()
@@ -23,7 +23,7 @@ void Sampler<TTag, TSample, TValue, IsAbsolute>::Setup()
 template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
 void Sampler<TTag, TSample, TValue, IsAbsolute>::BeginSample(const char* tag)
 {
-    m_Stack.push({ m_Sample.GetValue(), tag, TValue() });
+    m_Stack.push({ .value = m_Sample.GetValue(), .tag = tag, .bias = TValue() });
 }
 
 template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
