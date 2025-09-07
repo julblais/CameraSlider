@@ -1,10 +1,13 @@
 #include "connectionCommand.h"
 
+#include "src/network/wifiModule.h"
+
 using namespace Core;
 using namespace Slider;
 
-ConnectionCommand::ConnectionCommand(BrainConnector* connector)
-    :m_Connector(connector), m_AnimPrint("", 500, { " ", ".", "..", "..." })
+ConnectionCommand::ConnectionCommand(BrainConnector* connector) :
+    m_Connector(connector),
+    m_AnimPrint("", 500, { " ", ".", "..", "..." })
 {}
 
 void ConnectionCommand::Print(Display* display) const

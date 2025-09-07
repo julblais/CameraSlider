@@ -4,6 +4,7 @@
 #include "src/core/menu/menuSystem.h"
 #include "src/components/brainConnector.h"
 #include "src/core/output/animatedPrintable.h"
+#include <memory>
 
 using namespace Core;
 
