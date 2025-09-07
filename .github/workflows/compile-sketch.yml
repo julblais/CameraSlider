@@ -28,7 +28,6 @@ jobs:
             - name: LiquidCrystal I2C
             - name: AccelStepper
             - name: Preferences
-            - name: Wire
             - name: WiFi
             - name: Networking
       - name: Upload sketches report to workflow artifact
