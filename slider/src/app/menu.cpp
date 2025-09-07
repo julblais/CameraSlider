@@ -1,5 +1,4 @@
 #include "menu.h"
-#include "settings.h"
 
 #include "src/debug.h"
 #include "src/core/output/display.h"
