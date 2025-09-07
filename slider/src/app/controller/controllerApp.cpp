@@ -14,9 +14,7 @@ using namespace Net;
 
 Slider::ControllerApp::ControllerApp(const AppConfig& config) :
     m_Config(config),
-    m_ConnectAnim("ControllerAnimProgress", 500, { " ", ".", "..", "..." })
-{
-}
+    m_ConnectAnim("ControllerAnimProgress", 500, { " ", ".", "..", "..." }) {}
 
 void Slider::ControllerApp::Setup()
 {
