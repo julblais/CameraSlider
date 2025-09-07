@@ -4,8 +4,6 @@
 #include "src/debug.h"
 #include "src/core/network/address.h"
 
-#include <functional>
-
 #include <WiFi.h>
 #include <esp_wifi.h>
 #include <esp_now.h>
