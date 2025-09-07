@@ -2,7 +2,6 @@
 #define INVOKERBASE_H
 
 #include <inttypes.h>
-#include <cstddef>
 
 namespace Core
 {

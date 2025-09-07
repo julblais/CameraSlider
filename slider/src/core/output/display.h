@@ -19,11 +19,11 @@ namespace Core
     class SymbolHandle : public Printable
     {
     public:
-        explicit SymbolHandle(Keycode id) : m_Id(id)
-        {
-        };
+        explicit SymbolHandle(Keycode id) :
+            m_Id(id)
+        {};
 
-        size_t printTo(Print &p) const override
+        size_t printTo(Print& p) const override
         {
             return p.write(m_Id);
         }
@@ -42,28 +42,26 @@ namespace Core
         virtual void Clear() = 0;
 
         template<typename... TArgs>
-        void Print(TArgs &&... args);
+        void Print(TArgs&&... args);
 
         template<typename... TArgs>
-        void PrintLine(const int line, TArgs &&... args);
+        void PrintLine(const int line, TArgs&&... args);
 
     protected:
-        virtual void FillCurrentLine()
-        {
-        }
+        virtual void FillCurrentLine() {}
     };
 
     template<typename... TArgs>
-    void Display::Print(TArgs &&... args)
+    void Display::Print(TArgs&&... args)
     {
-        PassParamPack{(print(args), 1)...};
+        PassParamPack { (print(args), 1)... };
     }
 
     template<typename... TArgs>
-    void Display::PrintLine(const int line, TArgs &&... args)
+    void Display::PrintLine(const int line, TArgs&&... args)
     {
         SetCursor(0, line);
-        PassParamPack{(print(args), 1)...};
+        PassParamPack { (print(args), 1)... };
         FillCurrentLine();
     }
 }

@@ -9,14 +9,14 @@ namespace Slider
     {
     public:
         void Print(Core::Display* display) const override;
-        void Invoke(Core::MenuCommandButton command) override;
+        void Invoke(const Core::MenuCommandButton command) override;
     };
 
     class SpeedCurveCommand : public Core::MenuCommand
     {
     public:
         void Print(Core::Display* display) const override;
-        void Invoke(Core::MenuCommandButton command) override;
+        void Invoke(const Core::MenuCommandButton command) override;
     };
 }
 

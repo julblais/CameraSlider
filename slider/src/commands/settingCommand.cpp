@@ -5,7 +5,7 @@
 using namespace Core;
 using namespace Slider;
 
-const char* GetDesc(Settings::Speed speed)
+const char* GetDesc(const Settings::Speed speed)
 {
     switch (speed)
     {
@@ -20,7 +20,7 @@ const char* GetDesc(Settings::Speed speed)
     };
 }
 
-const char* GetDesc(Settings::Curve curve)
+const char* GetDesc(const Settings::Curve curve)
 {
     switch (curve)
     {
@@ -38,31 +38,31 @@ const char* GetDesc(Settings::Curve curve)
 void MaxSpeedCommand::Print(Display* display) const
 {
     PrintTitle(display, "Vitesse max.");
-    auto desc = GetDesc(Settings::GetInstance().GetSpeed());
+    const auto desc = GetDesc(Settings::GetInstance().GetSpeed());
     PrintDescription(display, desc);
 }
 
-void MaxSpeedCommand::Invoke(MenuCommandButton command)
+void MaxSpeedCommand::Invoke(const MenuCommandButton command)
 {
     const auto speed = Settings::GetInstance().GetSpeed();
-    if (command == MenuCommand::ButtonLeft)
+    if (command == ButtonLeft)
         Settings::GetInstance().SetSpeed(GetPreviousEnumValue(speed));
-    else if (command == MenuCommand::ButtonRight)
+    else if (command == ButtonRight)
         Settings::GetInstance().SetSpeed(GetNextEnumValue(speed));
 }
 
-void SpeedCurveCommand::Invoke(MenuCommandButton command)
+void SpeedCurveCommand::Invoke(const MenuCommandButton command)
 {
     const auto curve = Settings::GetInstance().GetCurve();
-    if (command == MenuCommand::ButtonLeft)
+    if (command == ButtonLeft)
         Settings::GetInstance().SetCurve(GetPreviousEnumValue(curve));
-    else if (command == MenuCommand::ButtonRight)
+    else if (command == ButtonRight)
         Settings::GetInstance().SetCurve(GetNextEnumValue(curve));
 }
 
 void SpeedCurveCommand::Print(Display* display) const
 {
     PrintTitle(display, "Courbe vitesse");
-    auto desc = GetDesc(Settings::GetInstance().GetCurve());
+    const auto desc = GetDesc(Settings::GetInstance().GetCurve());
     PrintDescription(display, desc);
 }

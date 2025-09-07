@@ -2,7 +2,6 @@
 #define ADDRESSCOMMAND_H
 
 #include "src/core/menu/menuSystem.h"
-#include <memory>
 
 using namespace Core;
 
@@ -12,20 +11,14 @@ namespace Slider
     {
     public:
         void Print(Display* display) const override;
-
-        void Invoke(MenuCommandButton command) override
-        {
-        }
+        void Invoke(MenuCommandButton command) override {}
     };
 
     class ControllerAddressCommand : public MenuCommand
     {
     public:
         void Print(Display* display) const override;
-
-        void Invoke(MenuCommandButton command) override
-        {
-        }
+        void Invoke(MenuCommandButton command) override {}
     };
 }
 

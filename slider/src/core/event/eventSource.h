@@ -3,11 +3,10 @@
 
 #include <vector>
 #include <functional>
-#include <algorithm>
 
 namespace Core
 {
-    template <typename... TArgs>
+    template<typename... TArgs>
     class EventSource
     {
         using TListener = std::function<bool(TArgs...)>;
@@ -17,9 +16,9 @@ namespace Core
         void AddListener(TListener listener);
 
         // AddListener for classes that have OnInputEvent method
-        template <typename C>
+        template<typename C>
         auto AddListener(C listener) -> decltype(listener.OnInputEvent(std::declval<TArgs...>()), void());
-        template <typename C>
+        template<typename C>
         auto AddListener(C* listener) -> decltype(listener->OnInputEvent(std::declval<TArgs...>()), void());
 
     protected:
