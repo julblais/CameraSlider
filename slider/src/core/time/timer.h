@@ -1,7 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#ifdef ARDUINO_ARCH_ESP32 
+#ifdef ARDUINO_ARCH_ESP32
 
 #include "time.h"
 #include "src/core/component/component.h"
@@ -9,20 +9,20 @@
 #include <memory>
 
 struct esp_timer;
-typedef struct esp_timer* esp_timer_handle_t;
+typedef esp_timer* esp_timer_handle_t;
 
 namespace Core
 {
     class TimerComponent : public Component
     {
-        virtual void Setup() override;
-        virtual void Update() override;
+        void Setup() override;
+        void Update() override;
     };
 
     class Timer
     {
     public:
-        using Callback = std::function<void(void)>;
+        using Callback = std::function<void()>;
         using Id = intptr_t;
 
         Timer();
@@ -33,10 +33,10 @@ namespace Core
         Timer& operator=(Timer&&);
 
         static Timer Create(const char* name, Callback callback);
-        static void FireAndForget(const char* name, Time delayMs, Callback callback);
-        void Start(Time delayMs, bool periodic = false) const;
+        static void FireAndForget(const char* name, const Time delayMs, Callback callback);
+        void Start(const Time delayMs, bool periodic = false) const;
         void Stop() const;
-        void Restart(Time delayMs) const;
+        void Restart(const Time delayMs) const;
         bool IsRunning() const;
 
     private:

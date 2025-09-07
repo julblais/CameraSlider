@@ -11,6 +11,8 @@ DeviceInputReader::DeviceInputReader(const InputPins& pins)
     : m_Pins(pins)
 {}
 
+DeviceInputReader::~DeviceInputReader() {}
+
 void DeviceInputReader::Setup()
 {
     pinMode(m_Pins.dpadUp, INPUT_PULLUP);

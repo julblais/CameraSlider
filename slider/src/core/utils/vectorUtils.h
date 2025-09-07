@@ -6,7 +6,7 @@
 
 namespace Core
 {
-    template <class TElement, class T>
+    template<class TElement, class T>
     void EraseAll(std::vector<TElement>& vector, const T& value)
     {
         auto t = std::find(vector.begin(), vector.end(), value);
@@ -17,7 +17,7 @@ namespace Core
         }
     }
 
-    template <class TElement, class TPredicate>
+    template<class TElement, class TPredicate>
     void EraseAllIf(std::vector<TElement>& vector, TPredicate pred)
     {
         auto t = std::find_if(vector.begin(), vector.end(), pred);
@@ -28,7 +28,7 @@ namespace Core
         }
     }
 
-    template <class TElement, class T>
+    template<class TElement, class T>
     bool EraseFirst(std::vector<TElement>& vector, const T& value)
     {
         auto t = std::find(vector.begin(), vector.end(), value);
@@ -40,7 +40,7 @@ namespace Core
         return false;
     }
 
-    template <class TElement, class TPredicate>
+    template<class TElement, class TPredicate>
     bool EraseFirstIf(std::vector<TElement>& vector, TPredicate pred)
     {
         auto t = std::find_if(vector.begin(), vector.end(), pred);
