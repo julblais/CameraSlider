@@ -11,6 +11,7 @@ using namespace Performance;
 
 template<typename TTag, typename TSample, typename TValue, bool IsAbsolute>
 Sampler<TTag, TSample, TValue, IsAbsolute>::Sampler(const unsigned int logFrequency) :
+    freq(0),
     m_LogFreqCount(logFrequency),
     m_Sample() {}
 
