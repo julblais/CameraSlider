@@ -1,6 +1,4 @@
 #include "connectionCommand.h"
-#include "settings.h"
-#include "src/network/wifiModule.h"
 
 using namespace Core;
 using namespace Slider;
