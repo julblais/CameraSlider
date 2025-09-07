@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Wokwi-debug" type="CLion_Remote" version="1" remoteCommand="$WokwiGdbServer$" symbolFile="$WokwiElfPath$" sysroot="">
+    <debugger kind="GDB">C:\Users\Jul\.platformio\packages\toolchain-xtensa-esp32\bin\xtensa-esp32-elf-gdb.exe</debugger>
+    <method v="2">
+      <option name="PlatformioUploadBeforeRun" enabled="true" />
+      <option name="WokwiStartDebug.Before.Run" enabled="true" />
+    </method>
+  </configuration>
+</component>
