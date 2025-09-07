@@ -16,29 +16,30 @@ namespace Output
         constexpr static auto LCD_NUM_LINES = 2;
 
         using ConstIterator =
-            std::array<Keycode, LCD_LINE_LENGTH* LCD_NUM_LINES>::const_iterator;
+        std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES>::const_iterator;
 
     public:
         DisplayBuffer();
-        virtual ~DisplayBuffer() = default;
-        void Init(Core::Display* display);
+        ~DisplayBuffer() override = default;
 
-        virtual size_t write(uint8_t value) override;
-        virtual void SetCursor(const int column, const int row) override;
-        virtual Core::SymbolHandle GetSymbol(Core::Symbol symbol) const override;
-        virtual void Clear() override;
-
+        void Init(Display* display);
+        size_t write(uint8_t value) override;
+        void SetCursor(const int column, const int row) override;
+        Core::SymbolHandle GetSymbol(Core::Symbol symbol) const override;
+        void Clear() override;
         void PrintToDisplay() const;
 
-        inline ConstIterator begin() const { return m_Buffer.begin(); }
-        inline ConstIterator end() const { return m_Buffer.end(); }
+        ConstIterator begin() const { return m_Buffer.begin(); }
+        ConstIterator end() const { return m_Buffer.end(); }
+
     protected:
-        virtual void FillCurrentLine() override;
+        void FillCurrentLine() override;
+
     private:
         unsigned int m_Cursor;
-        Core::Display* m_Display;
-        std::array<Keycode, LCD_LINE_LENGTH* LCD_NUM_LINES> m_Buffer;
-        mutable std::array<Keycode, LCD_LINE_LENGTH* LCD_NUM_LINES> m_PreviousBuffer;
+        Display* m_Display;
+        std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES> m_Buffer;
+        mutable std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES> m_PreviousBuffer;
     };
 }
 

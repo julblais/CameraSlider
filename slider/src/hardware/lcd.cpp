@@ -52,7 +52,7 @@ static const uint8_t RightArrow[] = {
 };
 
 Hardware::LCD::LCD(const uint8_t address) :
-    chip(address, LCD::NUM_COLS, LCD::NUM_ROWS),
+    chip(address, NUM_COLS, NUM_ROWS),
     m_DoubleLeftRightArrows(0),
     m_DoubleUpDownArrows(0),
     m_LeftArrow(0),
@@ -95,7 +95,7 @@ void Hardware::LCD::SetCursor(const int column, const int row)
     chip.setCursor(column, row);
 }
 
-Core::SymbolHandle Hardware::LCD::GetSymbol(Symbol symbol) const
+SymbolHandle Hardware::LCD::GetSymbol(Symbol symbol) const
 {
     using namespace Output;
     switch (symbol)

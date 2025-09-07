@@ -3,7 +3,6 @@
 
 #include "input.h"
 #include "src/core/event/eventSource.h"
-#include "src/core/utils/enumUtils.h"
 
 namespace Input
 {
@@ -15,40 +14,41 @@ namespace Input
         bool operator==(const Event& rhs) const;
         bool operator!=(const Event& rhs) const;
 
-        inline bool HasButtonChange() const
+        bool HasButtonChange() const
         {
             return button != None || diff.change != ButtonNone;
         }
 
-        inline bool HasStickMoved() const { return diff.stickMoved; }
-        inline bool HasChange() const { return HasButtonChange() || HasStickMoved(); }
+        bool HasStickMoved() const { return diff.stickMoved; }
+        bool HasChange() const { return HasButtonChange() || HasStickMoved(); }
 
-        inline ButtonEvent GetButtonEvent() const { return button; }
-        inline bool Is(ButtonEvent evt) { return evt == button; }
-        inline bool IsDpadUp() const { return button == DpadUp; }
-        inline bool IsDpadDown() const { return button == DpadDown; }
-        inline bool IsDpadLeft() const { return button == DpadLeft; }
-        inline bool IsDpadRight() const { return button == DpadRight; }
-        inline bool IsDpadSelect() const { return button == DpadSelect; }
-        inline bool IsStickCenter() const { return button == StickCenter; }
+        ButtonEvent GetButtonEvent() const { return button; }
+        bool Is(const ButtonEvent evt) const { return evt == button; }
+        bool IsDpadUp() const { return button == DpadUp; }
+        bool IsDpadDown() const { return button == DpadDown; }
+        bool IsDpadLeft() const { return button == DpadLeft; }
+        bool IsDpadRight() const { return button == DpadRight; }
+        bool IsDpadSelect() const { return button == DpadSelect; }
+        bool IsStickCenter() const { return button == StickCenter; }
 
-        inline float GetStickX() const { return joystickX; }
-        inline float GetStickY() const { return joystickY; }
+        float GetStickX() const { return joystickX; }
+        float GetStickY() const { return joystickY; }
 
-        inline ButtonChange GetButtonChange() const { return diff.change; }
-        inline ButtonEvent GetButtonPressed() const { return diff.pressed; }
-        inline ButtonEvent GetButtonReleased() const { return diff.released; }
+        ButtonChange GetButtonChange() const { return diff.change; }
+        ButtonEvent GetButtonPressed() const { return diff.pressed; }
+        ButtonEvent GetButtonReleased() const { return diff.released; }
 
     private:
         struct Diff
         {
             Diff() = default;
-            Diff(ButtonEvent pressed, ButtonEvent released, bool stickMoved);
+            Diff(const ButtonEvent pressed, const ButtonEvent released, const bool stickMoved);
             ButtonEvent released;
             ButtonEvent pressed;
             ButtonChange change;
             bool stickMoved;
         };
+
         static Diff CreateDiff(const Event& previous, const InputData& input);
 
         ButtonEvent button;
@@ -57,12 +57,13 @@ namespace Input
         Diff diff;
     };
 
-    class EventDispatcher : public Core::EventSource<const Event&>
+    class EventDispatcher : public EventSource<const Event&>
     {
     public:
         EventDispatcher() = default;
         void ProcessInput(const InputData& input);
         void Dispatch();
+
     private:
         InputData m_Input;
         Event m_LastEvent;

@@ -6,7 +6,7 @@
 #include <vector>
 #include "src/core/utils/vectorUtils.h"
 
-#ifdef ARDUINO_ARCH_ESP32 
+#ifdef ARDUINO_ARCH_ESP32
 
 using namespace Core;
 
@@ -17,6 +17,7 @@ public:
     void Invoke() const;
     bool operator==(const Handle& other) const { return m_Id == other.m_Id; }
     bool operator==(Timer::Id other) const { return m_Id == other; }
+
 private:
     const char* m_Name;
     Timer::Callback m_Callback;
@@ -34,15 +35,18 @@ void DeleteTimer(const char* name, const Timer::Id id, esp_timer_handle_t handle
     {
         EraseFirst(s_Handles, id);
         esp_timer_stop(handle);
-        auto result = esp_timer_delete(handle);
+        const auto result = esp_timer_delete(handle);
         if (result != ESP_OK)
             LogError("Problem deleting timer ", name, ", ", esp_err_to_name(result));
         LogInfo("Removed timer: ", name, ", id: ", id);
     }
 }
 
-Handle::Handle(const char* name, Timer::Id id, Timer::Callback callback, esp_timer_handle_t handleToRemove)
-    :m_Name(name), m_Id(id), m_Callback(std::move(callback)), m_Handle(handleToRemove)
+Handle::Handle(const char* name, Timer::Id id, Timer::Callback callback, esp_timer_handle_t handleToRemove) :
+    m_Name(name),
+    m_Id(id),
+    m_Callback(std::move(callback)),
+    m_Handle(handleToRemove)
 {}
 
 void Handle::Invoke() const
@@ -61,7 +65,7 @@ void TimerComponent::Setup() {}
 void TimerComponent::Update()
 {
     s_Queue.foreach([](Timer::Id id) {
-        auto handle = std::find(s_Handles.begin(), s_Handles.end(), id);
+        const auto handle = std::find(s_Handles.begin(), s_Handles.end(), id);
         if (handle != s_Handles.end())
             handle->Invoke();
         else
@@ -69,12 +73,16 @@ void TimerComponent::Update()
     });
 }
 
-Timer::Timer()
-    :m_Id(0), m_Handle(nullptr), m_Name("NULL")
+Timer::Timer() :
+    m_Name("NULL"),
+    m_Handle(nullptr),
+    m_Id(0)
 {}
 
-Timer::Timer(const Timer::Id id, const char* name, esp_timer_handle_t handle)
-    :m_Name(name), m_Id(id), m_Handle(handle)
+Timer::Timer(const Id id, const char* name, esp_timer_handle_t handle) :
+    m_Name(name),
+    m_Id(id),
+    m_Handle(handle)
 {}
 
 Timer::~Timer()
@@ -115,8 +123,8 @@ esp_timer_handle_t CreateHandle(const char* name, Timer::Callback cb, bool autoR
 
     const esp_timer_create_args_t args = {
         .callback = &OnTimerTriggered,
-        .arg = (void*)id,
-        .dispatch_method = esp_timer_dispatch_t::ESP_TIMER_TASK,
+        .arg = reinterpret_cast<void*>(id),
+        .dispatch_method = ESP_TIMER_TASK,
         .name = name
     };
 
@@ -135,19 +143,19 @@ esp_timer_handle_t CreateHandle(const char* name, Timer::Callback cb, bool autoR
 
 Timer Timer::Create(const char* name, Callback cb)
 {
-    Timer::Id id = 0;
-    auto handle = CreateHandle(name, std::move(cb), false, id);
+    Id id = 0;
+    const auto handle = CreateHandle(name, std::move(cb), false, id);
     return Timer(id, name, handle);
 }
 
-void Timer::FireAndForget(const char* name, Time delayMs, Callback cb)
+void Timer::FireAndForget(const char* name, const Time delayMs, Callback cb)
 {
-    Timer::Id id = 0;
-    auto handle = CreateHandle(name, std::move(cb), true, id);
+    Id id = 0;
+    const auto handle = CreateHandle(name, std::move(cb), true, id);
     esp_timer_start_once(handle, delayMs * 1000);
 }
 
-void Timer::Start(Time delayMs, bool periodic) const
+void Timer::Start(const Time delayMs, const bool periodic) const
 {
     if (m_Handle)
     {
@@ -164,10 +172,10 @@ void Timer::Stop() const
         esp_timer_stop(m_Handle);
 }
 
-void Timer::Restart(Time delay) const
+void Timer::Restart(const Time delayMs) const
 {
     Stop();
-    Start(delay);
+    Start(delayMs);
 }
 
 bool Timer::IsRunning() const

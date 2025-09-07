@@ -15,18 +15,18 @@ namespace Slider
     using namespace Input;
     using namespace Output;
 
-    class BrainApp : public Core::AppBase
+    class BrainApp : public AppBase
     {
         friend class SimulatorApp;
     public:
         BrainApp(const AppConfig& config);
-        virtual void Setup() override;
-        virtual void Update() override;
+        void Setup() override;
+        void Update() override;
 
     private:
         AppConfig m_Config;
-        std::unique_ptr<Core::Display> m_Display;
-        std::unique_ptr<Input::InputReader> m_InputReader;
+        std::unique_ptr<Display> m_Display;
+        std::unique_ptr<InputReader> m_InputReader;
         DisplayBuffer m_DisplayBuffer;
         EventDispatcher m_InputDispatcher;
     };

@@ -3,40 +3,43 @@
 
 using namespace Core;
 
-MessageHandler::QueueItem::QueueItem()
-    :data(0), length(0)
+MessageHandler::QueueItem::QueueItem() :
+    data(nullptr),
+    length(0)
 {}
 
-MessageHandler::QueueItem::QueueItem(const uint8_t* data, size_t length)
-    :data(data), length(length)
+MessageHandler::QueueItem::QueueItem(const uint8_t* data, const size_t length) :
+    data(data),
+    length(length)
 {}
 
-void MessageHandler::QueueItem::Finish()
+void MessageHandler::QueueItem::Finish() const
 {
     delete[] data;
 }
 
-MessageHandler::MessageHandler()
-    :m_Queue("Message queue")
+MessageHandler::MessageHandler() :
+    m_Queue("Message queue")
 {}
 
 void MessageHandler::RemoveCallback(const MessageCallbackHandle& handle)
 {
     if (EraseFirstIf(m_Selectors, [handle](const Selector& sel) {
-        return sel.second.get() == handle.invoker; }))
+        return sel.second.get() == handle.invoker;
+    }))
         return;
     LogError("Cannot remove callback, not found: ", handle.invoker->name);
 }
 
 void MessageHandler::ProcessMessages() const
 {
-    m_Queue.foreach([this](MessageHandler::QueueItem& item) {
-        auto message = reinterpret_cast<const MessageBase*>(item.data);
-        for (const auto& selector : m_Selectors)
+    m_Queue.foreach([this](const QueueItem& item) {
+        const auto message = reinterpret_cast<const MessageBase *>(item.data);
+        for (const auto& selector: m_Selectors)
         {
             if (selector.first == message->id)
             {
-                auto cmd = selector.second.get();
+                const auto cmd = selector.second.get();
                 if (cmd)
                 {
                     LogDebug("Invoking: ", cmd->name);
@@ -50,7 +53,7 @@ void MessageHandler::ProcessMessages() const
 
 void MessageHandler::Invoke(const uint8_t* data, size_t length)
 {
-    auto dataCopy = new uint8_t[length];
-    std::copy(data, data + length, dataCopy);
+    const auto dataCopy = new uint8_t[length];
+    std::copy_n(data, length, dataCopy);
     m_Queue.push(QueueItem(dataCopy, length));
 }

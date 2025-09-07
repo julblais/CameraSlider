@@ -9,17 +9,23 @@ namespace Hardware
 {
     struct InputPins
     {
-        int dpadUp; int dpadDown; int dpadLeft; int dpadRight; int dpadSelection;
-        int joystickHorizontal; int joystickVertical; int joystickCenter;
+        int dpadUp;
+        int dpadDown;
+        int dpadLeft;
+        int dpadRight;
+        int dpadSelection;
+        int joystickHorizontal;
+        int joystickVertical;
+        int joystickCenter;
     };
 
-    class DeviceInputReader : public Input::InputReader
+    class DeviceInputReader : public InputReader
     {
     public:
         DeviceInputReader(const InputPins& pins);
-        virtual ~DeviceInputReader() override = default;
-        virtual void Setup() override;
-        virtual InputData ReadInput() override;
+        ~DeviceInputReader() override;
+        void Setup() override;
+        InputData ReadInput() override;
 
     private:
         const InputPins m_Pins;

@@ -7,12 +7,12 @@
 
 namespace Slider
 {
-    class Stepper : public Core::Component
+    class Stepper : public Component
     {
     public:
         Stepper(const int directionPin, const int stepPin);
-        virtual void Setup() override;
-        virtual void Update() override;
+        void Setup() override;
+        void Update() override;
         bool OnInputEvent(const Input::Event& inputEvent);
 
     private:

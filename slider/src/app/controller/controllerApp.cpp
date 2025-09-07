@@ -13,14 +13,16 @@ using namespace Output;
 using namespace Net;
 
 Slider::ControllerApp::ControllerApp(const AppConfig& config) :
-    m_Config(config), m_ConnectAnim("ControllerAnimProgress", 500, { " ", ".", "..", "..." })
-{}
+    m_Config(config),
+    m_ConnectAnim("ControllerAnimProgress", 500, { " ", ".", "..", "..." })
+{
+}
 
 void Slider::ControllerApp::Setup()
 {
-    m_Display = std::unique_ptr<Core::Display>(new Core::SerialDisplay());
-    auto timer = AddComponent<TimerComponent>();
-    auto wifi = AddComponent<WifiComponent>();
+    m_Display = std::unique_ptr<Display>(new SerialDisplay());
+    AddComponent<TimerComponent>();
+    AddComponent<WifiComponent>();
     m_Connector = AddComponent<ControllerConnector>();
 
     Hardware::InputPins pins;
@@ -33,7 +35,7 @@ void Slider::ControllerApp::Setup()
     pins.joystickHorizontal = m_Config.JoystickXPin;
     pins.joystickVertical = m_Config.JoystickYPin;
 
-    m_InputReader = std::unique_ptr<Input::InputReader>(new Hardware::DeviceInputReader(pins));
+    m_InputReader = std::unique_ptr<InputReader>(new Hardware::DeviceInputReader(pins));
 
     SetupComponents();
     m_DisplayBuffer.Init(m_Display.get());
@@ -43,13 +45,13 @@ void Slider::ControllerApp::Setup()
 void Slider::ControllerApp::Update()
 {
     TAKE_SAMPLE("ProcessInput", [this]() {
-        auto input = m_InputReader->ReadInput();
-        m_InputDispatcher.ProcessInput(input);
-        /*-> ProcessInput(message_from_controller) */
-        m_InputDispatcher.Dispatch();
-    }, CpuSampler);
+                auto input = m_InputReader->ReadInput();
+                m_InputDispatcher.ProcessInput(input);
+                /*-> ProcessInput(message_from_controller) */
+                m_InputDispatcher.Dispatch();
+                }, CpuSampler);
 
-    if (m_Connector->GetState() == Slider::ControllerConnector::State::CONNECTED)
+    if (m_Connector->GetState() == ControllerConnector::State::CONNECTED)
     {
         m_DisplayBuffer.PrintLine(0, "Connexion");
         m_DisplayBuffer.PrintLine(1, "reussie");
@@ -58,7 +60,7 @@ void Slider::ControllerApp::Update()
     //update all systems
     TAKE_SAMPLE("ComponentUpdate", [this](){ UpdateComponents(); }, CpuSampler);
 
-    if (m_Connector->GetState() != Slider::ControllerConnector::State::CONNECTED)
+    if (m_Connector->GetState() != ControllerConnector::State::CONNECTED)
     {
         m_DisplayBuffer.PrintLine(0, "Attente de");
         m_DisplayBuffer.PrintLine(1, "connexion", m_ConnectAnim);

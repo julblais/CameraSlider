@@ -1,9 +1,11 @@
 #include "address.h"
 
+#include <Print.h>
+
 using namespace Core;
 
-MacAddress::MacAddress(std::array<uint8_t, 6> address)
-    : m_Address(address)
+MacAddress::MacAddress(std::array<uint8_t, 6> address) :
+    m_Address(address)
 {}
 
 MacAddress::MacAddress(const uint8_t* address)

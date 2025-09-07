@@ -19,7 +19,7 @@ SerialDisplay::SerialDisplay()
     m_Timer.Start(300, true);
 }
 
-size_t Core::SerialDisplay::write(uint8_t value)
+size_t SerialDisplay::write(const uint8_t value)
 {
     //do not go over the line!
     const auto maxCursor = ((m_Cursor / LCD_LINE_LENGTH) + 1) * LCD_LINE_LENGTH;
@@ -76,7 +76,6 @@ void SerialDisplay::PrintToSerial() const
     if (!areEqual)
     {
         unsigned int count = 0;
-        unsigned int line = 0;
 
         PrintBorderln(hborder);
         PrintBorder(vborder);

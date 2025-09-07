@@ -32,8 +32,9 @@ WAITING_FOR_HANDSHAKE  │                            Handshake   │  SENDING_H
             CONNECTED  │                                        │  CONNECTED
  */
 
-BrainConnector::BrainConnector()
-    : state(State::IDLE), m_BroadcastActive(false)
+BrainConnector::BrainConnector() :
+    state(State::IDLE),
+    m_BroadcastActive(false)
 {
     m_BroadcastTimer = Timer::Create("Broadcast", [this]() {
         LogInfo("Sending connection request...");
@@ -42,7 +43,7 @@ BrainConnector::BrainConnector()
     });
 }
 
-void Slider::BrainConnector::Setup()
+void BrainConnector::Setup()
 {
     if (Settings::GetInstance().HasPeerAddress())
     {
@@ -75,14 +76,14 @@ void BrainConnector::EndConnectionAttempt()
 
 void BrainConnector::SetupBroadcast()
 {
-    auto connect = WifiModule::GetInstance().RegisterReceiveCallback<ConnectionRequest>("Connection received",
+    const auto connect = WifiModule::GetInstance().RegisterReceiveCallback<ConnectionRequest>("Connection received",
         [this](ConnectionRequest msg) {
-        OnConnectionReceived(msg);
-    });
-    auto handshake = WifiModule::GetInstance().RegisterReceiveCallback<Handshake>("Handshake received",
+            OnConnectionReceived(msg);
+        });
+    const auto handshake = WifiModule::GetInstance().RegisterReceiveCallback<Handshake>("Handshake received",
         [this](Handshake msg) {
-        OnHandshakeReceived(msg);
-    });
+            OnHandshakeReceived(msg);
+        });
     m_Callbacks.push_back(connect);
     m_Callbacks.push_back(handshake);
     WifiModule::GetInstance().AddPeer(BROADCAST_ADDRESS);
@@ -91,7 +92,7 @@ void BrainConnector::SetupBroadcast()
 
 void BrainConnector::EndBroadcast()
 {
-    for (const auto& handle : m_Callbacks)
+    for (const auto& handle: m_Callbacks)
         WifiModule::GetInstance().RemoveReceiveCallback(handle);
     m_Callbacks.clear();
     m_BroadcastActive = false;
@@ -99,7 +100,8 @@ void BrainConnector::EndBroadcast()
 
 void BrainConnector::OnConnectionReceived(const ConnectionRequest& message)
 {
-    if (state != State::BROADCASTING) return;
+    if (state != State::BROADCASTING)
+        return;
     LogInfo("Received: ", message);
     m_BroadcastTimer.Stop();
     state = State::SENDING_HANDSHAKE;
@@ -108,9 +110,10 @@ void BrainConnector::OnConnectionReceived(const ConnectionRequest& message)
 
 void BrainConnector::OnHandshakeReceived(const Handshake& message)
 {
-    if (state != State::WAITING_FOR_HANDSHAKE) return;
+    if (state != State::WAITING_FOR_HANDSHAKE)
+        return;
     LogInfo("Received: ", message);
-    Slider::Settings::GetInstance().SetPeerAddress(message.from);
+    Settings::GetInstance().SetPeerAddress(message.from);
     state = State::CONNECTED;
 }
 
@@ -121,7 +124,7 @@ void BrainConnector::Update()
         WifiModule::GetInstance().RemovePeer(BROADCAST_ADDRESS);
         WifiModule::GetInstance().AddPeer(controllerMac);
         LogInfo("Sending handshake message...");
-        Handshake handshake(WifiModule::GetInstance().GetMacAddress());
+        const Handshake handshake(WifiModule::GetInstance().GetMacAddress());
         WifiModule::GetInstance().Send(handshake);
         state = State::WAITING_FOR_HANDSHAKE;
     }

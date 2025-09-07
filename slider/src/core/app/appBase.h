@@ -9,6 +9,7 @@ namespace Core
     class AppBase
     {
     public:
+        virtual ~AppBase() = default;
         virtual void Setup() = 0;
         virtual void Update() = 0;
 
@@ -17,8 +18,8 @@ namespace Core
         template <class TComponent, typename... TArgs>
         TComponent* AddComponent(TArgs&&... args);
 
-        void SetupComponents();
-        void UpdateComponents();
+        void SetupComponents() const;
+        void UpdateComponents() const;
 
     private:
         std::vector<std::unique_ptr<Component>> m_Components;

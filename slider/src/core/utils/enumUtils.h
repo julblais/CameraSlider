@@ -7,7 +7,7 @@ namespace Core
 {
     namespace Enums
     {
-        template< bool B, class T = void >
+        template<bool B, class T = void>
         using enable_if = typename std::enable_if<B, T>::type;
 
         template<typename TEnum>
@@ -37,6 +37,7 @@ namespace Core
                 static_cast<underlying_type<T>>(lhs) |
                 static_cast<underlying_type<T>>(rhs));
         }
+
         template<typename T, is_type_enum<T> = true>
         constexpr T operator^(T lhs, T rhs)
         {

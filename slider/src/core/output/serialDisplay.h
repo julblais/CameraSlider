@@ -11,20 +11,23 @@ namespace Core
     {
         constexpr static auto LCD_LINE_LENGTH = 16;
         constexpr static auto LCD_NUM_LINES = 2;
+
     public:
         SerialDisplay();
-        virtual size_t write(uint8_t value) override;
-        virtual void SetCursor(const int column, const int row) override;
-        virtual SymbolHandle GetSymbol(Symbol symbol) const override;
-        virtual void Clear() override;
+        size_t write(uint8_t value) override;
+        void SetCursor(const int column, const int row) override;
+        SymbolHandle GetSymbol(Symbol symbol) const override;
+        void Clear() override;
+
     protected:
-        virtual void FillCurrentLine() override;
+        void FillCurrentLine() override;
+
     private:
         void PrintToSerial() const;
 
         Timer m_Timer;
-        std::array<uint8_t, LCD_LINE_LENGTH* LCD_NUM_LINES> m_Buffer;
-        mutable std::array<Keycode, LCD_LINE_LENGTH* LCD_NUM_LINES> m_PreviousBuffer;
+        std::array<uint8_t, LCD_LINE_LENGTH * LCD_NUM_LINES> m_Buffer;
+        mutable std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES> m_PreviousBuffer;
         unsigned int m_Cursor;
     };
 }

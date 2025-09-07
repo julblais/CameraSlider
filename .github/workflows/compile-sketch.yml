@@ -27,6 +27,8 @@ jobs:
           libraries: |
             - name: LiquidCrystal I2C
             - name: AccelStepper
+            - name: Preferences
+            - name: WiFi
       - name: Upload sketches report to workflow artifact
         uses: actions/upload-artifact@v4
         with:

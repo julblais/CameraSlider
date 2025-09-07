@@ -3,13 +3,11 @@
 
 #include <LiquidCrystal_I2C.h>
 #include "src/core/output/display.h"
-#include <array>
-#include <type_traits>
 
 using namespace Core;
 
-namespace Hardware {
-
+namespace Hardware
+{
     class LCD : public Display
     {
     public:
@@ -18,10 +16,10 @@ namespace Hardware {
 
         LCD(const uint8_t address);
 
-        void Clear();
-        virtual size_t write(uint8_t value) override;
+        void Clear() override;
+        size_t write(uint8_t value) override;
         void SetCursor(const int column, const int row) override;
-        virtual SymbolHandle GetSymbol(Symbol symbol) const override;
+        SymbolHandle GetSymbol(Symbol symbol) const override;
 
     private:
         void CreateSymbol(const int id, const uint8_t* charmap);

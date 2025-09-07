@@ -8,14 +8,14 @@
 
 using namespace Input;
 
-namespace Slider {
-
-    class Menu : public Core::Component
+namespace Slider
+{
+    class Menu : public Component
     {
     public:
-        Menu(Core::Display* display, int delay);
+        Menu(Display* display, int delay);
         void Update() override;
-        bool OnInputEvent(const Input::Event& inputEvent);
+        bool OnInputEvent(const Event& inputEvent);
         void AddCommand(MenuCommand* command);
 
     private:
@@ -23,10 +23,10 @@ namespace Slider {
         void OnIntroFinished();
         void OutputMenu() const;
 
-        Core::Display* m_Display;
-        Core::Timer m_ShowHideTimer;
-        Core::Timer m_IntroTimer;
-        Core::MenuSystem m_MenuSystem;
+        Display* m_Display;
+        Timer m_ShowHideTimer;
+        Timer m_IntroTimer;
+        MenuSystem m_MenuSystem;
         const int m_Delay;
         bool m_IsIntroFinished;
     };

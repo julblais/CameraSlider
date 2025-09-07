@@ -20,22 +20,30 @@ namespace Input
             Pause
         };
 
-        constexpr Instruction(const Core::Time durationMs, const InputData& input)
-            :durationMs(durationMs), input(input), type(Type::Hold)
-        {}
-        constexpr Instruction(const InputData& input)
-            : durationMs(0), input(input), type(Type::Input)
-        {}
-        constexpr Instruction(const Core::Time durationMs)
-            : durationMs(durationMs), input(), type(Type::Pause)
+        constexpr Instruction(const Time durationMs, const InputData& input) :
+            durationMs(durationMs),
+            input(input),
+            type(Type::Hold)
         {}
 
-        const Core::Time durationMs;
+        constexpr Instruction(const InputData& input) :
+            durationMs(0),
+            input(input),
+            type(Type::Input)
+        {}
+
+        constexpr Instruction(const Time durationMs) :
+            durationMs(durationMs),
+            input(),
+            type(Type::Pause)
+        {}
+
+        const Time durationMs;
         const InputData input;
         const Type type;
 
         static constexpr Instruction Pause(Time durationMs) { return { durationMs }; }
-        
+
         static constexpr Instruction DpadUp() { return { { Input::DpadUp } }; }
         static constexpr Instruction DpadDown() { return { { Input::DpadDown } }; }
         static constexpr Instruction DpadLeft() { return { { Input::DpadLeft } }; }
@@ -52,16 +60,16 @@ namespace Input
         static constexpr Instruction Joystick(float x, float y, Time hold) { return { hold, { x, y } }; }
     };
 
-    class AutoInput : public Input::InputReader
+    class AutoInput : public InputReader
     {
     public:
-        AutoInput(std::initializer_list<Instruction> instructions);
-        AutoInput(const unsigned int interval, std::initializer_list<Instruction> instructions);
-        virtual ~AutoInput() override = default;
-        virtual InputData ReadInput() override;
+        AutoInput(const std::initializer_list<Instruction> instructions);
+        AutoInput(const unsigned int interval, const std::initializer_list<Instruction> instructions);
+        ~AutoInput() override = default;
+        InputData ReadInput() override;
 
     private:
-        Core::Timer m_Timer;
+        Timer m_Timer;
         std::queue<Instruction> m_Instructions;
         bool m_Ready;
     };

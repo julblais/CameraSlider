@@ -8,15 +8,15 @@ namespace Slider
     class MaxSpeedCommand : public Core::MenuCommand
     {
     public:
-        virtual void Print(Core::Display* display) const override;
-        virtual void Invoke(Core::MenuCommandButton command) override;
+        void Print(Core::Display* display) const override;
+        void Invoke(const Core::MenuCommandButton command) override;
     };
-    
+
     class SpeedCurveCommand : public Core::MenuCommand
     {
     public:
-        virtual void Print(Core::Display* display) const override;
-        virtual void Invoke(Core::MenuCommandButton command) override;
+        void Print(Core::Display* display) const override;
+        void Invoke(const Core::MenuCommandButton command) override;
     };
 }
 

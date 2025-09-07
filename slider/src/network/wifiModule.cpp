@@ -73,7 +73,7 @@ void WifiModule::Update()
 
 MacAddress WifiModule::GetMacAddress()
 {
-    return MacAddress { {0x01, 0x02, 0x03, 0x04, 0x05, 0x06} };
+    return MacAddress { { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 } };
 }
 
 bool WifiModule::AddPeer(const MacAddress& address)
@@ -91,7 +91,7 @@ void WifiModule::RegisterSendCallback(std::function<void(const MacAddress&, bool
     s_SendCallback = callback;
 }
 
-void Net::WifiModule::RemoveReceiveCallback(const MessageCallbackHandle& handle)
+void WifiModule::RemoveReceiveCallback(const MessageCallbackHandle& handle)
 {
     m_MessageHandler.RemoveCallback(handle);
 }

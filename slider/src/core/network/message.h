@@ -20,10 +20,10 @@ namespace Core
     };
 
     template<class T>
-    struct MessageWrapper : public MessageBase
+    struct MessageWrapper : MessageBase
     {
     public:
-        static_assert(IsTypeComplete<MessageWrapper<T>>::value, "You need to call REGISTER_TYPE_ID.");
+        static_assert(IsTypeComplete<MessageWrapper>::value, "You need to call REGISTER_TYPE_ID.");
     };
 }
 
