@@ -12,8 +12,7 @@ using namespace Core;
 
 struct Handle
 {
-public:
-    Handle(const char* name, Timer::Id id, Timer::Callback callback, esp_timer_handle_t handleToRemove);
+    Handle(const char* name, const Timer::Id id, Timer::Callback callback, const esp_timer_handle_t handleToRemove);
     void Invoke() const;
     bool operator==(const Handle& other) const { return m_Id == other.m_Id; }
     bool operator==(Timer::Id other) const { return m_Id == other; }
@@ -42,12 +41,12 @@ void DeleteTimer(const char* name, const Timer::Id id, esp_timer_handle_t handle
     }
 }
 
-Handle::Handle(const char* name, Timer::Id id, Timer::Callback callback, esp_timer_handle_t handleToRemove) :
+Handle::Handle(const char* name, const Timer::Id id, Timer::Callback callback,
+               const esp_timer_handle_t handleToRemove) :
     m_Name(name),
-    m_Id(id),
     m_Callback(std::move(callback)),
-    m_Handle(handleToRemove)
-{}
+    m_Id(id),
+    m_Handle(handleToRemove) {}
 
 void Handle::Invoke() const
 {
@@ -76,19 +75,14 @@ void TimerComponent::Update()
 Timer::Timer() :
     m_Name("NULL"),
     m_Handle(nullptr),
-    m_Id(0)
-{}
+    m_Id(0) {}
 
 Timer::Timer(const Id id, const char* name, esp_timer_handle_t handle) :
     m_Name(name),
     m_Id(id),
-    m_Handle(handle)
-{}
+    m_Handle(handle) {}
 
-Timer::~Timer()
-{
-    DeleteTimer(m_Name, m_Id, m_Handle);
-}
+Timer::~Timer() { DeleteTimer(m_Name, m_Id, m_Handle); }
 
 Timer::Timer(Timer&& other)
 {
@@ -111,10 +105,7 @@ Timer& Timer::operator=(Timer&& other)
     return *this;
 }
 
-void OnTimerTriggered(void* data)
-{
-    s_Queue.push(reinterpret_cast<Timer::Id>(data));
-}
+void OnTimerTriggered(void* data) { s_Queue.push(reinterpret_cast<Timer::Id>(data)); }
 
 esp_timer_handle_t CreateHandle(const char* name, Timer::Callback cb, bool autoRemove, Timer::Id& o_Id)
 {

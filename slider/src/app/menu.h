@@ -24,10 +24,10 @@ namespace Slider
         void OutputMenu() const;
 
         Display* m_Display;
+        const int m_Delay;
         Timer m_ShowHideTimer;
         Timer m_IntroTimer;
         MenuSystem m_MenuSystem;
-        const int m_Delay;
         bool m_IsIntroFinished;
     };
 }

@@ -17,9 +17,7 @@ using namespace Output;
 using namespace Net;
 
 Slider::BrainApp::BrainApp(const AppConfig& config) :
-    m_Config(config)
-{
-}
+    m_Config(config) {}
 
 void Slider::BrainApp::Setup()
 {
@@ -30,7 +28,7 @@ void Slider::BrainApp::Setup()
     const auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
     const auto connector = AddComponent<BrainConnector>();
 
-    Hardware::InputPins pins;
+    /*Hardware::InputPins pins;
     pins.dpadUp = m_Config.DpadUpPin;
     pins.dpadDown = m_Config.DpadDownPin;
     pins.dpadLeft = m_Config.DpadLeftPin;
@@ -39,8 +37,9 @@ void Slider::BrainApp::Setup()
     pins.joystickCenter = m_Config.JoystickCenterPin;
     pins.joystickHorizontal = m_Config.JoystickXPin;
     pins.joystickVertical = m_Config.JoystickYPin;
+    m_InputReader = std::unique_ptr<InputReader>(new Hardware::DeviceInputReader(pins));
+    */
 
-    //m_InputReader = std::unique_ptr<InputReader>(new Hardware::DeviceInputReader(pins));
     m_InputReader = std::unique_ptr<InputReader>(new AutoInput(2700, {
                                                                    Instruction::DpadSelect(2500),
                                                                    Instruction::DpadDown(),
