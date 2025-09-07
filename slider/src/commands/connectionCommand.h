@@ -4,7 +4,6 @@
 #include "src/core/menu/menuSystem.h"
 #include "src/components/brainConnector.h"
 #include "src/core/output/animatedPrintable.h"
-#include <memory>
 
 using namespace Core;
 
@@ -14,13 +13,14 @@ namespace Slider
     {
     public:
         ConnectionCommand(BrainConnector* connector);
-        virtual void Print(Core::Display* display) const override;
-        virtual void Invoke(MenuCommandButton command) override;
-        virtual void OnShow() override;
-        virtual void OnHide() override;
+        void Print(Display* display) const override;
+        void Invoke(MenuCommandButton command) override;
+        void OnShow() override;
+        void OnHide() override;
+
     private:
         BrainConnector* const m_Connector;
-        Core::AnimatedPrintable m_AnimPrint;
+        AnimatedPrintable m_AnimPrint;
     };
 }
 

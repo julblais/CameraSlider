@@ -21,13 +21,13 @@ namespace Slider
             CONNECTED
         };
         ControllerConnector();
-        virtual void Setup() override;
-        virtual void Update() override;
-        inline State GetState() { return state; }
+        void Setup() override;
+        void Update() override;
+        State GetState() const { return state; }
 
     private:
         void BeginConnectionAttempt();
-        void EndConnectionAttempt();
+        void EndConnectionAttempt() const;
         void OnConnectionReceived(const Net::ConnectionRequest& message);
         void OnHandshakeReceived(const Net::Handshake& message);
 

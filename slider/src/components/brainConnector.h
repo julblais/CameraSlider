@@ -24,12 +24,13 @@ namespace Slider
 
         BrainConnector();
 
-        virtual void Setup() override;
-        virtual void Update() override;
+        void Setup() override;
+        void Update() override;
 
         void BeginConnectionAttempt();
         void EndConnectionAttempt();
-        inline State GetState() { return state; }
+        State GetState() const { return state; }
+
     private:
         void SetupBroadcast();
         void EndBroadcast();

@@ -9,18 +9,17 @@
 
 using namespace Core;
 
-Slider::Menu::Menu(Display* display, int delay) :
-    m_Delay(delay),
-    m_Display(display),
-    m_ShowHideTimer(),
-    m_IntroTimer(),
-    m_MenuSystem(),
-    m_IsIntroFinished(false)
+Slider::Menu::Menu(Display* display, const int delay)
+    : m_Display(display),
+      m_Delay(delay),
+      m_IsIntroFinished(false)
 {
     m_ShowHideTimer = Timer::Create("Selection menu", [this]() {
-        OnSelectionLongPress(); });
+        OnSelectionLongPress();
+    });
     m_IntroTimer = Timer::Create("Intro menu", [this]() {
-        OnIntroFinished(); });
+        OnIntroFinished();
+    });
 }
 
 void Slider::Menu::Update()
@@ -30,36 +29,36 @@ void Slider::Menu::Update()
         OutputMenu();
 }
 
-bool Slider::Menu::OnInputEvent(const Input::Event& evt)
+bool Slider::Menu::OnInputEvent(const Event &inputEvent)
 {
-    auto buttonChange = evt.GetButtonChange();
-    if (buttonChange == Input::ButtonReleased)
+    const auto buttonChange = inputEvent.GetButtonChange();
+    if (buttonChange == ButtonReleased)
     {
         m_ShowHideTimer.Stop();
     }
 
-    if (buttonChange == Input::ButtonPressed)
+    if (buttonChange == ButtonPressed)
     {
-        auto button = evt.GetButtonEvent();
-        if (button == Input::DpadSelect)
+        auto button = inputEvent.GetButtonEvent();
+        if (button == DpadSelect)
             m_ShowHideTimer.Start(m_Delay);
         if (m_MenuSystem.IsShown())
         {
             switch (button)
             {
-                case Input::DpadLeft:
+                case DpadLeft:
                     m_MenuSystem.Left();
                     break;
-                case Input::DpadRight:
+                case DpadRight:
                     m_MenuSystem.Right();
                     break;
-                case Input::DpadUp:
+                case DpadUp:
                     m_MenuSystem.Up();
                     break;
-                case Input::DpadDown:
+                case DpadDown:
                     m_MenuSystem.Down();
                     break;
-                case Input::DpadSelect:
+                case DpadSelect:
                     m_MenuSystem.Select();
                 default:
                     break;
@@ -83,8 +82,7 @@ void Slider::Menu::OnSelectionLongPress()
         m_IntroTimer.Start(MENU_INTRO_DELAY_MS);
         m_Display->Clear();
         m_Display->Print(MENU_INTRO_MSG);
-    }
-    else
+    } else
     {
         m_MenuSystem.Close();
         m_IntroTimer.Stop();

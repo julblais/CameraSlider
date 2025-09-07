@@ -10,8 +10,8 @@ namespace Net
     class WifiComponent : public Component
     {
     public:
-        virtual void Setup() override;
-        virtual void Update() override;
+        void Setup() override;
+        void Update() override;
     };
 }
 

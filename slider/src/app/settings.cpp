@@ -6,8 +6,7 @@ constexpr auto SPEED_KEY = "speed";
 constexpr auto CURVE_KEY = "curve";
 constexpr auto PEER_KEY = "peer";
 
-Slider::Settings::Settings() :
-    m_Prefs()
+Slider::Settings::Settings()
 {
     m_Prefs.begin("settings");
 }
@@ -24,12 +23,12 @@ Slider::Settings::Curve Slider::Settings::GetCurve() const
     return static_cast<Curve>(m_Prefs.getChar(CURVE_KEY, s_default));
 }
 
-void Slider::Settings::SetSpeed(Speed value)
+void Slider::Settings::SetSpeed(Speed value) const
 {
     m_Prefs.putChar(SPEED_KEY, static_cast<char>(value));
 }
 
-void Slider::Settings::SetCurve(Curve value)
+void Slider::Settings::SetCurve(Curve value) const
 {
     m_Prefs.putChar(CURVE_KEY, static_cast<char>(value));
 }

@@ -1,11 +1,9 @@
 #include "connectionCommand.h"
-#include "settings.h"
-#include "src/network/wifiModule.h"
 
 using namespace Core;
 using namespace Slider;
 
-ConnectionCommand::ConnectionCommand(Slider::BrainConnector* connector)
+ConnectionCommand::ConnectionCommand(BrainConnector* connector)
     :m_Connector(connector), m_AnimPrint("", 500, { " ", ".", "..", "..." })
 {}
 
@@ -24,7 +22,7 @@ void ConnectionCommand::Print(Display* display) const
         display->PrintLine(1, "  Connexion", m_AnimPrint);
 }
 
-void ConnectionCommand::Invoke(MenuCommandButton command)
+void ConnectionCommand::Invoke(const MenuCommandButton command)
 {
     if (m_Connector->GetState() != BrainConnector::State::CONNECTED)
     {

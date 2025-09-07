@@ -19,17 +19,17 @@ namespace Slider
     using namespace Input;
     using namespace Output;
 
-    class SimulatorApp : public Core::AppBase
+    class SimulatorApp : public AppBase
     {
     public:
-        SimulatorApp(const AppConfig& config);
-        virtual void Setup() override;
-        virtual void Update() override;
+        SimulatorApp(const AppConfig &config);
+        void Setup() override;
+        void Update() override;
 
     private:
-        void AddDeviceMessageSimulator();
+        void AddDeviceMessageSimulator() const;
         AppConfig m_Config;
-        std::unique_ptr<Core::AppBase> m_BaseApp;
+        std::unique_ptr<AppBase> m_BaseApp;
     };
 }
 

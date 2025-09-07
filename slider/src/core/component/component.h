@@ -9,6 +9,8 @@ namespace Core
     class Component
     {
     public:
+        virtual ~Component() = default;
+
         virtual void Setup() {};
         virtual void Update() {};
     };

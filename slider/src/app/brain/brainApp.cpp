@@ -18,16 +18,17 @@ using namespace Net;
 
 Slider::BrainApp::BrainApp(const AppConfig& config) :
     m_Config(config)
-{}
+{
+}
 
 void Slider::BrainApp::Setup()
 {
-    m_Display = std::unique_ptr<Core::Display>(new Core::SerialDisplay());
-    auto timer = AddComponent<TimerComponent>();
-    auto wifi = AddComponent<WifiComponent>();
-    auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
-    auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
-    auto connector = AddComponent<BrainConnector>();
+    m_Display = std::unique_ptr<Display>(new SerialDisplay());
+    AddComponent<TimerComponent>();
+    AddComponent<WifiComponent>();
+    const auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
+    const auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
+    const auto connector = AddComponent<BrainConnector>();
 
     Hardware::InputPins pins;
     pins.dpadUp = m_Config.DpadUpPin;
@@ -41,13 +42,13 @@ void Slider::BrainApp::Setup()
 
     //m_InputReader = std::unique_ptr<InputReader>(new Hardware::DeviceInputReader(pins));
     m_InputReader = std::unique_ptr<InputReader>(new AutoInput(2700, {
-        Instruction::DpadSelect(2500),
-        Instruction::DpadDown(),
-        Instruction::DpadDown(),
-        Instruction::DpadLeft(),
-        Instruction::DpadSelect(2500),
-        Instruction::Joystick(0.5f, 0.4f, 5000)
-    }));
+                                                                   Instruction::DpadSelect(2500),
+                                                                   Instruction::DpadDown(),
+                                                                   Instruction::DpadDown(),
+                                                                   Instruction::DpadLeft(),
+                                                                   Instruction::DpadSelect(2500),
+                                                                   Instruction::Joystick(0.5f, 0.4f, 5000)
+                                                               }));
 
     menu->AddCommand(new MaxSpeedCommand());
     menu->AddCommand(new SpeedCurveCommand());
@@ -68,19 +69,19 @@ void Slider::BrainApp::Setup()
 void Slider::BrainApp::Update()
 {
     TAKE_SAMPLE("ProcessInput", [this]() {
-        auto input = m_InputReader->ReadInput();
-        m_InputDispatcher.ProcessInput(input);
-        /*-> ProcessInput(message_from_controller) */
-        m_InputDispatcher.Dispatch();
-    }, CpuSampler);
+                auto input = m_InputReader->ReadInput();
+                m_InputDispatcher.ProcessInput(input);
+                /*-> ProcessInput(message_from_controller) */
+                m_InputDispatcher.Dispatch();
+                }, CpuSampler);
 
     //update all systems
     TAKE_SAMPLE("ComponentUpdate", [this]() {
-        UpdateComponents();
-    }, CpuSampler);
+                UpdateComponents();
+                }, CpuSampler);
 
     //output final display buffer
     TAKE_SAMPLE("OutputToLCD", [this]() {
-        m_DisplayBuffer.PrintToDisplay();
-    }, CpuSampler);
+                m_DisplayBuffer.PrintToDisplay();
+                }, CpuSampler);
 }

@@ -22,8 +22,8 @@ namespace Slider
         Speed GetSpeed() const;
         Curve GetCurve() const;
 
-        void SetSpeed(Speed value);
-        void SetCurve(Curve value);
+        void SetSpeed(Speed value) const;
+        void SetCurve(Curve value) const;
 
         bool HasPeerAddress() const;
         Core::MacAddress GetPeerAddress() const;
