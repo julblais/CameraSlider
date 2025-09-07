@@ -130,7 +130,8 @@ esp_timer_handle_t CreateHandle(const char* name, Timer::Callback cb, bool autoR
         .callback = &OnTimerTriggered,
         .arg = reinterpret_cast<void*>(id),
         .dispatch_method = ESP_TIMER_TASK,
-        .name = name
+        .name = name,
+        .skip_unhandled_events = false
     };
 
     esp_timer_handle_t handle;

@@ -13,12 +13,10 @@ namespace Core
     };
 
     template<typename, typename = void>
-    struct IsTypeComplete : std::false_type
-    {};
+    struct IsTypeComplete : std::false_type {};
 
     template<typename T>
-    struct IsTypeComplete<T, std::void_t<decltype(sizeof(T))> > : std::true_type
-    {};
+    struct IsTypeComplete<T, std::void_t<decltype(sizeof(T))> > : std::true_type {};
 }
 
 #endif

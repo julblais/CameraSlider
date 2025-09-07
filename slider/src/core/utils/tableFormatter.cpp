@@ -2,7 +2,7 @@
 
 using namespace Core;
 
-TableFormatter::TableFormatter(const int cols, const int rows, const int padding, bool hasHeader) :
+TableFormatter::TableFormatter(const int cols, const int rows, const int padding, const bool hasHeader) :
     m_Cols(cols),
     m_Rows(hasHeader ? rows + 1 : rows),
     m_Padding(padding),

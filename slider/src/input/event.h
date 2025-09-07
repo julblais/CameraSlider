@@ -8,7 +8,7 @@ namespace Input
 {
     struct Event
     {
-        Event() = default;
+        Event();
         Event(const Event& previous, const InputData& input);
 
         bool operator==(const Event& rhs) const;
@@ -41,7 +41,7 @@ namespace Input
     private:
         struct Diff
         {
-            Diff() = default;
+            Diff();
             Diff(const ButtonEvent pressed, const ButtonEvent released, const bool stickMoved);
             ButtonEvent released;
             ButtonEvent pressed;
@@ -60,7 +60,7 @@ namespace Input
     class EventDispatcher : public EventSource<const Event&>
     {
     public:
-        EventDispatcher() = default;
+        EventDispatcher();
         void ProcessInput(const InputData& input);
         void Dispatch();
 
