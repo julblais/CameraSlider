@@ -14,7 +14,6 @@
 
 using namespace Input;
 using namespace Output;
-using namespace Net;
 
 Slider::BrainApp::BrainApp(const AppConfig& config) :
     m_Config(config) {}
@@ -23,7 +22,6 @@ void Slider::BrainApp::Setup()
 {
     m_Display = std::unique_ptr<Display>(new SerialDisplay());
     AddComponent<TimerComponent>();
-    AddComponent<WifiComponent>();
     const auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     const auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
     const auto connector = AddComponent<BrainConnector>();
