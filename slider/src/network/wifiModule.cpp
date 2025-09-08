@@ -1,5 +1,5 @@
 #include "wifiModule.h"
-#include "src/debug.h"
+#include "../core/debug.h"
 
 #ifdef USE_NETWORK
 

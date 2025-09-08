@@ -12,13 +12,13 @@
 #define C_LcdAddress        0x27
 #define C_ShowMenuDelayMs   2000
 #else
-#include "slider.ino"
+#include "../slider.ino"
 #endif
 
-#include "src/core/app/appBase.h"
-#include "src/app/appConfig.h"
-#include "debug.h"
-#include "src/core/perf/perf.h"
+#include "core/appBase.h"
+#include "appConfig.h"
+#include "core/debug.h"
+#include "core/perf.h"
 #include <memory>
 
 using namespace Slider;
