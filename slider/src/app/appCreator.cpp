@@ -1,7 +1,7 @@
 #include "src/core/app/appBase.h"
 #include "appConfig.h"
 
-#include "src/app/brain/brainApp.h"
+#include "brainApp.h"
 
 using namespace Core;
 using namespace Slider;

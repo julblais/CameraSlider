@@ -4,7 +4,6 @@
 #include "src/core/perf/perf.h"
 #include "src/app/menu.h"
 #include "src/hardware/stepper.h"
-#include "src/network/wifiComponent.h"
 #include "src/components/brainConnector.h"
 #include "src/input/autoInput.h"
 
