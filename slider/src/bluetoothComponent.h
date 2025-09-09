@@ -14,9 +14,10 @@ namespace Slider
         void Setup() override;
         void Update() override;
 
+        void DisconnectController();
         void EnablePairing();
         void DisablePairing();
-        void ResetConnections();
+        void Reset();
         Core::MacAddress GetMacAddress() const;
     };
 }

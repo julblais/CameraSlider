@@ -67,7 +67,6 @@ void BluetoothComponent::Setup()
     BP32.enableVirtualDevice(false);
 }
 
-
 void dumpGamepad(const ControllerPtr controller)
 {
     Serial.printf(
@@ -162,19 +161,7 @@ void BluetoothComponent::Update()
     }
 }
 
-void BluetoothComponent::EnablePairing()
-{
-    BP32.enableNewBluetoothConnections(true);
-}
-
-void BluetoothComponent::DisablePairing()
-{
-    BP32.enableNewBluetoothConnections(false);
-}
-
-void BluetoothComponent::ResetConnections()
-{
-    BP32.forgetBluetoothKeys();
+void BluetoothComponent::DisconnectController() {
 }
 
 MacAddress BluetoothComponent::GetMacAddress() const
