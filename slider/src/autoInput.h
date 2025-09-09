@@ -9,7 +9,7 @@
 
 using namespace Core;
 
-namespace Input
+namespace IO
 {
     struct Instruction
     {
@@ -44,17 +44,17 @@ namespace Input
 
         static constexpr Instruction Pause(Time durationMs) { return { durationMs }; }
 
-        static constexpr Instruction DpadUp() { return { { Input::DpadUp } }; }
-        static constexpr Instruction DpadDown() { return { { Input::DpadDown } }; }
-        static constexpr Instruction DpadLeft() { return { { Input::DpadLeft } }; }
-        static constexpr Instruction DpadRight() { return { { Input::DpadRight } }; }
-        static constexpr Instruction DpadSelect() { return { { Input::DpadSelect } }; }
+        static constexpr Instruction DpadUp() { return {{IO::DpadUp}}; }
+        static constexpr Instruction DpadDown() { return {{IO::DpadDown}}; }
+        static constexpr Instruction DpadLeft() { return {{IO::DpadLeft}}; }
+        static constexpr Instruction DpadRight() { return {{IO::DpadRight}}; }
+        static constexpr Instruction DpadSelect() { return {{IO::DpadSelect}}; }
 
-        static constexpr Instruction DpadUp(Time hold) { return { hold, { Input::DpadUp } }; }
-        static constexpr Instruction DpadDown(Time hold) { return { hold, { Input::DpadDown } }; }
-        static constexpr Instruction DpadLeft(Time hold) { return { hold, { Input::DpadLeft } }; }
-        static constexpr Instruction DpadRight(Time hold) { return { hold, { Input::DpadRight } }; }
-        static constexpr Instruction DpadSelect(Time hold) { return { hold, { Input::DpadSelect } }; }
+        static constexpr Instruction DpadUp(Time hold) { return {hold, {IO::DpadUp}}; }
+        static constexpr Instruction DpadDown(Time hold) { return {hold, {IO::DpadDown}}; }
+        static constexpr Instruction DpadLeft(Time hold) { return {hold, {IO::DpadLeft}}; }
+        static constexpr Instruction DpadRight(Time hold) { return {hold, {IO::DpadRight}}; }
+        static constexpr Instruction DpadSelect(Time hold) { return {hold, {IO::DpadSelect}}; }
 
         static constexpr Instruction Joystick(float x, float y) { return { { x, y } }; }
         static constexpr Instruction Joystick(float x, float y, Time hold) { return { hold, { x, y } }; }

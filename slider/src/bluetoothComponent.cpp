@@ -14,25 +14,25 @@ ControllerPtr s_Controller = nullptr;
 
 BluetoothGamepad::BluetoothGamepad() {}
 
-Input::InputData BluetoothGamepad::ReadInput()
+IO::InputData BluetoothGamepad::ReadInput()
 {
     if (s_Controller != nullptr && s_Controller->hasData())
     {
-        auto buttons = Input::ButtonEvent::None;
+        auto buttons = IO::ButtonEvent::None;
         const auto dpad = s_Controller->dpad();
         if (dpad & DPAD_UP)
-            buttons = Input::ButtonEvent::Up;
+            buttons = IO::ButtonEvent::Up;
         else if (dpad & DPAD_DOWN)
-            buttons = Input::ButtonEvent::Down;
+            buttons = IO::ButtonEvent::Down;
         else if (dpad & DPAD_LEFT)
-            buttons = Input::ButtonEvent::Left;
+            buttons = IO::ButtonEvent::Left;
         else if (dpad & DPAD_RIGHT)
-            buttons = Input::ButtonEvent::Right;
+            buttons = IO::ButtonEvent::Right;
         else if (s_Controller->miscSelect())
-            buttons = Input::ButtonEvent::Select;
+            buttons = IO::ButtonEvent::Select;
         else if (s_Controller->miscStart())
-            buttons = Input::ButtonEvent::Center;
-        m_LastInput = Input::InputData(buttons);
+            buttons = IO::ButtonEvent::Center;
+        m_LastInput = IO::InputData(buttons);
     }
     return m_LastInput;
 }

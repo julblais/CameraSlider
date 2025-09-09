@@ -3,7 +3,7 @@
 
 #include "buttonEvent.h"
 
-namespace Input
+namespace IO
 {
     struct InputData
     {

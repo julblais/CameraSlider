@@ -12,7 +12,7 @@
 
 namespace Slider
 {
-    using namespace Input;
+    using namespace IO;
     using namespace Output;
 
     class SliderApp : public AppBase

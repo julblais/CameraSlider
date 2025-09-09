@@ -13,7 +13,7 @@ namespace Slider
         Stepper(const int directionPin, const int stepPin);
         void Setup() override;
         void Update() override;
-        bool OnInputEvent(const Input::Event& inputEvent);
+        bool OnInputEvent(const IO::Event& inputEvent);
 
     private:
         AccelStepper m_Stepper;

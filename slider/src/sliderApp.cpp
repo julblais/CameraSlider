@@ -7,7 +7,7 @@
 #include "autoInput.h"
 #include "settingCommand.h"
 
-using namespace Input;
+using namespace IO;
 using namespace Output;
 
 Slider::SliderApp::SliderApp(const AppConfig& config) :

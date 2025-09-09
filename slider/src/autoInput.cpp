@@ -1,6 +1,6 @@
 #include "autoInput.h"
 
-using namespace Input;
+using namespace IO;
 using namespace Core;
 
 AutoInput::AutoInput(const std::initializer_list<Instruction> instructions) :

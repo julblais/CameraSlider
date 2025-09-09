@@ -4,7 +4,7 @@
 #include "input.h"
 #include "core/eventSource.h"
 
-namespace Input
+namespace IO
 {
     struct Event
     {

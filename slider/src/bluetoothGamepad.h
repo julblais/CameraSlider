@@ -12,10 +12,10 @@ namespace Bt
 {
     class BluetoothComponent;
 
-    class BluetoothGamepad : Input::InputReader
+    class BluetoothGamepad : IO::InputReader
     {
     public:
-        Input::InputData ReadInput() override;
+        IO::InputData ReadInput() override;
         bool IsConnected() const;
         bool HasData() const;
 
@@ -26,7 +26,7 @@ namespace Bt
     private:
         friend class BluetoothComponent;
         BluetoothGamepad();
-        Input::InputData m_LastInput = Input::InputData();
+        IO::InputData m_LastInput = IO::InputData();
     };
 }
 

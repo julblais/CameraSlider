@@ -20,7 +20,7 @@ void Stepper::Update()
     m_Stepper.runSpeed();
 }
 
-bool Stepper::OnInputEvent(const Input::Event& inputEvent)
+bool Stepper::OnInputEvent(const IO::Event& inputEvent)
 {
     if (inputEvent.GetStickX() < 0)
     {

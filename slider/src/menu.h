@@ -6,7 +6,7 @@
 #include "core/timer.h"
 #include "core/menuSystem.h"
 
-using namespace Input;
+using namespace IO;
 
 namespace Slider
 {

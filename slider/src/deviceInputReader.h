@@ -3,7 +3,7 @@
 
 #include "input.h"
 
-using namespace Input;
+using namespace IO;
 
 namespace Hardware
 {
