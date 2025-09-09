@@ -9,9 +9,9 @@ class Controller;
 
 namespace Bt
 {
-    struct Gamepad
+    struct Controller
     {
-        Gamepad(Controller* m_controller = nullptr);
+        Controller(::Controller* m_controller = nullptr);
 
         bool IsConnected() const;
         bool HasData() const;
@@ -32,15 +32,12 @@ namespace Bt
         bool Select() const;
         bool Start() const;
 
-        void SetPlayerLEDs(uint8_t led) const;
-
-        void Rumble(uint16_t delayedStartMs,
-                        uint16_t durationMs,
-                        uint8_t weakMagnitude,
-                        uint8_t strongMagnitude) const;
+        void SetPlayerLEDs(const uint8_t led) const;
+        void Rumble(const uint16_t delayedStartMs, const uint16_t durationMs, const uint8_t weakMagnitude,
+                    const uint8_t strongMagnitude) const;
 
     private:
-        Controller* m_Controller;
+        ::Controller* m_Controller;
     };
 
     class BluetoothModule
@@ -53,8 +50,8 @@ namespace Bt
         BluetoothModule() = default;
         BluetoothModule(const BluetoothModule&) = delete;
 
-        Gamepad GetGamepad() const;
-        //void DisconnectController();
+        Controller GetController() const;
+        void DisconnectController();
         void EnablePairing();
         void DisablePairing();
         void Reset();

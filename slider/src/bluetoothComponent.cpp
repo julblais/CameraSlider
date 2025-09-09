@@ -3,94 +3,146 @@
 #if !IS_SIMULATOR
 
 #include <Bluepad32.h>
+#include "bluetoothModule.h"
 #include "core/debug.h"
 
-using namespace Slider;
+using namespace Bt;
 using namespace Core;
 
-// Up to 4 gamepads can be connected at the same time.
-ControllerPtr s_Controllers[BP32_MAX_GAMEPADS];
+BluetoothGamepad::BluetoothGamepad(::Controller* controller)
+    : m_Controller(controller) {}
+
+Input::InputData BluetoothGamepad::ReadInput()
+{
+    if (m_Controller != nullptr && m_Controller->hasData())
+    {
+        auto buttons = Input::ButtonEvent::None;
+        if (m_Controller->dpad() & DPAD_UP)
+            buttons = Input::ButtonEvent::Up;
+        else if (m_Controller->dpad() & DPAD_DOWN)
+            buttons = Input::ButtonEvent::Down;
+        else if (m_Controller->dpad() & DPAD_LEFT)
+            buttons = Input::ButtonEvent::Left;
+        else if (m_Controller->dpad() & DPAD_RIGHT)
+            buttons = Input::ButtonEvent::Right;
+        else if (m_Controller->miscSelect())
+            buttons = Input::ButtonEvent::Select;
+        else if (m_Controller->miscStart())
+            buttons = Input::ButtonEvent::Center;
+        m_LastInput = Input::InputData(buttons);
+    }
+    return m_LastInput;
+}
+
+bool BluetoothGamepad::IsConnected() const
+{
+    return m_Controller != nullptr && m_Controller->isConnected();
+}
+
+bool BluetoothGamepad::HasData() const
+{
+    return m_Controller != nullptr && m_Controller->hasData();
+}
+
+void BluetoothGamepad::SetPlayerLEDs(const uint8_t led) const
+{
+    if (m_Controller != nullptr)
+        m_Controller->setPlayerLEDs(led);
+}
+
+void BluetoothGamepad::Rumble(const uint16_t delayedStartMs, const uint16_t durationMs, const uint8_t weakMagnitude,
+                              const uint8_t strongMagnitude) const
+{
+    if (m_Controller != nullptr)
+        m_Controller->playDualRumble(delayedStartMs, durationMs, weakMagnitude, strongMagnitude);
+}
+
+// Only one gamepad can be connected
+ControllerPtr s_Controller;
 
 void onConnectedController(const ControllerPtr controller)
 {
-    bool foundEmptySlot = false;
-    for (int i = 0; i < BP32_MAX_GAMEPADS; i++)
+    LogInfo("Bluetooth: Controller attempting to connect...");
+    if (s_Controller != nullptr)
     {
-        if (!controller->isGamepad())
+        if (controller->isGamepad())
         {
-            LogError("Only gamepad controllers are supported.");
+            LogInfo("Bluetooth: Controller connected! model: ", controller->getModelName());
+            s_Controller = controller;
         }
-        else if (s_Controllers[i] == nullptr)
+        else
         {
-            LogInfo("Bluetooth: Controller is connected, index: ", i, " model: ", controller->getModelName());
-            foundEmptySlot = true;
-            break;
+            LogError("Bluetooth: Only gamepad controllers are supported.");
         }
     }
-    if (!foundEmptySlot)
+    else
     {
-        LogWarning("Bluetooth: controller found, but could not find empty slot");
+        LogWarning("Bluetooth: cannot connect new controller. A controller is already connected.");
     }
 }
 
-void onDisconnectedController(ControllerPtr ctl)
+void onDisconnectedController(const ControllerPtr ctl)
 {
-    bool foundController = false;
-
-    for (int i = 0; i < BP32_MAX_GAMEPADS; i++)
-    {
-        if (s_Controllers[i] == ctl)
-        {
-            LogInfo("Bluetooth: controller disconnected from index=", i);
-            s_Controllers[i] = nullptr;
-            foundController = true;
-            break;
-        }
-    }
-
-    if (!foundController)
+    if (ctl != s_Controller)
     {
         LogWarning("Bluetooth: controller disconnected, but not found in myControllers");
+    }
+    else
+    {
+        s_Controller = nullptr;
     }
 }
 
 void BluetoothComponent::Setup()
 {
     BP32.setup(&onConnectedController, &onDisconnectedController);
-
-
-    // Enables mouse / touchpad support for gamepads that support them.
-    // When enabled, controllers like DualSense and DualShock4 generate two connected devices:
-    // - First one: the gamepad
-    // - Second one, which is a "virtual device", is a mouse.
-    // By default, it is disabled.
     BP32.enableVirtualDevice(false);
+    LogError("Bluetooth: BluetoothModule initialized.");
 }
 
-void dumpGamepad(const ControllerPtr controller)
+void BluetoothComponent::Update()
 {
-    Serial.printf(
-        "idx=%d, dpad: 0x%02x, buttons: 0x%04x, axis L: %4d, %4d, axis R: %4d, %4d, brake: %4d, throttle: %4d, "
-        "misc: 0x%02x, gyro x:%6d y:%6d z:%6d, accel x:%6d y:%6d z:%6d\n",
-        controller->index(), // Controller Index
-        controller->dpad(), // D-pad
-        controller->buttons(), // bitmask of pressed buttons
-        controller->axisX(), // (-511 - 512) left X Axis
-        controller->axisY(), // (-511 - 512) left Y axis
-        controller->axisRX(), // (-511 - 512) right X axis
-        controller->axisRY(), // (-511 - 512) right Y axis
-        controller->brake(), // (0 - 1023): brake button
-        controller->throttle(), // (0 - 1023): throttle (AKA gas) button
-        controller->miscButtons(), // bitmask of pressed "misc" buttons
-        controller->gyroX(), // Gyro X
-        controller->gyroY(), // Gyro Y
-        controller->gyroZ(), // Gyro Z
-        controller->accelX(), // Accelerometer X
-        controller->accelY(), // Accelerometer Y
-        controller->accelZ() // Accelerometer Z
-    );
+    BP32.update();
 }
 
+const BluetoothGamepad* BluetoothComponent::GetGamepad() const
+{
+    return &m_Gamepad;
+}
+
+void BluetoothComponent::DisconnectController()
+{
+    if (s_Controller != nullptr)
+    {
+        s_Controller->disconnect();
+    }
+    else
+    {
+        LogInfo("Bluetooth: no controller to disconnect.");
+    }
+}
+
+void BluetoothComponent::EnablePairing()
+{
+    BP32.enableNewBluetoothConnections(true);
+}
+
+void BluetoothComponent::DisablePairing()
+{
+    BP32.enableNewBluetoothConnections(false);
+}
+
+void BluetoothComponent::Reset()
+{
+    BP32.forgetBluetoothKeys();
+}
+
+MacAddress BluetoothComponent::GetMacAddress() const
+{
+    return MacAddress(BP32.localBdAddress());
+}
+
+/*
 void processGamepad(ControllerPtr ctl)
 {
     // There are different ways to query whether a button is pressed.
@@ -145,28 +197,7 @@ void processGamepad(ControllerPtr ctl)
     // See how the different "dump*" functions dump the Controller info.
     dumpGamepad(ctl);
 }
+*/
 
-void BluetoothComponent::Update()
-{
-    // This call fetches all the controllers' data.
-    // Call this function in your main loop.
-    bool dataUpdated = BP32.update();
-    if (!dataUpdated)
-        return;
-
-    for (const auto myController : s_Controllers)
-    {
-        if (myController && myController->isConnected() && myController->hasData() && myController->isGamepad())
-            processGamepad(myController);
-    }
-}
-
-void BluetoothComponent::DisconnectController() {
-}
-
-MacAddress BluetoothComponent::GetMacAddress() const
-{
-    return MacAddress(BP32.localBdAddress());
-}
 
 #endif
