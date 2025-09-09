@@ -3,30 +3,34 @@
 #if !IS_SIMULATOR
 
 #include <Bluepad32.h>
+#include "bluetoothGamepad.h"
 #include "core/debug.h"
 
 using namespace Bt;
 using namespace Core;
 
-BluetoothGamepad::BluetoothGamepad(::Controller* controller)
-    : m_Controller(controller) {}
+// Only one gamepad can be connected
+ControllerPtr s_Controller = nullptr;
+
+BluetoothGamepad::BluetoothGamepad() {}
 
 Input::InputData BluetoothGamepad::ReadInput()
 {
-    if (m_Controller != nullptr && m_Controller->hasData())
+    if (s_Controller != nullptr && s_Controller->hasData())
     {
         auto buttons = Input::ButtonEvent::None;
-        if (m_Controller->dpad() & DPAD_UP)
+        const auto dpad = s_Controller->dpad();
+        if (dpad & DPAD_UP)
             buttons = Input::ButtonEvent::Up;
-        else if (m_Controller->dpad() & DPAD_DOWN)
+        else if (dpad & DPAD_DOWN)
             buttons = Input::ButtonEvent::Down;
-        else if (m_Controller->dpad() & DPAD_LEFT)
+        else if (dpad & DPAD_LEFT)
             buttons = Input::ButtonEvent::Left;
-        else if (m_Controller->dpad() & DPAD_RIGHT)
+        else if (dpad & DPAD_RIGHT)
             buttons = Input::ButtonEvent::Right;
-        else if (m_Controller->miscSelect())
+        else if (s_Controller->miscSelect())
             buttons = Input::ButtonEvent::Select;
-        else if (m_Controller->miscStart())
+        else if (s_Controller->miscStart())
             buttons = Input::ButtonEvent::Center;
         m_LastInput = Input::InputData(buttons);
     }
@@ -35,29 +39,30 @@ Input::InputData BluetoothGamepad::ReadInput()
 
 bool BluetoothGamepad::IsConnected() const
 {
-    return m_Controller != nullptr && m_Controller->isConnected();
+    return s_Controller != nullptr && s_Controller->isConnected();
 }
 
 bool BluetoothGamepad::HasData() const
 {
-    return m_Controller != nullptr && m_Controller->hasData();
+    return s_Controller != nullptr && s_Controller->hasData();
 }
 
 void BluetoothGamepad::SetPlayerLEDs(const uint8_t led) const
 {
-    if (m_Controller != nullptr)
-        m_Controller->setPlayerLEDs(led);
+    if (s_Controller != nullptr)
+        s_Controller->setPlayerLEDs(led);
+    else
+        LogWarning("Bluetooth: cannot set led. A controller is not connected.");
 }
 
 void BluetoothGamepad::Rumble(const uint16_t delayedStartMs, const uint16_t durationMs, const uint8_t weakMagnitude,
                               const uint8_t strongMagnitude) const
 {
-    if (m_Controller != nullptr)
-        m_Controller->playDualRumble(delayedStartMs, durationMs, weakMagnitude, strongMagnitude);
+    if (s_Controller != nullptr)
+        s_Controller->playDualRumble(delayedStartMs, durationMs, weakMagnitude, strongMagnitude);
+    else
+        LogWarning("Bluetooth: cannot set rumble. A controller is not connected.");
 }
-
-// Only one gamepad can be connected
-ControllerPtr s_Controller;
 
 void onConnectedController(const ControllerPtr controller)
 {
@@ -104,9 +109,9 @@ void BluetoothComponent::Update()
     BP32.update();
 }
 
-const BluetoothGamepad* BluetoothComponent::GetGamepad() const
+BluetoothGamepad BluetoothComponent::GetGamepad() const
 {
-    return &m_Gamepad;
+    return BluetoothGamepad();
 }
 
 void BluetoothComponent::DisconnectController()
