@@ -1,4 +1,4 @@
-#include "brainApp.h"
+#include "sliderApp.h"
 #include "core/serialDisplay.h"
 #include "deviceInputReader.h"
 #include "core/perf.h"
@@ -10,10 +10,10 @@
 using namespace Input;
 using namespace Output;
 
-Slider::BrainApp::BrainApp(const AppConfig& config) :
+Slider::SliderApp::SliderApp(const AppConfig& config) :
     m_Config(config) {}
 
-void Slider::BrainApp::Setup()
+void Slider::SliderApp::Setup()
 {
     m_Display = std::unique_ptr<Display>(new SerialDisplay());
     AddComponent<TimerComponent>();
@@ -54,7 +54,7 @@ void Slider::BrainApp::Setup()
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
 }
 
-void Slider::BrainApp::Update()
+void Slider::SliderApp::Update()
 {
     TAKE_SAMPLE("ProcessInput", [this]() {
                 auto input = m_InputReader->ReadInput();

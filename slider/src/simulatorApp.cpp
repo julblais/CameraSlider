@@ -1,0 +1,72 @@
+#if IS_SIMULATOR
+
+#include "simulatorApp.h"
+#include "core/serialDisplay.h"
+#include "deviceInputReader.h"
+#include "core/perf.h"
+#include "menu.h"
+#include "stepper.h"
+#include "autoInput.h"
+#include "settingCommand.h"
+
+using namespace Input;
+using namespace Output;
+
+Slider::SimulatorApp::SimulatorApp(const AppConfig& config) :
+    m_Config(config) {}
+
+void Slider::SimulatorApp::Setup()
+{
+    m_Display = std::unique_ptr<Display>(new SerialDisplay());
+    AddComponent<TimerComponent>();
+    const auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
+    const auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
+
+    /*Hardware::InputPins pins;
+    pins.dpadUp = m_Config.DpadUpPin;
+    pins.dpadDown = m_Config.DpadDownPin;
+    pins.dpadLeft = m_Config.DpadLeftPin;
+    pins.dpadRight = m_Config.DpadRightPin;
+    pins.dpadSelection = m_Config.DpadSelectionPin;
+    pins.joystickCenter = m_Config.JoystickCenterPin;
+    pins.joystickHorizontal = m_Config.JoystickXPin;
+    pins.joystickVertical = m_Config.JoystickYPin;
+    m_InputReader = std::unique_ptr<InputReader>(new Hardware::DeviceInputReader(pins));
+    */
+
+    m_InputReader = std::unique_ptr<InputReader>(new AutoInput(2700, {
+                                                                   Instruction::DpadSelect(2500),
+                                                                   Instruction::DpadDown(),
+                                                                   Instruction::DpadDown(),
+                                                                   Instruction::DpadLeft(),
+                                                                   Instruction::DpadSelect(2500),
+                                                                   Instruction::Joystick(0.5f, 0.4f, 5000)
+                                                               }));
+
+    menu->AddCommand(new MaxSpeedCommand());
+    menu->AddCommand(new SpeedCurveCommand());
+
+    m_InputDispatcher.AddListener(menu);
+    m_InputDispatcher.AddListener(stepper);
+
+    SetupComponents();
+    m_DisplayBuffer.Init(m_Display.get());
+    m_InputReader->Setup();
+
+    m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
+}
+
+void Slider::SimulatorApp::Update()
+{
+    const auto input = m_InputReader->ReadInput();
+    m_InputDispatcher.ProcessInput(input);
+    /*-> ProcessInput(message_from_controller) */
+    m_InputDispatcher.Dispatch();
+
+    UpdateComponents();
+
+    //output final display buffer
+    m_DisplayBuffer.PrintToDisplay();
+}
+
+#endif

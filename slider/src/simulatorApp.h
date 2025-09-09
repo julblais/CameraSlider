@@ -1,5 +1,7 @@
-#ifndef BRAINAPP_H
-#define BRAINAPP_H
+#ifndef SIMULATORAPP_H
+#define SIMULATORAPP_H
+
+#if IS_SIMULATOR
 
 #include "core/appBase.h"
 #include "appConfig.h"
@@ -15,12 +17,10 @@ namespace Slider
     using namespace Input;
     using namespace Output;
 
-    class BrainApp : public AppBase
+    class SimulatorApp : public AppBase
     {
-        friend class SimulatorApp;
-
     public:
-        BrainApp(const AppConfig& config);
+        SimulatorApp(const AppConfig& config);
         void Setup() override;
         void Update() override;
 
@@ -33,4 +33,5 @@ namespace Slider
     };
 }
 
+#endif
 #endif
