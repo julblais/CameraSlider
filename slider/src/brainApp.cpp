@@ -4,12 +4,8 @@
 #include "core/perf.h"
 #include "menu.h"
 #include "stepper.h"
-#include "brainConnector.h"
 #include "autoInput.h"
-
 #include "settingCommand.h"
-#include "addressCommand.h"
-#include "connectionCommand.h"
 
 using namespace Input;
 using namespace Output;
@@ -23,7 +19,6 @@ void Slider::BrainApp::Setup()
     AddComponent<TimerComponent>();
     const auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     const auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
-    const auto connector = AddComponent<BrainConnector>();
 
     /*Hardware::InputPins pins;
     pins.dpadUp = m_Config.DpadUpPin;
@@ -48,9 +43,6 @@ void Slider::BrainApp::Setup()
 
     menu->AddCommand(new MaxSpeedCommand());
     menu->AddCommand(new SpeedCurveCommand());
-    menu->AddCommand(new BrainAddressCommand());
-    menu->AddCommand(new ControllerAddressCommand());
-    menu->AddCommand(new ConnectionCommand(connector));
 
     m_InputDispatcher.AddListener(menu);
     m_InputDispatcher.AddListener(stepper);
