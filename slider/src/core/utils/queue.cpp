@@ -1,5 +1,5 @@
 #include "queue.h"
-#include "src/debug.h"
+#include "../debug.h"
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>

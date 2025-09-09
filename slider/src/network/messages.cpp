@@ -1,3 +1,5 @@
+#ifdef USE_NETWORK
+
 #include "messages.h"
 
 using namespace Core;
@@ -26,3 +28,5 @@ size_t Handshake::printTo(Print& p) const
     s += p.print(MacAddress(from));
     return s;
 }
+
+#endif

@@ -18,7 +18,7 @@ jobs:
         uses: arduino/compile-sketches@v1
         with:
           enable-deltas-report: true
-          fqbn: esp32:esp32:esp32da
+          fqbn: esp32-bluepad32:esp32:esp32da
           # The default is to compile for the Arduino Uno board. If you want to compile for other boards, use the `fqbn` input.
           sketch-paths: |
             # Configure the action to search all folders under the root of the repository for sketches and compile them.
@@ -29,6 +29,10 @@ jobs:
             - name: AccelStepper
             - name: Preferences
             - name: WiFi
+          platforms: |
+            - name: "esp32:esp32"
+            - name: "esp32-bluepad32:esp32"
+              source-url: "https://raw.githubusercontent.com/ricardoquesada/esp32-arduino-lib-builder/master/bluepad32_files/package_esp32_bluepad32_index.json"
       - name: Upload sketches report to workflow artifact
         uses: actions/upload-artifact@v4
         with:

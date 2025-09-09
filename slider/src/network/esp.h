@@ -1,7 +1,7 @@
-#ifndef IS_SIMULATOR
-
 #ifndef ESP_UTILS_H
 #define ESP_UTILS_H
+
+#ifdef USE_NETWORK
 
 #include <functional>
 

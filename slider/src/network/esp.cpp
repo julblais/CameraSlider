@@ -1,4 +1,4 @@
-#ifndef IS_SIMULATOR
+#ifdef USE_NETWORK
 
 #include "esp.h"
 #include "src/debug.h"
