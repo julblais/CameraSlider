@@ -3,7 +3,6 @@
 #if !IS_SIMULATOR
 
 #include <Bluepad32.h>
-#include "bluetoothModule.h"
 #include "core/debug.h"
 
 using namespace Bt;
