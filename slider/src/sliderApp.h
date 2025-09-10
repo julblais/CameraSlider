@@ -7,6 +7,7 @@
 #include "event.h"
 #include "core/display.h"
 #include "displayBuffer.h"
+#include "bluetoothComponent.h"
 
 #include <memory>
 
@@ -25,7 +26,9 @@ namespace Slider
     private:
         AppConfig m_Config;
         std::unique_ptr<Display> m_Display;
-        std::unique_ptr<InputReader> m_InputReader;
+        std::unique_ptr<InputReader> m_LocalInputReader;
+
+        Bt::BluetoothGamepad* m_Gamepad;
         DisplayBuffer m_DisplayBuffer;
         EventDispatcher m_InputDispatcher;
     };
