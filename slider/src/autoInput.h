@@ -60,13 +60,13 @@ namespace IO
         static constexpr Instruction Joystick(float x, float y, Time hold) { return { hold, { x, y } }; }
     };
 
-    class AutoInput : public InputReader
+    class AutoInput
     {
     public:
         AutoInput(const std::initializer_list<Instruction> instructions);
         AutoInput(const unsigned int interval, const std::initializer_list<Instruction> instructions);
-        ~AutoInput() override = default;
-        InputData ReadInput() override;
+        ~AutoInput() = default;
+        InputData ReadInput();
 
     private:
         Timer m_Timer;

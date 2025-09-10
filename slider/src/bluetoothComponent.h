@@ -15,10 +15,10 @@ namespace Bt
 {
     class BluetoothComponent;
 
-    class BluetoothGamepad : IO::InputReader
+    class BluetoothGamepad
     {
     public:
-        IO::InputData ReadInput() override;
+        IO::InputData ReadInput();
         bool IsConnected() const;
         bool HasData() const;
 

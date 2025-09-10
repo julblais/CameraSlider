@@ -8,29 +8,18 @@
 #include "settingCommand.h"
 
 using namespace IO;
+using namespace Hardware;
+using namespace Bt;
 
 Slider::SliderApp::SliderApp(const AppConfig& config) :
     m_Config(config) {}
 
 void Slider::SliderApp::Setup()
 {
-    AddComponent<TimerComponent>();
-
     m_Display = std::unique_ptr<Display>(new SerialDisplay());
     m_DisplayBuffer.Init(m_Display.get());
 
-    const auto bluetooth = AddComponent<Bt::BluetoothComponent>();
-    m_GamepadInput = bluetooth->GetGamepad();
-
-    const auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
-    menu->AddCommand(new MaxSpeedCommand());
-    menu->AddCommand(new SpeedCurveCommand());
-    m_InputDispatcher.AddListener(menu);
-
-    const auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
-    m_InputDispatcher.AddListener(stepper);
-
-    Hardware::InputPins pins{
+    InputPins pins{
         .dpadUp = m_Config.DpadUpPin,
         .dpadDown = m_Config.DpadDownPin,
         .dpadLeft = m_Config.DpadLeftPin,
@@ -40,10 +29,22 @@ void Slider::SliderApp::Setup()
         .joystickVertical = m_Config.JoystickYPin,
         .joystickCenter = m_Config.JoystickCenterPin,
     };
-    m_LocalInput = std::unique_ptr<InputReader>(new Hardware::DeviceInputReader(pins));
+    m_LocalInput = std::unique_ptr<DeviceInputReader>(new DeviceInputReader(pins));
     m_LocalInput->Setup();
 
+    AddComponent<TimerComponent>();
+    const auto bluetooth = AddComponent<BluetoothComponent>();
+    const auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
+    const auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
     SetupComponents();
+
+    m_InputDispatcher.AddListener(menu);
+    m_InputDispatcher.AddListener(stepper);
+    m_GamepadInput = bluetooth->GetGamepad();
+
+    menu->AddCommand(new MaxSpeedCommand());
+    menu->AddCommand(new SpeedCurveCommand());
+
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
 }
 

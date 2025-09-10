@@ -3,7 +3,6 @@
 
 #include "core/appBase.h"
 #include "appConfig.h"
-#include "input.h"
 #include "event.h"
 #include "core/display.h"
 #include "displayBuffer.h"
@@ -11,10 +10,10 @@
 
 #include <memory>
 
+#include "deviceInputReader.h"
+
 namespace Slider
 {
-    using namespace IO;
-
     class SliderApp : public AppBase
     {
     public:
@@ -25,10 +24,10 @@ namespace Slider
     private:
         AppConfig m_Config;
         std::unique_ptr<Display> m_Display;
-        std::unique_ptr<InputReader> m_LocalInput;
+        std::unique_ptr<Hardware::DeviceInputReader> m_LocalInput;
         Bt::BluetoothGamepad* m_GamepadInput;
-        DisplayBuffer m_DisplayBuffer;
-        EventDispatcher m_InputDispatcher;
+        IO::DisplayBuffer m_DisplayBuffer;
+        IO::EventDispatcher m_InputDispatcher;
     };
 }
 

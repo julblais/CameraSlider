@@ -33,14 +33,6 @@ namespace IO
         float x;
         float y;
     };
-
-    class InputReader
-    {
-    public:
-        virtual ~InputReader() = default;
-        virtual void Setup() {}
-        virtual InputData ReadInput() = 0;
-    };
 }
 
 #endif
