@@ -1,6 +1,6 @@
 #include "displayBuffer.h"
 
-Output::DisplayBuffer::DisplayBuffer() :
+IO::DisplayBuffer::DisplayBuffer() :
     m_Display(nullptr)
 {
     m_Buffer.fill(' ');
@@ -8,14 +8,14 @@ Output::DisplayBuffer::DisplayBuffer() :
     m_Cursor = 0;
 }
 
-void Output::DisplayBuffer::FillCurrentLine()
+void IO::DisplayBuffer::FillCurrentLine()
 {
     const auto maxCursor = ((m_Cursor / LCD_LINE_LENGTH) + 1) * LCD_LINE_LENGTH;
     while (m_Cursor < maxCursor)
         m_Buffer[m_Cursor++] = ' ';
 }
 
-size_t Output::DisplayBuffer::write(uint8_t value)
+size_t IO::DisplayBuffer::write(uint8_t value)
 {
     //do not go over the line!
     const auto maxCursor = ((m_Cursor / LCD_LINE_LENGTH) + 1) * LCD_LINE_LENGTH;
@@ -24,18 +24,18 @@ size_t Output::DisplayBuffer::write(uint8_t value)
     return 1;
 }
 
-void Output::DisplayBuffer::Init(Display* display)
+void IO::DisplayBuffer::Init(Display* display)
 {
     m_Display = display;
 }
 
-void Output::DisplayBuffer::Clear()
+void IO::DisplayBuffer::Clear()
 {
     m_Cursor = 0;
     m_Buffer.fill(' ');
 }
 
-void Output::DisplayBuffer::SetCursor(const int column, const int row)
+void IO::DisplayBuffer::SetCursor(const int column, const int row)
 {
     if (row >= LCD_NUM_LINES || row < 0)
         return;
@@ -44,12 +44,12 @@ void Output::DisplayBuffer::SetCursor(const int column, const int row)
     m_Cursor = row * LCD_LINE_LENGTH + column;
 }
 
-Core::SymbolHandle Output::DisplayBuffer::GetSymbol(Core::Symbol symbol) const
+Core::SymbolHandle IO::DisplayBuffer::GetSymbol(Core::Symbol symbol) const
 {
     return m_Display->GetSymbol(symbol);
 }
 
-void Output::DisplayBuffer::PrintToDisplay() const
+void IO::DisplayBuffer::PrintToDisplay() const
 {
     const auto areEqual = std::equal(
         std::begin(m_Buffer), std::end(m_Buffer), std::begin(m_PreviousBuffer));

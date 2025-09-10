@@ -8,7 +8,6 @@
 #include "settingCommand.h"
 
 using namespace IO;
-using namespace Output;
 
 Slider::SliderApp::SliderApp(const AppConfig& config) :
     m_Config(config) {}

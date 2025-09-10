@@ -97,7 +97,7 @@ void Hardware::LCD::SetCursor(const int column, const int row)
 
 SymbolHandle Hardware::LCD::GetSymbol(Symbol symbol) const
 {
-    using namespace Output;
+    using namespace IO;
     switch (symbol)
     {
         case Symbol::LeftRightArrows:

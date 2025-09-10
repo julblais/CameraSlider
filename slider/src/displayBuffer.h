@@ -6,7 +6,7 @@
 #include <array>
 #include <Print.h>
 
-namespace Output
+namespace IO
 {
     using Keycode = uint8_t;
 

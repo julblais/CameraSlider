@@ -14,7 +14,6 @@
 namespace Slider
 {
     using namespace IO;
-    using namespace Output;
 
     class SliderApp : public AppBase
     {
