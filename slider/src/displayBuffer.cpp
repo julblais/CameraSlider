@@ -24,7 +24,7 @@ size_t IO::DisplayBuffer::write(uint8_t value)
     return 1;
 }
 
-void IO::DisplayBuffer::Init(Display* display)
+void IO::DisplayBuffer::Setup(Display* display)
 {
     m_Display = display;
 }

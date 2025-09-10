@@ -17,7 +17,7 @@ Slider::SliderApp::SliderApp(const AppConfig& config) :
 void Slider::SliderApp::Setup()
 {
     m_Display = std::unique_ptr<Display>(new SerialDisplay());
-    m_DisplayBuffer.Init(m_Display.get());
+    m_DisplayBuffer.Setup(m_Display.get());
 
     InputPins pins{
         .dpadUp = m_Config.DpadUpPin,

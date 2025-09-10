@@ -22,7 +22,7 @@ namespace IO
         DisplayBuffer();
         ~DisplayBuffer() override = default;
 
-        void Init(Display* display);
+        void Setup(Display* display);
         size_t write(uint8_t value) override;
         void SetCursor(const int column, const int row) override;
         Core::SymbolHandle GetSymbol(Core::Symbol symbol) const override;
