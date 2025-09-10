@@ -14,13 +14,13 @@ Slider::SliderApp::SliderApp(const AppConfig& config) :
 
 void Slider::SliderApp::Setup()
 {
+    AddComponent<TimerComponent>();
+
     m_Display = std::unique_ptr<Display>(new SerialDisplay());
     m_DisplayBuffer.Init(m_Display.get());
 
-    AddComponent<TimerComponent>();
-
     const auto bluetooth = AddComponent<Bt::BluetoothComponent>();
-    m_Gamepad = bluetooth->GetGamepad();
+    m_GamepadInput = bluetooth->GetGamepad();
 
     const auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
     menu->AddCommand(new MaxSpeedCommand());
@@ -40,8 +40,8 @@ void Slider::SliderApp::Setup()
         .joystickVertical = m_Config.JoystickYPin,
         .joystickCenter = m_Config.JoystickCenterPin,
     };
-    m_LocalInputReader = std::unique_ptr<InputReader>(new Hardware::DeviceInputReader(pins));
-    m_LocalInputReader->Setup();
+    m_LocalInput = std::unique_ptr<InputReader>(new Hardware::DeviceInputReader(pins));
+    m_LocalInput->Setup();
 
     SetupComponents();
     m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
@@ -50,8 +50,8 @@ void Slider::SliderApp::Setup()
 void Slider::SliderApp::Update()
 {
     TAKE_SAMPLE("ProcessInput", [this]() {
-                m_InputDispatcher.ProcessInput(m_LocalInputReader->ReadInput());
-                m_InputDispatcher.ProcessInput(m_Gamepad->ReadInput());
+                m_InputDispatcher.ProcessInput(m_LocalInput->ReadInput());
+                m_InputDispatcher.ProcessInput(m_GamepadInput->ReadInput());
                 m_InputDispatcher.Dispatch();
                 }, CpuSampler);
 

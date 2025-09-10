@@ -25,9 +25,8 @@ namespace Slider
     private:
         AppConfig m_Config;
         std::unique_ptr<Display> m_Display;
-        std::unique_ptr<InputReader> m_LocalInputReader;
-
-        Bt::BluetoothGamepad* m_Gamepad;
+        std::unique_ptr<InputReader> m_LocalInput;
+        Bt::BluetoothGamepad* m_GamepadInput;
         DisplayBuffer m_DisplayBuffer;
         EventDispatcher m_InputDispatcher;
     };
