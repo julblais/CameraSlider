@@ -57,7 +57,7 @@ namespace IO
         Diff diff;
     };
 
-    class EventDispatcher : public EventSource<const Event&>
+    class EventDispatcher : public Core::EventSource<const Event&>
     {
     public:
         EventDispatcher();

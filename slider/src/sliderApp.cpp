@@ -1,4 +1,7 @@
 #include "sliderApp.h"
+
+#if !IS_SIMULATOR
+
 #include "core/serialDisplay.h"
 #include "deviceInputReader.h"
 #include "core/perf.h"
@@ -7,6 +10,7 @@
 #include "bluetoothComponent.h"
 #include "settingCommand.h"
 
+using namespace Core;
 using namespace IO;
 using namespace Hardware;
 using namespace Bt;
@@ -66,3 +70,5 @@ void Slider::SliderApp::Update()
                 m_DisplayBuffer.PrintToDisplay();
                 }, CpuSampler);
 }
+
+#endif

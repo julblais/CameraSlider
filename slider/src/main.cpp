@@ -25,7 +25,7 @@ static AppConfig CreateConfig()
     return conf;
 }
 
-static std::unique_ptr<AppBase> app;
+static std::unique_ptr<Core::AppBase> app;
 
 void setup()
 {

@@ -5,19 +5,16 @@
 
 #include "core/appBase.h"
 #include "appConfig.h"
-#include "input.h"
 #include "event.h"
 #include "core/display.h"
 #include "displayBuffer.h"
-
+#include "deviceInputReader.h"
+#include "autoInput.h"
 #include <memory>
 
 namespace Slider
 {
-    using namespace Input;
-    using namespace Output;
-
-    class SimulatorApp : public AppBase
+    class SimulatorApp : public Core::AppBase
     {
     public:
         SimulatorApp(const AppConfig& config);
@@ -26,10 +23,11 @@ namespace Slider
 
     private:
         AppConfig m_Config;
-        std::unique_ptr<Display> m_Display;
-        std::unique_ptr<InputReader> m_InputReader;
-        DisplayBuffer m_DisplayBuffer;
-        EventDispatcher m_InputDispatcher;
+        std::unique_ptr<Core::Display> m_Display;
+        std::unique_ptr<Hardware::DeviceInputReader> m_LocalInput;
+        std::unique_ptr<IO::AutoInput> m_AutoInput;
+        IO::DisplayBuffer m_DisplayBuffer;
+        IO::EventDispatcher m_InputDispatcher;
     };
 }
 

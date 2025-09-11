@@ -7,6 +7,8 @@
 
 #include "core/debug.h"
 
+using namespace Core;
+
 static const uint8_t LeftRightArrows[] = {
     0b00000,
     0b00000,
