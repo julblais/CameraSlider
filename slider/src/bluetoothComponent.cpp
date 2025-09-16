@@ -15,7 +15,7 @@ ControllerPtr s_Controller = nullptr;
 void onConnectedController(const ControllerPtr controller)
 {
     LogInfo("Bluetooth: Controller attempting to connect...");
-    if (s_Controller != nullptr)
+    if (s_Controller == nullptr)
     {
         if (controller->isGamepad())
         {
@@ -53,7 +53,7 @@ void BluetoothComponent::Setup()
     BP32.setup(&onConnectedController, &onDisconnectedController);
     BP32.enableNewBluetoothConnections(false);
     BP32.enableVirtualDevice(false);
-    LogError("Bluetooth: BluetoothModule initialized.");
+    LogInfo("Bluetooth: BluetoothModule initialized.");
 }
 
 void BluetoothComponent::Update()
@@ -74,7 +74,7 @@ void BluetoothComponent::DisconnectGamepad()
     }
     else
     {
-        LogInfo("Bluetooth: no controller to disconnect.");
+        LogWarning("Bluetooth: no controller to disconnect.");
     }
 }
 
