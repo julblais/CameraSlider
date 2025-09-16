@@ -55,7 +55,7 @@ void Slider::SliderApp::Setup()
 void Slider::SliderApp::Update()
 {
     TAKE_SAMPLE("ProcessInput", [this]() {
-                m_InputDispatcher.ProcessInput(m_LocalInput->ReadInput());
+                //m_InputDispatcher.ProcessInput(m_LocalInput->ReadInput());
                 m_InputDispatcher.ProcessInput(m_GamepadInput->ReadInput());
                 m_InputDispatcher.Dispatch();
                 }, CpuSampler);

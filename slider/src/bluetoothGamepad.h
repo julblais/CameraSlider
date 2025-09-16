@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include "input.h"
+#include <memory>
 
 class Controller;
 
@@ -18,6 +19,8 @@ namespace Bt
         IO::InputData ReadInput();
         bool IsConnected() const;
         bool HasData() const;
+
+        std::unique_ptr<char[]> GetDescription() const;
 
         void SetPlayerLEDs(const uint8_t led);
         void Rumble(const uint16_t delayedStartMs, const uint16_t durationMs, const uint8_t weakMagnitude,

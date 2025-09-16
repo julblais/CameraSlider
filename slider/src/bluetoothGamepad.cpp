@@ -4,6 +4,8 @@
 
 #include <Bluepad32.h>
 #include "core/debug.h"
+#include <cstring>
+#include <string>
 
 using namespace Bt;
 using namespace Core;
@@ -46,6 +48,19 @@ bool BluetoothGamepad::HasData() const
 {
     const auto controller = *m_Controller;
     return controller != nullptr && controller->hasData();
+}
+
+std::unique_ptr<char[]> BluetoothGamepad::GetDescription() const
+{
+    const auto controller = *m_Controller;
+
+    String modelName = "";
+    if (controller != nullptr)
+        modelName = controller->getModelName();
+
+    std::unique_ptr<char[]> buffer(new char[modelName.length() + 1]);
+    std::strcpy(buffer.get(), modelName.c_str());
+    return buffer;
 }
 
 void BluetoothGamepad::SetPlayerLEDs(const uint8_t led)

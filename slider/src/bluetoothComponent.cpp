@@ -17,15 +17,9 @@ void onConnectedController(const ControllerPtr controller)
     LogInfo("Bluetooth: Controller attempting to connect...");
     if (s_Controller == nullptr)
     {
-        if (controller->isGamepad())
-        {
-            LogInfo("Bluetooth: Controller connected! model: ", controller->getModelName());
-            s_Controller = controller;
-        }
-        else
-        {
-            LogError("Bluetooth: Only gamepad controllers are supported.");
-        }
+        LogInfo("Bluetooth: Controller connected! model: ", controller->getModelName(), ", is gamepad: ",
+                controller->isGamepad());
+        s_Controller = controller;
     }
     else
     {
