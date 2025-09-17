@@ -46,7 +46,6 @@ void BluetoothComponent::Setup()
 {
     BP32.setup(&onConnectedController, &onDisconnectedController);
     BP32.enableNewBluetoothConnections(false);
-    BP32.enableVirtualDevice(false);
     LogInfo("Bluetooth: BluetoothModule initialized.");
 }
 

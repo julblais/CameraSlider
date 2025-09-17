@@ -33,7 +33,7 @@ InputData BluetoothGamepad::ReadInput()
             buttons = ButtonEvent::Select;
         else if (controller->miscStart())
             buttons = ButtonEvent::Center;
-        m_LastInput = InputData(buttons);
+        m_LastInput = InputData(buttons, controller->axisRX(), controller->axisRY());
     }
     return m_LastInput;
 }
