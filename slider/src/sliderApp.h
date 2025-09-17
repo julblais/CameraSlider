@@ -18,6 +18,7 @@ namespace Slider
     {
     public:
         SliderApp(const AppConfig& config);
+        bool OnInputEvent(const IO::Event& inputEvent);
         void Setup() override;
         void Update() override;
 
