@@ -1,6 +1,7 @@
 #include "settingCommand.h"
 #include "settings.h"
 #include "core/utils/enumUtils.h"
+#include "bluetoothComponent.h"
 
 using namespace Core;
 using namespace Slider;
@@ -65,4 +66,25 @@ void SpeedCurveCommand::Print(Display* display) const
     PrintTitle(display, "Courbe vitesse");
     const auto desc = GetDesc(Settings::GetInstance().GetCurve());
     PrintDescription(display, desc);
+}
+
+GamepadPairCommand::GamepadPairCommand(Bt::BluetoothComponent* bluetooth)
+    : m_Bluetooth(bluetooth) {}
+
+void GamepadPairCommand::Print(Display* display) const
+{
+    PrintTitle(display, "Gamepad pair");
+    PrintDescription(display, "None");
+}
+
+void GamepadPairCommand::Invoke(const MenuCommandButton command)
+{
+    if (m_Bluetooth != nullptr)
+    {
+        const auto gamepad = m_Bluetooth->GetGamepad();
+        if (gamepad == nullptr || !gamepad->IsConnected())
+        {
+            m_Bluetooth->EnablePairing();
+        }
+    }
 }

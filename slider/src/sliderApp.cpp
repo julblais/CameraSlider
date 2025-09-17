@@ -60,6 +60,7 @@ void Slider::SliderApp::Setup()
 
     menu->AddCommand(new MaxSpeedCommand());
     menu->AddCommand(new SpeedCurveCommand());
+    menu->AddCommand(new GamepadPairCommand());
 
     m_DisplayBuffer.Print(Event());
 }
