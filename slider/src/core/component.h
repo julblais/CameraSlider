@@ -11,8 +11,8 @@ namespace Core
     public:
         virtual ~Component() = default;
 
-        virtual void Setup() {};
-        virtual void Update() {};
+        virtual void Setup() {}
+        virtual void Update() {}
     };
 }
 

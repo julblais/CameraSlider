@@ -1,7 +1,7 @@
 #ifndef BUTTONEVENT_H
 #define BUTTONEVENT_H
 
-namespace Input 
+namespace IO
 {
     enum class ButtonEvent
     {

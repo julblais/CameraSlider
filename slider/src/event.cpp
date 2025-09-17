@@ -2,7 +2,7 @@
 #include "core/debug.h"
 #include "core/utils/enumUtils.h"
 
-using namespace Input;
+using namespace IO;
 using namespace Core::Enums;
 
 Event::Diff::Diff() :
@@ -115,9 +115,9 @@ void DebugPrint(const Event& lastEvent, const Event& event)
         return;
     if (event.HasButtonChange())
     {
-        LogDebug("Event button:\t", Input::ToString(event.GetButtonEvent()),
-                 "\tpressed: ", Input::ToString(event.GetButtonPressed()),
-                 "\treleased: ", Input::ToString(event.GetButtonReleased()));
+        LogDebug("Event button:\t", IO::ToString(event.GetButtonEvent()),
+                 "\tpressed: ", IO::ToString(event.GetButtonPressed()),
+                 "\treleased: ", IO::ToString(event.GetButtonReleased()));
     }
     if (event.HasStickMoved())
     {

@@ -1,6 +1,6 @@
 #include "buttonEvent.h"
 
-const char* Input::ToString(const ButtonEvent button)
+const char* IO::ToString(const ButtonEvent button)
 {
     switch (button)
     {
@@ -23,7 +23,7 @@ const char* Input::ToString(const ButtonEvent button)
     }
 }
 
-const char* Input::ToString(const ButtonChange button)
+const char* IO::ToString(const ButtonChange button)
 {
     switch (button)
     {

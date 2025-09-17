@@ -3,8 +3,6 @@
 
 #include "input.h"
 
-using namespace Input;
-
 namespace Hardware
 {
     struct InputPins
@@ -19,13 +17,13 @@ namespace Hardware
         int joystickCenter;
     };
 
-    class DeviceInputReader : public InputReader
+    class DeviceInputReader
     {
     public:
         DeviceInputReader(const InputPins& pins);
-        ~DeviceInputReader() override;
-        void Setup() override;
-        InputData ReadInput() override;
+        ~DeviceInputReader();
+        void Setup();
+        IO::InputData ReadInput();
 
     private:
         const InputPins m_Pins;

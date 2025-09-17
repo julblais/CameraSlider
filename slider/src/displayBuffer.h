@@ -6,7 +6,7 @@
 #include <array>
 #include <Print.h>
 
-namespace Output
+namespace IO
 {
     using Keycode = uint8_t;
 
@@ -22,7 +22,7 @@ namespace Output
         DisplayBuffer();
         ~DisplayBuffer() override = default;
 
-        void Init(Display* display);
+        void Setup(Display* display);
         size_t write(uint8_t value) override;
         void SetCursor(const int column, const int row) override;
         Core::SymbolHandle GetSymbol(Core::Symbol symbol) const override;

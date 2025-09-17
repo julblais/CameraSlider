@@ -6,16 +6,17 @@ using namespace Core;
 
 constexpr const char* border = "\e[48;5;22m";
 constexpr const char* reset = "\e[0m";
-constexpr const char* format = "\e[1m\e[48;5;112m";
+constexpr const char* format = "\e[1m\e[30m\e[48;5;112m";
 constexpr const char* goBackUp = "\r\e[4F";
 constexpr const char* hborder = "                    ";
 constexpr const char* vborder = "  ";
 
 SerialDisplay::SerialDisplay()
+    : m_Timer(Timer::Create("SerialDisplay", [this]() { PrintToSerial(); })),
+      m_Cursor(0)
 {
-    m_Timer = Timer::Create("SerialDisplay", [this]() {
-        PrintToSerial();
-    });
+    m_Buffer.fill(' ');
+    m_PreviousBuffer.fill('-');
     m_Timer.Start(300, true);
 }
 

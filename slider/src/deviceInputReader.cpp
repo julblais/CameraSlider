@@ -25,7 +25,7 @@ void DeviceInputReader::Setup()
     pinMode(m_Pins.joystickCenter, INPUT_PULLUP);
 }
 
-Input::InputData DeviceInputReader::ReadInput()
+IO::InputData DeviceInputReader::ReadInput()
 {
     auto up = digitalRead(m_Pins.dpadUp) == LOW;
     auto down = digitalRead(m_Pins.dpadDown) == LOW;
@@ -36,22 +36,22 @@ Input::InputData DeviceInputReader::ReadInput()
     auto h = analogRead(m_Pins.joystickHorizontal);
     auto joystickSelection = digitalRead(m_Pins.joystickCenter) == LOW;
 
-    auto buttons = Input::ButtonEvent::None;
+    auto buttons = IO::ButtonEvent::None;
     if (left)
-        buttons = Input::ButtonEvent::Left;
+        buttons = IO::ButtonEvent::Left;
     else if (right)
-        buttons = Input::ButtonEvent::Right;
+        buttons = IO::ButtonEvent::Right;
     else if (up)
-        buttons = Input::ButtonEvent::Up;
+        buttons = IO::ButtonEvent::Up;
     else if (down)
-        buttons = Input::ButtonEvent::Down;
+        buttons = IO::ButtonEvent::Down;
     else if (selection)
-        buttons = Input::ButtonEvent::Select;
+        buttons = IO::ButtonEvent::Select;
     else if (joystickSelection)
-        buttons = Input::ButtonEvent::Center;
+        buttons = IO::ButtonEvent::Center;
 
     auto x = -Core::Remap((float)h, 0.0f, (float)JOYSTICK_RANGE_X, -1.0f, 1.0f);
     auto y = Core::Remap((float)v, 0.0f, (float)JOYSTICK_RANGE_Y, -1.0f, 1.0f);
 
-    return Input::InputData(buttons, x, y);
+    return IO::InputData(buttons, x, y);
 }

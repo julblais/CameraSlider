@@ -7,9 +7,7 @@
 #include "core/timer.h"
 #include "input.h"
 
-using namespace Core;
-
-namespace Input
+namespace IO
 {
     struct Instruction
     {
@@ -20,7 +18,7 @@ namespace Input
             Pause
         };
 
-        constexpr Instruction(const Time durationMs, const InputData& input) :
+        constexpr Instruction(const Core::Time durationMs, const InputData& input) :
             durationMs(durationMs),
             input(input),
             type(Type::Hold)
@@ -32,44 +30,44 @@ namespace Input
             type(Type::Input)
         {}
 
-        constexpr Instruction(const Time durationMs) :
+        constexpr Instruction(const Core::Time durationMs) :
             durationMs(durationMs),
             input(),
             type(Type::Pause)
         {}
 
-        const Time durationMs;
+        const Core::Time durationMs;
         const InputData input;
         const Type type;
 
-        static constexpr Instruction Pause(Time durationMs) { return { durationMs }; }
+        static constexpr Instruction Pause(Core::Time durationMs) { return { durationMs }; }
 
-        static constexpr Instruction DpadUp() { return { { Input::DpadUp } }; }
-        static constexpr Instruction DpadDown() { return { { Input::DpadDown } }; }
-        static constexpr Instruction DpadLeft() { return { { Input::DpadLeft } }; }
-        static constexpr Instruction DpadRight() { return { { Input::DpadRight } }; }
-        static constexpr Instruction DpadSelect() { return { { Input::DpadSelect } }; }
+        static constexpr Instruction DpadUp() { return {{IO::DpadUp}}; }
+        static constexpr Instruction DpadDown() { return {{IO::DpadDown}}; }
+        static constexpr Instruction DpadLeft() { return {{IO::DpadLeft}}; }
+        static constexpr Instruction DpadRight() { return {{IO::DpadRight}}; }
+        static constexpr Instruction DpadSelect() { return {{IO::DpadSelect}}; }
 
-        static constexpr Instruction DpadUp(Time hold) { return { hold, { Input::DpadUp } }; }
-        static constexpr Instruction DpadDown(Time hold) { return { hold, { Input::DpadDown } }; }
-        static constexpr Instruction DpadLeft(Time hold) { return { hold, { Input::DpadLeft } }; }
-        static constexpr Instruction DpadRight(Time hold) { return { hold, { Input::DpadRight } }; }
-        static constexpr Instruction DpadSelect(Time hold) { return { hold, { Input::DpadSelect } }; }
+        static constexpr Instruction DpadUp(Core::Time hold) { return {hold, {IO::DpadUp}}; }
+        static constexpr Instruction DpadDown(Core::Time hold) { return {hold, {IO::DpadDown}}; }
+        static constexpr Instruction DpadLeft(Core::Time hold) { return {hold, {IO::DpadLeft}}; }
+        static constexpr Instruction DpadRight(Core::Time hold) { return {hold, {IO::DpadRight}}; }
+        static constexpr Instruction DpadSelect(Core::Time hold) { return {hold, {IO::DpadSelect}}; }
 
         static constexpr Instruction Joystick(float x, float y) { return { { x, y } }; }
-        static constexpr Instruction Joystick(float x, float y, Time hold) { return { hold, { x, y } }; }
+        static constexpr Instruction Joystick(float x, float y, Core::Time hold) { return { hold, { x, y } }; }
     };
 
-    class AutoInput : public InputReader
+    class AutoInput
     {
     public:
         AutoInput(const std::initializer_list<Instruction> instructions);
         AutoInput(const unsigned int interval, const std::initializer_list<Instruction> instructions);
-        ~AutoInput() override = default;
-        InputData ReadInput() override;
+        ~AutoInput() = default;
+        InputData ReadInput();
 
     private:
-        Timer m_Timer;
+        Core::Timer m_Timer;
         std::queue<Instruction> m_Instructions;
         bool m_Ready;
     };

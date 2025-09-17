@@ -3,7 +3,7 @@
 
 #include "buttonEvent.h"
 
-namespace Input
+namespace IO
 {
     struct InputData
     {
@@ -32,14 +32,6 @@ namespace Input
         ButtonEvent button;
         float x;
         float y;
-    };
-
-    class InputReader
-    {
-    public:
-        virtual ~InputReader() = default;
-        virtual void Setup() {}
-        virtual InputData ReadInput() = 0;
     };
 }
 
