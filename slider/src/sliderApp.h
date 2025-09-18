@@ -9,8 +9,9 @@
 #include "core/display.h"
 #include "displayBuffer.h"
 #include "bluetoothComponent.h"
-#include <memory>
 #include "deviceInputReader.h"
+#include "eventDispatcher.h"
+#include <memory>
 
 namespace Slider
 {

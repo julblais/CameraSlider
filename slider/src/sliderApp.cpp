@@ -18,12 +18,11 @@ using namespace Bt;
 Slider::SliderApp::SliderApp(const AppConfig& config) :
     m_Config(config) {}
 
-bool Slider::SliderApp::OnInputEvent(const Event& evt)
+bool Slider::SliderApp::OnInputEvent(const Event& inputEvent)
 {
-    if (evt.HasChange())
+    if (inputEvent.HasChange())
     {
-        m_DisplayBuffer.PrintLine(0, "Btn: ", ToString(evt.GetButtonEvent()));
-        m_DisplayBuffer.PrintLine(1, "(", evt.GetStickX(), ",", evt.GetStickY(), ")");
+        m_DisplayBuffer.Print(inputEvent);
     }
     return false;
 }
@@ -53,6 +52,7 @@ void Slider::SliderApp::Setup()
     SetupComponents();
 
     m_InputDispatcher.AddListener(menu);
+
     m_InputDispatcher.AddListener(stepper);
     m_InputDispatcher.AddListener(this);
     m_GamepadInput = bluetooth->GetGamepad();
@@ -60,9 +60,7 @@ void Slider::SliderApp::Setup()
     menu->AddCommand(new MaxSpeedCommand());
     menu->AddCommand(new SpeedCurveCommand());
 
-    Event event;
-    m_DisplayBuffer.PrintLine(0, "Btn: ", ToString(event.GetButtonEvent()));
-    m_DisplayBuffer.PrintLine(1, "(", event.GetStickX(), ",", event.GetStickY(), ")");
+    m_DisplayBuffer.Print(Event());
 }
 
 void Slider::SliderApp::Update()
