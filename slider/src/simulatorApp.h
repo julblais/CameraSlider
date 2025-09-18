@@ -5,11 +5,11 @@
 
 #include "core/appBase.h"
 #include "appConfig.h"
-#include "event.h"
 #include "core/display.h"
 #include "displayBuffer.h"
 #include "deviceInputReader.h"
 #include "autoInput.h"
+#include "event.h"
 #include <memory>
 
 namespace Slider
@@ -20,6 +20,7 @@ namespace Slider
         SimulatorApp(const AppConfig& config);
         void Setup() override;
         void Update() override;
+        bool OnInputEvent(const IO::Event& inputEvent);
 
     private:
         AppConfig m_Config;
