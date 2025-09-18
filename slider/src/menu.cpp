@@ -12,7 +12,7 @@ using namespace IO;
 Slider::Menu::Menu(Display* display, const int delay)
     : m_Display(display),
       m_Delay(delay),
-      m_IsIntroFinished(false)
+      m_IsIntroFinished(true)
 {
     m_ShowHideTimer = Timer::Create("Selection menu", [this]() {
         OnSelectionLongPress();
