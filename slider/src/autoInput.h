@@ -5,7 +5,7 @@
 #include <queue>
 #include "core/time/time.h"
 #include "core/timer.h"
-#include "input.h"
+#include "event.h"
 
 namespace IO
 {
@@ -42,17 +42,17 @@ namespace IO
 
         static constexpr Instruction Pause(Core::Time durationMs) { return { durationMs }; }
 
-        static constexpr Instruction DpadUp() { return {{IO::DpadUp}}; }
-        static constexpr Instruction DpadDown() { return {{IO::DpadDown}}; }
-        static constexpr Instruction DpadLeft() { return {{IO::DpadLeft}}; }
-        static constexpr Instruction DpadRight() { return {{IO::DpadRight}}; }
-        static constexpr Instruction DpadSelect() { return {{IO::DpadSelect}}; }
+        static constexpr Instruction DpadUp() { return {{ButtonEvent::Up}}; }
+        static constexpr Instruction DpadDown() { return {{ButtonEvent::Down}}; }
+        static constexpr Instruction DpadLeft() { return {{ButtonEvent::Left}}; }
+        static constexpr Instruction DpadRight() { return {{ButtonEvent::Right}}; }
+        static constexpr Instruction DpadSelect() { return {{ButtonEvent::Select}}; }
 
-        static constexpr Instruction DpadUp(Core::Time hold) { return {hold, {IO::DpadUp}}; }
-        static constexpr Instruction DpadDown(Core::Time hold) { return {hold, {IO::DpadDown}}; }
-        static constexpr Instruction DpadLeft(Core::Time hold) { return {hold, {IO::DpadLeft}}; }
-        static constexpr Instruction DpadRight(Core::Time hold) { return {hold, {IO::DpadRight}}; }
-        static constexpr Instruction DpadSelect(Core::Time hold) { return {hold, {IO::DpadSelect}}; }
+        static constexpr Instruction DpadUp(Core::Time hold) { return {hold, {ButtonEvent::Up}}; }
+        static constexpr Instruction DpadDown(Core::Time hold) { return {hold, {ButtonEvent::Down}}; }
+        static constexpr Instruction DpadLeft(Core::Time hold) { return {hold, {ButtonEvent::Left}}; }
+        static constexpr Instruction DpadRight(Core::Time hold) { return {hold, {ButtonEvent::Right}}; }
+        static constexpr Instruction DpadSelect(Core::Time hold) { return {hold, {ButtonEvent::Select}}; }
 
         static constexpr Instruction Joystick(float x, float y) { return { { x, y } }; }
         static constexpr Instruction Joystick(float x, float y, Core::Time hold) { return { hold, { x, y } }; }

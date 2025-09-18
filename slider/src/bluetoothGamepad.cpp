@@ -2,6 +2,7 @@
 
 #if !IS_SIMULATOR
 
+#include "core/utils/enumUtils.h"
 #include <Bluepad32.h>
 #include "core/debug.h"
 #include <cstring>
@@ -10,6 +11,7 @@
 using namespace Bt;
 using namespace Core;
 using namespace IO;
+using namespace Core::Enums;
 
 BluetoothGamepad::BluetoothGamepad(Controller** controller)
     : m_Controller(controller) {}
@@ -22,17 +24,17 @@ InputData BluetoothGamepad::ReadInput()
         auto buttons = ButtonEvent::None;
         const auto dpad = controller->dpad();
         if (dpad & DPAD_UP)
-            buttons = ButtonEvent::Up;
+            buttons |= ButtonEvent::Up;
         else if (dpad & DPAD_DOWN)
-            buttons = ButtonEvent::Down;
+            buttons |= ButtonEvent::Down;
         else if (dpad & DPAD_LEFT)
-            buttons = ButtonEvent::Left;
+            buttons |= ButtonEvent::Left;
         else if (dpad & DPAD_RIGHT)
-            buttons = ButtonEvent::Right;
+            buttons |= ButtonEvent::Right;
         else if (controller->miscSelect())
-            buttons = ButtonEvent::Select;
+            buttons |= ButtonEvent::Select;
         else if (controller->miscStart())
-            buttons = ButtonEvent::Center;
+            buttons |= ButtonEvent::Center;
         m_LastInput = InputData(buttons, controller->axisRX(), controller->axisRY());
     }
     return m_LastInput;

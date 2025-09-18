@@ -12,6 +12,8 @@
 #include "event.h"
 #include <memory>
 
+#include "eventDispatcher.h"
+
 namespace Slider
 {
     class SimulatorApp : public Core::AppBase

@@ -1,8 +1,10 @@
 #include "deviceInputReader.h"
 #include "core/debug.h"
 #include "core/utils/mathUtils.h"
+#include "core/utils/enumUtils.h"
 
 using namespace Hardware;
+using namespace Core::Enums;
 
 constexpr auto JOYSTICK_RANGE_X = 4096;
 constexpr auto JOYSTICK_RANGE_Y = 4096;
@@ -38,17 +40,17 @@ IO::InputData DeviceInputReader::ReadInput()
 
     auto buttons = IO::ButtonEvent::None;
     if (left)
-        buttons = IO::ButtonEvent::Left;
-    else if (right)
-        buttons = IO::ButtonEvent::Right;
-    else if (up)
-        buttons = IO::ButtonEvent::Up;
-    else if (down)
-        buttons = IO::ButtonEvent::Down;
-    else if (selection)
-        buttons = IO::ButtonEvent::Select;
-    else if (joystickSelection)
-        buttons = IO::ButtonEvent::Center;
+        buttons |= IO::ButtonEvent::Left;
+    if (right)
+        buttons |= IO::ButtonEvent::Right;
+    if (up)
+        buttons |= IO::ButtonEvent::Up;
+    if (down)
+        buttons |= IO::ButtonEvent::Down;
+    if (selection)
+        buttons |= IO::ButtonEvent::Select;
+    if (joystickSelection)
+        buttons |= IO::ButtonEvent::Center;
 
     auto x = -Core::Remap((float)h, 0.0f, (float)JOYSTICK_RANGE_X, -1.0f, 1.0f);
     auto y = Core::Remap((float)v, 0.0f, (float)JOYSTICK_RANGE_Y, -1.0f, 1.0f);
