@@ -4,12 +4,13 @@
 #include "core/eventSource.h"
 #include "memory"
 #include "Print.h"
+#include "core/utils/enumWrapper.h"
 
 #define BUTTON_EVENT_COUNT 6
 
 namespace IO
 {
-    enum class ButtonEvent
+    enum class ButtonEventFlags
     {
         None = 0,
         Up = 1 << 0,
@@ -20,18 +21,28 @@ namespace IO
         Center = 1 << 5
     };
 
+    using ButtonEvent = Core::EnumWrapper<ButtonEventFlags>;
+
+    constexpr auto ButtonNone = ButtonEvent(ButtonEventFlags::None);
+    constexpr auto ButtonDpadUp = ButtonEvent(ButtonEventFlags::Up);
+    constexpr auto ButtonDpadDown = ButtonEvent(ButtonEventFlags::Down);
+    constexpr auto ButtonDpadLeft = ButtonEvent(ButtonEventFlags::Left);
+    constexpr auto ButtonDpadRight = ButtonEvent(ButtonEventFlags::Right);
+    constexpr auto ButtonCenter = ButtonEvent(ButtonEventFlags::Center);
+    constexpr auto ButtonSelect = ButtonEvent(ButtonEventFlags::Select);
+
     std::unique_ptr<char[]> ToString(const ButtonEvent button);
 
     struct InputData
     {
         constexpr InputData() :
-            InputData(ButtonEvent::None, 0.0f, 0.0f) {}
+            InputData(ButtonNone, 0.0f, 0.0f) {}
 
         constexpr InputData(const ButtonEvent buttons) :
             InputData(buttons, 0.0f, 0.0f) {}
 
         constexpr InputData(const float x, const float y) :
-            InputData(ButtonEvent::None, x, y) {}
+            InputData(ButtonNone, x, y) {}
 
         constexpr InputData(const ButtonEvent buttons, const float x, const float y) :
             buttons(buttons),

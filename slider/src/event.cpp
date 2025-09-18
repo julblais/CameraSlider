@@ -8,17 +8,17 @@ std::unique_ptr<char[]> IO::ToString(const ButtonEvent button)
 {
     std::unique_ptr<char[]> buffer(new char[BUTTON_EVENT_COUNT + 1]);
     int index = 0;
-    if (HasValue(button, ButtonEvent::Up))
+    if (button.Has(ButtonDpadUp))
         buffer[index++] = 'U';
-    if (HasValue(button, ButtonEvent::Down))
+    if (button.Has(ButtonDpadDown))
         buffer[index++] = 'D';
-    if (HasValue(button, ButtonEvent::Left))
+    if (button.Has(ButtonDpadLeft))
         buffer[index++] = 'L';
-    if (HasValue(button, ButtonEvent::Right))
+    if (button.Has(ButtonDpadRight))
         buffer[index++] = 'R';
-    if (HasValue(button, ButtonEvent::Select))
+    if (button.Has(ButtonSelect))
         buffer[index++] = 'S';
-    if (HasValue(button, ButtonEvent::Center))
+    if (button.Has(ButtonCenter))
         buffer[index++] = 'C';
 
     buffer[index] = '\0';
@@ -26,8 +26,8 @@ std::unique_ptr<char[]> IO::ToString(const ButtonEvent button)
 }
 
 Event::Event() :
-    m_Previous(ButtonEvent::None),
-    m_Current(ButtonEvent::None) {}
+    m_Previous(ButtonNone),
+    m_Current(ButtonNone) {}
 
 Event::Event(const InputData& previous, const InputData& input) :
     m_Previous(previous),
@@ -38,7 +38,7 @@ Event::Event(const Event& previous, const InputData& input) :
 
 bool Event::HasButtonChange() const
 {
-    return (m_Previous.buttons | m_Current.buttons) != ButtonEvent::None;
+    return (m_Previous.buttons | m_Current.buttons).Any();
 }
 
 bool Event::HasStickMoved() const
@@ -73,37 +73,37 @@ float Event::GetStickY() const
 
 bool Event::HasActiveButton() const
 {
-    return GetReleasedButtons() != ButtonEvent::None;
+    return GetReleasedButtons().Any();
 }
 
 bool Event::IsDpadUp() const
 {
-    return HasValue(GetReleasedButtons(), ButtonEvent::Up);
+    return GetReleasedButtons().Has(ButtonDpadUp);
 }
 
 bool Event::IsDpadDown() const
 {
-    return HasValue(GetReleasedButtons(), ButtonEvent::Down);
+    return GetReleasedButtons().Has(ButtonDpadDown);
 }
 
 bool Event::IsDpadLeft() const
 {
-    return HasValue(GetReleasedButtons(), ButtonEvent::Left);
+    return GetReleasedButtons().Has(ButtonDpadLeft);
 }
 
 bool Event::IsDpadRight() const
 {
-    return HasValue(GetReleasedButtons(), ButtonEvent::Right);
+    return GetReleasedButtons().Has(ButtonDpadRight);
 }
 
 bool Event::IsDpadSelect() const
 {
-    return HasValue(GetReleasedButtons(), ButtonEvent::Select);
+    return GetReleasedButtons().Has(ButtonSelect);
 }
 
 bool Event::IsStickCenter() const
 {
-    return HasValue(GetReleasedButtons(), ButtonEvent::Center);
+    return GetReleasedButtons().Has(ButtonCenter);
 }
 
 void Event::Log() const

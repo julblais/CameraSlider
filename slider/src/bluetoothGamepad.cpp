@@ -19,20 +19,20 @@ InputData BluetoothGamepad::ReadInput()
     const auto controller = *m_Controller;
     if (controller != nullptr && controller->hasData())
     {
-        auto buttons = ButtonEvent::None;
+        auto buttons = ButtonNone;
         const auto dpad = controller->dpad();
         if (dpad & DPAD_UP)
-            buttons |= ButtonEvent::Up;
+            buttons |= ButtonDpadUp;
         else if (dpad & DPAD_DOWN)
-            buttons |= ButtonEvent::Down;
+            buttons |= ButtonDpadDown;
         else if (dpad & DPAD_LEFT)
-            buttons |= ButtonEvent::Left;
+            buttons |= ButtonDpadLeft;
         else if (dpad & DPAD_RIGHT)
-            buttons |= ButtonEvent::Right;
+            buttons |= ButtonDpadRight;
         else if (controller->miscSelect())
-            buttons |= ButtonEvent::Select;
+            buttons |= ButtonSelect;
         else if (controller->miscStart())
-            buttons |= ButtonEvent::Center;
+            buttons |= ButtonCenter;
         m_LastInput = InputData(buttons, controller->axisRX(), controller->axisRY());
     }
     return m_LastInput;

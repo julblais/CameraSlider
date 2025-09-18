@@ -31,9 +31,9 @@ void Slider::Menu::Update()
 
 bool Slider::Menu::OnInputEvent(const Event& inputEvent)
 {
-    if (HasValue(inputEvent.GetPressedButtons(), ButtonEvent::Select))
+    if (inputEvent.GetPressedButtons().Has(ButtonSelect))
         m_ShowHideTimer.Start(m_Delay);
-    else if (HasValue(inputEvent.GetReleasedButtons(), ButtonEvent::Select))
+    else if (inputEvent.GetReleasedButtons().Has(ButtonSelect))
         m_ShowHideTimer.Stop();
 
     if (m_MenuSystem.IsShown())

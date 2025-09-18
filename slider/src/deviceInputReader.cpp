@@ -37,19 +37,19 @@ IO::InputData DeviceInputReader::ReadInput()
     auto h = analogRead(m_Pins.joystickHorizontal);
     auto joystickSelection = digitalRead(m_Pins.joystickCenter) == LOW;
 
-    auto buttons = IO::ButtonEvent::None;
+    auto buttons = ButtonNone;
     if (left)
-        buttons |= IO::ButtonEvent::Left;
+        buttons |= ButtonDpadLeft;
     if (right)
-        buttons |= IO::ButtonEvent::Right;
+        buttons |= ButtonDpadRight;
     if (up)
-        buttons |= IO::ButtonEvent::Up;
+        buttons |= ButtonDpadUp;
     if (down)
-        buttons |= IO::ButtonEvent::Down;
+        buttons |= ButtonDpadDown;
     if (selection)
-        buttons |= IO::ButtonEvent::Select;
+        buttons |= ButtonSelect;
     if (joystickSelection)
-        buttons |= IO::ButtonEvent::Center;
+        buttons |= ButtonCenter;
 
     auto x = -Core::Remap((float)h, 0.0f, (float)JOYSTICK_RANGE_X, -1.0f, 1.0f);
     auto y = Core::Remap((float)v, 0.0f, (float)JOYSTICK_RANGE_Y, -1.0f, 1.0f);
