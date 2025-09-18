@@ -4,7 +4,7 @@
 #include "core/eventSource.h"
 #include "memory"
 #include "Print.h"
-#include "core/utils/enumWrapper.h"
+#include "core/utils/enumFlagsWrapper.h"
 
 #define BUTTON_EVENT_COUNT 6
 
@@ -21,7 +21,7 @@ namespace IO
         Center = 1 << 5
     };
 
-    using ButtonEvent = Core::EnumWrapper<ButtonEventFlags>;
+    using ButtonEvent = Core::EnumFlagsWrapper<ButtonEventFlags>;
 
     constexpr auto ButtonNone = ButtonEvent(ButtonEventFlags::None);
     constexpr auto ButtonDpadUp = ButtonEvent(ButtonEventFlags::Up);
