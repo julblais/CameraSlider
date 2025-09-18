@@ -17,12 +17,6 @@ namespace Core
         using underlying_type = typename std::underlying_type<T>::type;
 
         template<typename T, is_type_enum<T> = true>
-        constexpr bool HasValue(T current, T value)
-        {
-            return (current & value) == value;
-        }
-
-        template<typename T, is_type_enum<T> = true>
         constexpr T operator&(T lhs, T rhs)
         {
             return static_cast<T>(
@@ -53,13 +47,48 @@ namespace Core
         }
 
         template<typename T, is_type_enum<T> = true>
-        constexpr T& operator|=(T& lhs, T rhs) { return lhs = lhs | rhs; }
+        constexpr T& operator|=(T& lhs, T rhs)
+        {
+            return lhs = lhs | rhs;
+        }
 
         template<typename T, is_type_enum<T> = true>
-        constexpr T& operator&=(T& lhs, T rhs) { return lhs = lhs & rhs; }
+        constexpr T& operator&=(T& lhs, T rhs)
+        {
+            return lhs = lhs & rhs;
+        }
 
         template<typename T, is_type_enum<T> = true>
-        constexpr T& operator^=(T& lhs, T rhs) { return lhs = lhs ^ rhs; }
+        constexpr T& operator^=(T& lhs, T rhs)
+        {
+            return lhs = lhs ^ rhs;
+        }
+
+        template <typename T, is_type_enum<T> = true>
+        constexpr bool HasValue(T current, T value)
+        {
+            return (current & value) == value;
+        }
+
+        template<typename T>
+        auto GetPreviousValue(T enumValue) -> decltype(T::COUNT)
+        {
+            const auto val = static_cast<char>(enumValue) - 1;
+            const auto count = static_cast<char>(T::COUNT);
+            if (val < 0)
+                return static_cast<T>(count - 1);
+            return static_cast<T>(val);
+        }
+
+        template<typename T>
+        auto GetNextValue(T enumValue) -> decltype(T::COUNT)
+        {
+            const auto val = static_cast<char>(enumValue) + 1;
+            const auto count = static_cast<char>(T::COUNT);
+            if (val >= count)
+                return static_cast<T>(0);
+            return static_cast<T>(val);
+        }
     }
 }
 

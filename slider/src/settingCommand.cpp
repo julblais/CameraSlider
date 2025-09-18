@@ -1,6 +1,6 @@
 #include "settingCommand.h"
 #include "settings.h"
-#include "core/utils/mathUtils.h"
+#include "core/utils/enumUtils.h"
 
 using namespace Core;
 using namespace Slider;
@@ -46,18 +46,18 @@ void MaxSpeedCommand::Invoke(const MenuCommandButton command)
 {
     const auto speed = Settings::GetInstance().GetSpeed();
     if (command == ButtonLeft)
-        Settings::GetInstance().SetSpeed(GetPreviousEnumValue(speed));
+        Settings::GetInstance().SetSpeed(Enums::GetPreviousValue(speed));
     else if (command == ButtonRight)
-        Settings::GetInstance().SetSpeed(GetNextEnumValue(speed));
+        Settings::GetInstance().SetSpeed(Enums::GetNextValue(speed));
 }
 
 void SpeedCurveCommand::Invoke(const MenuCommandButton command)
 {
     const auto curve = Settings::GetInstance().GetCurve();
     if (command == ButtonLeft)
-        Settings::GetInstance().SetCurve(GetPreviousEnumValue(curve));
+        Settings::GetInstance().SetCurve(Enums::GetPreviousValue(curve));
     else if (command == ButtonRight)
-        Settings::GetInstance().SetCurve(GetNextEnumValue(curve));
+        Settings::GetInstance().SetCurve(Enums::GetNextValue(curve));
 }
 
 void SpeedCurveCommand::Print(Display* display) const
