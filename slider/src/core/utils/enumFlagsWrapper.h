@@ -8,10 +8,7 @@ namespace Core
     template <typename E, IsTypeEnum<E> = true>
     struct EnumFlagsWrapper
     {
-        constexpr EnumFlagsWrapper() noexcept
-            : m_Value(0) {}
-
-        constexpr EnumFlagsWrapper(E value) noexcept
+        constexpr EnumFlagsWrapper(E value = E()) noexcept
             : m_Value(value) {}
 
         constexpr bool Has(EnumFlagsWrapper flag) const noexcept { return HasValue(m_Value, flag.m_Value); }
@@ -28,19 +25,19 @@ namespace Core
 
         EnumFlagsWrapper& operator|=(EnumFlagsWrapper rhs) noexcept
         {
-            m_Value = m_Value | rhs.m_Value;
+            m_Value |= rhs.m_Value;
             return *this;
         }
 
         EnumFlagsWrapper& operator&=(EnumFlagsWrapper rhs) noexcept
         {
-            m_Value = m_Value & rhs.m_Value;
+            m_Value &= rhs.m_Value;
             return *this;
         }
 
         EnumFlagsWrapper& operator^=(EnumFlagsWrapper rhs) noexcept
         {
-            m_Value = m_Value ^ rhs.m_Value;
+            m_Value ^= rhs.m_Value;
             return *this;
         }
 

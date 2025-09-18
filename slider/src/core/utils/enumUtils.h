@@ -62,8 +62,8 @@ namespace Core
     template <typename T>
     auto GetPreviousEnumValue(T enumValue) -> decltype(T::COUNT)
     {
-        const auto val = static_cast<char>(enumValue) - 1;
-        const auto count = static_cast<char>(T::COUNT);
+        const auto val = static_cast<UnderlyingType<T>>(enumValue) - 1;
+        const auto count = static_cast<UnderlyingType<T>>(T::COUNT);
         if (val < 0)
             return static_cast<T>(count - 1);
         return static_cast<T>(val);
@@ -72,8 +72,8 @@ namespace Core
     template <typename T>
     auto GetNextEnumValue(T enumValue) -> decltype(T::COUNT)
     {
-        const auto val = static_cast<char>(enumValue) + 1;
-        const auto count = static_cast<char>(T::COUNT);
+        const auto val = static_cast<UnderlyingType<T>>(enumValue) + 1;
+        const auto count = static_cast<UnderlyingType<T>>(T::COUNT);
         if (val >= count)
             return static_cast<T>(0);
         return static_cast<T>(val);
