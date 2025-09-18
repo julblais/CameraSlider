@@ -17,6 +17,15 @@ namespace Core
 
     template<typename T>
     struct IsTypeComplete<T, std::void_t<decltype(sizeof(T))> > : std::true_type {};
+
+    template <bool B, class T = void>
+    using EnableIf = typename std::enable_if<B, T>::type;
+
+    template <typename TEnum>
+    using IsTypeEnum = EnableIf<std::is_enum<TEnum>::value, bool>;
+
+    template <typename T>
+    using UnderlyingType = typename std::underlying_type<T>::type;
 }
 
 #endif
