@@ -123,8 +123,7 @@ void Event::Log() const
 size_t Event::printTo(Print& p) const
 {
     size_t n = 0;
-    auto pressedb = GetPressedButtons();
-    auto pressed = ToString(GetPressedButtons());
+    const auto pressed = ToString(GetPressedButtons());
     n += p.print("Btns:");
     n += p.println(pressed.get());
     n += p.print("(");
