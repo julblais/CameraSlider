@@ -1,10 +1,8 @@
 #include "event.h"
 #include "core/debug.h"
-#include "core/utils/enumUtils.h"
 #include <memory>
 
 using namespace IO;
-using namespace Core::Enums;
 
 std::unique_ptr<char[]> IO::ToString(const ButtonEvent button)
 {

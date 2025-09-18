@@ -2,7 +2,6 @@
 
 #if !IS_SIMULATOR
 
-#include "core/utils/enumUtils.h"
 #include <Bluepad32.h>
 #include "core/debug.h"
 #include <cstring>
@@ -11,7 +10,6 @@
 using namespace Bt;
 using namespace Core;
 using namespace IO;
-using namespace Core::Enums;
 
 BluetoothGamepad::BluetoothGamepad(Controller** controller)
     : m_Controller(controller) {}

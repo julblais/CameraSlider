@@ -2,14 +2,12 @@
 
 #include "core/debug.h"
 #include "core/display.h"
-#include "core/utils/enumUtils.h"
 
 #define MENU_INTRO_DELAY_MS 1500
 #define MENU_INTRO_MSG "   -- Menu --"
 
 using namespace Core;
 using namespace IO;
-using namespace Core::Enums;
 
 Slider::Menu::Menu(Display* display, const int delay)
     : m_Display(display),

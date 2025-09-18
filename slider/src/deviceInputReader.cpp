@@ -1,10 +1,9 @@
 #include "deviceInputReader.h"
 #include "core/debug.h"
 #include "core/utils/mathUtils.h"
-#include "core/utils/enumUtils.h"
 
 using namespace Hardware;
-using namespace Core::Enums;
+using namespace IO;
 
 constexpr auto JOYSTICK_RANGE_X = 4096;
 constexpr auto JOYSTICK_RANGE_Y = 4096;

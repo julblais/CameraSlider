@@ -1,8 +1,6 @@
 #include "eventDispatcher.h"
-#include "core/utils/enumUtils.h"
 
 using namespace IO;
-using namespace Core::Enums;
 
 InputData Merge(const InputData& a, const InputData& b)
 {

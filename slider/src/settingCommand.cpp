@@ -46,18 +46,18 @@ void MaxSpeedCommand::Invoke(const MenuCommandButton command)
 {
     const auto speed = Settings::GetInstance().GetSpeed();
     if (command == ButtonLeft)
-        Settings::GetInstance().SetSpeed(Enums::GetPreviousValue(speed));
+        Settings::GetInstance().SetSpeed(GetPreviousEnumValue(speed));
     else if (command == ButtonRight)
-        Settings::GetInstance().SetSpeed(Enums::GetNextValue(speed));
+        Settings::GetInstance().SetSpeed(GetNextEnumValue(speed));
 }
 
 void SpeedCurveCommand::Invoke(const MenuCommandButton command)
 {
     const auto curve = Settings::GetInstance().GetCurve();
     if (command == ButtonLeft)
-        Settings::GetInstance().SetCurve(Enums::GetPreviousValue(curve));
+        Settings::GetInstance().SetCurve(GetPreviousEnumValue(curve));
     else if (command == ButtonRight)
-        Settings::GetInstance().SetCurve(Enums::GetNextValue(curve));
+        Settings::GetInstance().SetCurve(GetNextEnumValue(curve));
 }
 
 void SpeedCurveCommand::Print(Display* display) const
