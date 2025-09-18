@@ -22,6 +22,7 @@ bool Slider::SliderApp::OnInputEvent(const Event& inputEvent)
 {
     if (inputEvent.HasChange())
     {
+        m_DisplayBuffer.Clear();
         m_DisplayBuffer.Print(inputEvent);
     }
     return false;
