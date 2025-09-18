@@ -28,7 +28,6 @@ void EventDispatcher::ProcessInput(const InputData& input)
 void EventDispatcher::Dispatch()
 {
     const auto event = Event(m_Last, m_Input);
-    event.Log();
     SendEvent(event);
 
     m_AggregateCount = 0;
