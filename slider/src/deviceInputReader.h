@@ -1,7 +1,7 @@
 #ifndef DEVICEINPUTREADER_H
 #define DEVICEINPUTREADER_H
 
-#include "input.h"
+#include "event.h"
 
 namespace Hardware
 {

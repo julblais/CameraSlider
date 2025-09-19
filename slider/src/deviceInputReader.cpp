@@ -3,6 +3,7 @@
 #include "core/utils/mathUtils.h"
 
 using namespace Hardware;
+using namespace IO;
 
 constexpr auto JOYSTICK_RANGE_X = 4096;
 constexpr auto JOYSTICK_RANGE_Y = 4096;
@@ -36,19 +37,19 @@ IO::InputData DeviceInputReader::ReadInput()
     auto h = analogRead(m_Pins.joystickHorizontal);
     auto joystickSelection = digitalRead(m_Pins.joystickCenter) == LOW;
 
-    auto buttons = IO::ButtonEvent::None;
+    auto buttons = ButtonNone;
     if (left)
-        buttons = IO::ButtonEvent::Left;
-    else if (right)
-        buttons = IO::ButtonEvent::Right;
-    else if (up)
-        buttons = IO::ButtonEvent::Up;
-    else if (down)
-        buttons = IO::ButtonEvent::Down;
-    else if (selection)
-        buttons = IO::ButtonEvent::Select;
-    else if (joystickSelection)
-        buttons = IO::ButtonEvent::Center;
+        buttons |= ButtonDpadLeft;
+    if (right)
+        buttons |= ButtonDpadRight;
+    if (up)
+        buttons |= ButtonDpadUp;
+    if (down)
+        buttons |= ButtonDpadDown;
+    if (selection)
+        buttons |= ButtonSelect;
+    if (joystickSelection)
+        buttons |= ButtonCenter;
 
     auto x = -Core::Remap((float)h, 0.0f, (float)JOYSTICK_RANGE_X, -1.0f, 1.0f);
     auto y = Core::Remap((float)v, 0.0f, (float)JOYSTICK_RANGE_Y, -1.0f, 1.0f);

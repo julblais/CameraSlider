@@ -12,7 +12,7 @@ using namespace IO;
 Slider::Menu::Menu(Display* display, const int delay)
     : m_Display(display),
       m_Delay(delay),
-      m_IsIntroFinished(false)
+      m_IsIntroFinished(true)
 {
     m_ShowHideTimer = Timer::Create("Selection menu", [this]() {
         OnSelectionLongPress();
@@ -29,41 +29,25 @@ void Slider::Menu::Update()
         OutputMenu();
 }
 
-bool Slider::Menu::OnInputEvent(const Event &inputEvent)
+bool Slider::Menu::OnInputEvent(const Event& inputEvent)
 {
-    const auto buttonChange = inputEvent.GetButtonChange();
-    if (buttonChange == ButtonReleased)
-    {
+    if (inputEvent.GetPressedButtons().Has(ButtonSelect))
+        m_ShowHideTimer.Start(m_Delay);
+    else if (inputEvent.GetReleasedButtons().Has(ButtonSelect))
         m_ShowHideTimer.Stop();
-    }
 
-    if (buttonChange == ButtonPressed)
+    if (m_MenuSystem.IsShown())
     {
-        auto button = inputEvent.GetButtonEvent();
-        if (button == DpadSelect)
-            m_ShowHideTimer.Start(m_Delay);
-        if (m_MenuSystem.IsShown())
-        {
-            switch (button)
-            {
-                case DpadLeft:
-                    m_MenuSystem.Left();
-                    break;
-                case DpadRight:
-                    m_MenuSystem.Right();
-                    break;
-                case DpadUp:
-                    m_MenuSystem.Up();
-                    break;
-                case DpadDown:
-                    m_MenuSystem.Down();
-                    break;
-                case DpadSelect:
-                    m_MenuSystem.Select();
-                default:
-                    break;
-            };
-        }
+        if (inputEvent.IsDpadLeft())
+            m_MenuSystem.Left();
+        if (inputEvent.IsDpadRight())
+            m_MenuSystem.Right();
+        if (inputEvent.IsDpadUp())
+            m_MenuSystem.Up();
+        if (inputEvent.IsDpadDown())
+            m_MenuSystem.Down();
+        if (inputEvent.IsDpadSelect())
+            m_MenuSystem.Select();
     }
 
     return !m_MenuSystem.IsHidden() || !m_IsIntroFinished;

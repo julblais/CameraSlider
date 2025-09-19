@@ -1,73 +1,90 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 
-#include "input.h"
 #include "core/eventSource.h"
+#include "memory"
+#include "Print.h"
+#include "core/utils/enumFlagsWrapper.h"
+
+#define BUTTON_EVENT_COUNT 6
 
 namespace IO
 {
-    struct Event
+    enum class ButtonEventFlags
+    {
+        None = 0,
+        Up = 1 << 0,
+        Down = 1 << 1,
+        Left = 1 << 2,
+        Right = 1 << 3,
+        Select = 1 << 4,
+        Center = 1 << 5
+    };
+
+    using ButtonEvent = Core::EnumFlagsWrapper<ButtonEventFlags>;
+
+    constexpr auto ButtonNone = ButtonEvent(ButtonEventFlags::None);
+    constexpr auto ButtonDpadUp = ButtonEvent(ButtonEventFlags::Up);
+    constexpr auto ButtonDpadDown = ButtonEvent(ButtonEventFlags::Down);
+    constexpr auto ButtonDpadLeft = ButtonEvent(ButtonEventFlags::Left);
+    constexpr auto ButtonDpadRight = ButtonEvent(ButtonEventFlags::Right);
+    constexpr auto ButtonCenter = ButtonEvent(ButtonEventFlags::Center);
+    constexpr auto ButtonSelect = ButtonEvent(ButtonEventFlags::Select);
+
+    std::unique_ptr<char[]> ToString(const ButtonEvent button);
+
+    struct InputData
+    {
+        constexpr InputData() :
+            InputData(ButtonNone, 0.0f, 0.0f) {}
+
+        constexpr InputData(const ButtonEvent buttons) :
+            InputData(buttons, 0.0f, 0.0f) {}
+
+        constexpr InputData(const float x, const float y) :
+            InputData(ButtonNone, x, y) {}
+
+        constexpr InputData(const ButtonEvent buttons, const float x, const float y) :
+            buttons(buttons),
+            x(x),
+            y(y) {}
+
+        ButtonEvent buttons;
+        float x;
+        float y;
+    };
+
+    struct Event : Printable
     {
         Event();
         Event(const Event& previous, const InputData& input);
+        Event(const InputData& previous, const InputData& input);
 
-        bool operator==(const Event& rhs) const;
-        bool operator!=(const Event& rhs) const;
+        bool HasButtonChange() const;
+        bool HasStickMoved() const;
+        bool HasChange() const;
 
-        bool HasButtonChange() const
-        {
-            return button != None || diff.change != ButtonNone;
-        }
+        ButtonEvent GetPressedButtons() const;
+        ButtonEvent GetReleasedButtons() const;
+        float GetStickX() const;
+        float GetStickY() const;
 
-        bool HasStickMoved() const { return diff.stickMoved; }
-        bool HasChange() const { return HasButtonChange() || HasStickMoved(); }
+        bool HasActiveButton() const;
+        bool IsDpadUp() const;
+        bool IsDpadDown() const;
+        bool IsDpadLeft() const;
+        bool IsDpadRight() const;
+        bool IsDpadSelect() const;
+        bool IsStickCenter() const;
 
-        ButtonEvent GetButtonEvent() const { return button; }
-        bool Is(const ButtonEvent evt) const { return evt == button; }
-        bool IsDpadUp() const { return button == DpadUp; }
-        bool IsDpadDown() const { return button == DpadDown; }
-        bool IsDpadLeft() const { return button == DpadLeft; }
-        bool IsDpadRight() const { return button == DpadRight; }
-        bool IsDpadSelect() const { return button == DpadSelect; }
-        bool IsStickCenter() const { return button == StickCenter; }
+        void Log() const;
 
-        float GetStickX() const { return joystickX; }
-        float GetStickY() const { return joystickY; }
-
-        ButtonChange GetButtonChange() const { return diff.change; }
-        ButtonEvent GetButtonPressed() const { return diff.pressed; }
-        ButtonEvent GetButtonReleased() const { return diff.released; }
+    protected:
+        size_t printTo(Print& p) const override;
 
     private:
-        struct Diff
-        {
-            Diff();
-            Diff(const ButtonEvent pressed, const ButtonEvent released, const bool stickMoved);
-            ButtonEvent released;
-            ButtonEvent pressed;
-            ButtonChange change;
-            bool stickMoved;
-        };
-
-        static Diff CreateDiff(const Event& previous, const InputData& input);
-
-        ButtonEvent button;
-        float joystickX;
-        float joystickY;
-        Diff diff;
-    };
-
-    class EventDispatcher : public Core::EventSource<const Event&>
-    {
-    public:
-        EventDispatcher();
-        void ProcessInput(const InputData& input);
-        void Dispatch();
-
-    private:
-        InputData m_Input;
-        Event m_LastEvent;
-        unsigned int m_AggregateCount;
+        const InputData m_Previous;
+        const InputData m_Current;
     };
 }
 

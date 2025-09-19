@@ -15,8 +15,7 @@ namespace IO
         constexpr static auto LCD_LINE_LENGTH = 16;
         constexpr static auto LCD_NUM_LINES = 2;
 
-        using ConstIterator =
-        std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES>::const_iterator;
+        using ConstIterator = std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES>::const_iterator;
 
     public:
         DisplayBuffer();

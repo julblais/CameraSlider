@@ -1,140 +1,133 @@
 #include "event.h"
 #include "core/debug.h"
-#include "core/utils/enumUtils.h"
+#include <memory>
 
 using namespace IO;
-using namespace Core::Enums;
 
-Event::Diff::Diff() :
-    Diff(None, None, false) {}
-
-Event::Diff::Diff(const ButtonEvent pressed, const ButtonEvent released, const bool stickMoved) :
-    released(released),
-    pressed(pressed),
-    change(ButtonChange::None),
-    stickMoved(stickMoved)
+std::unique_ptr<char[]> IO::ToString(const ButtonEvent button)
 {
-    if (pressed != None)
-        change |= ButtonChange::Pressed;
-    if (released != None)
-        change |= ButtonChange::Released;
-}
+    std::unique_ptr<char[]> buffer(new char[BUTTON_EVENT_COUNT + 1]);
+    int index = 0;
+    if (button.Has(ButtonDpadUp))
+        buffer[index++] = 'U';
+    if (button.Has(ButtonDpadDown))
+        buffer[index++] = 'D';
+    if (button.Has(ButtonDpadLeft))
+        buffer[index++] = 'L';
+    if (button.Has(ButtonDpadRight))
+        buffer[index++] = 'R';
+    if (button.Has(ButtonSelect))
+        buffer[index++] = 'S';
+    if (button.Has(ButtonCenter))
+        buffer[index++] = 'C';
 
-Event::Diff Event::CreateDiff(const Event& previous, const InputData& input)
-{
-    ButtonEvent pressed = None;
-    ButtonEvent released = None;
-
-    if (previous.IsDpadDown() && !input.IsDown())
-        released = DpadDown;
-    else if (previous.IsDpadUp() && !input.IsUp())
-        released = DpadUp;
-    else if (previous.IsDpadLeft() && !input.IsLeft())
-        released = DpadLeft;
-    else if (previous.IsDpadRight() && !input.IsRight())
-        released = DpadRight;
-    else if (previous.IsDpadSelect() && !input.IsSelect())
-        released = DpadSelect;
-    else if (!previous.IsDpadDown() && input.IsDown())
-        pressed = DpadDown;
-    else if (!previous.IsDpadUp() && input.IsUp())
-        pressed = DpadUp;
-    else if (!previous.IsDpadLeft() && input.IsLeft())
-        pressed = DpadLeft;
-    else if (!previous.IsDpadRight() && input.IsRight())
-        pressed = DpadRight;
-    else if (!previous.IsDpadSelect() && input.IsSelect())
-        pressed = DpadSelect;
-    else if (previous.IsStickCenter() && !input.IsCenterButton())
-        released = StickCenter;
-    else if (!previous.IsStickCenter() && input.IsCenterButton())
-        pressed = StickCenter;
-
-    const bool stickMoved = previous.GetStickX() != input.x || previous.GetStickY() != input.y;
-    return Diff(pressed, released, stickMoved);
+    buffer[index] = '\0';
+    return buffer;
 }
 
 Event::Event() :
-    button(None),
-    joystickX(0),
-    joystickY(0),
-    diff() {}
+    m_Previous(ButtonNone),
+    m_Current(ButtonNone) {}
+
+Event::Event(const InputData& previous, const InputData& input) :
+    m_Previous(previous),
+    m_Current(input) {}
 
 Event::Event(const Event& previous, const InputData& input) :
-    button(input.button),
-    joystickX(input.x),
-    joystickY(input.y)
+    Event(previous.m_Current, input) {}
+
+bool Event::HasButtonChange() const
 {
-    diff = CreateDiff(previous, input);
+    return (m_Previous.buttons | m_Current.buttons).Any();
 }
 
-bool Event::operator==(const Event& rhs) const
+bool Event::HasStickMoved() const
 {
-    return diff.released == rhs.diff.released &&
-           diff.pressed == rhs.diff.pressed &&
-           diff.change == rhs.diff.change &&
-           diff.stickMoved == rhs.diff.stickMoved &&
-           button == rhs.button;
+    return m_Previous.x != m_Current.x || m_Previous.y != m_Current.y;
 }
 
-bool Event::operator!=(const Event& rhs) const
+bool Event::HasChange() const
 {
-    return !(*this == rhs);
+    return HasButtonChange() || HasStickMoved();
 }
 
-void Merge(const InputData& input, InputData& destination)
+ButtonEvent Event::GetPressedButtons() const
 {
-    //last input wins
-    if (input.IsActive())
-        destination.button = input.button;
-    if (input.x != 0 || input.y != 0)
+    return m_Current.buttons;
+}
+
+ButtonEvent Event::GetReleasedButtons() const
+{
+    return m_Previous.buttons & ~m_Current.buttons;
+}
+
+float Event::GetStickX() const
+{
+    return m_Current.x;
+}
+
+float Event::GetStickY() const
+{
+    return m_Current.y;
+}
+
+bool Event::HasActiveButton() const
+{
+    return GetReleasedButtons().Any();
+}
+
+bool Event::IsDpadUp() const
+{
+    return GetReleasedButtons().Has(ButtonDpadUp);
+}
+
+bool Event::IsDpadDown() const
+{
+    return GetReleasedButtons().Has(ButtonDpadDown);
+}
+
+bool Event::IsDpadLeft() const
+{
+    return GetReleasedButtons().Has(ButtonDpadLeft);
+}
+
+bool Event::IsDpadRight() const
+{
+    return GetReleasedButtons().Has(ButtonDpadRight);
+}
+
+bool Event::IsDpadSelect() const
+{
+    return GetReleasedButtons().Has(ButtonSelect);
+}
+
+bool Event::IsStickCenter() const
+{
+    return GetReleasedButtons().Has(ButtonCenter);
+}
+
+void Event::Log() const
+{
+    if (HasButtonChange())
     {
-        destination.x = input.x;
-        destination.y = input.y;
+        LogInfo("Event buttons:\t", ToString(GetPressedButtons()).get());
+    }
+    if (HasStickMoved())
+    {
+        LogInfo("Event joystick\t", GetStickX(), "\t", GetStickY());
     }
 }
 
-EventDispatcher::EventDispatcher() :
-    m_AggregateCount(0) {}
-
-void EventDispatcher::ProcessInput(const InputData& input)
+size_t Event::printTo(Print& p) const
 {
-    if (m_AggregateCount == 0)
-    {
-        m_Input = input;
-        m_AggregateCount++;
-    }
-    else
-        Merge(input, m_Input);
-}
-
-#if LOG_LEVEL >= LOG_LEVEL_DEBUG
-void DebugPrint(const Event& lastEvent, const Event& event)
-{
-    if (lastEvent == event)
-        return;
-    if (event.HasButtonChange())
-    {
-        LogDebug("Event button:\t", IO::ToString(event.GetButtonEvent()),
-                 "\tpressed: ", IO::ToString(event.GetButtonPressed()),
-                 "\treleased: ", IO::ToString(event.GetButtonReleased()));
-    }
-    if (event.HasStickMoved())
-    {
-        LogDebug("Event joystick\t", event.GetStickX(), "\t", event.GetStickY());
-    }
-};
-#else
-void DebugPrint(const Event& lastEvent, const Event& event) {}
-#endif
-
-void EventDispatcher::Dispatch()
-{
-    auto event = Event(m_LastEvent, m_Input);
-    DebugPrint(m_LastEvent, event);
-
-    SendEvent(event);
-    m_AggregateCount = 0;
-    m_Input = InputData();
-    m_LastEvent = event;
+    size_t n = 0;
+    const auto pressed = ToString(GetPressedButtons());
+    n += p.print("Btns:");
+    n += p.println(pressed.get());
+    n += p.print("(");
+    n += p.print(GetStickX());
+    n += p.print(",");
+    n += p.print(GetStickY());
+    n += p.print(")");
+    return n;
 }

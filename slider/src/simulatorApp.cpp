@@ -1,27 +1,38 @@
 #if IS_SIMULATOR
 
 #include "simulatorApp.h"
-#include "core/serialDisplay.h"
 #include "deviceInputReader.h"
 #include "core/perf.h"
 #include "menu.h"
 #include "stepper.h"
 #include "autoInput.h"
 #include "settingCommand.h"
+#include "lcd.h"
 
 using namespace IO;
 using namespace Core;
 using namespace Hardware;
 
 Slider::SimulatorApp::SimulatorApp(const AppConfig& config) :
-    m_Config(config) {}
+    m_Config(config)
+{}
+
+bool Slider::SimulatorApp::OnInputEvent(const Event& inputEvent)
+{
+    if (inputEvent.HasChange())
+    {
+        m_DisplayBuffer.Clear();
+        m_DisplayBuffer.Print(inputEvent);
+    }
+    return false;
+}
 
 void Slider::SimulatorApp::Setup()
 {
-    m_Display = std::unique_ptr<Display>(new SerialDisplay());
+    m_Display = std::unique_ptr<Display>(new Hardware::LCD(m_Config.LcdAddress));
     m_DisplayBuffer.Setup(m_Display.get());
 
-    InputPins pins{
+    InputPins pins {
         .dpadUp = m_Config.DpadUpPin,
         .dpadDown = m_Config.DpadDownPin,
         .dpadLeft = m_Config.DpadLeftPin,
@@ -41,7 +52,7 @@ void Slider::SimulatorApp::Setup()
                                                                Instruction::DpadLeft(),
                                                                Instruction::DpadSelect(2500),
                                                                Instruction::Joystick(0.5f, 0.4f, 5000)
-                                                           }));
+        }));
 
     AddComponent<TimerComponent>();
     const auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
@@ -53,15 +64,17 @@ void Slider::SimulatorApp::Setup()
 
     m_InputDispatcher.AddListener(menu);
     m_InputDispatcher.AddListener(stepper);
+    m_InputDispatcher.AddListener(this);
 
-    m_DisplayBuffer.PrintLine(0, "Salut Guillaume!");
+    m_DisplayBuffer.Print(Event());
 }
 
 void Slider::SimulatorApp::Update()
 {
-    const auto input = m_AutoInput->ReadInput();
-    m_InputDispatcher.ProcessInput(input);
-    /*-> ProcessInput(message_from_controller) */
+    const auto localInput = m_LocalInput->ReadInput();
+    const auto autoInput = m_AutoInput->ReadInput();
+    m_InputDispatcher.ProcessInput(localInput);
+    //m_InputDispatcher.ProcessInput(autoInput);
     m_InputDispatcher.Dispatch();
 
     UpdateComponents();

@@ -1,6 +1,6 @@
 #include "settingCommand.h"
 #include "settings.h"
-#include "core/utils/mathUtils.h"
+#include "core/utils/enumUtils.h"
 
 using namespace Core;
 using namespace Slider;
