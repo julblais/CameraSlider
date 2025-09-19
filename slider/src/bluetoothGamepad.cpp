@@ -62,25 +62,28 @@ BluetoothGamepad::BluetoothGamepad(Controller** controller)
 InputData BluetoothGamepad::ReadInput()
 {
     const auto controller = *m_Controller;
-    if (controller == nullptr || !controller->hasData())
-        return m_LastInput;
 
-    //change to function pointer (no string comparison needed).
-    const auto controllerName = controller->getModelName();
-    if (controllerName.equals(CONTROLLER_MODEL_WII))
-        ReadWiiInput(*controller);
-    else if (controllerName.equals(CONTROLLER_MODEL_PS4))
-        ReadDefaultInput(*controller);
-    else if (controllerName.equals(CONTROLLER_MODEL_PS5))
-        return ReadDefaultInput(*controller);
-    else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_PRO))
-        return ReadDefaultInput(*controller);
-    else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_JOY_LEFT))
-        return ReadDefaultInput(*controller);
-    else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_JOY_RIGHT))
-        return ReadDefaultInput(*controller);
-    else
-        return ReadDefaultInput(*controller);
+    if (controller != nullptr && controller->hasData())
+    {
+        //change to function pointer (no string comparison needed)
+        const auto controllerName = controller->getModelName();
+        if (controllerName.equals(CONTROLLER_MODEL_WII))
+            m_LastInput = ReadWiiInput(*controller);
+        else if (controllerName.equals(CONTROLLER_MODEL_PS4))
+            m_LastInput = ReadDefaultInput(*controller);
+        else if (controllerName.equals(CONTROLLER_MODEL_PS5))
+            m_LastInput = ReadDefaultInput(*controller);
+        else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_PRO))
+            m_LastInput = ReadDefaultInput(*controller);
+        else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_JOY_LEFT))
+            m_LastInput = ReadDefaultInput(*controller);
+        else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_JOY_RIGHT))
+            m_LastInput = ReadDefaultInput(*controller);
+        else
+            m_LastInput = ReadDefaultInput(*controller);
+    }
+
+    return m_LastInput;
 }
 
 bool BluetoothGamepad::IsConnected() const
@@ -99,13 +102,14 @@ std::unique_ptr<char[]> BluetoothGamepad::GetDescription() const
 {
     const auto controller = *m_Controller;
 
-    String modelName = "";
     if (controller != nullptr)
-        modelName = controller->getModelName();
-
-    std::unique_ptr<char[]> buffer(new char[modelName.length() + 1]);
-    std::strcpy(buffer.get(), modelName.c_str());
-    return buffer;
+    {
+        const auto modelName = controller->getModelName();
+        std::unique_ptr<char[]> buffer(new char[modelName.length() + 1]);
+        std::strcpy(buffer.get(), modelName.c_str());
+        return buffer;
+    }
+    return nullptr;
 }
 
 void BluetoothGamepad::SetPlayerLEDs(const uint8_t led)
