@@ -11,31 +11,76 @@ using namespace Bt;
 using namespace Core;
 using namespace IO;
 
+#define CONTROLLER_MODEL_WII "Wii"
+#define CONTROLLER_MODEL_PS4 "DualShock 4"
+#define CONTROLLER_MODEL_PS5 "DualSense"
+#define CONTROLLER_MODEL_SWITCH_PRO "Switch Pro"
+#define CONTROLLER_MODEL_SWITCH_JOY_LEFT "Switch JoyCon Left"
+#define CONTROLLER_MODEL_SWITCH_JOY_RIGHT "Switch JoyCon Right"
+
+InputData ReadWiiInput(const Controller& controller)
+{
+    auto buttons = ButtonNone;
+    const auto dpad = controller.dpad();
+    if (dpad & DPAD_UP)
+        buttons |= ButtonDpadUp;
+    else if (dpad & DPAD_DOWN)
+        buttons |= ButtonDpadDown;
+    else if (dpad & DPAD_LEFT)
+        buttons |= ButtonDpadLeft;
+    else if (dpad & DPAD_RIGHT)
+        buttons |= ButtonDpadRight;
+    else if (controller.miscSelect())
+        buttons |= ButtonSelect;
+    else if (controller.miscStart())
+        buttons |= ButtonCenter;
+    return InputData(buttons, controller.axisRX(), controller.axisRY());
+}
+
+InputData ReadDefaultInput(const Controller& controller)
+{
+    auto buttons = ButtonNone;
+    const auto dpad = controller.dpad();
+    if (dpad & DPAD_UP)
+        buttons |= ButtonDpadUp;
+    else if (dpad & DPAD_DOWN)
+        buttons |= ButtonDpadDown;
+    else if (dpad & DPAD_LEFT)
+        buttons |= ButtonDpadLeft;
+    else if (dpad & DPAD_RIGHT)
+        buttons |= ButtonDpadRight;
+    else if (controller.miscSelect())
+        buttons |= ButtonSelect;
+    else if (controller.miscStart())
+        buttons |= ButtonCenter;
+    return InputData(buttons, controller.axisX(), controller.axisY());
+}
+
 BluetoothGamepad::BluetoothGamepad(Controller** controller)
     : m_Controller(controller) {}
 
 InputData BluetoothGamepad::ReadInput()
 {
     const auto controller = *m_Controller;
-    if (controller != nullptr && controller->hasData())
-    {
-        auto buttons = ButtonNone;
-        const auto dpad = controller->dpad();
-        if (dpad & DPAD_UP)
-            buttons |= ButtonDpadUp;
-        else if (dpad & DPAD_DOWN)
-            buttons |= ButtonDpadDown;
-        else if (dpad & DPAD_LEFT)
-            buttons |= ButtonDpadLeft;
-        else if (dpad & DPAD_RIGHT)
-            buttons |= ButtonDpadRight;
-        else if (controller->miscSelect())
-            buttons |= ButtonSelect;
-        else if (controller->miscStart())
-            buttons |= ButtonCenter;
-        m_LastInput = InputData(buttons, controller->axisRX(), controller->axisRY());
-    }
-    return m_LastInput;
+    if (controller == nullptr || !controller->hasData())
+        return m_LastInput;
+
+    //change to function pointer (no string comparison needed).
+    const auto controllerName = controller->getModelName();
+    if (controllerName.equals(CONTROLLER_MODEL_WII))
+        ReadWiiInput(*controller);
+    else if (controllerName.equals(CONTROLLER_MODEL_PS4))
+        ReadDefaultInput(*controller);
+    else if (controllerName.equals(CONTROLLER_MODEL_PS5))
+        return ReadDefaultInput(*controller);
+    else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_PRO))
+        return ReadDefaultInput(*controller);
+    else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_JOY_LEFT))
+        return ReadDefaultInput(*controller);
+    else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_JOY_RIGHT))
+        return ReadDefaultInput(*controller);
+    else
+        return ReadDefaultInput(*controller);
 }
 
 bool BluetoothGamepad::IsConnected() const
