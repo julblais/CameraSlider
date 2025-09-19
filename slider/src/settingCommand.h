@@ -24,11 +24,11 @@ namespace Slider
         void Invoke(const Core::MenuCommandButton command) override;
     };
 
-    class GamepadPairCommand : public Core::MenuCommand
+    class GamepadNameCommand : public Core::MenuCommand
     {
-        GamepadPairCommand(Bt::BluetoothComponent* bluetooth);
-
     public:
+        GamepadNameCommand(Bt::BluetoothComponent* bluetooth);
+
         void Print(Core::Display* display) const override;
         void Invoke(const Core::MenuCommandButton command) override;
 

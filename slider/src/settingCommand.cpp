@@ -68,16 +68,20 @@ void SpeedCurveCommand::Print(Display* display) const
     PrintDescription(display, desc);
 }
 
-GamepadPairCommand::GamepadPairCommand(Bt::BluetoothComponent* bluetooth)
+GamepadNameCommand::GamepadNameCommand(Bt::BluetoothComponent* bluetooth)
     : m_Bluetooth(bluetooth) {}
 
-void GamepadPairCommand::Print(Display* display) const
+void GamepadNameCommand::Print(Display* display) const
 {
-    PrintTitle(display, "Gamepad pair");
-    PrintDescription(display, "None");
+    const auto name = m_Bluetooth->GetGamepad()->GetDescription();
+    PrintTitle(display, "Manette");
+    if (name.get() == nullptr)
+        PrintDescription(display, "Aucune", false);
+    else
+        PrintDescription(display, name.get(), false);
 }
 
-void GamepadPairCommand::Invoke(const MenuCommandButton command)
+void GamepadNameCommand::Invoke(const MenuCommandButton command)
 {
     if (m_Bluetooth != nullptr)
     {

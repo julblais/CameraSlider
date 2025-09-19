@@ -60,7 +60,7 @@ void Slider::SliderApp::Setup()
 
     menu->AddCommand(new MaxSpeedCommand());
     menu->AddCommand(new SpeedCurveCommand());
-    menu->AddCommand(new GamepadPairCommand());
+    menu->AddCommand(new GamepadNameCommand(bluetooth));
 
     m_DisplayBuffer.Print(Event());
 }
