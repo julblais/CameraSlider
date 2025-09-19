@@ -24,15 +24,15 @@ InputData ReadWiiInput(const Controller& controller)
     const auto dpad = controller.dpad();
     if (dpad & DPAD_UP)
         buttons |= ButtonDpadUp;
-    else if (dpad & DPAD_DOWN)
+    if (dpad & DPAD_DOWN)
         buttons |= ButtonDpadDown;
-    else if (dpad & DPAD_LEFT)
+    if (dpad & DPAD_LEFT)
         buttons |= ButtonDpadLeft;
-    else if (dpad & DPAD_RIGHT)
+    if (dpad & DPAD_RIGHT)
         buttons |= ButtonDpadRight;
-    else if (controller.miscSelect())
+    if (controller.miscSelect())
         buttons |= ButtonSelect;
-    else if (controller.miscStart())
+    if (controller.miscStart())
         buttons |= ButtonCenter;
     return InputData(buttons, controller.axisRX(), controller.axisRY());
 }
@@ -43,15 +43,15 @@ InputData ReadDefaultInput(const Controller& controller)
     const auto dpad = controller.dpad();
     if (dpad & DPAD_UP)
         buttons |= ButtonDpadUp;
-    else if (dpad & DPAD_DOWN)
+    if (dpad & DPAD_DOWN)
         buttons |= ButtonDpadDown;
-    else if (dpad & DPAD_LEFT)
+    if (dpad & DPAD_LEFT)
         buttons |= ButtonDpadLeft;
-    else if (dpad & DPAD_RIGHT)
+    if (dpad & DPAD_RIGHT)
         buttons |= ButtonDpadRight;
-    else if (controller.miscSelect())
+    if (controller.miscSelect())
         buttons |= ButtonSelect;
-    else if (controller.miscStart())
+    if (controller.miscStart())
         buttons |= ButtonCenter;
     return InputData(buttons, controller.axisX(), controller.axisY());
 }
