@@ -8,6 +8,7 @@
 #include "menu.h"
 #include "stepper.h"
 #include "bluetoothComponent.h"
+#include "bluetoothCommands.h"
 #include "settingCommand.h"
 
 using namespace Core;
