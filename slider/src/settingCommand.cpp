@@ -1,6 +1,7 @@
 #include "settingCommand.h"
 #include "settings.h"
 #include "core/utils/enumUtils.h"
+#include "bluetoothComponent.h"
 
 using namespace Core;
 using namespace Slider;

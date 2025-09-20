@@ -4,13 +4,6 @@
 
 using namespace Core;
 
-constexpr const char* border = "\e[48;5;22m";
-constexpr const char* reset = "\e[0m";
-constexpr const char* format = "\e[1m\e[30m\e[48;5;112m";
-constexpr const char* goBackUp = "\r\e[4F";
-constexpr const char* hborder = "                    ";
-constexpr const char* vborder = "  ";
-
 SerialDisplay::SerialDisplay()
     : m_Timer(Timer::Create("SerialDisplay", [this]() { PrintToSerial(); })),
       m_Cursor(0)
@@ -56,6 +49,15 @@ void SerialDisplay::FillCurrentLine()
         m_Buffer[m_Cursor++] = ' ';
 }
 
+#ifdef USE_ADVANCED_SERIAL
+
+constexpr const char* border = "\e[48;5;22m";
+constexpr const char* reset = "\e[0m";
+constexpr const char* format = "\e[1m\e[30m\e[48;5;112m";
+constexpr const char* goBackUp = "\r\e[4F";
+constexpr const char* hborder = "                    ";
+constexpr const char* vborder = "  ";
+
 void PrintBorder(const char* text)
 {
     Serial.print(border);
@@ -69,6 +71,51 @@ void PrintBorderln(const char* text)
     Serial.println();
 }
 
+void WriteToDisplay(const uint8_t buffer[], const size_t length, const size_t lineLength)
+{
+    unsigned int count = 0;
+
+    PrintBorderln(hborder);
+    PrintBorder(vborder);
+    Serial.print(format);
+
+    for (int i = 0; i < length; i++)
+    {
+        if (count >= lineLength)
+        {
+            Serial.print(reset);
+            PrintBorderln(vborder);
+            PrintBorder(vborder);
+            Serial.print(format);
+            count = 0;
+        }
+        count++;
+        Serial.write(buffer[i]);
+    }
+
+    Serial.print(reset);
+    PrintBorderln(vborder);
+    PrintBorderln(hborder);
+    Serial.print(goBackUp);
+}
+#else
+void WriteToDisplay(const uint8_t buffer[], const size_t length, const size_t lineLength)
+{
+    unsigned int count = 0;
+    for (int i = 0; i < length; i++)
+    {
+        if (count >= lineLength)
+        {
+            Serial.println();
+            count = 0;
+        }
+        Serial.write(buffer[i]);
+        count++;
+    }
+    Serial.println();
+}
+#endif
+
 void SerialDisplay::PrintToSerial() const
 {
     const auto areEqual = std::equal(
@@ -76,30 +123,7 @@ void SerialDisplay::PrintToSerial() const
 
     if (!areEqual)
     {
-        unsigned int count = 0;
-
-        PrintBorderln(hborder);
-        PrintBorder(vborder);
-        Serial.print(format);
-
-        for (const auto it : m_Buffer)
-        {
-            if (count >= LCD_LINE_LENGTH)
-            {
-                Serial.print(reset);
-                PrintBorderln(vborder);
-                PrintBorder(vborder);
-                Serial.print(format);
-                count = 0;
-            }
-            count++;
-            Serial.write(it);
-        }
-        
-        Serial.print(reset);
-        PrintBorderln(vborder);
-        PrintBorderln(hborder);
-        Serial.print(goBackUp);
+        WriteToDisplay(m_Buffer.data(), m_Buffer.size(), LCD_LINE_LENGTH);
         std::copy(std::begin(m_Buffer), std::end(m_Buffer), std::begin(m_PreviousBuffer));
     }
 }

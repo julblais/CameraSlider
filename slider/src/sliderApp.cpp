@@ -8,6 +8,7 @@
 #include "menu.h"
 #include "stepper.h"
 #include "bluetoothComponent.h"
+#include "bluetoothCommands.h"
 #include "settingCommand.h"
 
 using namespace Core;
@@ -60,6 +61,7 @@ void Slider::SliderApp::Setup()
 
     menu->AddCommand(new MaxSpeedCommand());
     menu->AddCommand(new SpeedCurveCommand());
+    menu->AddCommand(new GamepadNameCommand(bluetooth));
 
     m_DisplayBuffer.Print(Event());
 }

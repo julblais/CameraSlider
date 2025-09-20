@@ -11,30 +11,78 @@ using namespace Bt;
 using namespace Core;
 using namespace IO;
 
+#define CONTROLLER_MODEL_WII "Wii"
+#define CONTROLLER_MODEL_PS4 "DualShock 4"
+#define CONTROLLER_MODEL_PS5 "DualSense"
+#define CONTROLLER_MODEL_SWITCH_PRO "Switch Pro"
+#define CONTROLLER_MODEL_SWITCH_JOY_LEFT "Switch JoyCon Left"
+#define CONTROLLER_MODEL_SWITCH_JOY_RIGHT "Switch JoyCon Right"
+
+InputData ReadWiiInput(const Controller& controller)
+{
+    auto buttons = ButtonNone;
+    const auto dpad = controller.dpad();
+    if (dpad & DPAD_UP)
+        buttons |= ButtonDpadUp;
+    if (dpad & DPAD_DOWN)
+        buttons |= ButtonDpadDown;
+    if (dpad & DPAD_LEFT)
+        buttons |= ButtonDpadLeft;
+    if (dpad & DPAD_RIGHT)
+        buttons |= ButtonDpadRight;
+    if (controller.miscSelect())
+        buttons |= ButtonSelect;
+    if (controller.miscStart())
+        buttons |= ButtonCenter;
+    return InputData(buttons, controller.axisRX(), controller.axisRY());
+}
+
+InputData ReadDefaultInput(const Controller& controller)
+{
+    auto buttons = ButtonNone;
+    const auto dpad = controller.dpad();
+    if (dpad & DPAD_UP)
+        buttons |= ButtonDpadUp;
+    if (dpad & DPAD_DOWN)
+        buttons |= ButtonDpadDown;
+    if (dpad & DPAD_LEFT)
+        buttons |= ButtonDpadLeft;
+    if (dpad & DPAD_RIGHT)
+        buttons |= ButtonDpadRight;
+    if (controller.miscSelect())
+        buttons |= ButtonSelect;
+    if (controller.miscStart())
+        buttons |= ButtonCenter;
+    return InputData(buttons, controller.axisX(), controller.axisY());
+}
+
 BluetoothGamepad::BluetoothGamepad(Controller** controller)
     : m_Controller(controller) {}
 
 InputData BluetoothGamepad::ReadInput()
 {
     const auto controller = *m_Controller;
+
     if (controller != nullptr && controller->hasData())
     {
-        auto buttons = ButtonNone;
-        const auto dpad = controller->dpad();
-        if (dpad & DPAD_UP)
-            buttons |= ButtonDpadUp;
-        else if (dpad & DPAD_DOWN)
-            buttons |= ButtonDpadDown;
-        else if (dpad & DPAD_LEFT)
-            buttons |= ButtonDpadLeft;
-        else if (dpad & DPAD_RIGHT)
-            buttons |= ButtonDpadRight;
-        else if (controller->miscSelect())
-            buttons |= ButtonSelect;
-        else if (controller->miscStart())
-            buttons |= ButtonCenter;
-        m_LastInput = InputData(buttons, controller->axisRX(), controller->axisRY());
+        //change to function pointer (no string comparison needed)
+        const auto controllerName = controller->getModelName();
+        if (controllerName.equals(CONTROLLER_MODEL_WII))
+            m_LastInput = ReadWiiInput(*controller);
+        else if (controllerName.equals(CONTROLLER_MODEL_PS4))
+            m_LastInput = ReadDefaultInput(*controller);
+        else if (controllerName.equals(CONTROLLER_MODEL_PS5))
+            m_LastInput = ReadDefaultInput(*controller);
+        else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_PRO))
+            m_LastInput = ReadDefaultInput(*controller);
+        else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_JOY_LEFT))
+            m_LastInput = ReadDefaultInput(*controller);
+        else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_JOY_RIGHT))
+            m_LastInput = ReadDefaultInput(*controller);
+        else
+            m_LastInput = ReadDefaultInput(*controller);
     }
+
     return m_LastInput;
 }
 
@@ -54,13 +102,14 @@ std::unique_ptr<char[]> BluetoothGamepad::GetDescription() const
 {
     const auto controller = *m_Controller;
 
-    String modelName = "";
     if (controller != nullptr)
-        modelName = controller->getModelName();
-
-    std::unique_ptr<char[]> buffer(new char[modelName.length() + 1]);
-    std::strcpy(buffer.get(), modelName.c_str());
-    return buffer;
+    {
+        const auto modelName = controller->getModelName();
+        std::unique_ptr<char[]> buffer(new char[modelName.length() + 1]);
+        std::strcpy(buffer.get(), modelName.c_str());
+        return buffer;
+    }
+    return nullptr;
 }
 
 void BluetoothGamepad::SetPlayerLEDs(const uint8_t led)
