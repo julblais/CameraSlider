@@ -1,6 +1,6 @@
 #include "perf.h"
 
-#ifdef LOG_PERFORMANCE
+#if LOG_PERFORMANCE
 
 #ifdef ARDUINO_ARCH_ESP32 
 #include "esp_timer.h"

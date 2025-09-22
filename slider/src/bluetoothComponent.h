@@ -3,18 +3,16 @@
 
 #if !IS_SIMULATOR
 
-#include "bluetoothGamepad.h"
 #include "core/component.h"
 #include "core/address.h"
 
-class Controller;
-
 namespace Bt
 {
+    class BluetoothGamepad;
+
     class BluetoothComponent : public Core::Component
     {
     public:
-        BluetoothComponent();
         void Setup() override;
         void Update() override;
 
@@ -24,9 +22,6 @@ namespace Bt
         void DisablePairing();
         void Reset();
         Core::MacAddress GetMacAddress() const;
-
-    private:
-        BluetoothGamepad m_Gamepad;
     };
 }
 

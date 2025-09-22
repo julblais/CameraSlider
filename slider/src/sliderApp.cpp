@@ -5,9 +5,14 @@
 #include "core/serialDisplay.h"
 #include "deviceInputReader.h"
 #include "core/perf.h"
+#include "core/display.h"
+#include "displayBuffer.h"
+#include "eventDispatcher.h"
 #include "menu.h"
 #include "stepper.h"
 #include "bluetoothComponent.h"
+#include "bluetoothCommands.h"
+#include "bluetoothGamepad.h"
 #include "settingCommand.h"
 
 using namespace Core;
@@ -22,8 +27,8 @@ bool Slider::SliderApp::OnInputEvent(const Event& inputEvent)
 {
     if (inputEvent.HasChange())
     {
-        m_DisplayBuffer.Clear();
-        m_DisplayBuffer.Print(inputEvent);
+        m_DisplayBuffer->Clear();
+        m_DisplayBuffer->Print(inputEvent);
     }
     return false;
 }
@@ -31,7 +36,7 @@ bool Slider::SliderApp::OnInputEvent(const Event& inputEvent)
 void Slider::SliderApp::Setup()
 {
     m_Display = std::unique_ptr<Display>(new SerialDisplay());
-    m_DisplayBuffer.Setup(m_Display.get());
+    m_DisplayBuffer->Setup(m_Display.get());
 
     InputPins pins{
         .dpadUp = m_Config.DpadUpPin,
@@ -47,29 +52,28 @@ void Slider::SliderApp::Setup()
     m_LocalInput->Setup();
 
     AddComponent<TimerComponent>();
-    const auto bluetooth = AddComponent<BluetoothComponent>();
-    const auto menu = AddComponent<Menu>(&m_DisplayBuffer, m_Config.ShowMenuDelayMs);
+    m_BluetoothComponent = std::unique_ptr<BluetoothComponent>(AddComponent<BluetoothComponent>());
+    const auto menu = AddComponent<Menu>(m_DisplayBuffer.get(), m_Config.ShowMenuDelayMs);
     const auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
     SetupComponents();
 
-    m_InputDispatcher.AddListener(menu);
-
-    m_InputDispatcher.AddListener(stepper);
-    m_InputDispatcher.AddListener(this);
-    m_GamepadInput = bluetooth->GetGamepad();
+    m_InputDispatcher->AddListener(menu);
+    m_InputDispatcher->AddListener(stepper);
+    m_InputDispatcher->AddListener(this);
 
     menu->AddCommand(new MaxSpeedCommand());
     menu->AddCommand(new SpeedCurveCommand());
+    menu->AddCommand(new GamepadNameCommand(m_BluetoothComponent.get()));
 
-    m_DisplayBuffer.Print(Event());
+    m_DisplayBuffer->Print(Event());
 }
 
 void Slider::SliderApp::Update()
 {
     TAKE_SAMPLE("ProcessInput", [this]() {
                 //m_InputDispatcher.ProcessInput(m_LocalInput->ReadInput());
-                m_InputDispatcher.ProcessInput(m_GamepadInput->ReadInput());
-                m_InputDispatcher.Dispatch();
+                m_InputDispatcher->ProcessInput(m_BluetoothComponent->GetGamepad()->ReadInput());
+                m_InputDispatcher->Dispatch();
                 }, CpuSampler);
 
     //update all systems
@@ -79,7 +83,7 @@ void Slider::SliderApp::Update()
 
     //output final display buffer
     TAKE_SAMPLE("OutputToLCD", [this]() {
-                m_DisplayBuffer.PrintToDisplay();
+                m_DisplayBuffer->PrintToDisplay();
                 }, CpuSampler);
 }
 

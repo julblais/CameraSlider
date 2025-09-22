@@ -6,12 +6,28 @@
 #include "core/appBase.h"
 #include "appConfig.h"
 #include "event.h"
-#include "core/display.h"
-#include "displayBuffer.h"
-#include "bluetoothComponent.h"
-#include "deviceInputReader.h"
-#include "eventDispatcher.h"
 #include <memory>
+
+namespace Core
+{
+    class Display;
+}
+
+namespace IO
+{
+    class DisplayBuffer;
+    class EventDispatcher;
+}
+
+namespace Hardware
+{
+    class DeviceInputReader;
+}
+
+namespace Bt
+{
+    class BluetoothComponent;
+}
 
 namespace Slider
 {
@@ -27,9 +43,9 @@ namespace Slider
         AppConfig m_Config;
         std::unique_ptr<Core::Display> m_Display;
         std::unique_ptr<Hardware::DeviceInputReader> m_LocalInput;
-        Bt::BluetoothGamepad* m_GamepadInput;
-        IO::DisplayBuffer m_DisplayBuffer;
-        IO::EventDispatcher m_InputDispatcher;
+        std::unique_ptr<Bt::BluetoothComponent> m_BluetoothComponent;
+        std::unique_ptr<IO::DisplayBuffer> m_DisplayBuffer;
+        std::unique_ptr<IO::EventDispatcher> m_InputDispatcher;
     };
 }
 

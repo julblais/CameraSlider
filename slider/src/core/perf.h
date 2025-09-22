@@ -1,7 +1,7 @@
 #ifndef PERF_H
 #define PERF_H
 
-#ifdef LOG_PERFORMANCE
+#if LOG_PERFORMANCE
 
 #include "esp_log.h"
 #include "core/utils/templateUtils.h"

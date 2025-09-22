@@ -23,8 +23,8 @@ namespace Core
         static constexpr auto ButtonRight = MenuCommandButton::RIGHT;
         static constexpr auto ButtonSelect = MenuCommandButton::SELECT;
 
-        static void PrintTitle(Display* display, const char* title);
-        static void PrintDescription(Display* display, const char* description);
+        static void PrintTitle(Display* display, const char* title, bool drawArrows = true);
+        static void PrintDescription(Display* display, const char* description, bool drawArrows = true);
 
         virtual ~MenuCommand() = default;
         virtual void Print(Display* display) const = 0;
