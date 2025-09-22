@@ -5,7 +5,7 @@
 #include <Bluepad32.h>
 #include "core/debug.h"
 #include <cstring>
-#include <string>
+#include "core/utils/enumUtils.h"
 
 using namespace Bt;
 using namespace Core;
@@ -43,13 +43,13 @@ InputData ReadWiiInput(const Controller& controller)
 {
     auto buttons = ButtonNone;
     const auto dpad = controller.dpad();
-    if (dpad & DPAD_UP)
+    if (HasValue(dpad, DPAD_UP))
         buttons |= ButtonDpadUp;
-    if (dpad & DPAD_DOWN)
+    if (HasValue(dpad, DPAD_DOWN))
         buttons |= ButtonDpadDown;
-    if (dpad & DPAD_LEFT)
+    if (HasValue(dpad, DPAD_LEFT))
         buttons |= ButtonDpadLeft;
-    if (dpad & DPAD_RIGHT)
+    if (HasValue(dpad, DPAD_RIGHT))
         buttons |= ButtonDpadRight;
     if (controller.miscSelect())
         buttons |= ButtonSelect;
@@ -62,13 +62,13 @@ InputData ReadDefaultInput(const Controller& controller)
 {
     auto buttons = ButtonNone;
     const auto dpad = controller.dpad();
-    if (dpad & DPAD_UP)
+    if (HasValue(dpad, DPAD_UP))
         buttons |= ButtonDpadUp;
-    if (dpad & DPAD_DOWN)
+    if (HasValue(dpad, DPAD_DOWN))
         buttons |= ButtonDpadDown;
-    if (dpad & DPAD_LEFT)
+    if (HasValue(dpad, DPAD_LEFT))
         buttons |= ButtonDpadLeft;
-    if (dpad & DPAD_RIGHT)
+    if (HasValue(dpad, DPAD_RIGHT))
         buttons |= ButtonDpadRight;
     if (controller.miscSelect())
         buttons |= ButtonSelect;

@@ -59,6 +59,12 @@ namespace Core
         return (current & value) == value;
     }
 
+    template <typename T, IsTypeEnum<T> = true>
+    constexpr bool HasValue(UnderlyingType<T> current, T value)
+    {
+        return (current & value) == value;
+    }
+
     template <typename T>
     auto GetPreviousEnumValue(T enumValue) -> decltype(T::COUNT)
     {
