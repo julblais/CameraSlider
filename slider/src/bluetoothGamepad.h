@@ -16,6 +16,8 @@ namespace Bt
     class BluetoothGamepad
     {
     public:
+        BluetoothGamepad(Controller* controller = nullptr);
+
         IO::InputData ReadInput();
         bool IsConnected() const;
         bool HasData() const;
@@ -28,7 +30,6 @@ namespace Bt
 
     private:
         friend class BluetoothComponent;
-        BluetoothGamepad(Controller* controller = nullptr);
         IO::InputData m_LastInput = IO::InputData();
         Controller* m_Controller;
     };

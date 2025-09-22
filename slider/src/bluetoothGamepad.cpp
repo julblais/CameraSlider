@@ -1,4 +1,4 @@
-#include "bluetoothComponent.h"
+#include "bluetoothGamepad.h"
 
 #if !IS_SIMULATOR
 
