@@ -3,6 +3,7 @@
 #if !IS_SIMULATOR
 
 #include "bluetoothComponent.h"
+#include "bluetoothGamepad.h"
 
 using namespace Bt;
 using namespace Core;
@@ -12,7 +13,7 @@ GamepadNameCommand::GamepadNameCommand(BluetoothComponent* bluetooth)
 
 void GamepadNameCommand::Print(Display* display) const
 {
-    const auto name = m_Bluetooth->GetGamepad().GetDescription();
+    const auto name = m_Bluetooth->GetGamepad()->GetDescription();
     PrintTitle(display, "Manette");
     if (name.get() == nullptr)
         PrintDescription(display, "Aucune", false);
@@ -24,8 +25,8 @@ void GamepadNameCommand::Invoke(const MenuCommandButton command)
 {
     if (m_Bluetooth != nullptr)
     {
-        const auto gamepad = m_Bluetooth.GetGamepad();
-        if (!gamepad.IsConnected())
+        const auto gamepad = m_Bluetooth->GetGamepad();
+        if (!gamepad->IsConnected())
         {
             m_Bluetooth->EnablePairing();
         }

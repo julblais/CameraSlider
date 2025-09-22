@@ -123,4 +123,9 @@ void BluetoothGamepad::Rumble(const uint16_t delayedStartMs, const uint16_t dura
         LogWarning("Bluetooth: cannot set rumble. A controller is not connected.");
 }
 
+Controller* BluetoothGamepad::GetController() const
+{
+    return m_Controller;
+}
+
 #endif

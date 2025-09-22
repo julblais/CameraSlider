@@ -3,22 +3,20 @@
 
 #if !IS_SIMULATOR
 
-#include "bluetoothGamepad.h"
 #include "core/component.h"
 #include "core/address.h"
 
-class Controller;
-
 namespace Bt
 {
+    class BluetoothGamepad;
+
     class BluetoothComponent : public Core::Component
     {
     public:
-        BluetoothComponent();
         void Setup() override;
         void Update() override;
 
-        BluetoothGamepad GetGamepad();
+        BluetoothGamepad* GetGamepad();
         void DisconnectGamepad();
         void EnablePairing();
         void DisablePairing();

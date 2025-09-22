@@ -4,22 +4,22 @@
 
 #include <Bluepad32.h>
 #include "core/debug.h"
+#include "bluetoothGamepad.h"
 
 using namespace Bt;
 using namespace Core;
-using namespace IO;
 
 // Only one gamepad can be connected
-ControllerPtr s_Controller = nullptr;
+static BluetoothGamepad s_Gamepad{};
 
 void onConnectedController(const ControllerPtr controller)
 {
     LogInfo("Bluetooth: Controller attempting to connect...");
-    if (s_Controller == nullptr)
+    if (!s_Gamepad.IsConnected())
     {
         LogInfo("Bluetooth: Controller connected! model: ", controller->getModelName(), ", is gamepad: ",
                 controller->isGamepad());
-        s_Controller = controller;
+        s_Gamepad = BluetoothGamepad(controller);
     }
     else
     {
@@ -29,18 +29,15 @@ void onConnectedController(const ControllerPtr controller)
 
 void onDisconnectedController(const ControllerPtr ctl)
 {
-    if (ctl != s_Controller)
+    if (s_Gamepad.GetController() != ctl)
     {
         LogWarning("Bluetooth: controller disconnected, but not found in myControllers");
     }
     else
     {
-        s_Controller = nullptr;
+        s_Gamepad = BluetoothGamepad();
     }
 }
-
-BluetoothComponent::BluetoothComponent()
-    : m_Gamepad(&s_Controller) {}
 
 void BluetoothComponent::Setup()
 {
@@ -56,14 +53,14 @@ void BluetoothComponent::Update()
 
 BluetoothGamepad* BluetoothComponent::GetGamepad()
 {
-    return &m_Gamepad;
+    return &s_Gamepad;
 }
 
 void BluetoothComponent::DisconnectGamepad()
 {
-    if (s_Controller != nullptr)
+    if (s_Gamepad.IsConnected())
     {
-        s_Controller->disconnect();
+        s_Gamepad.GetController()->disconnect();
     }
     else
     {

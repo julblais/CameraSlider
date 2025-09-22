@@ -21,6 +21,7 @@ namespace Bt
         IO::InputData ReadInput();
         bool IsConnected() const;
         bool HasData() const;
+        Controller* GetController() const;
 
         std::unique_ptr<char[]> GetDescription() const;
 
