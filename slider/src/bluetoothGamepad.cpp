@@ -18,6 +18,27 @@ using namespace IO;
 #define CONTROLLER_MODEL_SWITCH_JOY_LEFT "Switch JoyCon Left"
 #define CONTROLLER_MODEL_SWITCH_JOY_RIGHT "Switch JoyCon Right"
 
+BluetoothGamepad::Model GetGamepadModel(const Controller* controller)
+{
+    if (controller == nullptr)
+        return BluetoothGamepad::Model::Generic;
+
+    const auto modelName = controller->getModelName();
+    if (modelName.equals(CONTROLLER_MODEL_WII))
+        return BluetoothGamepad::Model::Wii;
+    if (modelName.equals(CONTROLLER_MODEL_PS4))
+        return BluetoothGamepad::Model::PS4;
+    if (modelName.equals(CONTROLLER_MODEL_PS5))
+        return BluetoothGamepad::Model::PS5;
+    if (modelName.equals(CONTROLLER_MODEL_SWITCH_PRO))
+        return BluetoothGamepad::Model::SwitchPro;
+    if (modelName.equals(CONTROLLER_MODEL_SWITCH_JOY_LEFT))
+        return BluetoothGamepad::Model::SwitchJoyLeft;
+    if (modelName.equals(CONTROLLER_MODEL_SWITCH_JOY_RIGHT))
+        return BluetoothGamepad::Model::SwitchJoyRight;
+    return BluetoothGamepad::Model::Generic;
+}
+
 InputData ReadWiiInput(const Controller& controller)
 {
     auto buttons = ButtonNone;
@@ -57,28 +78,29 @@ InputData ReadDefaultInput(const Controller& controller)
 }
 
 BluetoothGamepad::BluetoothGamepad(Controller* controller)
-    : m_Controller(controller) {}
+    : m_Controller(controller),
+      m_Model(GetGamepadModel(controller)) {}
 
 InputData BluetoothGamepad::ReadInput()
 {
     if (m_Controller != nullptr && m_Controller->hasData())
     {
-        //change to function pointer (no string comparison needed)
-        const auto controllerName = m_Controller->getModelName();
-        if (controllerName.equals(CONTROLLER_MODEL_WII))
+        switch (m_Model)
+        {
+        case Model::Wii:
             m_LastInput = ReadWiiInput(*m_Controller);
-        else if (controllerName.equals(CONTROLLER_MODEL_PS4))
+            break;
+        case Model::PS4:
+        case Model::PS5:
+        case Model::SwitchPro:
+        case Model::SwitchJoyLeft:
+        case Model::SwitchJoyRight:
             m_LastInput = ReadDefaultInput(*m_Controller);
-        else if (controllerName.equals(CONTROLLER_MODEL_PS5))
+            break;
+        default:
             m_LastInput = ReadDefaultInput(*m_Controller);
-        else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_PRO))
-            m_LastInput = ReadDefaultInput(*m_Controller);
-        else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_JOY_LEFT))
-            m_LastInput = ReadDefaultInput(*m_Controller);
-        else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_JOY_RIGHT))
-            m_LastInput = ReadDefaultInput(*m_Controller);
-        else
-            m_LastInput = ReadDefaultInput(*m_Controller);
+            break;
+        }
     }
 
     return m_LastInput;
@@ -126,6 +148,11 @@ void BluetoothGamepad::Rumble(const uint16_t delayedStartMs, const uint16_t dura
 Controller* BluetoothGamepad::GetController() const
 {
     return m_Controller;
+}
+
+BluetoothGamepad::Model BluetoothGamepad::GetModel() const
+{
+    return m_Model;
 }
 
 #endif

@@ -16,12 +16,24 @@ namespace Bt
     class BluetoothGamepad
     {
     public:
+        enum class Model
+        {
+            Generic,
+            Wii,
+            PS4,
+            PS5,
+            SwitchPro,
+            SwitchJoyLeft,
+            SwitchJoyRight
+        };
+
         BluetoothGamepad(Controller* controller = nullptr);
 
         IO::InputData ReadInput();
         bool IsConnected() const;
         bool HasData() const;
         Controller* GetController() const;
+        Model GetModel() const;
 
         std::unique_ptr<char[]> GetDescription() const;
 
@@ -31,8 +43,9 @@ namespace Bt
 
     private:
         friend class BluetoothComponent;
-        IO::InputData m_LastInput = IO::InputData();
+        IO::InputData m_LastInput;
         Controller* m_Controller;
+        Model m_Model;
     };
 }
 
