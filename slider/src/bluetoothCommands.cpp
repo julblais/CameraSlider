@@ -12,7 +12,7 @@ GamepadNameCommand::GamepadNameCommand(BluetoothComponent* bluetooth)
 
 void GamepadNameCommand::Print(Display* display) const
 {
-    const auto name = m_Bluetooth->GetGamepad()->GetDescription();
+    const auto name = m_Bluetooth->GetGamepad().GetDescription();
     PrintTitle(display, "Manette");
     if (name.get() == nullptr)
         PrintDescription(display, "Aucune", false);
@@ -24,8 +24,8 @@ void GamepadNameCommand::Invoke(const MenuCommandButton command)
 {
     if (m_Bluetooth != nullptr)
     {
-        const auto gamepad = m_Bluetooth->GetGamepad();
-        if (gamepad == nullptr || !gamepad->IsConnected())
+        const auto gamepad = m_Bluetooth.GetGamepad();
+        if (!gamepad.IsConnected())
         {
             m_Bluetooth->EnablePairing();
         }

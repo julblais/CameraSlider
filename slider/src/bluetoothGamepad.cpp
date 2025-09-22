@@ -56,31 +56,29 @@ InputData ReadDefaultInput(const Controller& controller)
     return InputData(buttons, controller.axisX(), controller.axisY());
 }
 
-BluetoothGamepad::BluetoothGamepad(Controller** controller)
+BluetoothGamepad::BluetoothGamepad(Controller* controller)
     : m_Controller(controller) {}
 
 InputData BluetoothGamepad::ReadInput()
 {
-    const auto controller = *m_Controller;
-
-    if (controller != nullptr && controller->hasData())
+    if (m_Controller != nullptr && m_Controller->hasData())
     {
         //change to function pointer (no string comparison needed)
-        const auto controllerName = controller->getModelName();
+        const auto controllerName = m_Controller->getModelName();
         if (controllerName.equals(CONTROLLER_MODEL_WII))
-            m_LastInput = ReadWiiInput(*controller);
+            m_LastInput = ReadWiiInput(*m_Controller);
         else if (controllerName.equals(CONTROLLER_MODEL_PS4))
-            m_LastInput = ReadDefaultInput(*controller);
+            m_LastInput = ReadDefaultInput(*m_Controller);
         else if (controllerName.equals(CONTROLLER_MODEL_PS5))
-            m_LastInput = ReadDefaultInput(*controller);
+            m_LastInput = ReadDefaultInput(*m_Controller);
         else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_PRO))
-            m_LastInput = ReadDefaultInput(*controller);
+            m_LastInput = ReadDefaultInput(*m_Controller);
         else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_JOY_LEFT))
-            m_LastInput = ReadDefaultInput(*controller);
+            m_LastInput = ReadDefaultInput(*m_Controller);
         else if (controllerName.equals(CONTROLLER_MODEL_SWITCH_JOY_RIGHT))
-            m_LastInput = ReadDefaultInput(*controller);
+            m_LastInput = ReadDefaultInput(*m_Controller);
         else
-            m_LastInput = ReadDefaultInput(*controller);
+            m_LastInput = ReadDefaultInput(*m_Controller);
     }
 
     return m_LastInput;
@@ -88,23 +86,19 @@ InputData BluetoothGamepad::ReadInput()
 
 bool BluetoothGamepad::IsConnected() const
 {
-    const auto controller = *m_Controller;
-    return controller != nullptr && controller->isConnected();
+    return m_Controller != nullptr && m_Controller->isConnected();
 }
 
 bool BluetoothGamepad::HasData() const
 {
-    const auto controller = *m_Controller;
-    return controller != nullptr && controller->hasData();
+    return m_Controller != nullptr && m_Controller->hasData();
 }
 
 std::unique_ptr<char[]> BluetoothGamepad::GetDescription() const
 {
-    const auto controller = *m_Controller;
-
-    if (controller != nullptr)
+    if (m_Controller != nullptr)
     {
-        const auto modelName = controller->getModelName();
+        const auto modelName = m_Controller->getModelName();
         std::unique_ptr<char[]> buffer(new char[modelName.length() + 1]);
         std::strcpy(buffer.get(), modelName.c_str());
         return buffer;
@@ -112,21 +106,19 @@ std::unique_ptr<char[]> BluetoothGamepad::GetDescription() const
     return nullptr;
 }
 
-void BluetoothGamepad::SetPlayerLEDs(const uint8_t led)
+void BluetoothGamepad::SetPlayerLEDs(const uint8_t led) const
 {
-    const auto controller = *m_Controller;
-    if (controller != nullptr)
-        controller->setPlayerLEDs(led);
+    if (m_Controller != nullptr)
+        m_Controller->setPlayerLEDs(led);
     else
         LogWarning("Bluetooth: cannot set led. A controller is not connected.");
 }
 
 void BluetoothGamepad::Rumble(const uint16_t delayedStartMs, const uint16_t durationMs, const uint8_t weakMagnitude,
-                              const uint8_t strongMagnitude)
+                              const uint8_t strongMagnitude) const
 {
-    const auto controller = *m_Controller;
-    if (controller != nullptr)
-        controller->playDualRumble(delayedStartMs, durationMs, weakMagnitude, strongMagnitude);
+    if (m_Controller != nullptr)
+        m_Controller->playDualRumble(delayedStartMs, durationMs, weakMagnitude, strongMagnitude);
     else
         LogWarning("Bluetooth: cannot set rumble. A controller is not connected.");
 }

@@ -18,15 +18,12 @@ namespace Bt
         void Setup() override;
         void Update() override;
 
-        BluetoothGamepad* GetGamepad();
+        BluetoothGamepad GetGamepad();
         void DisconnectGamepad();
         void EnablePairing();
         void DisablePairing();
         void Reset();
         Core::MacAddress GetMacAddress() const;
-
-    private:
-        BluetoothGamepad m_Gamepad;
     };
 }
 
