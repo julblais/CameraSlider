@@ -14,17 +14,24 @@ namespace Core
     public:
         enum class Button : char
         {
-            LEFT,
-            RIGHT,
-            SELECT
+            Left,
+            Right,
+            Select
         };
 
-        static constexpr auto ButtonLeft = Button::LEFT;
-        static constexpr auto ButtonRight = Button::RIGHT;
-        static constexpr auto ButtonSelect = Button::SELECT;
+        enum class DescriptionType : char
+        {
+            None,
+            Options,
+            Action
+        };
 
-        static void PrintTitle(Display* display, const char* title, bool drawArrows = true);
-        static void PrintDescription(Display* display, const char* description, bool drawArrows = true);
+        static constexpr auto ButtonLeft = Button::Left;
+        static constexpr auto ButtonRight = Button::Right;
+        static constexpr auto ButtonSelect = Button::Select;
+
+        static void PrintTitle(Display* display, const char* title);
+        static void PrintDescription(Display* display, const char* description, const DescriptionType type);
 
         virtual ~MenuCommand() = default;
         virtual void Print(Display* display) const = 0;

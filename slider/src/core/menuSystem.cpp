@@ -92,24 +92,32 @@ void MenuSystem::Select()
     m_Items[m_Index]->Invoke(MenuCommand::ButtonSelect);
 }
 
-void MenuCommand::PrintTitle(Display* display, const char* title, const bool drawArrows)
+void MenuCommand::PrintTitle(Display* display, const char* title)
 {
-    if (drawArrows)
-    {
-        const auto upDownArrows = display->GetSymbol(Symbol::UpDownArrows);
-        display->PrintLine(0, upDownArrows, title);
-    }
-    else
-        display->PrintLine(0, title);
+    const auto upDownArrows = display->GetSymbol(Symbol::UpDownArrows);
+    display->PrintLine(0, upDownArrows, title);
 }
 
-void MenuCommand::PrintDescription(Display* display, const char* description, const bool drawArrows)
+void MenuCommand::PrintDescription(Display* display, const char* description, const DescriptionType type)
 {
-    if (drawArrows)
+    switch (type)
     {
-        const auto leftRightArrows = display->GetSymbol(Symbol::LeftRightArrows);
-        display->PrintLine(1, " ", leftRightArrows, description);
+    case DescriptionType::Options:
+        {
+            const auto leftRightArrows = display->GetSymbol(Symbol::LeftRightArrows);
+            display->PrintLine(1, " ", leftRightArrows, description);
+            break;
+        }
+    case DescriptionType::Action:
+        {
+            const auto leftRightArrows = display->GetSymbol(Symbol::RightArrow);
+            display->PrintLine(1, " ", leftRightArrows, description);
+            break;
+        }
+    default:
+        {
+            display->PrintLine(1, " ", description);
+            break;
+        }
     }
-    else
-        display->PrintLine(1, " ", description);
 }

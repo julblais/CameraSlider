@@ -16,9 +16,9 @@ void GamepadNameCommand::Print(Display* display) const
     const auto name = m_Bluetooth->GetGamepad()->GetDescription();
     PrintTitle(display, "Manette");
     if (name.get() == nullptr)
-        PrintDescription(display, "Aucune", false);
+        PrintDescription(display, "Aucune", DescriptionType::None);
     else
-        PrintDescription(display, name.get(), false);
+        PrintDescription(display, name.get(), DescriptionType::None);
 }
 
 GamepadConnectionCommand::GamepadConnectionCommand(BluetoothComponent* bluetooth)
@@ -29,9 +29,9 @@ void GamepadConnectionCommand::Print(Display* display) const
     PrintTitle(display, "Bluetooth");
     const auto gamepad = m_Bluetooth->GetGamepad();
     if (gamepad->IsConnected())
-        PrintDescription(display, "Deconnecter", false);
+        PrintDescription(display, "Deconnecter", DescriptionType::Action);
     else
-        PrintDescription(display, "Connecter", false);
+        PrintDescription(display, "Connecter", DescriptionType::Action);
 }
 
 void GamepadConnectionCommand::Invoke(const Button command)

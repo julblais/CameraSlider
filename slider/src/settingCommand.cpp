@@ -40,7 +40,7 @@ void MaxSpeedCommand::Print(Display* display) const
 {
     PrintTitle(display, "Vitesse max.");
     const auto desc = GetDesc(Settings::GetInstance().GetSpeed());
-    PrintDescription(display, desc);
+    PrintDescription(display, desc, DescriptionType::Options);
 }
 
 void MaxSpeedCommand::Invoke(const Button command)
@@ -65,5 +65,5 @@ void SpeedCurveCommand::Print(Display* display) const
 {
     PrintTitle(display, "Courbe vitesse");
     const auto desc = GetDesc(Settings::GetInstance().GetCurve());
-    PrintDescription(display, desc);
+    PrintDescription(display, desc, DescriptionType::Options);
 }
