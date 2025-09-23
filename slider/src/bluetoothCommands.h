@@ -3,6 +3,7 @@
 
 #if !IS_SIMULATOR
 
+#include "core/animatedPrintable.h"
 #include "core/menuSystem.h"
 
 namespace Bt
@@ -29,8 +30,13 @@ namespace Bt
         void Print(Core::Display* display) const override;
         void Invoke(const Button command) override;
 
+        void OnUpdate() override;
+        void OnHide() override;
+
     private:
         BluetoothComponent* m_Bluetooth;
+        bool m_IsPairing;
+        Core::AnimatedPrintable m_ConnectionMsg;
     };
 }
 

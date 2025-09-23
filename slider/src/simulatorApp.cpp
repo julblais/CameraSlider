@@ -8,6 +8,7 @@
 #include "autoInput.h"
 #include "settingCommand.h"
 #include "lcd.h"
+#include "core/animatedPrintable.h"
 
 using namespace IO;
 using namespace Core;
@@ -19,7 +20,7 @@ public:
     void Print(Display* display) const override
     {
         PrintTitle(display, "Test Action");
-        PrintDescription(display, "Action", DescriptionType::Action);
+        PrintDescription(display, DescriptionType::Action, "Action", m_ConnectionMsg);
     }
 
     void Invoke(const Button command) override
@@ -27,6 +28,8 @@ public:
         if (command == ButtonSelect)
             LogInfo("Action invoked!");
     }
+private:
+    AnimatedPrintable m_ConnectionMsg = AnimatedPrintable(300, {"", ".", "..", "..."});
 };
 
 class TestOptionsCommand : public MenuCommand
@@ -47,16 +50,16 @@ public:
         switch (m_Option)
         {
         case Option::Option1:
-            PrintDescription(display, "Option 1", DescriptionType::Options);
+            PrintDescription(display, DescriptionType::Options, "Option 1");
             break;
         case Option::Option2:
-            PrintDescription(display, "Option 2", DescriptionType::Options);
+            PrintDescription(display, DescriptionType::Options, "Option 2");
             break;
         case Option::Option3:
-            PrintDescription(display, "Option 3", DescriptionType::Options);
+            PrintDescription(display, DescriptionType::Options, "Option 3");
             break;
         default:
-            PrintDescription(display, "ERROR", DescriptionType::Options);
+            PrintDescription(display, DescriptionType::Options, "ERROR");
             break;
         }
     }
