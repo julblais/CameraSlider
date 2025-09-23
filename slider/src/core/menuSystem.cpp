@@ -4,7 +4,6 @@
 using namespace Core;
 
 MenuSystem::MenuSystem() :
-    m_Items(),
     m_Index(0),
     m_IsOpened(false)
 {}
@@ -13,7 +12,7 @@ void MenuSystem::Open()
 {
     m_IsOpened = true;
     m_Index = 0;
-    for (auto& item : m_Items)
+    for (const auto& item : m_Items)
         item->OnOpenMenu();
     m_Items[m_Index]->OnShow();
 }
@@ -21,7 +20,7 @@ void MenuSystem::Open()
 void MenuSystem::Close()
 {
     m_Items[m_Index]->OnHide();
-    for (auto& item : m_Items)
+    for (const auto& item : m_Items)
         item->OnCloseMenu();
     m_Index = -1;
     m_IsOpened = false;
@@ -46,8 +45,8 @@ void MenuSystem::AddCommand(MenuCommand* command)
 
 void MenuSystem::Up()
 {
-    auto oldIdx = m_Index;
-    auto newIdx = m_Index - 1;
+    const auto oldIdx = m_Index;
+    const auto newIdx = m_Index - 1;
     if (newIdx < 0) //wrap
         m_Index = m_Items.size() - 1;
     else
@@ -62,9 +61,9 @@ void MenuSystem::Up()
 
 void MenuSystem::Down()
 {
-    auto oldIdx = m_Index;
+    const auto oldIdx = m_Index;
     m_Items[m_Index]->OnShow();
-    auto newIdx = m_Index + 1;
+    const auto newIdx = m_Index + 1;
     if (newIdx >= m_Items.size()) //wrap
         m_Index = 0;
     else
