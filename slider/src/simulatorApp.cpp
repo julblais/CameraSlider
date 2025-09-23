@@ -57,6 +57,7 @@ public:
             break;
         default:
             PrintDescription(display, "ERROR", DescriptionType::Options);
+            break;
         }
     }
 
@@ -88,7 +89,7 @@ bool Slider::SimulatorApp::OnInputEvent(const Event& inputEvent)
 
 void Slider::SimulatorApp::Setup()
 {
-    m_Display = std::unique_ptr<Display>(new Hardware::LCD(m_Config.LcdAddress));
+    m_Display = std::unique_ptr<Display>(new LCD(m_Config.LcdAddress));
     m_DisplayBuffer.Setup(m_Display.get());
 
     InputPins pins {
@@ -133,7 +134,7 @@ void Slider::SimulatorApp::Setup()
 void Slider::SimulatorApp::Update()
 {
     const auto localInput = m_LocalInput->ReadInput();
-    const auto autoInput = m_AutoInput->ReadInput();
+    //const auto autoInput = m_AutoInput->ReadInput();
     m_InputDispatcher.ProcessInput(localInput);
     //m_InputDispatcher.ProcessInput(autoInput);
     m_InputDispatcher.Dispatch();
