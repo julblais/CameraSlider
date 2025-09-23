@@ -20,7 +20,7 @@ public:
     void Print(Display* display) const override
     {
         PrintTitle(display, "Test Action");
-        PrintDescription(display, DescriptionType::Action, "Action", m_ConnectionMsg);
+        PrintDescription(display, DescriptionType::Action, "Action", m_Progress);
     }
 
     void Invoke(const Button command) override
@@ -29,7 +29,7 @@ public:
             LogInfo("Action invoked!");
     }
 private:
-    AnimatedPrintable m_ConnectionMsg = AnimatedPrintable(300, {"", ".", "..", "..."});
+    AnimatedPrintable m_Progress = AnimatedPrintable::CreateProgressDots(500);
 };
 
 class TestOptionsCommand : public MenuCommand

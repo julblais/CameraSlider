@@ -24,7 +24,7 @@ void GamepadNameCommand::Print(Display* display) const
 GamepadConnectionCommand::GamepadConnectionCommand(BluetoothComponent* bluetooth)
     : m_Bluetooth(bluetooth),
       m_IsPairing(false),
-      m_ConnectionMsg(AnimatedPrintable(500, {"Connexion", "Connexion.", "Connexion..", "Connexion..."})) {}
+      m_Progress(AnimatedPrintable::CreateProgressDots()) {}
 
 void GamepadConnectionCommand::Print(Display* display) const
 {
@@ -35,7 +35,7 @@ void GamepadConnectionCommand::Print(Display* display) const
     else if (m_IsPairing == false)
         PrintDescription(display, DescriptionType::Action, "Connecter");
     else
-        PrintDescription(display, DescriptionType::Action, m_ConnectionMsg);
+        PrintDescription(display, DescriptionType::Action, "Connexion", m_Progress);
 }
 
 void GamepadConnectionCommand::Invoke(const Button command)
