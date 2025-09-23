@@ -21,7 +21,20 @@ void GamepadNameCommand::Print(Display* display) const
         PrintDescription(display, name.get(), false);
 }
 
-void GamepadNameCommand::Invoke(const MenuCommandButton command)
+GamepadConnectionCommand::GamepadConnectionCommand(BluetoothComponent* bluetooth)
+    : m_Bluetooth(bluetooth) {}
+
+void GamepadConnectionCommand::Print(Display* display) const
+{
+    PrintTitle(display, "Bluetooth");
+    const auto gamepad = m_Bluetooth->GetGamepad();
+    if (gamepad->IsConnected())
+        PrintDescription(display, "Deconnecter", false);
+    else
+        PrintDescription(display, "Connecter", false);
+}
+
+void GamepadConnectionCommand::Invoke(const MenuCommandButton command)
 {
     if (m_Bluetooth != nullptr)
     {
@@ -29,6 +42,11 @@ void GamepadNameCommand::Invoke(const MenuCommandButton command)
         if (!gamepad->IsConnected())
         {
             m_Bluetooth->EnablePairing();
+            //needs more advanced code (state machine to manage pairing)
+        }
+        else
+        {
+            m_Bluetooth->DisconnectGamepad();
         }
     }
 }
