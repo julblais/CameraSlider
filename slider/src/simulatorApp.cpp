@@ -13,6 +13,65 @@ using namespace IO;
 using namespace Core;
 using namespace Hardware;
 
+class TestActionCommand : public MenuCommand
+{
+public:
+    void Print(Display* display) const override
+    {
+        PrintTitle(display, "Test Action");
+        PrintDescription(display, "Action", DescriptionType::Action);
+    }
+
+    void Invoke(const Button command) override
+    {
+        if (command == ButtonSelect)
+            LogInfo("Action invoked!");
+    }
+};
+
+class TestOptionsCommand : public MenuCommand
+{
+    enum class Option
+    {
+        Option1,
+        Option2,
+        Option3,
+        COUNT
+    };
+
+public:
+    void Print(Display* display) const override
+    {
+        PrintTitle(display, "Test Option");
+
+        switch (m_Option)
+        {
+        case Option::Option1:
+            PrintDescription(display, "Option 1", DescriptionType::Options);
+            break;
+        case Option::Option2:
+            PrintDescription(display, "Option 2", DescriptionType::Options);
+            break;
+        case Option::Option3:
+            PrintDescription(display, "Option 3", DescriptionType::Options);
+            break;
+        default:
+            PrintDescription(display, "ERROR", DescriptionType::Options);
+        }
+    }
+
+    void Invoke(const Button command) override
+    {
+        if (command == ButtonLeft)
+            m_Option = GetPreviousEnumValue(m_Option);
+        else if (command == ButtonRight)
+            m_Option = GetNextEnumValue(m_Option);
+    }
+
+private:
+    Option m_Option = Option::Option1;
+};
+
 Slider::SimulatorApp::SimulatorApp(const AppConfig& config) :
     m_Config(config)
 {}
@@ -59,6 +118,8 @@ void Slider::SimulatorApp::Setup()
     const auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
     SetupComponents();
 
+    menu->AddCommand(new TestActionCommand());
+    menu->AddCommand(new TestOptionsCommand());
     menu->AddCommand(new MaxSpeedCommand());
     menu->AddCommand(new SpeedCurveCommand());
 
