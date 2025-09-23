@@ -34,7 +34,7 @@ void GamepadConnectionCommand::Print(Display* display) const
         PrintDescription(display, "Connecter", false);
 }
 
-void GamepadConnectionCommand::Invoke(const MenuCommandButton command)
+void GamepadConnectionCommand::Invoke(const Button command)
 {
     if (m_Bluetooth != nullptr)
     {

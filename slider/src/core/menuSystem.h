@@ -9,26 +9,26 @@
 
 namespace Core
 {
-    enum class MenuCommandButton : char
-    {
-        LEFT,
-        RIGHT,
-        SELECT
-    };
-
     class MenuCommand
     {
     public:
-        static constexpr auto ButtonLeft = MenuCommandButton::LEFT;
-        static constexpr auto ButtonRight = MenuCommandButton::RIGHT;
-        static constexpr auto ButtonSelect = MenuCommandButton::SELECT;
+        enum class Button : char
+        {
+            LEFT,
+            RIGHT,
+            SELECT
+        };
+
+        static constexpr auto ButtonLeft = Button::LEFT;
+        static constexpr auto ButtonRight = Button::RIGHT;
+        static constexpr auto ButtonSelect = Button::SELECT;
 
         static void PrintTitle(Display* display, const char* title, bool drawArrows = true);
         static void PrintDescription(Display* display, const char* description, bool drawArrows = true);
 
         virtual ~MenuCommand() = default;
         virtual void Print(Display* display) const = 0;
-        virtual void Invoke(const MenuCommandButton command) = 0;
+        virtual void Invoke(const Button command) = 0;
 
         virtual void OnOpenMenu() {}
         virtual void OnCloseMenu() {}
