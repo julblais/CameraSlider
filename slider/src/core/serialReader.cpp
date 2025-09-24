@@ -2,7 +2,7 @@
 
 #include "debug.h"
 #include "HardwareSerial.h"
-//#include "WString.h"
+#include "WString.h"
 
 using namespace Core;
 
