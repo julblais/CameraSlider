@@ -9,7 +9,7 @@ namespace Core
     struct PassParamPack
     {
         template<typename... T>
-        PassParamPack(T...) {}
+        PassParamPack(T&&...) {}
     };
 
     template<typename, typename = void>
