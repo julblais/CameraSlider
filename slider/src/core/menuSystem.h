@@ -3,8 +3,6 @@
 
 #include "debug.h"
 #include "display.h"
-#include "symbols.h"
-
 #include <vector>
 
 namespace Core
