@@ -2,17 +2,22 @@
 
 using namespace Core;
 
-size_t MenuCommand::TitlePrefix::printTo(::Print& p) const
+Display& MenuCommand::TitlePrefix(Display& display)
 {
-    return p.print(IO::SymbolHandle(IO::Symbol::UpDownArrows));
+    return display << IO::SymbolHandle(IO::Symbol::UpDownArrows);
 }
 
-size_t MenuCommand::DescriptionPrefix::printTo(::Print& p) const
+Display& MenuCommand::DescriptionPrefix(Display& display, const DescriptionType type)
 {
-    size_t result = 0;
-    result += p.print(' ');
-    result += p.print(IO::SymbolHandle(IO::Symbol::LeftRightArrows));
-    return result;
+    switch (type)
+    {
+    case DescriptionType::Options:
+        return display << ' ' << IO::SymbolHandle(IO::Symbol::LeftRightArrows);
+    case DescriptionType::Action:
+        return display << ' ' << IO::SymbolHandle(IO::Symbol::RightArrow);
+    default:
+        return display << ' ';
+    }
 }
 
 MenuSystem::MenuSystem() :
@@ -52,7 +57,10 @@ void MenuSystem::Update()
 void MenuSystem::Print(Display* display) const
 {
     if (m_IsOpened)
-        m_Commands[m_Index]->Print(display);
+    {
+        display->SetCursor(0, 0);
+        m_Commands[m_Index]->Print(*display);
+    }
 }
 
 void MenuSystem::AddCommand(MenuCommand* command)
