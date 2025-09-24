@@ -24,40 +24,85 @@ void GamepadNameCommand::Print(Display* display) const
 GamepadConnectionCommand::GamepadConnectionCommand(BluetoothComponent* bluetooth)
     : m_Bluetooth(bluetooth),
       m_IsPairing(false),
-      m_Progress(AnimatedPrintable::CreateProgressDots()) {}
+      m_Progress(AnimatedPrintable::CreateProgressDots()),
+      m_ShowConnectionResult(false),
+      m_ConnectionResultTimer(Timer::Create("SerialDisplay", [this]() { m_ShowConnectionResult = false; })) {}
 
 void GamepadConnectionCommand::Print(Display* display) const
 {
+    if (m_ShowConnectionResult)
+    {
+        const auto gamepad = m_Bluetooth->GetGamepad();
+        display->PrintLine(0, "Manette trouvee");
+        display->PrintLine(1, " ", gamepad->GetDescription().get());
+        return;
+    }
+
     PrintTitle(display, "Bluetooth");
     const auto gamepad = m_Bluetooth->GetGamepad();
     if (gamepad->IsConnected())
-        PrintDescription(display, DescriptionType::Action, "Reset");
+        PrintDescription(display, DescriptionType::Action, "Reset?");
     else if (m_IsPairing == false)
-        PrintDescription(display, DescriptionType::Action, "Connecter");
+        PrintDescription(display, DescriptionType::Action, "Connexion?");
     else
-        PrintDescription(display, DescriptionType::Action, "Connexion", m_Progress);
+        PrintDescription(display, DescriptionType::Action, "Recherche", m_Progress);
 }
 
 void GamepadConnectionCommand::Invoke(const Button command)
 {
-    if (m_Bluetooth != nullptr)
+    if (command != Button::Select)
+        return;
+
+    if (m_Bluetooth == nullptr)
+    {
+        LogError("GamepadConnectionCommand: Cannot reset, Bluetooth component is null");
+        return;
+    }
+
+    if (m_IsPairing)
+    {
+        LogInfo("GamepadConnectionCommand: Cannot reset, already pairing");
+        return;
+    }
+
+    const auto gamepad = m_Bluetooth->GetGamepad();
+    if (!gamepad->IsConnected())
+    {
+        m_Bluetooth->EnablePairing();
+        m_IsPairing = true;
+    }
+    else
+    {
+        m_Bluetooth->DisconnectGamepad();
+        m_Bluetooth->Reset();
+        m_IsPairing = false;
+    }
+}
+
+void GamepadConnectionCommand::OnUpdate()
+{
+    if (m_IsPairing) //check gamepad connection
     {
         const auto gamepad = m_Bluetooth->GetGamepad();
-        if (!gamepad->IsConnected())
+        if (gamepad->IsConnected())
         {
-            m_Bluetooth->EnablePairing();
-            //needs more advanced code (state machine to manage pairing)
-        }
-        else
-        {
-            m_Bluetooth->DisconnectGamepad();
-            m_Bluetooth->Reset();
+            LogInfo("GamepadConnectionCommand: Gamepad connected");
+            m_IsPairing = false;
+            m_ShowConnectionResult = true;
+            m_ConnectionResultTimer.Start(3000, false);
+            m_Bluetooth->DisablePairing();
         }
     }
 }
 
-void GamepadConnectionCommand::OnUpdate() {}
-
-void GamepadConnectionCommand::OnHide() {}
+void GamepadConnectionCommand::OnHide()
+{
+    if (m_IsPairing)
+    {
+        m_IsPairing = false;
+        m_ShowConnectionResult = false;
+        m_Bluetooth->DisablePairing();
+    }
+}
 
 #endif

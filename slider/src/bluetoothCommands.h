@@ -5,6 +5,7 @@
 
 #include "core/animatedPrintable.h"
 #include "core/menuSystem.h"
+#include "core/timer.h"
 
 namespace Bt
 {
@@ -37,6 +38,8 @@ namespace Bt
         BluetoothComponent* m_Bluetooth;
         bool m_IsPairing;
         Core::AnimatedPrintable m_Progress;
+        bool m_ShowConnectionResult;
+        Core::Timer m_ConnectionResultTimer;
     };
 }
 
