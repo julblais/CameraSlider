@@ -31,11 +31,6 @@ void SerialDisplay::SetCursor(const int column, const int row)
     m_Cursor = row * LCD_LINE_LENGTH + column;
 }
 
-SymbolHandle SerialDisplay::GetSymbol(Symbol symbol) const
-{
-    return SymbolHandle('|');
-}
-
 void SerialDisplay::Clear()
 {
     m_Cursor = 0;

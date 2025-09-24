@@ -5,6 +5,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <array>
 
+#include "symbols.h"
 #include "core/debug.h"
 
 using namespace Core;
@@ -54,24 +55,15 @@ static const uint8_t RightArrow[] = {
 };
 
 Hardware::LCD::LCD(const uint8_t address) :
-    chip(address, NUM_COLS, NUM_ROWS),
-    m_DoubleLeftRightArrows(0),
-    m_DoubleUpDownArrows(0),
-    m_LeftArrow(0),
-    m_RightArrow(0)
+    chip(address, NUM_COLS, NUM_ROWS)
 {
     LogInfo("Init LCD.");
     chip.init();
 
-    auto id = 0;
-    CreateSymbol(id, LeftRightArrows);
-    m_DoubleLeftRightArrows = id++;
-    CreateSymbol(id, UpDownArrows);
-    m_DoubleUpDownArrows = id++;
-    CreateSymbol(id, LeftArrow);
-    m_LeftArrow = id++;
-    CreateSymbol(id, RightArrow);
-    m_RightArrow = id++;
+    CreateSymbol(static_cast<int>(IO::Symbol::LeftRightArrows), LeftRightArrows);
+    CreateSymbol(static_cast<int>(IO::Symbol::UpDownArrows), UpDownArrows);
+    CreateSymbol(static_cast<int>(IO::Symbol::LeftArrow), LeftArrow);
+    CreateSymbol(static_cast<int>(IO::Symbol::RightArrow), RightArrow);
 
     chip.backlight();
 }
@@ -95,21 +87,4 @@ size_t Hardware::LCD::write(uint8_t value)
 void Hardware::LCD::SetCursor(const int column, const int row)
 {
     chip.setCursor(column, row);
-}
-
-SymbolHandle Hardware::LCD::GetSymbol(Symbol symbol) const
-{
-    using namespace IO;
-    switch (symbol)
-    {
-        case Symbol::LeftRightArrows:
-            return SymbolHandle(m_DoubleLeftRightArrows);
-        case Symbol::UpDownArrows:
-            return SymbolHandle(m_DoubleUpDownArrows);
-        case Symbol::LeftArrow:
-            return SymbolHandle(m_LeftArrow);
-        case Symbol::RightArrow:
-            return SymbolHandle(m_RightArrow);
-    };
-    return SymbolHandle(-1);
 }

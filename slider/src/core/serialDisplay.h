@@ -16,7 +16,6 @@ namespace Core
         SerialDisplay();
         size_t write(uint8_t value) override;
         void SetCursor(const int column, const int row) override;
-        SymbolHandle GetSymbol(Symbol symbol) const override;
         void Clear() override;
 
     protected:

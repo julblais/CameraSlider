@@ -2,6 +2,19 @@
 
 using namespace Core;
 
+size_t MenuCommand::TitlePrefix::printTo(::Print& p) const
+{
+    return p.print(IO::SymbolHandle(IO::Symbol::UpDownArrows));
+}
+
+size_t MenuCommand::DescriptionPrefix::printTo(::Print& p) const
+{
+    size_t result = 0;
+    result += p.print(' ');
+    result += p.print(IO::SymbolHandle(IO::Symbol::LeftRightArrows));
+    return result;
+}
+
 MenuSystem::MenuSystem() :
     m_Index(0),
     m_IsOpened(false) {}

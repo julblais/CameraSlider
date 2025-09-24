@@ -8,37 +8,10 @@ namespace Core
 {
     using Keycode = uint8_t;
 
-    enum class Symbol : char
-    {
-        LeftRightArrows,
-        UpDownArrows,
-        LeftArrow,
-        RightArrow
-    };
-
-    class SymbolHandle : public Printable
-    {
-    public:
-        explicit SymbolHandle(Keycode id) :
-            m_Id(id)
-        {};
-
-        size_t printTo(Print& p) const override
-        {
-            return p.write(m_Id);
-        }
-
-    private:
-        uint8_t m_Id;
-    };
-
     class Display : public Print
     {
     public:
         virtual void SetCursor(const int column, const int row) = 0;
-
-        virtual SymbolHandle GetSymbol(Symbol symbol) const = 0;
-
         virtual void Clear() = 0;
 
         template<typename... TArgs>

@@ -38,9 +38,9 @@ const char* GetDesc(const Settings::Curve curve)
 
 void MaxSpeedCommand::Print(Display* display) const
 {
-    PrintTitle(display, "Vitesse max.");
+    display->PrintLine(0, TitlePrefix(), "Vitesse max.");
     const auto desc = GetDesc(Settings::GetInstance().GetSpeed());
-    PrintDescription(display, DescriptionType::Options, desc);
+    display->PrintLine(1, DescriptionPrefix(DescriptionType::Options), desc);
 }
 
 void MaxSpeedCommand::Invoke(const Button command)
@@ -63,7 +63,7 @@ void SpeedCurveCommand::Invoke(const Button command)
 
 void SpeedCurveCommand::Print(Display* display) const
 {
-    PrintTitle(display, "Courbe vitesse");
+    display->PrintLine(0, TitlePrefix(), "Courbe vitesse");
     const auto desc = GetDesc(Settings::GetInstance().GetCurve());
-    PrintDescription(display, DescriptionType::Options, desc);
+    display->PrintLine(1, DescriptionPrefix(DescriptionType::Options), desc);
 }

@@ -3,6 +3,7 @@
 
 #include "debug.h"
 #include "display.h"
+#include "symbols.h"
 
 #include <vector>
 
@@ -25,16 +26,31 @@ namespace Core
             Action
         };
 
+        struct TitlePrefix : Printable
+        {
+            size_t printTo(Print& p) const override;
+        };
+
+        struct DescriptionPrefix : Printable
+        {
+            DescriptionPrefix(const DescriptionType type) : type(type) {}
+            size_t printTo(Print& p) const override;
+
+        private:
+            DescriptionType type;
+        };
+
         static constexpr auto ButtonLeft = Button::Left;
         static constexpr auto ButtonRight = Button::Right;
         static constexpr auto ButtonSelect = Button::Select;
 
+/*
         template <typename... TArgs>
         static void PrintTitle(Display* display, TArgs&&... message);
 
         template <typename... TArgs>
         static void PrintDescription(Display* display, const DescriptionType type, TArgs&&... message);
-
+*/
         virtual ~MenuCommand() = default;
         virtual void Print(Display* display) const = 0;
         virtual void Invoke(const Button command) = 0;
@@ -71,13 +87,13 @@ namespace Core
         std::vector<MenuCommand*> m_Commands;
         int m_Index;
         bool m_IsOpened;
-    };
+    }; /*
 
     template <typename... TArgs>
     void MenuCommand::PrintTitle(Display* display, TArgs&&... message)
     {
-        const auto upDownArrows = display->GetSymbol(Symbol::UpDownArrows);
-        display->PrintLine(0, upDownArrows, message...);
+        const IO::SymbolHandle symbol = IO::SymbolHandle(IO::Symbol::UpDownArrows);
+        const auto upDownArrows = display->PrintLine(" ", symbol, upDownArrows, message...);
     }
 
     template <typename... TArgs>
@@ -103,7 +119,7 @@ namespace Core
                 break;
             }
         }
-    }
+    }*/
 }
 
 #endif
