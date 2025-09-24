@@ -15,28 +15,28 @@
 //-------------------------------------
 
 #if LOG_LEVEL >= LOG_LEVEL_ERROR
-#define LogError(...) {Debug::LogStyle(Debug::Styler(Debug::Red), "Error\t");\
+#define LogError(...) { { Debug::Styler style(Debug::Red); Serial.print("Error\t"); } \
 Debug::Log(__FILE__, "(", __LINE__, "): ",  __VA_ARGS__);}
 #else
 #define LogError(...) ;
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_WARNING
-#define LogWarning(...) {Debug::LogStyle(Debug::Styler(Debug::Yellow), "Warning\t");\
+#define LogWarning(...) { { Debug::Styler style(Debug::Yellow); Serial.print("Warning\t"); } \
 Debug::Log(__VA_ARGS__);}
 #else
 #define LogWarning(...) ;
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
-#define LogInfo(...) {Debug::LogStyle(Debug::Styler(Debug::Cyan), "Info\t");\
+#define LogInfo(...) { { Debug::Styler style(Debug::Cyan); Serial.print("Info\t"); } \
 Debug::Log(__VA_ARGS__);}
 #else
 #define LogInfo(...) ;
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_DEBUG
-#define LogDebug(...) {Debug::LogStyle(Debug::Styler(Debug::White), "Debug\t");\
+#define LogDebug(...) { { Debug::Styler style(Debug::White); Serial.print("Debug\t"); } \
 Debug::Log(__VA_ARGS__);}
 #else
 #define LogDebug(...) ;
@@ -82,15 +82,9 @@ namespace Debug
 
     struct Styler
     {
-        constexpr Styler(Color color = Color::None, Style style = Style::Bold, Color background = Color::None)
-            :color(color), style(style), background(background)
-        {}
-        constexpr Styler(Style style)
-            : Styler(Color::None, style)
-        {}
-        Color color;
-        Style style;
-        Color background;
+        Styler(Color color = Color::None, Style style = Style::Bold, Color background = Color::None);
+        Styler(Style style);
+        ~Styler();
     };
 
     template <typename... TArgs>
@@ -98,22 +92,6 @@ namespace Debug
     {
         Core::PassParamPack { (Serial.print(args), 1)... };
         Serial.println();
-    }
-
-    template <typename... TArgs>
-    void LogStyle(const Styler& styler, TArgs&&... args)
-    {
-        constexpr const char* RESET = "\e[0m";
-
-        if (styler.style != Style::Regular)
-            Serial.printf("\e[%im", static_cast<int>(styler.style));
-        if (styler.color != Color::None)
-            Serial.printf("\e[3%im", static_cast<int>(styler.color));
-        if (styler.background != Color::None)
-            Serial.printf("\e[4%im", static_cast<int>(styler.background));
-
-        Core::PassParamPack { (Serial.print(args), 1)... };
-        Serial.print(RESET);
     }
 
     void Init(const int baud);
