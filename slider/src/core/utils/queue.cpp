@@ -22,12 +22,12 @@ void QueueUtils::Push(const char* name, const void* item, QueueHandle_t queue)
         LogError("Queue ", name, " has no space left.");
 }
 
-bool Core::QueueUtils::Pop(QueueHandle_t queue, void* const item)
+bool QueueUtils::Pop(QueueHandle_t queue, void* const item)
 {
     return xQueueReceive(queue, item, 0);
 }
 
-size_t Core::QueueUtils::Size(QueueHandle_t queue)
+size_t QueueUtils::Size(QueueHandle_t queue)
 {
     return uxQueueMessagesWaiting(queue);
 }
