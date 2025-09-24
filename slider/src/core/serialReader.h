@@ -4,17 +4,35 @@
 #include <functional>
 #include <vector>
 
-namespace IO
+namespace Core
 {
     class SerialReader
     {
-        using TListener = std::function<bool(TArgs...)>;
-
     public:
-        SerialReader() = default;
+        using TMessage = const char*;
+        using TListener = std::function<bool(TMessage message)>;
+
+        SerialReader();
+        void ProcessInput() const;
         void AddListener(TListener listener);
+
+        template <typename C>
+        auto AddListener(C listener) -> decltype(listener.OnSerialMessage(std::declval<TMessage>()), void())
+        {
+            m_Listeners.push_back([listener](TMessage message) { return listener.OnSerialMessage(message); });
+            return;
+        }
+
+        template <typename C>
+        auto AddListener(C* listener) -> decltype(listener->OnSerialMessage(std::declval<TMessage>()), void())
+        {
+            m_Listeners.push_back([listener](TMessage message) { return listener->OnSerialMessage(message); });
+            return;
+        }
 
     private:
         std::vector<TListener> m_Listeners;
     };
 }
+
+#endif

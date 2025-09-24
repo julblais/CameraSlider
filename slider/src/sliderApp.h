@@ -1,5 +1,6 @@
 #ifndef SLIDERAPP_H
 #define SLIDERAPP_H
+#include "core/serialReader.h"
 
 #if !IS_SIMULATOR
 
@@ -10,6 +11,7 @@
 
 namespace Core
 {
+    class SerialReader;
     class Display;
 }
 
@@ -36,6 +38,7 @@ namespace Slider
     public:
         SliderApp(const AppConfig& config);
         bool OnInputEvent(const IO::Event& inputEvent);
+        bool OnSerialMessage(const char* message);
         void Setup() override;
         void Update() override;
 
@@ -45,6 +48,7 @@ namespace Slider
         std::unique_ptr<Hardware::DeviceInputReader> m_LocalInput;
         std::unique_ptr<IO::DisplayBuffer> m_DisplayBuffer;
         std::unique_ptr<IO::EventDispatcher> m_InputDispatcher;
+        std::unique_ptr<Core::SerialReader> m_SerialReader;
         Bt::BluetoothComponent* m_BluetoothComponent;
     };
 }
