@@ -14,7 +14,6 @@
 #include "bluetoothCommands.h"
 #include "bluetoothGamepad.h"
 #include "settingCommand.h"
-#include "core/symbols.h"
 
 using namespace Core;
 using namespace IO;
