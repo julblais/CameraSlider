@@ -1,3 +1,5 @@
 #include "serialReader.h"
 
-using namespace IO {}
+using namespace IO;
+
+
