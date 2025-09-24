@@ -5,7 +5,6 @@
 #include "display.h"
 
 #include <vector>
-#include <memory>
 
 namespace Core
 {
@@ -51,6 +50,7 @@ namespace Core
     {
     public:
         MenuSystem();
+        ~MenuSystem();
 
         void Open();
         void Close();
@@ -68,7 +68,7 @@ namespace Core
         void Select();
 
     private:
-        std::vector<std::unique_ptr<MenuCommand> > m_Items;
+        std::vector<MenuCommand*> m_Commands;
         int m_Index;
         bool m_IsOpened;
     };
