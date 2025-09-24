@@ -20,8 +20,12 @@ namespace Bt
         void DisconnectGamepad();
         void EnablePairing();
         void DisablePairing();
+        bool IsPairing() const;
         void Reset();
         Core::MacAddress GetMacAddress() const;
+
+    private:
+        bool m_IsPairing = false;
     };
 }
 

@@ -36,7 +36,6 @@ namespace Bt
 
     private:
         BluetoothComponent* m_Bluetooth;
-        bool m_IsPairing;
         Core::AnimatedPrintable m_Progress;
         bool m_ShowConnectionResult;
         Core::Timer m_ConnectionResultTimer;

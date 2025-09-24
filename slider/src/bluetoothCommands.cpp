@@ -23,7 +23,6 @@ void GamepadNameCommand::Print(Display* display) const
 
 GamepadConnectionCommand::GamepadConnectionCommand(BluetoothComponent* bluetooth)
     : m_Bluetooth(bluetooth),
-      m_IsPairing(false),
       m_Progress(AnimatedPrintable::CreateProgressDots()),
       m_ShowConnectionResult(false),
       m_ConnectionResultTimer(Timer::Create("SerialDisplay", [this]() { m_ShowConnectionResult = false; })) {}
@@ -42,10 +41,10 @@ void GamepadConnectionCommand::Print(Display* display) const
     const auto gamepad = m_Bluetooth->GetGamepad();
     if (gamepad->IsConnected())
         PrintDescription(display, DescriptionType::Action, "Reset?");
-    else if (m_IsPairing == false)
-        PrintDescription(display, DescriptionType::Action, "Connexion?");
-    else
+    else if (m_Bluetooth->IsPairing())
         PrintDescription(display, DescriptionType::Action, "Recherche", m_Progress);
+    else
+        PrintDescription(display, DescriptionType::Action, "Connexion?");
 }
 
 void GamepadConnectionCommand::Invoke(const Button command)
@@ -59,7 +58,7 @@ void GamepadConnectionCommand::Invoke(const Button command)
         return;
     }
 
-    if (m_IsPairing)
+    if (m_Bluetooth->IsPairing())
     {
         LogInfo("GamepadConnectionCommand: Cannot reset, already pairing");
         return;
@@ -69,25 +68,22 @@ void GamepadConnectionCommand::Invoke(const Button command)
     if (!gamepad->IsConnected())
     {
         m_Bluetooth->EnablePairing();
-        m_IsPairing = true;
     }
     else
     {
         m_Bluetooth->DisconnectGamepad();
         m_Bluetooth->Reset();
-        m_IsPairing = false;
     }
 }
 
 void GamepadConnectionCommand::OnUpdate()
 {
-    if (m_IsPairing) //check gamepad connection
+    if (m_Bluetooth->IsPairing()) //check gamepad connection
     {
         const auto gamepad = m_Bluetooth->GetGamepad();
         if (gamepad->IsConnected())
         {
             LogInfo("GamepadConnectionCommand: Gamepad connected");
-            m_IsPairing = false;
             m_ShowConnectionResult = true;
             m_ConnectionResultTimer.Start(3000, false);
             m_Bluetooth->DisablePairing();
@@ -97,9 +93,8 @@ void GamepadConnectionCommand::OnUpdate()
 
 void GamepadConnectionCommand::OnHide()
 {
-    if (m_IsPairing)
+    if (m_Bluetooth->IsPairing())
     {
-        m_IsPairing = false;
         m_ShowConnectionResult = false;
         m_Bluetooth->DisablePairing();
     }
