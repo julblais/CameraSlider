@@ -2,11 +2,11 @@
 #define DISPLAY_H
 
 #include <Print.h>
-#include "utils/templateUtils.h"
 
 namespace Core
 {
     using Keycode = uint8_t;
+    constexpr char Endl{'\n'};
 
     class Display : public Print
     {
@@ -14,29 +14,25 @@ namespace Core
         virtual void SetCursor(const int column, const int row) = 0;
         virtual void Clear() = 0;
 
-        template<typename... TArgs>
-        void Print(TArgs&&... args);
-
-        template<typename... TArgs>
-        void PrintLine(const int line, TArgs&&... args);
+        template <typename T>
+        void Print(T&& arg);
 
     protected:
         virtual void FillCurrentLine() {}
     };
 
-    template<typename... TArgs>
-    void Display::Print(TArgs&&... args)
+    template <typename T>
+    void Display::Print(T&& arg)
     {
-        PassParamPack { (print(args), 1)... };
+        print(arg);
     }
+}
 
-    template<typename... TArgs>
-    void Display::PrintLine(const int line, TArgs&&... args)
-    {
-        SetCursor(0, line);
-        PassParamPack { (print(args), 1)... };
-        FillCurrentLine();
-    }
+template <typename T>
+Core::Display& operator<<(Core::Display& display, T&& msg)
+{
+    display.print(msg);
+    return display;
 }
 
 #endif
