@@ -72,18 +72,26 @@ void BluetoothComponent::EnablePairing()
 {
     BP32.enableNewBluetoothConnections(true);
     LogInfo("Bluetooth: pairing enabled");
+    m_IsPairing = true;
 }
 
 void BluetoothComponent::DisablePairing()
 {
     BP32.enableNewBluetoothConnections(false);
     LogInfo("Bluetooth: pairing disabled");
+    m_IsPairing = false;
+}
+
+bool BluetoothComponent::IsPairing() const
+{
+    return m_IsPairing;
 }
 
 void BluetoothComponent::Reset()
 {
     BP32.forgetBluetoothKeys();
     LogInfo("Bluetooth: reset connection keys");
+    DisablePairing();
 }
 
 MacAddress BluetoothComponent::GetMacAddress() const

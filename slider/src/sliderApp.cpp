@@ -35,9 +35,12 @@ bool Slider::SliderApp::OnInputEvent(const Event& inputEvent)
 
 void Slider::SliderApp::Setup()
 {
+    LogDebug("Creating display...");
     m_Display = std::unique_ptr<Display>(new SerialDisplay());
+    m_DisplayBuffer = std::unique_ptr<DisplayBuffer>(new DisplayBuffer());
     m_DisplayBuffer->Setup(m_Display.get());
 
+    LogDebug("Creating input...");
     InputPins pins{
         .dpadUp = m_Config.DpadUpPin,
         .dpadDown = m_Config.DpadDownPin,
@@ -51,20 +54,26 @@ void Slider::SliderApp::Setup()
     m_LocalInput = std::unique_ptr<DeviceInputReader>(new DeviceInputReader(pins));
     m_LocalInput->Setup();
 
+    LogDebug("Creating components...");
     AddComponent<TimerComponent>();
-    m_BluetoothComponent = std::unique_ptr<BluetoothComponent>(AddComponent<BluetoothComponent>());
+    m_BluetoothComponent = AddComponent<BluetoothComponent>();
     const auto menu = AddComponent<Menu>(m_DisplayBuffer.get(), m_Config.ShowMenuDelayMs);
     const auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
     SetupComponents();
 
+    LogDebug("Creating listeners...");
+    m_InputDispatcher = std::unique_ptr<EventDispatcher>(new EventDispatcher());
     m_InputDispatcher->AddListener(menu);
     m_InputDispatcher->AddListener(stepper);
     m_InputDispatcher->AddListener(this);
 
+    LogDebug("Adding menu commands...");
     menu->AddCommand(new MaxSpeedCommand());
     menu->AddCommand(new SpeedCurveCommand());
-    menu->AddCommand(new GamepadNameCommand(m_BluetoothComponent.get()));
+    menu->AddCommand(new GamepadNameCommand(m_BluetoothComponent));
+    menu->AddCommand(new GamepadConnectionCommand(m_BluetoothComponent));
 
+    LogDebug("Printing display buffer...");
     m_DisplayBuffer->Print(Event());
 }
 

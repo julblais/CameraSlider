@@ -21,6 +21,8 @@ namespace Core
         ~AnimatedPrintable() override = default;
         size_t printTo(Print& p) const override;
 
+        static AnimatedPrintable CreateProgressDots(const unsigned int interval = 300);
+
     private:
         Messages m_Messages;
         const unsigned int m_Interval;

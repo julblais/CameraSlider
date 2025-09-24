@@ -33,3 +33,8 @@ size_t AnimatedPrintable::printTo(Print& p) const
     }
     return p.print(*(m_Messages.begin() + m_CurrentMessageIndex));
 }
+
+AnimatedPrintable AnimatedPrintable::CreateProgressDots(const unsigned int interval)
+{
+    return AnimatedPrintable(interval, {"", ".", "..", "..."});
+}

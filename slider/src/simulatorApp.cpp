@@ -8,10 +8,73 @@
 #include "autoInput.h"
 #include "settingCommand.h"
 #include "lcd.h"
+#include "core/animatedPrintable.h"
 
 using namespace IO;
 using namespace Core;
 using namespace Hardware;
+
+class TestActionCommand : public MenuCommand
+{
+public:
+    void Print(Display* display) const override
+    {
+        PrintTitle(display, "Test Action");
+        PrintDescription(display, DescriptionType::Action, "Action", m_Progress);
+    }
+
+    void Invoke(const Button command) override
+    {
+        if (command == ButtonSelect)
+            LogInfo("Action invoked!");
+    }
+private:
+    AnimatedPrintable m_Progress = AnimatedPrintable::CreateProgressDots(500);
+};
+
+class TestOptionsCommand : public MenuCommand
+{
+    enum class Option
+    {
+        Option1,
+        Option2,
+        Option3,
+        COUNT
+    };
+
+public:
+    void Print(Display* display) const override
+    {
+        PrintTitle(display, "Test Option");
+
+        switch (m_Option)
+        {
+        case Option::Option1:
+            PrintDescription(display, DescriptionType::Options, "Option 1");
+            break;
+        case Option::Option2:
+            PrintDescription(display, DescriptionType::Options, "Option 2");
+            break;
+        case Option::Option3:
+            PrintDescription(display, DescriptionType::Options, "Option 3");
+            break;
+        default:
+            PrintDescription(display, DescriptionType::Options, "ERROR");
+            break;
+        }
+    }
+
+    void Invoke(const Button command) override
+    {
+        if (command == ButtonLeft)
+            m_Option = GetPreviousEnumValue(m_Option);
+        else if (command == ButtonRight)
+            m_Option = GetNextEnumValue(m_Option);
+    }
+
+private:
+    Option m_Option = Option::Option1;
+};
 
 Slider::SimulatorApp::SimulatorApp(const AppConfig& config) :
     m_Config(config)
@@ -29,7 +92,7 @@ bool Slider::SimulatorApp::OnInputEvent(const Event& inputEvent)
 
 void Slider::SimulatorApp::Setup()
 {
-    m_Display = std::unique_ptr<Display>(new Hardware::LCD(m_Config.LcdAddress));
+    m_Display = std::unique_ptr<Display>(new LCD(m_Config.LcdAddress));
     m_DisplayBuffer.Setup(m_Display.get());
 
     InputPins pins {
@@ -59,6 +122,8 @@ void Slider::SimulatorApp::Setup()
     const auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
     SetupComponents();
 
+    menu->AddCommand(new TestActionCommand());
+    menu->AddCommand(new TestOptionsCommand());
     menu->AddCommand(new MaxSpeedCommand());
     menu->AddCommand(new SpeedCurveCommand());
 
@@ -72,7 +137,7 @@ void Slider::SimulatorApp::Setup()
 void Slider::SimulatorApp::Update()
 {
     const auto localInput = m_LocalInput->ReadInput();
-    const auto autoInput = m_AutoInput->ReadInput();
+    //const auto autoInput = m_AutoInput->ReadInput();
     m_InputDispatcher.ProcessInput(localInput);
     //m_InputDispatcher.ProcessInput(autoInput);
     m_InputDispatcher.Dispatch();

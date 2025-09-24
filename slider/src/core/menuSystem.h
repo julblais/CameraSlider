@@ -9,26 +9,36 @@
 
 namespace Core
 {
-    enum class MenuCommandButton : char
-    {
-        LEFT,
-        RIGHT,
-        SELECT
-    };
-
     class MenuCommand
     {
     public:
-        static constexpr auto ButtonLeft = MenuCommandButton::LEFT;
-        static constexpr auto ButtonRight = MenuCommandButton::RIGHT;
-        static constexpr auto ButtonSelect = MenuCommandButton::SELECT;
+        enum class Button : char
+        {
+            Left,
+            Right,
+            Select
+        };
 
-        static void PrintTitle(Display* display, const char* title, bool drawArrows = true);
-        static void PrintDescription(Display* display, const char* description, bool drawArrows = true);
+        enum class DescriptionType : char
+        {
+            None,
+            Options,
+            Action
+        };
+
+        static constexpr auto ButtonLeft = Button::Left;
+        static constexpr auto ButtonRight = Button::Right;
+        static constexpr auto ButtonSelect = Button::Select;
+
+        template <typename... TArgs>
+        static void PrintTitle(Display* display, TArgs&&... message);
+
+        template <typename... TArgs>
+        static void PrintDescription(Display* display, const DescriptionType type, TArgs&&... message);
 
         virtual ~MenuCommand() = default;
         virtual void Print(Display* display) const = 0;
-        virtual void Invoke(const MenuCommandButton command) = 0;
+        virtual void Invoke(const Button command) = 0;
 
         virtual void OnOpenMenu() {}
         virtual void OnCloseMenu() {}
@@ -62,6 +72,38 @@ namespace Core
         int m_Index;
         bool m_IsOpened;
     };
+
+    template <typename... TArgs>
+    void MenuCommand::PrintTitle(Display* display, TArgs&&... message)
+    {
+        const auto upDownArrows = display->GetSymbol(Symbol::UpDownArrows);
+        display->PrintLine(0, upDownArrows, message...);
+    }
+
+    template <typename... TArgs>
+    void MenuCommand::PrintDescription(Display* display, const DescriptionType type, TArgs&&... message)
+    {
+        switch (type)
+        {
+        case DescriptionType::Options:
+            {
+                const auto leftRightArrows = display->GetSymbol(Symbol::LeftRightArrows);
+                display->PrintLine(1, " ", leftRightArrows, message...);
+                break;
+            }
+        case DescriptionType::Action:
+            {
+                const auto leftRightArrows = display->GetSymbol(Symbol::RightArrow);
+                display->PrintLine(1, " ", leftRightArrows, message...);
+                break;
+            }
+        default:
+            {
+                display->PrintLine(1, " ", message...);
+                break;
+            }
+        }
+    }
 }
 
 #endif

@@ -3,7 +3,9 @@
 
 #if !IS_SIMULATOR
 
+#include "core/animatedPrintable.h"
 #include "core/menuSystem.h"
+#include "core/timer.h"
 
 namespace Bt
 {
@@ -12,13 +14,31 @@ namespace Bt
     class GamepadNameCommand : public Core::MenuCommand
     {
     public:
-        GamepadNameCommand(Bt::BluetoothComponent* bluetooth);
+        GamepadNameCommand(BluetoothComponent* bluetooth);
 
         void Print(Core::Display* display) const override;
-        void Invoke(const Core::MenuCommandButton command) override;
+        void Invoke(const Button command) override {}
 
     private:
         BluetoothComponent* m_Bluetooth;
+    };
+
+    class GamepadConnectionCommand : public Core::MenuCommand
+    {
+    public:
+        GamepadConnectionCommand(BluetoothComponent* bluetooth);
+
+        void Print(Core::Display* display) const override;
+        void Invoke(const Button command) override;
+
+        void OnUpdate() override;
+        void OnHide() override;
+
+    private:
+        BluetoothComponent* m_Bluetooth;
+        Core::AnimatedPrintable m_Progress;
+        bool m_ShowConnectionResult;
+        Core::Timer m_ConnectionResultTimer;
     };
 }
 
