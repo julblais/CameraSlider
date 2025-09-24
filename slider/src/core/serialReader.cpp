@@ -10,17 +10,16 @@ SerialReader::SerialReader() {}
 
 void SerialReader::ProcessInput() const
 {
-    /*
-        if (Serial.available())
+    if (Serial.available())
+    {
+        const auto input = Serial.readStringUntil('\n');
+        LogInfo("Received message: ", input);
+        for (const auto& listener : m_Listeners)
         {
-            const auto input = Serial.readStringUntil('\n');
-            LogInfo("Received message: ", input);
-            for (const auto& listener : m_Listeners)
-            {
-                if (listener(input.c_str()))
-                    break;
-            }
-        }*/
+            if (listener(input.c_str()))
+                break;
+        }
+    }
 }
 
 void SerialReader::AddListener(TListener listener)
