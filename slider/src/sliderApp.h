@@ -43,9 +43,9 @@ namespace Slider
         AppConfig m_Config;
         std::unique_ptr<Core::Display> m_Display;
         std::unique_ptr<Hardware::DeviceInputReader> m_LocalInput;
-        std::unique_ptr<Bt::BluetoothComponent> m_BluetoothComponent;
         std::unique_ptr<IO::DisplayBuffer> m_DisplayBuffer;
         std::unique_ptr<IO::EventDispatcher> m_InputDispatcher;
+        Bt::BluetoothComponent* m_BluetoothComponent;
     };
 }
 
