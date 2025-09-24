@@ -1,5 +1,5 @@
 #include "menuSystem.h"
-#include "core/symbols.h"
+#include "symbols.h"
 
 using namespace Core;
 
