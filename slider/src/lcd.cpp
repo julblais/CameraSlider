@@ -5,7 +5,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <array>
 
-#include "symbols.h"
+#include "core/symbols.h"
 #include "core/debug.h"
 
 using namespace Core;
@@ -60,10 +60,10 @@ Hardware::LCD::LCD(const uint8_t address) :
     LogInfo("Init LCD.");
     chip.init();
 
-    CreateSymbol(static_cast<int>(IO::Symbol::LeftRightArrows), LeftRightArrows);
-    CreateSymbol(static_cast<int>(IO::Symbol::UpDownArrows), UpDownArrows);
-    CreateSymbol(static_cast<int>(IO::Symbol::LeftArrow), LeftArrow);
-    CreateSymbol(static_cast<int>(IO::Symbol::RightArrow), RightArrow);
+    CreateSymbol(Symbols::LeftRightArrows.id, LeftRightArrows);
+    CreateSymbol(Symbols::UpDownArrows.id, UpDownArrows);
+    CreateSymbol(Symbols::LeftArrow.id, LeftArrow);
+    CreateSymbol(Symbols::RightArrow.id, RightArrow);
 
     chip.backlight();
 }

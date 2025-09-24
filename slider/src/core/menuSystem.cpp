@@ -1,10 +1,11 @@
 #include "menuSystem.h"
+#include "core/symbols.h"
 
 using namespace Core;
 
 Display& MenuCommand::TitlePrefix(Display& display)
 {
-    return display << IO::SymbolHandle(IO::Symbol::UpDownArrows);
+    return display << Symbols::UpDownArrows;
 }
 
 Display& MenuCommand::DescriptionPrefix(Display& display, const DescriptionType type)
@@ -12,9 +13,9 @@ Display& MenuCommand::DescriptionPrefix(Display& display, const DescriptionType 
     switch (type)
     {
     case DescriptionType::Options:
-        return display << ' ' << IO::SymbolHandle(IO::Symbol::LeftRightArrows);
+        return display << ' ' << Symbols::LeftRightArrows;
     case DescriptionType::Action:
-        return display << ' ' << IO::SymbolHandle(IO::Symbol::RightArrow);
+        return display << ' ' << Symbols::RightArrow;
     default:
         return display << ' ';
     }
