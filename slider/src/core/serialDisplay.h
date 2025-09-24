@@ -16,6 +16,7 @@ namespace Core
         SerialDisplay();
         size_t write(uint8_t value) override;
         void SetCursor(const int column, const int row) override;
+        void SetSymbolRange(uint8_t range) { m_SymbolsRange = range; }
         void Clear() override;
 
     protected:
@@ -28,6 +29,7 @@ namespace Core
         std::array<uint8_t, LCD_LINE_LENGTH * LCD_NUM_LINES> m_Buffer;
         mutable std::array<Keycode, LCD_LINE_LENGTH * LCD_NUM_LINES> m_PreviousBuffer;
         unsigned int m_Cursor;
+        uint8_t m_SymbolsRange;
     };
 }
 

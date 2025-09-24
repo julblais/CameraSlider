@@ -11,7 +11,8 @@ namespace IO
         LeftRightArrows = 0,
         UpDownArrows = 1,
         LeftArrow = 2,
-        RightArrow = 3
+        RightArrow = 3,
+        COUNT
     };
 
     class SymbolHandle : public Printable

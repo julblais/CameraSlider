@@ -14,6 +14,7 @@
 #include "bluetoothCommands.h"
 #include "bluetoothGamepad.h"
 #include "settingCommand.h"
+#include "symbols.h"
 
 using namespace Core;
 using namespace IO;
@@ -36,7 +37,9 @@ bool Slider::SliderApp::OnInputEvent(const Event& inputEvent)
 void Slider::SliderApp::Setup()
 {
     LogDebug("Creating display...");
-    m_Display = std::unique_ptr<Display>(new SerialDisplay());
+    auto serialDisplay = new SerialDisplay();
+    serialDisplay->SetSymbolRange(static_cast<uint8_t>(Symbol::COUNT));
+    m_Display = std::unique_ptr<Display>(serialDisplay);
     m_DisplayBuffer = std::unique_ptr<DisplayBuffer>(new DisplayBuffer());
     m_DisplayBuffer->Setup(m_Display.get());
 

@@ -15,10 +15,13 @@ SerialDisplay::SerialDisplay()
 
 size_t SerialDisplay::write(const uint8_t value)
 {
-    //do not go over the line!
+    auto realValue = value;
+    if (value < m_SymbolsRange)
+        realValue = '|';
+
     const auto maxCursor = ((m_Cursor / LCD_LINE_LENGTH) + 1) * LCD_LINE_LENGTH;
     if (m_Cursor < maxCursor)
-        m_Buffer[m_Cursor++] = value;
+        m_Buffer[m_Cursor++] = realValue;
     return 1;
 }
 
