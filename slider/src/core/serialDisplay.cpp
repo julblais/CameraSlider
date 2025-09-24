@@ -34,6 +34,11 @@ void SerialDisplay::SetCursor(const int column, const int row)
     m_Cursor = row * LCD_LINE_LENGTH + column;
 }
 
+void SerialDisplay::SetSymbolCount(const uint8_t range)
+{
+    m_SymbolsRange = range;
+}
+
 void SerialDisplay::Clear()
 {
     m_Cursor = 0;
