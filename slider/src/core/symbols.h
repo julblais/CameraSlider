@@ -9,7 +9,7 @@ namespace Core
     class Symbol
     {
     public:
-        Symbol(const SymbolId symbol);
+        constexpr Symbol(const SymbolId symbol) : id(symbol) {}
         size_t printTo(Print& p) const;
 
         const SymbolId id;
@@ -17,10 +17,10 @@ namespace Core
 
     namespace Symbols
     {
-        const auto LeftRightArrows{Symbol(0)};
-        const auto UpDownArrows{Symbol(1)};
-        const auto LeftArrow{Symbol(2)};
-        const auto RightArrow{Symbol(3)};
+        constexpr auto LeftRightArrows{Symbol(0)};
+        constexpr auto UpDownArrows{Symbol(1)};
+        constexpr auto LeftArrow{Symbol(2)};
+        constexpr auto RightArrow{Symbol(3)};
     }
 }
 
