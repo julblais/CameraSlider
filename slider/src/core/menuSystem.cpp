@@ -8,22 +8,17 @@ Display& MenuCommand::TitlePrefix(Display& display)
     return display << Symbols::UpDownArrows;
 }
 
-Symbol GetSymbol(const MenuCommand::DescriptionType type)
+Display& MenuCommand::DescriptionPrefix(Display& display, const DescriptionType type)
 {
     switch (type)
     {
-    case MenuCommand::DescriptionType::Options:
-        return Symbols::LeftRightArrows;
-    case MenuCommand::DescriptionType::Action:
-        return Symbols::RightArrow;
+    case DescriptionType::Options:
+        return display << ' ' << Symbols::LeftRightArrows;
+    case DescriptionType::Action:
+        return display << ' ' << Symbols::RightArrow;
     default:
-        return Symbol();
+        return display << ' ';
     }
-}
-
-Display& MenuCommand::DescriptionPrefix(Display& display, const DescriptionType type)
-{
-    return display << ' ' << GetSymbol(type);
 }
 
 MenuSystem::MenuSystem() :

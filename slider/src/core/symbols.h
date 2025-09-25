@@ -9,10 +9,10 @@ namespace Core
     class Symbol
     {
     public:
-        Symbol(const SymbolId symbol = -1);
+        Symbol(const SymbolId symbol);
         size_t printTo(Print& p) const;
 
-        const int16_t id;
+        const SymbolId id;
     };
 
     namespace Symbols
