@@ -10,12 +10,12 @@ namespace Core
     class TableFormatter : public Printable
     {
     public:
-        TableFormatter(const int cols, const int rows, const int padding = 0, bool hasHeader = true);
+        TableFormatter(const int cols, const int rows, const int padding = 0, const bool hasHeader = true);
 
         void AddRow(const std::initializer_list<std::string>& values);
         void AddRow(const std::vector<std::string>& values);
-        virtual size_t printTo(Print& p) const;
-        
+        size_t printTo(Print& p) const override;
+
     private:
         int CalculateMaxColWith(std::vector<int>& colWidths) const;
 

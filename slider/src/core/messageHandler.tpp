@@ -1,0 +1,39 @@
+#ifndef MESSAGEHANDLER_TPP
+#define MESSAGEHANDLER_TPP
+
+#include "messageHandler.h"
+
+template<class TMessage>
+Core::MessageHandler::Invoker<TMessage>::Invoker(const char* name, std::function<void(TMessage)> function) :
+    InvokerBase(name),
+    m_Function(function)
+{}
+
+template<class TMessage>
+void Core::MessageHandler::Invoker<TMessage>::Invoke(const uint8_t* data, const size_t length) const
+{
+    const auto expectedSize = sizeof(MessageWrapper<TMessage>);
+    if (length != expectedSize)
+    {
+        LogDebug("Invalid message size, expected: ", expectedSize, " got: ", length);
+        return;
+    }
+    auto msg = reinterpret_cast<const MessageWrapper<TMessage> *>(data);
+    m_Function(msg->data);
+}
+
+template<class T>
+Core::MessageCallbackHandle Core::MessageHandler::AddCallback(const char* name, std::function<void(T)> callback)
+{
+    auto ptr = new Invoker<T>(name, callback);
+    m_Selectors.emplace_back(MessageWrapper<T>::StaticId(), std::unique_ptr<InvokerBase>(ptr));
+    return MessageCallbackHandle(ptr);
+}
+
+template<class T>
+Core::MessageWrapper<T> Core::MessageHandler::CreateMessage(const T& message)
+{
+    return MessageWrapper<T>(message);
+}
+
+#endif // MESSAGEHANDLER_TPP

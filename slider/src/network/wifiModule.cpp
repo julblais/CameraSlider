@@ -1,5 +1,7 @@
 #include "wifiModule.h"
-#include "src/debug.h"
+#include "../core/debug.h"
+
+#ifdef USE_NETWORK
 
 using namespace Net;
 
@@ -17,7 +19,8 @@ void WifiModule::Setup()
 {
     Esp::Init();
 
-    Esp::RegisterReceiveCb([this](const uint8_t* data, size_t length) {
+    Esp::RegisterReceiveCb([this](const uint8_t* data, size_t length)
+    {
         m_MessageHandler.Invoke(data, length);
     });
 }
@@ -47,7 +50,7 @@ void Net::WifiModule::RemoveReceiveCallback(const MessageCallbackHandle& handle)
     m_MessageHandler.RemoveCallback(handle);
 }
 
-void WifiModule::RegisterSendCallback(Core::function<void(const MacAddress&, bool)> callback)
+void WifiModule::RegisterSendCallback(function<void(const MacAddress &, bool)> callback)
 {
     Esp::RegisterSendCallback(callback);
 }
@@ -59,7 +62,7 @@ bool WifiModule::SendImpl(const uint8_t* address, const uint8_t* data, size_t le
 
 #else
 
-Core::function<void(const MacAddress&, bool)> s_SendCallback {};
+function<void(const MacAddress &, bool)> s_SendCallback{};
 
 void WifiModule::Setup()
 {
@@ -73,7 +76,7 @@ void WifiModule::Update()
 
 MacAddress WifiModule::GetMacAddress()
 {
-    return MacAddress { {0x01, 0x02, 0x03, 0x04, 0x05, 0x06} };
+    return MacAddress{{0x01, 0x02, 0x03, 0x04, 0x05, 0x06}};
 }
 
 bool WifiModule::AddPeer(const MacAddress& address)
@@ -86,12 +89,12 @@ bool WifiModule::RemovePeer(const MacAddress& address)
     return true;
 }
 
-void WifiModule::RegisterSendCallback(Core::function<void(const MacAddress&, bool)> callback)
+void WifiModule::RegisterSendCallback(function<void(const MacAddress &, bool)> callback)
 {
     s_SendCallback = callback;
 }
 
-void Net::WifiModule::RemoveReceiveCallback(const MessageCallbackHandle& handle)
+void WifiModule::RemoveReceiveCallback(const MessageCallbackHandle& handle)
 {
     m_MessageHandler.RemoveCallback(handle);
 }
@@ -105,4 +108,5 @@ bool WifiModule::SendImpl(const uint8_t* address, const uint8_t* data, size_t le
     return true;
 }
 
+#endif
 #endif
