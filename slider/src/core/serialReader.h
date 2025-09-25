@@ -1,7 +1,7 @@
 #ifndef SERIAL_READER_H
 #define SERIAL_READER_H
 
-#include <functional>
+#include "utils/function.h"
 #include <vector>
 
 namespace Core
@@ -10,7 +10,7 @@ namespace Core
     {
     public:
         using TMessage = const char*;
-        using TListener = std::function<bool(TMessage message)>;
+        using TListener = function<bool(TMessage message)>;
 
         SerialReader();
         void ProcessInput() const;

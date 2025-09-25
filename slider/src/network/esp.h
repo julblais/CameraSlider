@@ -3,8 +3,8 @@
 
 #ifdef USE_NETWORK
 
-#include "src/core/utils/function.h"
-#include "src/core/network/address.h"
+#include "utils/function.h"
+#include "network/address.h"
 #include "src/debug.h"
 
 namespace Net

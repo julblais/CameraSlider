@@ -6,7 +6,7 @@
 #include "invokerBase.h"
 #include "messageCallbackHandle.h"
 #include "utils/queue.h"
-#include "src/core/utils/function.h"
+#include "utils/function.h"
 
 #include <vector>
 #include <memory>

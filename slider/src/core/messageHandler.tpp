@@ -23,7 +23,7 @@ void Core::MessageHandler::Invoker<TMessage>::Invoke(const uint8_t* data, const 
 }
 
 template<class T>
-Core::MessageCallbackHandle Core::MessageHandler::AddCallback(const char* name, std::function<void(T)> callback)
+Core::MessageCallbackHandle Core::MessageHandler::AddCallback(const char* name, function<void(T)> callback)
 {
     auto ptr = new Invoker<T>(name, callback);
     m_Selectors.emplace_back(MessageWrapper<T>::StaticId(), std::unique_ptr<InvokerBase>(ptr));

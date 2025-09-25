@@ -6,7 +6,7 @@
 #include "time/time.h"
 #include "component.h"
 #include <memory>
-#include "src/core/utils/function.h"
+#include "utils/function.h"
 
 struct esp_timer;
 typedef esp_timer* esp_timer_handle_t;
