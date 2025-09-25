@@ -85,7 +85,7 @@ bool Slider::SimulatorApp::OnInputEvent(const Event& inputEvent)
     if (inputEvent.HasChange())
     {
         m_DisplayBuffer.Clear();
-        m_DisplayBuffer.Print(inputEvent);
+        m_DisplayBuffer.print(inputEvent);
     }
     return false;
 }
@@ -131,7 +131,7 @@ void Slider::SimulatorApp::Setup()
     m_InputDispatcher.AddListener(stepper);
     m_InputDispatcher.AddListener(this);
 
-    m_DisplayBuffer.Print(Event());
+    m_DisplayBuffer.print(Event());
 }
 
 void Slider::SimulatorApp::Update()

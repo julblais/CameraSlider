@@ -6,11 +6,11 @@ namespace Core
 {
     using SymbolId = uint8_t;
 
-    class Symbol : public Printable
+    class Symbol
     {
     public:
         Symbol(const SymbolId symbol);
-        size_t printTo(Print& p) const override;
+        size_t printTo(Print& p) const;
 
         const SymbolId id;
     };
