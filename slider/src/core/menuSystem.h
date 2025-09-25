@@ -3,9 +3,7 @@
 
 #include "debug.h"
 #include "display.h"
-
 #include <vector>
-#include <memory>
 
 namespace Core
 {
@@ -30,14 +28,11 @@ namespace Core
         static constexpr auto ButtonRight = Button::Right;
         static constexpr auto ButtonSelect = Button::Select;
 
-        template <typename... TArgs>
-        static void PrintTitle(Display* display, TArgs&&... message);
-
-        template <typename... TArgs>
-        static void PrintDescription(Display* display, const DescriptionType type, TArgs&&... message);
+        static Display& TitlePrefix(Display& display);
+        static Display& DescriptionPrefix(Display& display, const DescriptionType type);
 
         virtual ~MenuCommand() = default;
-        virtual void Print(Display* display) const = 0;
+        virtual void Print(Display& display) const = 0;
         virtual void Invoke(const Button command) = 0;
 
         virtual void OnOpenMenu() {}
@@ -51,6 +46,7 @@ namespace Core
     {
     public:
         MenuSystem();
+        ~MenuSystem();
 
         void Open();
         void Close();
@@ -68,42 +64,10 @@ namespace Core
         void Select();
 
     private:
-        std::vector<std::unique_ptr<MenuCommand> > m_Items;
+        std::vector<MenuCommand*> m_Commands;
         int m_Index;
         bool m_IsOpened;
     };
-
-    template <typename... TArgs>
-    void MenuCommand::PrintTitle(Display* display, TArgs&&... message)
-    {
-        const auto upDownArrows = display->GetSymbol(Symbol::UpDownArrows);
-        display->PrintLine(0, upDownArrows, message...);
-    }
-
-    template <typename... TArgs>
-    void MenuCommand::PrintDescription(Display* display, const DescriptionType type, TArgs&&... message)
-    {
-        switch (type)
-        {
-        case DescriptionType::Options:
-            {
-                const auto leftRightArrows = display->GetSymbol(Symbol::LeftRightArrows);
-                display->PrintLine(1, " ", leftRightArrows, message...);
-                break;
-            }
-        case DescriptionType::Action:
-            {
-                const auto leftRightArrows = display->GetSymbol(Symbol::RightArrow);
-                display->PrintLine(1, " ", leftRightArrows, message...);
-                break;
-            }
-        default:
-            {
-                display->PrintLine(1, " ", message...);
-                break;
-            }
-        }
-    }
 }
 
 #endif

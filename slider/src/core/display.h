@@ -3,67 +3,60 @@
 
 #include <Print.h>
 #include "utils/templateUtils.h"
+#include <type_traits>
+#include <utility>
 
 namespace Core
 {
     using Keycode = uint8_t;
-
-    enum class Symbol : char
-    {
-        LeftRightArrows,
-        UpDownArrows,
-        LeftArrow,
-        RightArrow
-    };
-
-    class SymbolHandle : public Printable
-    {
-    public:
-        explicit SymbolHandle(Keycode id) :
-            m_Id(id)
-        {};
-
-        size_t printTo(Print& p) const override
-        {
-            return p.write(m_Id);
-        }
-
-    private:
-        uint8_t m_Id;
-    };
+    constexpr char Endl{'\n'};
 
     class Display : public Print
     {
+        template <typename T>
+        using PrintToExists = decltype(std::declval<T>().printTo(std::declval<::Print&>()));
+
+        template <typename T>
+        using PrintToEnableIf = std::enable_if<std::is_same<PrintToExists<T>, size_t>::value>;
+
+        template <typename, typename = void>
+        struct HasPrintTo : std::false_type {};
+
+        template <typename T>
+        struct HasPrintTo<T, typename PrintToEnableIf<T>::type> : std::true_type {};
+
     public:
         virtual void SetCursor(const int column, const int row) = 0;
-
-        virtual SymbolHandle GetSymbol(Symbol symbol) const = 0;
-
         virtual void Clear() = 0;
 
-        template<typename... TArgs>
-        void Print(TArgs&&... args);
+        template <typename T, enable_if_t<HasPrintTo<T>::value, bool> = true>
+        size_t print(T&& value);
 
-        template<typename... TArgs>
-        void PrintLine(const int line, TArgs&&... args);
+        template <typename T, enable_if_t<!HasPrintTo<T>::value, bool> = true>
+        size_t print(T&& value);
 
     protected:
         virtual void FillCurrentLine() {}
     };
 
-    template<typename... TArgs>
-    void Display::Print(TArgs&&... args)
+    template <typename T, enable_if_t<Display::HasPrintTo<T>::value, bool>>
+    size_t Display::print(T&& value)
     {
-        PassParamPack { (print(args), 1)... };
+        return value.printTo(*this);
     }
 
-    template<typename... TArgs>
-    void Display::PrintLine(const int line, TArgs&&... args)
+    template <typename T, enable_if_t<!Display::HasPrintTo<T>::value, bool>>
+    size_t Display::print(T&& value)
     {
-        SetCursor(0, line);
-        PassParamPack { (print(args), 1)... };
-        FillCurrentLine();
+        return Print::print(std::forward<T>(value));
     }
+}
+
+template <typename T>
+Core::Display& operator<<(Core::Display& display, T&& msg)
+{
+    display.print(msg);
+    return display;
 }
 
 #endif

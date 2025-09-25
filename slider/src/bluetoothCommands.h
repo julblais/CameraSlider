@@ -16,7 +16,7 @@ namespace Bt
     public:
         GamepadNameCommand(BluetoothComponent* bluetooth);
 
-        void Print(Core::Display* display) const override;
+        void Print(Core::Display& display) const override;
         void Invoke(const Button command) override {}
 
     private:
@@ -28,7 +28,7 @@ namespace Bt
     public:
         GamepadConnectionCommand(BluetoothComponent* bluetooth);
 
-        void Print(Core::Display* display) const override;
+        void Print(Core::Display& display) const override;
         void Invoke(const Button command) override;
 
         void OnUpdate() override;

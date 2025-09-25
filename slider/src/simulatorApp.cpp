@@ -17,10 +17,10 @@ using namespace Hardware;
 class TestActionCommand : public MenuCommand
 {
 public:
-    void Print(Display* display) const override
+    void Print(Display& display) const override
     {
-        PrintTitle(display, "Test Action");
-        PrintDescription(display, DescriptionType::Action, "Action", m_Progress);
+        TitlePrefix(display) << "Test Action" << Endl;
+        DescriptionPrefix(display, DescriptionType::Action) << "Action" << m_Progress << Endl;
     }
 
     void Invoke(const Button command) override
@@ -43,23 +43,23 @@ class TestOptionsCommand : public MenuCommand
     };
 
 public:
-    void Print(Display* display) const override
+    void Print(Display& display) const override
     {
-        PrintTitle(display, "Test Option");
+        TitlePrefix(display) << "Test Option" << Endl;
 
         switch (m_Option)
         {
         case Option::Option1:
-            PrintDescription(display, DescriptionType::Options, "Option 1");
+            DescriptionPrefix(display, DescriptionType::Options) << "Option 1" << Endl;
             break;
         case Option::Option2:
-            PrintDescription(display, DescriptionType::Options, "Option 2");
+            DescriptionPrefix(display, DescriptionType::Options) << "Option 2" << Endl;
             break;
         case Option::Option3:
-            PrintDescription(display, DescriptionType::Options, "Option 3");
+            DescriptionPrefix(display, DescriptionType::Options) << "Option 3" << Endl;
             break;
         default:
-            PrintDescription(display, DescriptionType::Options, "ERROR");
+            DescriptionPrefix(display, DescriptionType::Options) << "ERROR" << Endl;
             break;
         }
     }
@@ -85,7 +85,7 @@ bool Slider::SimulatorApp::OnInputEvent(const Event& inputEvent)
     if (inputEvent.HasChange())
     {
         m_DisplayBuffer.Clear();
-        m_DisplayBuffer.Print(inputEvent);
+        m_DisplayBuffer.print(inputEvent);
     }
     return false;
 }
@@ -131,7 +131,7 @@ void Slider::SimulatorApp::Setup()
     m_InputDispatcher.AddListener(stepper);
     m_InputDispatcher.AddListener(this);
 
-    m_DisplayBuffer.Print(Event());
+    m_DisplayBuffer.print(Event());
 }
 
 void Slider::SimulatorApp::Update()

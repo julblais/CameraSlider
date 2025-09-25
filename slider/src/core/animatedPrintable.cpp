@@ -6,16 +6,20 @@ using namespace Core;
 AnimatedPrintable::AnimatedPrintable(const unsigned int interval, const Messages messages) :
     m_Messages(messages),
     m_Interval(interval),
+    m_LastTimeMs(0),
     m_CurrentMessageIndex(0) {}
 
-AnimatedPrintable::AnimatedPrintable(AnimatedPrintable&& other) :
+AnimatedPrintable::AnimatedPrintable(AnimatedPrintable&& other) noexcept :
     m_Messages(std::move(other.m_Messages)),
     m_Interval(other.m_Interval),
+    m_LastTimeMs(other.m_LastTimeMs),
     m_CurrentMessageIndex(other.m_CurrentMessageIndex) {}
 
-AnimatedPrintable& AnimatedPrintable::operator=(AnimatedPrintable&& other)
+AnimatedPrintable& AnimatedPrintable::operator=(AnimatedPrintable&& other) noexcept
 {
     m_Messages = std::move(other.m_Messages);
+    m_Interval = other.m_Interval;
+    m_LastTimeMs = other.m_LastTimeMs;
     m_CurrentMessageIndex = other.m_CurrentMessageIndex;
     return *this;
 }

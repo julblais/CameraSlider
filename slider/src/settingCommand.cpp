@@ -1,7 +1,6 @@
 #include "settingCommand.h"
 #include "settings.h"
 #include "core/utils/enumUtils.h"
-#include "bluetoothComponent.h"
 
 using namespace Core;
 using namespace Slider;
@@ -36,11 +35,11 @@ const char* GetDesc(const Settings::Curve curve)
     };
 }
 
-void MaxSpeedCommand::Print(Display* display) const
+void MaxSpeedCommand::Print(Display& display) const
 {
-    PrintTitle(display, "Vitesse max.");
+    TitlePrefix(display) << "Vitesse max." << Endl;
     const auto desc = GetDesc(Settings::GetInstance().GetSpeed());
-    PrintDescription(display, DescriptionType::Options, desc);
+    DescriptionPrefix(display, DescriptionType::Options) << desc << Endl;
 }
 
 void MaxSpeedCommand::Invoke(const Button command)
@@ -61,9 +60,9 @@ void SpeedCurveCommand::Invoke(const Button command)
         Settings::GetInstance().SetCurve(GetNextEnumValue(curve));
 }
 
-void SpeedCurveCommand::Print(Display* display) const
+void SpeedCurveCommand::Print(Display& display) const
 {
-    PrintTitle(display, "Courbe vitesse");
+    TitlePrefix(display) << "Courbe vitesse" << Endl;
     const auto desc = GetDesc(Settings::GetInstance().GetCurve());
-    PrintDescription(display, DescriptionType::Options, desc);
+    DescriptionPrefix(display, DescriptionType::Options) << desc << Endl;
 }

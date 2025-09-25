@@ -7,7 +7,7 @@
 
 namespace Core
 {
-    class AnimatedPrintable : public Printable
+    class AnimatedPrintable
     {
         using Messages = std::initializer_list<const char*>;
 
@@ -15,17 +15,16 @@ namespace Core
         AnimatedPrintable(const unsigned int interval, const Messages messages);
         AnimatedPrintable(const AnimatedPrintable& other) = delete;
         AnimatedPrintable& operator=(const AnimatedPrintable& other) = delete;
-        AnimatedPrintable(AnimatedPrintable&& other);
-        AnimatedPrintable& operator=(AnimatedPrintable&& other);
+        AnimatedPrintable(AnimatedPrintable&& other) noexcept;
+        AnimatedPrintable& operator=(AnimatedPrintable&& other) noexcept;
 
-        ~AnimatedPrintable() override = default;
-        size_t printTo(Print& p) const override;
+        size_t printTo(Print& p) const;
 
         static AnimatedPrintable CreateProgressDots(const unsigned int interval = 300);
 
     private:
         Messages m_Messages;
-        const unsigned int m_Interval;
+        unsigned int m_Interval;
         mutable Time m_LastTimeMs;
         mutable unsigned int m_CurrentMessageIndex;
     };

@@ -11,14 +11,14 @@ using namespace Core;
 GamepadNameCommand::GamepadNameCommand(BluetoothComponent* bluetooth)
     : m_Bluetooth(bluetooth) {}
 
-void GamepadNameCommand::Print(Display* display) const
+void GamepadNameCommand::Print(Display& display) const
 {
     const auto name = m_Bluetooth->GetGamepad()->GetDescription();
-    PrintTitle(display, "Manette");
+    TitlePrefix(display) << "Manette" << Endl;
     if (name.get() == nullptr)
-        PrintDescription(display, DescriptionType::None, "Aucune");
+        DescriptionPrefix(display, DescriptionType::None) << "Aucune" << Endl;
     else
-        PrintDescription(display, DescriptionType::None, name.get());
+        DescriptionPrefix(display, DescriptionType::None) << name.get() << Endl;
 }
 
 GamepadConnectionCommand::GamepadConnectionCommand(BluetoothComponent* bluetooth)
@@ -27,24 +27,24 @@ GamepadConnectionCommand::GamepadConnectionCommand(BluetoothComponent* bluetooth
       m_ShowConnectionResult(false),
       m_ConnectionResultTimer(Timer::Create("SerialDisplay", [this]() { m_ShowConnectionResult = false; })) {}
 
-void GamepadConnectionCommand::Print(Display* display) const
+void GamepadConnectionCommand::Print(Display& display) const
 {
     if (m_ShowConnectionResult)
     {
         const auto gamepad = m_Bluetooth->GetGamepad();
-        display->PrintLine(0, "Manette trouvee");
-        display->PrintLine(1, " ", gamepad->GetDescription().get());
+        display << "Manette trouvee" << Endl;
+        DescriptionPrefix(display, DescriptionType::None) << gamepad->GetDescription().get() << Endl;
         return;
     }
 
-    PrintTitle(display, "Bluetooth");
+    TitlePrefix(display) << "Bluetooth" << Endl;
     const auto gamepad = m_Bluetooth->GetGamepad();
     if (gamepad->IsConnected())
-        PrintDescription(display, DescriptionType::Action, "Reset?");
+        DescriptionPrefix(display, DescriptionType::Action) << "Reset?" << Endl;
     else if (m_Bluetooth->IsPairing())
-        PrintDescription(display, DescriptionType::Action, "Recherche", m_Progress);
+        DescriptionPrefix(display, DescriptionType::Action) << "Recherche" << m_Progress << Endl;
     else
-        PrintDescription(display, DescriptionType::Action, "Connexion?");
+        DescriptionPrefix(display, DescriptionType::Action) << "Connexion?" << Endl;
 }
 
 void GamepadConnectionCommand::Invoke(const Button command)

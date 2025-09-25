@@ -6,14 +6,14 @@
 template <class TComponent>
 void Core::AppBase::AddComponent(TComponent* component)
 {
-    m_Components.emplace_back(component);
+    m_Components.push_back(component);
 }
 
 template <class TComponent, typename... TArgs>
 TComponent* Core::AppBase::AddComponent(TArgs&&... args)
 {
     auto ptr = new TComponent(std::forward<TArgs>(args)...);
-    m_Components.emplace_back(ptr);
+    m_Components.push_back(ptr);
     return ptr;
 }
 
