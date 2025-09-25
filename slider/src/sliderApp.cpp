@@ -28,7 +28,7 @@ bool Slider::SliderApp::OnInputEvent(const Event& inputEvent)
     if (inputEvent.HasChange())
     {
         m_DisplayBuffer->Clear();
-        m_DisplayBuffer->Print(inputEvent);
+        m_DisplayBuffer->print(inputEvent);
     }
     return false;
 }
@@ -76,7 +76,7 @@ void Slider::SliderApp::Setup()
     menu->AddCommand(new GamepadConnectionCommand(m_BluetoothComponent));
 
     LogDebug("Printing display buffer...");
-    m_DisplayBuffer->Print(Event());
+    m_DisplayBuffer->print(Event());
 }
 
 void Slider::SliderApp::Update()

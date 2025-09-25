@@ -12,6 +12,9 @@ namespace Core
         PassParamPack(T&&...) {}
     };
 
+    template <bool B, class T = void>
+    using enable_if_t = typename std::enable_if<B, T>::type;
+
     template<typename, typename = void>
     struct IsTypeComplete : std::false_type {};
 

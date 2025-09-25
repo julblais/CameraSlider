@@ -7,7 +7,7 @@
 
 namespace Core
 {
-    class AnimatedPrintable : public Printable
+    class AnimatedPrintable
     {
         using Messages = std::initializer_list<const char*>;
 
@@ -18,8 +18,7 @@ namespace Core
         AnimatedPrintable(AnimatedPrintable&& other);
         AnimatedPrintable& operator=(AnimatedPrintable&& other);
 
-        ~AnimatedPrintable() override = default;
-        size_t printTo(Print& p) const override;
+        size_t printTo(Print& p) const;
 
         static AnimatedPrintable CreateProgressDots(const unsigned int interval = 300);
 
