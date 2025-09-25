@@ -82,7 +82,7 @@ Debug::Log(__VA_ARGS__);}
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_DEBUG
-#define LogDebug(...) { Debug::PrintInfo(); \
+#define LogDebug(...) { Debug::PrintDebug(); \
 Debug::Log(__VA_ARGS__);}
 #else
 #define LogDebug(...) ;
