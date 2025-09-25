@@ -12,36 +12,6 @@
 
 #define LOG_LEVEL LOG_LEVEL_INFO
 
-//-------------------------------------
-
-#if LOG_LEVEL >= LOG_LEVEL_ERROR
-#define LogError(...) { { Debug::Styler style(Debug::Red); Serial.print("Error\t"); } \
-Debug::Log(__FILE__, "(", __LINE__, "): ",  __VA_ARGS__);}
-#else
-#define LogError(...) ;
-#endif
-
-#if LOG_LEVEL >= LOG_LEVEL_WARNING
-#define LogWarning(...) { { Debug::Styler style(Debug::Yellow); Serial.print("Warning\t"); } \
-Debug::Log(__VA_ARGS__);}
-#else
-#define LogWarning(...) ;
-#endif
-
-#if LOG_LEVEL >= LOG_LEVEL_INFO
-#define LogInfo(...) { { Debug::Styler style(Debug::Cyan); Serial.print("Info\t"); } \
-Debug::Log(__VA_ARGS__);}
-#else
-#define LogInfo(...) ;
-#endif
-
-#if LOG_LEVEL >= LOG_LEVEL_DEBUG
-#define LogDebug(...) { { Debug::Styler style(Debug::White); Serial.print("Debug\t"); } \
-Debug::Log(__VA_ARGS__);}
-#else
-#define LogDebug(...) ;
-#endif
-
 namespace Debug
 {
     enum class Color : char
@@ -66,26 +36,17 @@ namespace Debug
         Strikethrough = 9
     };
 
-    constexpr Color Black = Color::Black;
-    constexpr Color Red = Color::Red;
-    constexpr Color Green = Color::Green;
-    constexpr Color Yellow = Color::Yellow;
-    constexpr Color Blue = Color::Blue;
-    constexpr Color Purple = Color::Purple;
-    constexpr Color Cyan = Color::Cyan;
-    constexpr Color White = Color::White;
-
-    constexpr Style Bold = Style::Bold;
-    constexpr Style Italic = Style::Italic;
-    constexpr Style Underline = Style::Underline;
-    constexpr Style Strikethrough = Style::Strikethrough;
-
     struct Styler
     {
         Styler(Color color = Color::None, Style style = Style::Bold, Color background = Color::None);
         Styler(Style style);
         ~Styler();
     };
+
+    void PrintError();
+    void PrintWarning();
+    void PrintInfo();
+    void PrintDebug();
 
     template <typename... TArgs>
     void Log(TArgs&&... args)
@@ -96,5 +57,36 @@ namespace Debug
 
     void Init(const int baud);
 }
+
+//-------------------------------------
+
+#if LOG_LEVEL >= LOG_LEVEL_ERROR
+#define LogError(...) { Debug::PrintError(); \
+Debug::Log(__FILE__, "(", __LINE__, "): ",  __VA_ARGS__);}
+#else
+#define LogError(...) ;
+#endif
+
+#if LOG_LEVEL >= LOG_LEVEL_WARNING
+#define LogWarning(...) { Debug::PrintWarning(); \
+Debug::Log(__VA_ARGS__);}
+#else
+#define LogWarning(...) ;
+#endif
+
+#if LOG_LEVEL >= LOG_LEVEL_INFO
+#define LogInfo(...) { Debug::PrintInfo(); \
+Debug::Log(__VA_ARGS__);}
+#else
+#define LogInfo(...) ;
+#endif
+
+#if LOG_LEVEL >= LOG_LEVEL_DEBUG
+#define LogDebug(...) { Debug::PrintInfo(); \
+Debug::Log(__VA_ARGS__);}
+#else
+#define LogDebug(...) ;
+#endif
+
 
 #endif
