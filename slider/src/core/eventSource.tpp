@@ -12,6 +12,7 @@ template<typename C>
 auto Core::EventSource<TArgs...>::AddListener(C listener) -> decltype(listener.OnInputEvent(std::declval<TArgs...>()), void())
 {
     m_Listeners.push_back([listener](TArgs... args) { return listener.OnInputEvent(args...); });
+    return;
 }
 
 template<typename... TArgs>
@@ -20,6 +21,7 @@ auto Core::EventSource<TArgs...>::AddListener(
     C* listener) -> decltype(listener->OnInputEvent(std::declval<TArgs...>()), void())
 {
     m_Listeners.push_back([listener](TArgs... args) { return listener->OnInputEvent(args...); });
+    return;
 }
 
 template<typename... TArgs>

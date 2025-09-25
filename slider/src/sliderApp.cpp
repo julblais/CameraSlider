@@ -6,6 +6,7 @@
 #include "deviceInputReader.h"
 #include "core/perf.h"
 #include "core/display.h"
+#include "core/serialReader.h"
 #include "displayBuffer.h"
 #include "eventDispatcher.h"
 #include "menu.h"
@@ -29,6 +30,20 @@ bool Slider::SliderApp::OnInputEvent(const Event& inputEvent)
     {
         m_DisplayBuffer->Clear();
         m_DisplayBuffer->print(inputEvent);
+    }
+    return false;
+}
+
+bool Slider::SliderApp::OnSerialMessage(const char* message)
+{
+    LogInfo("Received serial message: ", message);
+    if (strcmp(message, "bt.pair") == 0)
+    {
+        if (m_BluetoothComponent != nullptr)
+            m_BluetoothComponent->EnablePairing();
+        else
+            LogError("Cannot reset Bluetooth module: Bluetooth component is null");
+        return true;
     }
     return false;
 }
@@ -63,6 +78,10 @@ void Slider::SliderApp::Setup()
     const auto stepper = AddComponent<Stepper>(m_Config.StepperDirectionPin, m_Config.StepperStepPin);
     SetupComponents();
 
+    LogDebug("Creating serial reader");
+    m_SerialReader = std::unique_ptr<SerialReader>(new SerialReader());
+    m_SerialReader->AddListener(this);
+
     LogDebug("Creating listeners...");
     m_InputDispatcher = std::unique_ptr<EventDispatcher>(new EventDispatcher());
     m_InputDispatcher->AddListener(menu);
@@ -81,6 +100,10 @@ void Slider::SliderApp::Setup()
 
 void Slider::SliderApp::Update()
 {
+    TAKE_SAMPLE("Process messages", [this]() {
+                m_SerialReader->ProcessInput();
+                }, CpuSampler);
+
     TAKE_SAMPLE("ProcessInput", [this]() {
                 //m_InputDispatcher.ProcessInput(m_LocalInput->ReadInput());
                 m_InputDispatcher->ProcessInput(m_BluetoothComponent->GetGamepad()->ReadInput());
