@@ -6,7 +6,8 @@ using namespace Core;
 
 SerialDisplay::SerialDisplay()
     : m_Timer(Timer::Create("SerialDisplay", [this]() { PrintToSerial(); })),
-      m_Cursor(0)
+      m_Cursor(0),
+      m_SymbolsRange(0)
 {
     m_Buffer.fill(' ');
     m_PreviousBuffer.fill('-');
