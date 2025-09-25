@@ -65,7 +65,7 @@ void Slider::Menu::OnSelectionLongPress()
         m_IsIntroFinished = false;
         m_IntroTimer.Start(MENU_INTRO_DELAY_MS);
         m_Display->Clear();
-        m_Display->Print(MENU_INTRO_MSG);
+        m_Display->print(MENU_INTRO_MSG);
     } else
     {
         m_MenuSystem.Close();

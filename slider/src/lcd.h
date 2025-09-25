@@ -17,16 +17,10 @@ namespace Hardware
         void Clear() override;
         size_t write(uint8_t value) override;
         void SetCursor(const int column, const int row) override;
-        Core::SymbolHandle GetSymbol(Core::Symbol symbol) const override;
 
     private:
         void CreateSymbol(const int id, const uint8_t* charmap);
-
         LiquidCrystal_I2C chip;
-        Core::Keycode m_DoubleLeftRightArrows;
-        Core::Keycode m_DoubleUpDownArrows;
-        Core::Keycode m_LeftArrow;
-        Core::Keycode m_RightArrow;
     };
 }
 

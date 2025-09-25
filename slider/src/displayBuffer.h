@@ -24,7 +24,6 @@ namespace IO
         void Setup(Display* display);
         size_t write(uint8_t value) override;
         void SetCursor(const int column, const int row) override;
-        Core::SymbolHandle GetSymbol(Core::Symbol symbol) const override;
         void Clear() override;
         void PrintToDisplay() const;
 

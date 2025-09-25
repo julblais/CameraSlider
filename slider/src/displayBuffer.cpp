@@ -60,11 +60,6 @@ void IO::DisplayBuffer::SetCursor(const int column, const int row)
     m_Cursor = row * LCD_LINE_LENGTH + column;
 }
 
-Core::SymbolHandle IO::DisplayBuffer::GetSymbol(Core::Symbol symbol) const
-{
-    return m_Display->GetSymbol(symbol);
-}
-
 void IO::DisplayBuffer::PrintToDisplay() const
 {
     const auto areEqual = std::equal(

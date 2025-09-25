@@ -9,15 +9,15 @@
 
 namespace Net
 {
-    struct ConnectionRequest : public Printable
+    struct ConnectionRequest
     {
         uint8_t from[6];
 
         ConnectionRequest(const Core::MacAddress& address);
-        virtual size_t printTo(Print& p) const override;
+        size_t printTo(Print& p) const;
     };
 
-    struct Handshake : public Printable
+    struct Handshake
     {
         uint8_t from[6];
 

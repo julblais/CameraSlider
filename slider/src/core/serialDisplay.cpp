@@ -6,7 +6,8 @@ using namespace Core;
 
 SerialDisplay::SerialDisplay()
     : m_Timer(Timer::Create("SerialDisplay", [this]() { PrintToSerial(); })),
-      m_Cursor(0)
+      m_Cursor(0),
+      m_SymbolsRange(0)
 {
     m_Buffer.fill(' ');
     m_PreviousBuffer.fill('-');
@@ -15,10 +16,13 @@ SerialDisplay::SerialDisplay()
 
 size_t SerialDisplay::write(const uint8_t value)
 {
-    //do not go over the line!
+    auto realValue = value;
+    if (value < m_SymbolsRange)
+        realValue = '|';
+
     const auto maxCursor = ((m_Cursor / LCD_LINE_LENGTH) + 1) * LCD_LINE_LENGTH;
     if (m_Cursor < maxCursor)
-        m_Buffer[m_Cursor++] = value;
+        m_Buffer[m_Cursor++] = realValue;
     return 1;
 }
 
@@ -31,9 +35,9 @@ void SerialDisplay::SetCursor(const int column, const int row)
     m_Cursor = row * LCD_LINE_LENGTH + column;
 }
 
-SymbolHandle SerialDisplay::GetSymbol(Symbol symbol) const
+void SerialDisplay::SetSymbolCount(const uint8_t range)
 {
-    return SymbolHandle('|');
+    m_SymbolsRange = range;
 }
 
 void SerialDisplay::Clear()

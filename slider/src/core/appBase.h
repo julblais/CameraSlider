@@ -9,7 +9,7 @@ namespace Core
     class AppBase
     {
     public:
-        virtual ~AppBase() = default;
+        virtual ~AppBase();
         virtual void Setup() = 0;
         virtual void Update() = 0;
 
@@ -22,7 +22,7 @@ namespace Core
         void UpdateComponents() const;
 
     private:
-        std::vector<std::unique_ptr<Component>> m_Components;
+        std::vector<Component*> m_Components;
     };
 
     template <class TConfig>

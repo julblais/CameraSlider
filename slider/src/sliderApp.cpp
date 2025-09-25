@@ -28,7 +28,7 @@ bool Slider::SliderApp::OnInputEvent(const Event& inputEvent)
     if (inputEvent.HasChange())
     {
         m_DisplayBuffer->Clear();
-        m_DisplayBuffer->Print(inputEvent);
+        m_DisplayBuffer->print(inputEvent);
     }
     return false;
 }
@@ -36,7 +36,9 @@ bool Slider::SliderApp::OnInputEvent(const Event& inputEvent)
 void Slider::SliderApp::Setup()
 {
     LogDebug("Creating display...");
-    m_Display = std::unique_ptr<Display>(new SerialDisplay());
+    const auto serialDisplay = new SerialDisplay();
+    serialDisplay->SetSymbolCount(4);
+    m_Display = std::unique_ptr<Display>(serialDisplay);
     m_DisplayBuffer = std::unique_ptr<DisplayBuffer>(new DisplayBuffer());
     m_DisplayBuffer->Setup(m_Display.get());
 
@@ -74,7 +76,7 @@ void Slider::SliderApp::Setup()
     menu->AddCommand(new GamepadConnectionCommand(m_BluetoothComponent));
 
     LogDebug("Printing display buffer...");
-    m_DisplayBuffer->Print(Event());
+    m_DisplayBuffer->print(Event());
 }
 
 void Slider::SliderApp::Update()
